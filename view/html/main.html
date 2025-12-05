@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head class="headHome">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <script src="../assets/js/main.js"></script>
+  </head>
+  <body>
+    <header class="headHome">
+      <img
+        src="../assets/img/Nike logo for some reason.png"
+        alt="Nike logo"
+        class="topPic"
+      />
+
+      <a href="login.html" class="logoutIcon"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="black"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6ZM5.78 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 0 0 0 1.06l3 3a.75.75 0 0 0 1.06-1.06l-1.72-1.72H15a.75.75 0 0 0 0-1.5H4.06l1.72-1.72a.75.75 0 0 0 0-1.06Z"
+            clip-rule="evenodd"
+          /></svg
+      ></a>
+    </header>
+    <main class="mainHome">
+      <section>
+        <img
+          src="../assets/img/mountainHorizontal.jpg"
+          alt="Photo of mountains"
+          class="mainPic"
+        />
+      </section>
+      <aside class="saveDataBox">
+        <h1>Save your data for the next trip now</h1>
+        <div class="buttons">
+          <button id="adjustData" class="adjustData">Adjust data</button>
+          <a href="https://www.linkedin.com/in/mosi-hickman-blanco-093623349/"
+            ><button class="checkUsOut">Check us out</button></a
+          >
+        </div>
+      </aside>
+
+      <!-- The Modal -->
+      <div id="adminTableModal" class="adminTableModal">
+        <!-- Modal content -->
+        <div class="adminTableModalContent">
+          <div class="flex-space-between">
+            <button id="modifySelfButton" class="modifySelfButton">
+              Modify Self
+            </button>
+            <span class="close">&times;</span>
+          </div>
+
+          <table class="adminTable" id="adminTable">
+            <tr class="adminTableHead">
+              <th>Username</th>
+              <th>Card Number</th>
+              <th></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="modifyUserPopupAdmin" class="modifyUserPopupAdmin">
+        <div class="popupCard">
+          <form class="loginForm profileForm" id="profileForm">
+            <div class="profileHeader">
+              <div class="avatar">
+                <img src="https://placehold.co/280x280/png" alt="avatar" />
+              </div>
+              <div class="infoArea">
+                <div class="fields">
+                  <div class="field half">
+                    <label for="firstName">Name</label>
+                    <input
+                      id="firstNameUser"
+                      name="firstName"
+                      type="text"
+                      placeholder="John"
+                    />
+                  </div>
+                  <div class="field half">
+                    <label for="lastName">Surname</label>
+                    <input
+                      id="lastNameUser"
+                      name="lastName"
+                      type="text"
+                      placeholder="Doe"
+                    />
+                  </div>
+                  <div class="field full">
+                    <label for="email">Email</label>
+                    <input
+                      id="emailUser"
+                      name="email"
+                      type="email"
+                      placeholder="example@example.com"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fields">
+              <div class="field half">
+                <label for="username">Username</label>
+                <input
+                  id="usernameUser"
+                  name="username"
+                  type="text"
+                  placeholder="Example"
+                  disabled
+                />
+              </div>
+
+              <div class="field half">
+                <label for="password">Password</label>
+                <button type="button" id="changePwdBtn" class="changePwdBtn">
+                  Change Password
+                </button>
+              </div>
+              <div class="field half">
+                <label for="phone">Phone Number</label>
+                <input
+                  id="phoneUser"
+                  name="phone"
+                  type="number"
+                  placeholder="000-000-0000"
+                />
+              </div>
+              <div class="field half">
+                <label for="gender">Gender</label>
+                <select name="gender" id="genderUser" class="gender">
+                  <option value="Man">Man</option>
+                  <option value="Female">Woman</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="cardNumber">Card Number</label>
+                <input
+                  id="cardNumberUser"
+                  name="cardNumber"
+                  type="text"
+                  placeholder="XXXX-XXXX-XXXX-XXXX"
+                />
+              </div>
+            </div>
+            <span style="color: green" ; id="message"></span>
+            <div class="actions">
+              <button id="deleteBtn" class="deleteBtn" type="button">
+                Delete Account
+              </button>
+              <button class="saveBtn" type="button" id="saveBtnUser">
+                Save Data
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="modifyAdminPopup" class="modifyAdminPopup">
+        <div class="popupCard">
+          <form class="loginForm profileForm" id="profileForm">
+            <div class="profileHeader">
+              <div class="avatar">
+                <img src="https://placehold.co/280x280/png" alt="avatar" />
+              </div>
+              <div class="infoArea">
+                <div class="fields">
+                  <div class="field half">
+                    <label for="firstName">Name</label>
+                    <input
+                      id="firstNameAdmin"
+                      name="firstName"
+                      type="text"
+                      placeholder="John"
+                    />
+                  </div>
+                  <div class="field half">
+                    <label for="lastName">Surname</label>
+                    <input
+                      id="lastNameAdmin"
+                      name="lastName"
+                      type="text"
+                      placeholder="Doe"
+                    />
+                  </div>
+                  <div class="field full">
+                    <label for="email">Email</label>
+                    <input
+                      id="emailAdmin"
+                      name="email"
+                      type="email"
+                      placeholder="example@example.com"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fields">
+              <div class="field half">
+                <label for="username">Username</label>
+                <input
+                  id="usernameAdmin"
+                  name="username"
+                  type="text"
+                  placeholder="Example"
+                  disabled
+                />
+              </div>
+
+              <div class="field half">
+                <label for="password">Password</label>
+                <button
+                  type="button"
+                  id="changePwdBtnAdmin"
+                  class="changePwdBtn"
+                >
+                  Change Password
+                </button>
+              </div>
+              <div class="field half">
+                <label for="phone">Phone Number</label>
+                <input
+                  id="phoneAdmin"
+                  name="phone"
+                  type="number"
+                  placeholder="000-000-0000"
+                />
+              </div>
+              <div class="field half">
+                <label for="profileCode">Profile Code</label>
+                <input
+                  id="profileCodeAdmin"
+                  name="profileCode"
+                  type="tel"
+                  placeholder="x"
+                  disabled="disabled"
+                />
+              </div>
+              <div class="field full">
+                <label for="accountNumber">Account Number</label>
+                <input
+                  id="currentAccountAdmin"
+                  name="accountNumber"
+                  type="text"
+                  placeholder="XXXX-XXXX-XXXX-XXXX"
+                />
+              </div>
+            </div>
+            <span style="color: green" ; id="messageAdmin"></span>
+            <div class="actions">
+              <button id="saveBtnAdmin" class="saveBtn" type="button">
+                Save Data
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="changePasswordModal" class="changePasswordModal">
+        <div class="changePasswordModalContent">
+          <span class="closePasswordSpan">&times;</span>
+          <h2>Change Password</h2>
+          <form id="changePasswordForm">
+            <label for="currentPassword">Actual Password</label>
+            <input
+              type="password"
+              id="currentPassword"
+              name="currentPassword"
+              required
+            />
+            <span style="color: red" ; id="messageOldPassword"></span>
+
+            <label for="newPassword">New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              required
+            />
+
+            <label for="confirmNewPassword">Repeat Password</label>
+            <input
+              type="password"
+              id="confirmNewPassword"
+              name="confirmNewPassword"
+              required
+            />
+            <span style="color: red" ; id="messageWrongPassword"></span>
+
+            <span style="color: green" ; id="messageSuccessPassword"></span>
+            <button type="submit">Confirm</button>
+          </form>
+          <div id="passwordMessage" class="passwordMessage"></div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <!--Logo goes here-->
+      <p class="desc">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo.
+      </p>
+      <ul class="footerList">
+        <li class="listTitle">Contacto</li>
+        <li>Dirección: xxxxxxx, xxx, xxx</li>
+        <li>Teléfono: +34 678 439 478</li>
+        <li>Email: ejemplo@gmail.com</li>
+        <li>Horario: L-V 8:00-14:25</li>
+      </ul>
+      <ul>
+        <li class="listTitle">Enlaces útiles</li>
+        <li>Inicio</li>
+        <li>Servicios</li>
+        <li>Acerca de nosotros</li>
+      </ul>
+      <div class="map">
+        <p class="listTitle">Ubicacion</p>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
+          width="300"
+          height="200"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+      <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
+    </footer>
+  </body>
+</html>

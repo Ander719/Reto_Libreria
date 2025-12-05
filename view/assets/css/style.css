@@ -1,0 +1,634 @@
+.logoutIcon {
+  width: 4%;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.headHome {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 1%;
+}
+
+:root {
+  --background-color: #f1f1f1;
+}
+
+/*Footer*/
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/*Login / Signup*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body,
+html {
+  height: 100%;
+  font-family: "Segoe UI", sans-serif;
+}
+.container {
+  display: flex;
+  height: 100vh;
+}
+.leftPanel {
+  width: 50%;
+  overflow: hidden;
+}
+.leftPanel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rightPanel {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+}
+.loginForm {
+  width: 80%;
+  max-width: 400px;
+  padding: 40px;
+}
+.loginForm h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.loginForm label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+.loginForm input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+}
+.loginForm button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background-color: #222020;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+.loginForm button:hover {
+  background-color: #005fa3;
+}
+.registerLink {
+  align-self: center;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+.registerLink a {
+  color: #555;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.registerLink a:hover {
+  text-decoration: underline;
+}
+#mensaje {
+  text-align: center;
+}
+/* Pantallas pequeñas (móviles) */
+@media (max-width: 600px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  .leftPanel {
+    width: 100%;
+    height: 30vh;
+  }
+  .leftPanel img {
+    height: 100%;
+    object-fit: cover;
+  }
+  .rightPanel {
+    width: 100%;
+    height: 70vh;
+    padding: 20px 0;
+  }
+  .loginForm {
+    width: 90%;
+    padding: 25px;
+    max-width: 350px;
+  }
+  .loginForm h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  .loginForm input {
+    padding: 12px;
+  }
+  .loginForm button {
+    padding: 12px;
+  }
+}
+/* Pantallas medianas (tablets) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .container {
+    flex-direction: row;
+  }
+  .leftPanel {
+    width: 40%;
+  }
+  .rightPanel {
+    width: 60%;
+  }
+  .loginForm {
+    padding: 30px;
+    width: 85%;
+  }
+  .loginForm h2 {
+    font-size: 1.4rem;
+  }
+}
+/* Pantallas grandes (escritorios) */
+@media (min-width: 1200px) {
+  .loginForm {
+    max-width: 450px;
+    padding: 50px;
+  }
+
+  .loginForm h2 {
+    font-size: 1.8rem;
+  }
+
+  .loginForm input,
+  .loginForm button {
+    padding: 12px;
+  }
+}
+/*Home Page*/
+.topPic {
+  width: 10%;
+}
+
+.map {
+  padding-right: 2%;
+}
+
+.mainPic {
+  float: left;
+  width: 40%;
+  padding: 7px 6px;
+}
+
+.saveDataBox {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+}
+
+.saveDataBox h1 {
+  font-size: 50px;
+  width: 500px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.adjustData {
+  width: 200px;
+  height: 50px;
+  background-color: #ffffff;
+  border-style: solid;
+  border-color: #000;
+  cursor: pointer;
+}
+
+.adjustData:hover {
+  background-color: #d3d3d3;
+  transition-duration: 0.5s;
+}
+
+.checkUsOut {
+  width: 200px;
+  height: 50px;
+  background-color: #101416;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.checkUsOut:hover {
+  background-color: #4d4a4a;
+  transition-duration: 0.5s;
+}
+
+.desc {
+  width: 25%;
+  padding-left: 1%;
+}
+
+p.copyright {
+  position: absolute;
+  width: 100%;
+  color: #fff;
+  line-height: 40px;
+  font-size: 0.7em;
+  text-align: center;
+  bottom: 0;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  text-align: left;
+  padding: 3px 0px;
+}
+
+.listTitle {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: left;
+}
+
+/*-----Admin Page CSS-----*/
+/*Modal*/
+.adminTableModal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modifyUserPopupAdmin {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 999;
+}
+
+.modifyAdminPopup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 999;
+}
+
+/* Modal Content */
+.adminTableModalContent {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 80%;
+  height: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.adminTable {
+  width: 100%;
+  display: block;
+  max-height: 90%;
+  overflow-y: auto;
+}
+
+.adminTableHead {
+  position: sticky;
+  top: 0;
+}
+
+.adminTable th {
+  background-color: #101416;
+  color: #ffffff;
+  width: 33%;
+  height: 10%;
+  padding: 5px;
+  outline: 3px solid #101416;
+}
+
+.adminTable tr {
+  text-align: center;
+}
+
+.adminTableData td {
+  outline: 3px solid #101416;
+}
+
+.center-flex-div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.center-flex-div > * {
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.size-small {
+  width: 10%;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.modifySelfButton {
+  width: 30%;
+  background-color: #101416;
+  font-weight: bold;
+  color: white;
+  border: 0px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Profile Popup */
+/* to blurr the background */
+.popupOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 999;
+}
+
+.popupCard {
+  width: 100%;
+  max-width: 980px;
+  background: var(--background-color, #f1f1f1);
+  border-radius: 18px;
+  border: 4px black solid;
+  padding: 24px;
+}
+
+.profileForm {
+  width: 100%;
+  max-width: 100%;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.profileHeader {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 140px;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.infoArea {
+  flex: 1 1 auto;
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 22px;
+  margin-top: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.field.half {
+  width: calc(50% - 11px);
+}
+
+.field.full {
+  width: 100%;
+}
+
+.inline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.passwordWrap {
+  position: relative;
+  flex: 1;
+}
+
+.passwordWrap input {
+  width: 100%;
+}
+
+.togglePwd {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid #d0d0d0;
+  background: #f7f7f7;
+  border-radius: 18px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.changePwdBtn {
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  margin-top: 22px;
+}
+
+.saveBtn {
+  width: 100%;
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.deleteBtn {
+  width: 50%;
+  border-radius: 18px;
+  padding: 14px;
+  background-color: #f0f0f0;
+  border-color: 1px #000;
+}
+
+.gender {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  background-color: white;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/*Change Password pop up*/
+.changePasswordModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.changePasswordModalContent {
+  background-color: var(--background-color, #f1f1f1);
+  margin: 5% auto;
+  padding: 24px;
+  border: 4px black solid;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+.changePasswordModal h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.changePasswordModal label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.changePasswordModal input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+}
+
+.changePasswordModal button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background-color: #101416;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.changePasswordModal button:hover {
+  background-color: #4d4a4a;
+  transition-duration: 0.5s;
+}
+
+.closePasswordSpan {
+  color: #aaaaaa;
+  cursor: pointer;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
+.closePasswordModal:hover,
+.closePasswordModal:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (max-width: 780px) {
+  .profileHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .field.half {
+    width: 100%;
+  }
+}
