@@ -35,24 +35,29 @@ footer {
   padding: 0;
   box-sizing: border-box;
 }
+
 body,
 html {
   height: 100%;
   font-family: "Segoe UI", sans-serif;
 }
+
 .container {
   display: flex;
   height: 100vh;
 }
+
 .leftPanel {
   width: 50%;
   overflow: hidden;
 }
+
 .leftPanel img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .rightPanel {
   width: 50%;
   display: flex;
@@ -60,20 +65,24 @@ html {
   align-items: center;
   background-color: var(--background-color);
 }
+
 .loginForm {
   width: 80%;
   max-width: 400px;
   padding: 40px;
 }
+
 .loginForm h2 {
   margin-bottom: 20px;
   text-align: center;
 }
+
 .loginForm label {
   display: block;
   margin-top: 15px;
   font-weight: bold;
 }
+
 .loginForm input {
   width: 100%;
   padding: 10px;
@@ -81,6 +90,7 @@ html {
   border: 1px solid #ccc;
   border-radius: 15px;
 }
+
 .loginForm button {
   margin-top: 20px;
   width: 100%;
@@ -91,9 +101,11 @@ html {
   border-radius: 15px;
   cursor: pointer;
 }
+
 .loginForm button:hover {
   background-color: #005fa3;
 }
+
 .registerLink {
   align-self: center;
   margin-top: 15px;
@@ -101,17 +113,21 @@ html {
   font-size: 14px;
   color: #555;
 }
+
 .registerLink a {
   color: #555;
   text-decoration: underline;
   font-weight: bold;
 }
+
 .registerLink a:hover {
   text-decoration: underline;
 }
+
 #mensaje {
   text-align: center;
 }
+
 /* Pantallas pequeñas (móviles) */
 @media (max-width: 600px) {
   .container {
@@ -119,54 +135,67 @@ html {
     height: auto;
     min-height: 100vh;
   }
+
   .leftPanel {
     width: 100%;
     height: 30vh;
   }
+
   .leftPanel img {
     height: 100%;
     object-fit: cover;
   }
+
   .rightPanel {
     width: 100%;
     height: 70vh;
     padding: 20px 0;
   }
+
   .loginForm {
     width: 90%;
     padding: 25px;
     max-width: 350px;
   }
+
   .loginForm h2 {
     font-size: 1.3rem;
     margin-bottom: 15px;
   }
+
   .loginForm input {
     padding: 12px;
   }
+
   .loginForm button {
     padding: 12px;
   }
 }
+
 /* Pantallas medianas (tablets) */
 @media (min-width: 601px) and (max-width: 1024px) {
   .container {
     flex-direction: row;
   }
+
   .leftPanel {
     width: 40%;
   }
+
   .rightPanel {
     width: 60%;
   }
+
   .loginForm {
     padding: 30px;
     width: 85%;
   }
+
   .loginForm h2 {
     font-size: 1.4rem;
   }
 }
+
 /* Pantallas grandes (escritorios) */
 @media (min-width: 1200px) {
   .loginForm {
@@ -183,6 +212,7 @@ html {
     padding: 12px;
   }
 }
+
 /*Home Page*/
 .topPic {
   width: 10%;
@@ -373,7 +403,7 @@ li {
   justify-content: center;
 }
 
-.center-flex-div > * {
+.center-flex-div>* {
   margin-left: 5px;
   margin-right: 5px;
   cursor: pointer;
@@ -630,5 +660,266 @@ li {
 
   .field.half {
     width: 100%;
+  }
+
+}
+
+
+/* ==========================================================================
+   ==========================================================================
+   PARTE 2: ESTILOS NUEVOS - TIENDA TIPO AMAZON (STYLE 2)
+   (Pega esto al final de tu archivo style.css original)
+   ==========================================================================
+   ========================================================================== */
+
+/* 1. VARIABLES & CONFIGURACIÓN GLOBAL */
+:root {
+  /* Paleta de Colores estilo E-commerce Pro */
+  --bg-body: #ffffff;
+  --text-main: #333333;
+  /* Gris muy oscuro para lectura cómoda */
+  --text-muted: #565959;
+  /* Gris Amazon para autores/meta info */
+  --price-color: #b12704;
+  /* Rojo oscuro para precios */
+  --link-color: #007185;
+  /* Azul "Amazon" para enlaces */
+  --link-hover: #c7511f;
+  /* Naranja al pasar el ratón */
+
+  /* Botones y Acciones */
+  --btn-primary: #ffd814;
+  /* Amarillo "Buy Box" */
+  --btn-hover: #f7ca00;
+  --btn-border: #fcd200;
+
+  /* Bordes y Fondos */
+  --border-light: #e7e7e7;
+  --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Ajuste de fuente para la tienda (Cascada sobre el body original) */
+body {
+  font-family: "Amazon Ember", Arial, sans-serif, "Segoe UI";
+  line-height: 1.6;
+}
+
+/* 2. HEADER MODIFICADO (Sobrescribe para dar look oscuro Amazon) */
+.headHome {
+  background-color: #131921;
+  /* Negro Amazon */
+  align-items: center;
+  color: white;
+  padding: 10px 20px;
+}
+
+.topPic {
+  height: 40px;
+  width: auto;
+  /* Reseteamos el ancho para que no se deforme el logo */
+  object-fit: contain;
+}
+
+.nav-icons a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-icons a:hover {
+  text-decoration: underline;
+}
+
+/* 3. LAYOUT PRINCIPAL */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 80px;
+  /* Espacio extra para el footer */
+}
+
+/* 4. SECCIÓN DE DETALLES DEL LIBRO (Book Details) */
+.details-container {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 40px;
+  align-items: flex-start;
+}
+
+.details-image {
+  flex: 0 0 35%;
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  border: 1px solid var(--border-light);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.details-image img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 500px;
+}
+
+.details-info {
+  flex: 1;
+}
+
+#bookTitle {
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  color: var(--text-main);
+}
+
+#bookAuthor {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: var(--link-color);
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+#bookAuthor:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.details-price {
+  font-size: 1.5rem;
+  color: var(--price-color);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.stock-badge {
+  color: #007600;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.details-info h4 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.details-info p {
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+
+/* Tabla de info técnica */
+.meta-info {
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  padding: 15px 0;
+  margin: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.meta-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.meta-info strong {
+  color: var(--text-main);
+}
+
+/* 5. ZONA DE ACCIÓN (Caja de compra) */
+.actions {
+  background-color: #fcfbfb;
+  border: 1px solid var(--border-light);
+  padding: 20px;
+  border-radius: 8px;
+  width: fit-content;
+  display: flex;
+  /* Sobrescribe el display block si existía */
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: var(--shadow-soft);
+  margin-top: 0;
+}
+
+.actions label {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.qty-input {
+  padding: 8px;
+  border: 1px solid #888;
+  border-radius: 4px;
+  width: 60px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+}
+
+.action-btn {
+  background-color: var(--btn-primary);
+  border: 1px solid var(--btn-border);
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0F1111;
+  box-shadow: 0 2px 5px rgba(213, 217, 217, .5);
+  transition: background-color 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.action-btn:hover {
+  background-color: var(--btn-hover);
+}
+
+/* 6. COMENTARIOS */
+.comments-section {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-light);
+  margin-bottom: 60px;
+}
+
+.comments-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#commentsList {
+  background: #fff;
+}
+
+/* 7. RESPONSIVE DESIGN TIENDA */
+@media (max-width: 768px) {
+  .details-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .details-image,
+  .details-info {
+    flex: none;
+    width: 100%;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .details-image img {
+    max-height: 350px;
   }
 }
