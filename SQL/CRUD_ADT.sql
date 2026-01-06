@@ -1,3 +1,5 @@
+drop database CRUD_ADT;
+
 CREATE DATABASE IF NOT EXISTS CRUD_ADT;
 USE CRUD_ADT;
 
@@ -18,11 +20,37 @@ CARD_NO VARCHAR (50),
 FOREIGN KEY (PROFILE_CODE) REFERENCES PROFILE_(PROFILE_CODE) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE BOOK_ (
+    Isbn VARCHAR(20) NOT NULL PRIMARY KEY, 
+    Title VARCHAR(100),
+    Author VARCHAR(100),
+    Description TEXT,
+    Price DECIMAL(10, 2),
+    Stock INT,
+    Category VARCHAR(50),
+    Image VARCHAR(200)
+);
+
 CREATE TABLE ADMIN_(
 PROFILE_CODE INT NOT NULL PRIMARY KEY,
 CURRENT_ACCOUNT VARCHAR (50),
 FOREIGN KEY (PROFILE_CODE) REFERENCES PROFILE_(PROFILE_CODE) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE COMENT_ (
+    COMENT_ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    PROFILE_CODE INT NOT NULL,
+    Isbn VARCHAR(20) NOT NULL,
+    comment_text TEXT,
+    valoration INT,
+    dateComent DATE,
+    
+  
+    FOREIGN KEY (PROFILE_CODE) REFERENCES PROFILE_(PROFILE_CODE) ON UPDATE CASCADE ON DELETE CASCADE,
+
+    FOREIGN KEY (Isbn) REFERENCES BOOK_(Isbn) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 
 
 INSERT INTO PROFILE_ (PROFILE_CODE, EMAIL, USER_NAME, PSWD, TELEPHONE, NAME_, SURNAME) VALUES
@@ -42,6 +70,22 @@ INSERT INTO USER_ (PROFILE_CODE, GENDER, CARD_NO) VALUES
 INSERT INTO ADMIN_ (PROFILE_CODE, CURRENT_ACCOUNT) VALUES
 (4, 'ES12-3456-7890-1234-5678'),
 (5, 'ES98-7654-3210-9876-5432');
+
+
+INSERT INTO BOOK_ (Isbn, Author, Title, Description, Price, Stock, Category, Image)
+VALUES ('123-PRUEBA', 'Autor Prueba', 'Libro de Prueba', 'Descripción...', 10, 100, 'Test', 'https://placehold.co/400x600');
+INSERT INTO COMENT_ (PROFILE_CODE, Isbn, comment_text, valoration, dateComent)
+VALUES (1, '123-PRUEBA', '¡Me ha encantado! Es un libro fantástico.', 5, CURDATE());
+
+
+INSERT INTO AUTHOR_ (ID_AUTHOR, NameAuthor, LastName) VALUES 
+(1, 'Brandon', 'Sanderson'),
+(2, 'J.K.', 'Rowling');
+
+
+INSERT INTO Book_ (Isbn, title, id_author, pages, stock, sipnosis, price, editorial, cover) VALUES 
+('9780765326355', 'The Way of Kings', 1, 1007, 10, 'Roshar is a world of stone and storms. Uncanny tempests of incredible power sweep across the rocky terrain so frequently that they have shaped ecology and civilization alike.', 25.99, 'Tor Books', 'https://placehold.co/400x600'),
+('9780439064873', 'Harry Potter and the Chamber of Secrets', 2, 251, 5, 'The Dursleys were so mean and hideous that summer that all Harry Potter wanted was to get back to the Hogwarts School for Witchcraft and Wizardry.', 14.50, 'Scholastic', 'https://placehold.co/400x600');
 
 DELIMITER //
 CREATE PROCEDURE RegistrarUsuario( IN p_username VARCHAR(30), IN p_pswd VARCHAR(30))

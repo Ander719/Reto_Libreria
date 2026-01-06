@@ -923,3 +923,176 @@ main {
     max-height: 350px;
   }
 }
+
+
+/* --- Estilos para la sección de reseñas --- */
+.review-form {
+  background: white;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.rating-select {
+  width: 150px;
+  margin-bottom: 10px;
+  padding: 5px;
+  /* Un poco de aire queda mejor */
+}
+
+.review-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  /* Permite estirar solo hacia abajo */
+  font-family: inherit;
+}
+
+.btn-container {
+  margin-top: 10px;
+}
+
+.btn-cancel {
+  background-color: #999;
+  display: none;
+  /* Oculto por defecto */
+  margin-left: 5px;
+}
+
+.login-prompt {
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.success-message {
+  color: green;
+  display: none;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+
+
+/* ==========================================================================
+   ESTILOS PARA LA LISTA DE COMENTARIOS (Generados por JS)
+   ========================================================================== */
+
+.comment-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Contenedor de los botones editar/borrar */
+.comment-actions {
+  float: right;
+  /* Mantenemos float para que se vaya a la derecha del todo */
+}
+
+/* Botones de iconos (lápiz y basura) */
+.btn-icon {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.btn-delete {
+  color: #dc3545;
+  /* Rojo estándar */
+  margin-left: 8px;
+}
+
+/* Cabecera del comentario (Nombre y Fecha) */
+.comment-header {
+  margin: 0;
+  font-weight: 700;
+  color: #333;
+  font-size: 1rem;
+}
+
+.comment-date {
+  font-weight: 400;
+  font-size: 0.85em;
+  margin-left: 10px;
+  color: #767676;
+  /* Gris suave */
+}
+
+/* Estrellas */
+.star-rating {
+  color: #ffa41c;
+  /* Naranja/Dorado tipo Amazon */
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+/* Texto del comentario */
+.comment-text {
+  margin: 0;
+  color: #333;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* Utilidad para limpiar floats si fuera necesario */
+.clear-fix {
+  clear: both;
+}
+
+/* Mensajes de estado */
+.no-reviews {
+  color: #565959;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.error-msg {
+  color: red;
+  font-weight: bold;
+}
+
+
+
+/* Clases para mensajes de estado */
+.msg-success {
+  color: green;
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.msg-error {
+  color: #dc3545;
+  /* Rojo */
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+
+/* --- Utilidades para botones y enlaces --- */
+
+/* Hace que el botón se ajuste al texto en lugar de ocupar todo el ancho */
+.btn-auto {
+  width: auto !important;
+  display: inline-block;
+}
+
+/* Estilos específicos para el enlace de Login */
+.login-link-btn {
+  text-decoration: none;
+  margin-top: 10px;
+}
