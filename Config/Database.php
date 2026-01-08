@@ -3,7 +3,7 @@ class Database {
     private $host = "localhost";
     private $db_name = "CRUD_ADT";
     private $username = "root";
-    private $password = "abcd*1234";
+    private $password = "abcd*1234"; 
     private $conn;
 
     public function getConnection() {
@@ -16,11 +16,9 @@ class Database {
             );
             $this->conn->exec("set names utf8");
         } catch (PDOException $e) {
-            echo "Error de conexión: " . $e->getMessage();
+            error_log("Error de conexión: " . $e->getMessage());
         }
         return $this->conn;
     }
 }
 ?>
-
-

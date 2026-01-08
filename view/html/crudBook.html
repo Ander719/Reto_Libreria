@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Acción Libro</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+    <main class="books-page">
+        <div class="books-topbar">
+            <h2 id="pageTitle">Gestión de Libro</h2> <a href="bookOptions.html" class="btn-back">Volver</a>
+        </div>
+
+        <div class="crud-container"
+            style="max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px;">
+
+            <div id="searchSection"
+                style="display:none; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 20px;">
+                <label for="searchIsbn">Introduce el ISBN del libro:</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="searchIsbn" placeholder="Ej: 978-3-16-148410-0">
+                    <button id="btnSearch" class="book-btn edit" style="padding: 5px 15px;">Buscar</button>
+                </div>
+                <p id="searchMessage" style="color: red;"></p>
+            </div>
+
+            <form id="bookForm" class="profileForm">
+                <div class="fields">
+                    <div class="field full">
+                        <label for="isbn">ISBN</label>
+                        <input type="text" id="isbn" name="isbn" required>
+                    </div>
+
+                    <div class="field half">
+                        <label for="title">Título</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="field half">
+                        <label for="author">Autor</label>
+                        <input type="text" id="author" name="author">
+                    </div>
+
+                    <div class="field half">
+                        <label for="editorial">Editorial</label>
+                        <input type="text" id="editorial" name="editorial">
+                    </div>
+                    <div class="field half">
+                        <label for="price">Precio</label>
+                        <input type="number" step="0.01" id="price" name="price">
+                    </div>
+
+                    <div class="field half">
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" name="stock">
+                    </div>
+                    <div class="field half">
+                        <label for="pages">Páginas</label>
+                        <input type="number" id="pages" name="pages">
+                    </div>
+
+                    <div class="field full">
+                        <label>Portada</label>
+
+                        <div class="drop-zone" id="dropZone">
+                            <span class="drop-zone__prompt">Arrastra la imagen aquí o haz clic para buscar</span>
+                            <input type="file" name="coverFile" class="drop-zone__input" id="coverInput"
+                                accept="image/*">
+                        </div>
+
+                        <input type="hidden" id="cover" name="cover">
+                    </div>
+                    <div class="field full">
+                        <label for="synopsis">Sinopsis</label>
+                        <textarea id="synopsis" name="synopsis" rows="4" style="width:100%"></textarea>
+                    </div>
+                </div>
+
+                <div class="actions" style="margin-top: 20px; text-align: center;">
+                    <button type="submit" id="actionBtn" class="saveBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="../assets/js/crudBook.js"></script>
+</body>
+
+</html>

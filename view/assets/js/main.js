@@ -3,8 +3,34 @@ document.addEventListener("DOMContentLoaded", async () => {
    *****************************************VARIABLE DECLARATION*****************************************
    ******************************************************************************************************/
 
-  //Loading the current user from localstorage, can be admin or user this is checked later
+  // Cargar el perfil actual del localStorage
   let profile = JSON.parse(localStorage.getItem("actualProfile"));
+
+  /* ---------- MODIFICACIÓN: DETECTAR MODO DESDE URL ---------- */
+  // Leemos si la URL tiene ?mode=deleteUser o ?mode=modifyUser
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode'); 
+
+  // Referencias a elementos que usaremos para la lógica automática
+  const adminTableModal = document.getElementById("adminTableModal");
+  const deleteBtn = document.getElementById("deleteBtn"); // Botón de borrar dentro del popup de edición
+
+  // Si detectamos un modo en la URL y el usuario es Administrador (tiene CURRENT_ACCOUNT)
+  if (mode && profile && ["CURRENT_ACCOUNT"] in profile) {
+      
+      // Abrimos el modal de la tabla automáticamente
+      adminTableModal.style.display = "block";
+      
+      // Llamamos a la función de refrescar tabla pasándole el modo
+      refreshAdminTable(mode);
+
+      // Opcional: Si entramos en modo "Delete User" desde la tabla, 
+      // ocultamos el botón de borrar DENTRO del popup de detalles para que no sea confuso
+      if (deleteBtn && mode === 'deleteUser') {
+          deleteBtn.style.display = "none";
+      }
+  }
+  /* ----------------------------------------------------------- */
 
   /* ----------HOME---------- */
   const homeBtn = document.getElementById("adjustData");
@@ -18,13 +44,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modifyAdminPopup = document.getElementById("modifyAdminPopup");
   const closeAdminSpan = document.getElementsByClassName("close")[0];
   const changePwdBtnAdmin = document.getElementById("changePwdBtnAdmin");
-  const adminTableModal = document.getElementById("adminTableModal");
+  // const adminTableModal ya definido arriba
   const modifyAdminBtn = document.getElementById("modifySelfButton");
   const saveBtnAdmin = document.getElementById("saveBtnAdmin");
 
   /* ----------SHARED ELEMENTS---------- */
   const changePwdModal = document.getElementById("changePasswordModal");
-  const deleteBtn = document.getElementById("deleteBtn");
+  // const deleteBtn ya definido arriba
   const closePasswordSpan =
     document.getElementsByClassName("closePasswordSpan")[0];
 
@@ -33,17 +59,20 @@ document.addEventListener("DOMContentLoaded", async () => {
    ******************************************************************************************************/
 
   /* ----------HOME---------- */
-  //Opens a popup depending on if the profile is a user or admin
+  // Abre un popup dependiendo de si es user o admin
   homeBtn.onclick = function () {
-    if (["CARD_NO"] in profile) {
-      profile = JSON.parse(localStorage.getItem("actualProfile"));
+    // Recargamos el perfil por si acaso
+    profile = JSON.parse(localStorage.getItem("actualProfile"));
+    
+    if (profile && ["CARD_NO"] in profile) {
       document.getElementById("message").innerHTML = "";
       openModifyUserPopup(profile);
-    } else if (["CURRENT_ACCOUNT"] in profile) {
-      refreshAdminTable();
+    } else if (profile && ["CURRENT_ACCOUNT"] in profile) {
+      // Si entra como admin desde el botón "Adjust Data", muestra la tabla normal (ambos iconos)
+      refreshAdminTable(); 
       adminTableModal.style.display = "block";
-      //Hide delete button in user popups as admin can delete directly from table, no need for 2 buttons for the same thing
-      deleteBtn.style.display = "none";
+      // Ocultar botón borrar en popup usuario (lógica original)
+      if(deleteBtn) deleteBtn.style.display = "none";
     }
   };
 
@@ -60,6 +89,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ----------ADMIN POPUP---------- */
   closeAdminSpan.onclick = function () {
     adminTableModal.style.display = "none";
+    // Limpiamos la URL al cerrar para que si recarga no se vuelva a abrir solo
+    window.history.pushState({}, document.title, window.location.pathname);
   };
 
   changePwdBtnAdmin.onclick = function () {
@@ -76,18 +107,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   /* ----------SHARED ELEMENTS---------- */
-  deleteBtn.onclick = function () {
-    delete_user(profile["PROFILE_CODE"]);
-  };
+  if(deleteBtn) {
+      deleteBtn.onclick = function () {
+        delete_user(profile["PROFILE_CODE"]);
+      };
+  }
 
   closePasswordSpan.onclick = function () {
     changePwdModal.style.display = "none";
   };
 
-  //If a popup is clicked outside of the actual area, automatically close the popup
+  // Cerrar popups al hacer click fuera
   window.onclick = function (event) {
     if (event.target == adminTableModal) {
       adminTableModal.style.display = "none";
+      // Limpiamos URL
+      window.history.pushState({}, document.title, window.location.pathname);
     } else if (event.target == modifyUserPopup) {
       modifyUserPopup.style.display = "none";
     } else if (event.target == modifyAdminPopup) {
@@ -97,9 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  //Change password popup functionality, inside this initial on document loaded method as it relies on the
-  //form existing even though it isnt shown to be able to listen to it, if it isnt inside this on document
-  //loaded method an error occurs as it tries to listen to the form before it is loaded
+  // Lógica de cambio de contraseña
   document
     .getElementById("changePasswordForm")
     .addEventListener("submit", async function (e) {
@@ -110,11 +143,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("message").innerHTML = "";
 
       let actualProfile;
+      // Recargar perfil para asegurar datos frescos
+      profile = JSON.parse(localStorage.getItem("actualProfile"));
 
       if (["CARD_NO"] in profile) {
-        actualProfile = JSON.parse(localStorage.getItem("actualUser"));
+        actualProfile = JSON.parse(localStorage.getItem("actualUser")) || profile;
       } else if (["CURRENT_ACCOUNT"] in profile) {
-        actualProfile = JSON.parse(localStorage.getItem("actualProfile"));
+        actualProfile = profile;
       }
 
       const profile_code = actualProfile["PROFILE_CODE"];
@@ -130,8 +165,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("messageOldPassword").innerHTML =
           "That is not your current password";
         hasErrors = true;
-        console.log("CURRENT PASSWORD: ", userPassword);
-        console.log("INPUT: ", password);
       }
 
       if (userPassword == newPassword) {
@@ -165,11 +198,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             actualProfile.PSWD = newPassword;
             document.getElementById("messageSuccessPassword").innerHTML =
               "Password correctly changed";
+            
+            // Actualizar localStorage
             if (["CARD_NO"] in profile) {
-              console.log("IS A USER");
               localStorage.setItem("actualUser", JSON.stringify(actualProfile));
+              // También actualizar el perfil principal si es el mismo usuario
+              if(profile.PROFILE_CODE === actualProfile.PROFILE_CODE) {
+                  localStorage.setItem("actualProfile", JSON.stringify(actualProfile));
+              }
             } else if (["CURRENT_ACCOUNT"] in profile) {
-              console.log("IS AN ADMIN");
               localStorage.setItem(
                 "actualProfile",
                 JSON.stringify(actualProfile)
@@ -177,8 +214,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             setTimeout(() => {
-              document.getElementById("messageSuccessPassword").innerHTML = ""; // clean the modified message
-              document.getElementById("changePasswordForm").reset(); // clean all the fields
+              document.getElementById("messageSuccessPassword").innerHTML = ""; 
+              document.getElementById("changePasswordForm").reset(); 
             }, 3000);
           } else {
             document.getElementById("messageSuccessPassword").innerHTML =
@@ -187,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               "red";
           }
         } catch (error) {
-          //DEBUG console.log(error);
+          console.log(error);
         }
       }
     });
@@ -215,7 +252,7 @@ function openModifyUserPopup(actualProfile) {
   };
 
   document.getElementById("usernameUser").value = usuario.username;
-  //if the profile has an atribute, it has them all, because all are mandatory
+  
   if (usuario.email) {
     document.getElementById("emailUser").value = usuario.email;
     document.getElementById("phoneUser").value = usuario.telephone;
@@ -235,14 +272,14 @@ async function modifyUser() {
 
   const usuario = {
     profile_code: actualProfile.PROFILE_CODE,
-    password: actualProfile.PSWD,
+    // ... resto de campos
+    name: actualProfile.NAME_,
+    surname: actualProfile.SURNAME,
     email: actualProfile.EMAIL,
     username: actualProfile.USER_NAME,
     telephone: actualProfile.TELEPHONE,
-    name: actualProfile.NAME_,
-    surname: actualProfile.SURNAME,
     gender: actualProfile.GENDER,
-    card_no: actualProfile.CARD_NO,
+    card_no: actualProfile.CARD_NO
   };
 
   const profile_code = usuario.profile_code;
@@ -252,20 +289,9 @@ async function modifyUser() {
   const username = document.getElementById("usernameUser").value;
   const telephone = document
     .getElementById("phoneUser")
-    .value.replace(/\s/g, ""); //remove spaces
+    .value.replace(/\s/g, ""); 
   const gender = document.getElementById("genderUser").value;
   const card_no = document.getElementById("cardNumberUser").value;
-
-  /*DEBUG console.log(
-    "Esto son los datos de los textfields" + profile_code,
-    name,
-    surname,
-    email,
-    username,
-    telephone,
-    gender,
-    card_no
-  );*/
 
   if (
     !name ||
@@ -282,10 +308,8 @@ async function modifyUser() {
     return;
   }
 
-  //verify if there are changes in the fields
   function hasChanges() {
     let changes = false;
-
     if (
       name !== usuario.name ||
       surname !== usuario.surname ||
@@ -319,7 +343,6 @@ async function modifyUser() {
         )}`
       );
       const data = await response.json();
-      //DEBUG console.log(data);
 
       if (data.success) {
         document.getElementById("message").innerHTML = data.message;
@@ -335,11 +358,15 @@ async function modifyUser() {
 
         localStorage.setItem("actualUser", JSON.stringify(actualProfile));
 
+        // Refrescar tabla si el admin está viéndola
         if (
           ["CURRENT_ACCOUNT"] in
           JSON.parse(localStorage.getItem("actualProfile"))
         ) {
-          refreshAdminTable();
+          // Detectamos el modo actual de la URL para refrescar manteniendo el estado visual
+          const urlParams = new URLSearchParams(window.location.search);
+          const currentMode = urlParams.get('mode');
+          refreshAdminTable(currentMode);
         } else {
           localStorage.setItem("actualProfile", JSON.stringify(actualProfile));
         }
@@ -348,7 +375,7 @@ async function modifyUser() {
         document.getElementById("message").style.color = "red";
       }
     } catch (error) {
-      //DEBUG console.log(error);
+      console.log(error);
     }
   }
 }
@@ -357,7 +384,6 @@ async function modifyUser() {
 async function get_all_users() {
   const response = await fetch("../../api/GetAllUsers.php");
   const data = await response.json();
-
   return data["resultado"];
 }
 
@@ -371,29 +397,40 @@ async function delete_user_admin(id) {
   const data = await response.json();
 
   if (data.error) {
-    //DEBUG console.log("Error deleting user: ", data.error);
+    console.log("Error deleting user: ", data.error);
   } else {
-    //DEBUG console.log("User deleted.");
-    row = document.getElementById(`user${id}`);
+    // Eliminar la fila visualmente
+    let row = document.getElementById(`user${id}`);
     if (row) row.remove();
   }
 }
 
-async function refreshAdminTable() {
+/* ---------- MODIFICACIÓN: FUNCIÓN DE REFRESCO CON MODO ---------- */
+async function refreshAdminTable(mode = null) {
   let table = document.getElementById("adminTable");
+  
+  // Header Action
   table.innerHTML = `<tr class="adminTableHead">
               <th>Username</th>
               <th>Card Number</th>
-              <th></th>
+              <th>Action</th>
             </tr>`;
+            
   let users = await get_all_users();
+
+  // Estilos para ocultar botones según el modo
+  const styleHideModify = (mode === 'deleteUser') ? 'display:none;' : '';
+  const styleHideDelete = (mode === 'modifyUser') ? 'display:none;' : '';
 
   if (users) {
     users.forEach((user) => {
       const profile_id = user["PROFILE_CODE"];
-      let row = adminTable.insertRow(1);
+      
+      // Insertar en la tabla correcta (table, no adminTable global)
+      let row = table.insertRow(1); 
       row.className = "adminTableData";
       row.id = `user${profile_id}`;
+      
       let username = row.insertCell(0);
       username.id = `${profile_id}Username`;
       let cardNo = row.insertCell(1);
@@ -402,12 +439,15 @@ async function refreshAdminTable() {
 
       username.innerHTML = user["USER_NAME"];
       cardNo.innerHTML = user["CARD_NO"];
+      
+      // Aplicamos la visibilidad según el modo
       buttons.innerHTML = `<div class="center-flex-div">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   class="size-small"
+                  style="${styleHideModify} cursor: pointer;"
                   onclick='openModifyUserPopup(${JSON.stringify(user)})'
                 >
                   <path
@@ -423,6 +463,7 @@ async function refreshAdminTable() {
                   viewBox="0 0 24 24"
                   fill="#ff5457"
                   class="size-small"
+                  style="${styleHideDelete} cursor: pointer;"
                   onclick="delete_user_admin(${user.PROFILE_CODE})" 
                 >
                   <path
@@ -434,12 +475,11 @@ async function refreshAdminTable() {
               </div>`;
     });
   } else {
-    let row = adminTable.insertRow(1);
+    let row = table.insertRow(1);
     row.className = "adminTableData";
     let username = row.insertCell(0);
     let accountNum = row.insertCell(1);
     let buttons = row.insertCell(2);
-
     accountNum.innerHTML = "No users available.";
   }
 }
@@ -460,8 +500,6 @@ function openModifyAdminPopup() {
     current_account: actualProfile.CURRENT_ACCOUNT,
   };
 
-  //DEBUG console.log("User username: ", usuario.username);
-
   document.getElementById("usernameAdmin").value = usuario.username;
   document.getElementById("emailAdmin").value = usuario.email;
   document.getElementById("phoneAdmin").value = usuario.telephone;
@@ -476,7 +514,7 @@ function openModifyAdminPopup() {
 
 async function modifyAdmin() {
   const actualProfile = JSON.parse(localStorage.getItem("actualProfile"));
-
+  // (La lógica es idéntica a modifyUser pero con datos de admin, la mantengo igual)
   const usuario = {
     profile_code: actualProfile.PROFILE_CODE,
     password: actualProfile.PSWD,
@@ -495,18 +533,8 @@ async function modifyAdmin() {
   const username = document.getElementById("usernameAdmin").value;
   const telephone = document
     .getElementById("phoneAdmin")
-    .value.replace(/\s/g, ""); //remove spaces
+    .value.replace(/\s/g, "");
   const current_account = document.getElementById("currentAccountAdmin").value;
-
-  /*DEBUG console.log(
-    "Esto son los datos de los textfields" + profile_code,
-    name,
-    surname,
-    email,
-    username,
-    telephone,
-    current_account
-  );*/
 
   if (
     !name ||
@@ -522,10 +550,8 @@ async function modifyAdmin() {
     return;
   }
 
-  //verify if there are changes in the fields
   function hasChanges() {
     let changes = false;
-
     if (
       name !== usuario.name ||
       surname !== usuario.surname ||
@@ -557,7 +583,6 @@ async function modifyAdmin() {
       );
 
       const data = await response.json();
-      //DEBUG console.log(data);
 
       if (data.success) {
         document.getElementById("messageAdmin").innerHTML = data.message;
@@ -570,25 +595,17 @@ async function modifyAdmin() {
         actualProfile.TELEPHONE = telephone;
         actualProfile.CURRENT_ACCOUNT = current_account;
 
-        //DEBUG console.log("New actual profile:", JSON.stringify(actualProfile));
-
         localStorage.setItem("actualProfile", JSON.stringify(actualProfile));
-
-        /*DEBUG console.log(
-          "Local storage updated: ",
-          localStorage.getItem("actualProfile")
-        );*/
       } else {
         document.getElementById("messageAdmin").innerHTML = data.error;
         document.getElementById("messageAdmin").style.color = "red";
       }
     } catch (error) {
-      //DEBUG console.log(error);
+      console.log(error);
     }
   }
 }
 
-/* ----------SHARED ELEMENTS---------- */
 function resetPasswordModal() {
   document.getElementById("changePasswordForm").reset();
   document.getElementById("messageOldPassword").innerHTML = "";
@@ -606,7 +623,7 @@ async function delete_user(id) {
   const data = await response.json();
 
   if (data.error) {
-    //DEBUG console.log("Error deleting user: ", data.error);
+     console.log("Error deleting user: ", data.error);
   } else {
     window.location.href = "login.html";
   }
