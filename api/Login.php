@@ -22,20 +22,21 @@ $user = $controller->loginUser($username, $password);
 
 if (is_null($user)) {
     $admin = $controller->loginAdmin($username, $password);
+    
     if (is_null($admin)) {
-        echo json_encode(["error" => 'El nombre de usuario o contraseña son incorrectos.'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(["error" => 'Datos incorrectos'], JSON_UNESCAPED_UNICODE);
     } else {
-        // 2. Guardamos al ADMIN en la sesión del servidor
-        $_SESSION['user_data'] = $admin;
-        $_SESSION['logged_in'] = true;
-        
-        echo json_encode(["resultado" => $admin], JSON_UNESCAPED_UNICODE);
+        // AQUÍ EL CAMBIO: Añadimos "rol" => "admin"
+        echo json_encode([
+            "resultado" => $admin, 
+            "rol" => "admin" 
+        ], JSON_UNESCAPED_UNICODE);
     }
 } else {
-    // 3. Guardamos al USUARIO en la sesión del servidor
-    $_SESSION['user_data'] = $user;
-    $_SESSION['logged_in'] = true;
-
-    echo json_encode(["resultado" => $user], JSON_UNESCAPED_UNICODE);
+    // AQUÍ EL CAMBIO: Añadimos "rol" => "user"
+    echo json_encode([
+        "resultado" => $user, 
+        "rol" => "user" 
+    ], JSON_UNESCAPED_UNICODE);
 }
 ?>
