@@ -141,3 +141,17 @@ Stack trace:
 #1 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('aisodmafetpals', 'dragones yy maz...', '1', '200', '22', 'dragoness y maz...', '20', 'editorial', '61k5K+9pNyL._AC...')
 #2 {main}
   thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 45
+[08-Jan-2026 12:09:27 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`crud_adt`.`book_`, CONSTRAINT `book__ibfk_1` FOREIGN KEY (`id_author`) REFERENCES `author_` (`ID_AUTHOR`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('9788445073727', 'prueba', '9', '200', '3', 'irwnfio', '20', 'elkar', 'download.jpg')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[08-Jan-2026 12:10:20 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '9788445073727' for key 'book_.PRIMARY' in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('9788445073727', 'qw4ert', '1', '234', '23', 'ttyjgu', '23', 'weert', 'download.jpg')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
