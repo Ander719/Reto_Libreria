@@ -6,6 +6,9 @@ error_reporting(E_ALL);
 ini_set('log_errors', 1);
 ini_set('error_log', 'php_error.log');
 
+// 1. IMPORTANTE: Iniciar la gestión de sesión
+session_start();
+
 header("Content-Type: application/json");
 
 require_once '../controller/controller.php';
@@ -19,12 +22,21 @@ $user = $controller->loginUser($username, $password);
 
 if (is_null($user)) {
     $admin = $controller->loginAdmin($username, $password);
+    
     if (is_null($admin)) {
-        echo json_encode(["error" => 'El nombre de usuario o contraseña son incorrectos.'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(["error" => 'Datos incorrectos'], JSON_UNESCAPED_UNICODE);
     } else {
-        echo json_encode(["resultado" => $admin], JSON_UNESCAPED_UNICODE);
+        // AQUÍ EL CAMBIO: Añadimos "rol" => "admin"
+        echo json_encode([
+            "resultado" => $admin, 
+            "rol" => "admin" 
+        ], JSON_UNESCAPED_UNICODE);
     }
 } else {
-    echo json_encode(["resultado" => $user], JSON_UNESCAPED_UNICODE);
+    // AQUÍ EL CAMBIO: Añadimos "rol" => "user"
+    echo json_encode([
+        "resultado" => $user, 
+        "rol" => "user" 
+    ], JSON_UNESCAPED_UNICODE);
 }
 ?>

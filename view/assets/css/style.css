@@ -35,24 +35,29 @@ footer {
   padding: 0;
   box-sizing: border-box;
 }
+
 body,
 html {
   height: 100%;
   font-family: "Segoe UI", sans-serif;
 }
+
 .container {
   display: flex;
   height: 100vh;
 }
+
 .leftPanel {
   width: 50%;
   overflow: hidden;
 }
+
 .leftPanel img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .rightPanel {
   width: 50%;
   display: flex;
@@ -60,20 +65,24 @@ html {
   align-items: center;
   background-color: var(--background-color);
 }
+
 .loginForm {
   width: 80%;
   max-width: 400px;
   padding: 40px;
 }
+
 .loginForm h2 {
   margin-bottom: 20px;
   text-align: center;
 }
+
 .loginForm label {
   display: block;
   margin-top: 15px;
   font-weight: bold;
 }
+
 .loginForm input {
   width: 100%;
   padding: 10px;
@@ -81,6 +90,7 @@ html {
   border: 1px solid #ccc;
   border-radius: 15px;
 }
+
 .loginForm button {
   margin-top: 20px;
   width: 100%;
@@ -91,9 +101,11 @@ html {
   border-radius: 15px;
   cursor: pointer;
 }
+
 .loginForm button:hover {
   background-color: #005fa3;
 }
+
 .registerLink {
   align-self: center;
   margin-top: 15px;
@@ -101,17 +113,21 @@ html {
   font-size: 14px;
   color: #555;
 }
+
 .registerLink a {
   color: #555;
   text-decoration: underline;
   font-weight: bold;
 }
+
 .registerLink a:hover {
   text-decoration: underline;
 }
+
 #mensaje {
   text-align: center;
 }
+
 /* Pantallas pequeñas (móviles) */
 @media (max-width: 600px) {
   .container {
@@ -119,54 +135,67 @@ html {
     height: auto;
     min-height: 100vh;
   }
+
   .leftPanel {
     width: 100%;
     height: 30vh;
   }
+
   .leftPanel img {
     height: 100%;
     object-fit: cover;
   }
+
   .rightPanel {
     width: 100%;
     height: 70vh;
     padding: 20px 0;
   }
+
   .loginForm {
     width: 90%;
     padding: 25px;
     max-width: 350px;
   }
+
   .loginForm h2 {
     font-size: 1.3rem;
     margin-bottom: 15px;
   }
+
   .loginForm input {
     padding: 12px;
   }
+
   .loginForm button {
     padding: 12px;
   }
 }
+
 /* Pantallas medianas (tablets) */
 @media (min-width: 601px) and (max-width: 1024px) {
   .container {
     flex-direction: row;
   }
+
   .leftPanel {
     width: 40%;
   }
+
   .rightPanel {
     width: 60%;
   }
+
   .loginForm {
     padding: 30px;
     width: 85%;
   }
+
   .loginForm h2 {
     font-size: 1.4rem;
   }
 }
+
 /* Pantallas grandes (escritorios) */
 @media (min-width: 1200px) {
   .loginForm {
@@ -183,6 +212,7 @@ html {
     padding: 12px;
   }
 }
+
 /*Home Page*/
 .topPic {
   width: 10%;
@@ -373,7 +403,7 @@ li {
   justify-content: center;
 }
 
-.center-flex-div > * {
+.center-flex-div>* {
   margin-left: 5px;
   margin-right: 5px;
   cursor: pointer;
@@ -631,4 +661,379 @@ li {
   .field.half {
     width: 100%;
   }
+
+}
+
+
+/* ==========================================================================
+   ==========================================================================
+   PARTE 2: ESTILOS NUEVOS - TIENDA TIPO AMAZON (STYLE 2)
+   (Pega esto al final de tu archivo style.css original)
+   ==========================================================================
+   ========================================================================== */
+
+/* 1. VARIABLES & CONFIGURACIÓN GLOBAL */
+:root {
+  /* Paleta de Colores estilo E-commerce Pro */
+  --bg-body: #ffffff;
+  --text-main: #333333;
+  /* Gris muy oscuro para lectura cómoda */
+  --text-muted: #565959;
+  /* Gris Amazon para autores/meta info */
+  --price-color: #b12704;
+  /* Rojo oscuro para precios */
+  --link-color: #007185;
+  /* Azul "Amazon" para enlaces */
+  --link-hover: #c7511f;
+  /* Naranja al pasar el ratón */
+
+  /* Botones y Acciones */
+  --btn-primary: #ffd814;
+  /* Amarillo "Buy Box" */
+  --btn-hover: #f7ca00;
+  --btn-border: #fcd200;
+
+  /* Bordes y Fondos */
+  --border-light: #e7e7e7;
+  --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Ajuste de fuente para la tienda (Cascada sobre el body original) */
+body {
+  font-family: "Amazon Ember", Arial, sans-serif, "Segoe UI";
+  line-height: 1.6;
+}
+
+/* 2. HEADER MODIFICADO (Sobrescribe para dar look oscuro Amazon) */
+.headHome {
+  background-color: #131921;
+  /* Negro Amazon */
+  align-items: center;
+  color: white;
+  padding: 10px 20px;
+}
+
+.topPic {
+  height: 40px;
+  width: auto;
+  /* Reseteamos el ancho para que no se deforme el logo */
+  object-fit: contain;
+}
+/* -------------------------------------------------------------------------- */
+/* CENTRADO DE PANTALLA (ADMIN)                                               */
+/* -------------------------------------------------------------------------- */
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+header {
+    text-align: center;
+    width: 100%;
+    padding-top: 20px;
+    flex-shrink: 0;
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrado Vertical */
+    align-items: center;     /* Centrado Horizontal */
+    width: 100%;
+    padding-bottom: 50px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* ESTILOS PANEL ADMINISTRADOR                         */
+/* -------------------------------------------------------------------------- */
+
+/* BARRA SUPERIOR */
+.topbar-admin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 15px 30px;
+  margin-bottom: 20px; /* Espacio entre barra y botones */
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+
+  /* ANCHURA DEFINIDA - LA REFERENCIA */
+  width: 90%;
+  max-width: 1000px;
+}
+
+.user-info, 
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #101416;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.btn-logout {
+  background-color: #101416;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #333;
+}
+
+/* CONTENEDOR DE BOTONES */
+.admin-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%; /* El contenedor ocupa todo para poder centrar los hijos */
+}
+
+/* BOTONES DE ACCIÓN */
+.admin-btn {
+  /* AQUÍ ESTÁ EL CAMBIO: Mismas medidas que .topbar-admin */
+  width: 90%;
+  max-width: 1000px;
+  
+  padding: 20px; /* Un poco más altos para que se vean bien al ser tan anchos */
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-btn.filled {
+  background-color: #101416;
+  color: white;
+  border: 2px solid #101416;
+}
+
+.admin-btn.filled:hover {
+  background-color: #333;
+  border-color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.admin-btn.outlined {
+  background-color: transparent;
+  color: #101416;
+  border: 2px solid #101416;
+}
+
+.admin-btn.outlined:hover {
+  background-color: #101416;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 600px) {
+  .topbar-admin {
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+  }
+}
+/*zona dropdown admin*/
+/* --- ZONA DE ARRASTRAR Y SOLTAR (DRAG & DROP) --- */
+.drop-zone {
+    max-width: 100%;
+    height: 200px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    cursor: pointer;
+    color: #cccccc;
+    border: 4px dashed #101416; /* Borde discontinuo estilo admin */
+    border-radius: 10px;
+    background-color: white;
+    transition: background-color 0.2s, border-color 0.2s;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Estado cuando pasas el archivo por encima */
+.drop-zone--over {
+    border-style: solid;
+    background-color: #e1e1e1; /* Se oscurece un poco */
+    color: #101416;
+}
+
+.drop-zone__input {
+    display: none; /* Ocultamos el input feo por defecto */
+}
+
+.drop-zone__thumb {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #cccccc;
+    background-size: cover;
+    background-position: center;
+    position: absolute; /* Para cubrir el texto */
+    top: 0;
+    left: 0;
+}
+
+/* Texto de la etiqueta del prompt */
+.drop-zone__thumb::after {
+    content: attr(data-label); /* Muestra el nombre del archivo */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 0;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.75);
+    font-size: 14px;
+    text-align: center;
+}
+.books-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    margin-bottom: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+    
+    /* Manteniendo la coherencia de anchura */
+    width: 90%;
+    max-width: 1000px;
+}
+
+/* LOGO (Estilo diamante simple) */
+.logo-diamond {
+    font-weight: 800;
+    color: #101416;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: 2px solid #101416;
+    padding: 5px 15px;
+    transform: skew(-10deg); /* Un pequeño toque de estilo */
+}
+
+/* BOTÓN VOLVER */
+.btn-back {
+    text-decoration: none;
+    color: #101416;
+    font-weight: 600;
+    border: 2px solid #101416;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #101416;
+    color: white;
+}
+
+/* CONTENEDOR DE ACCIONES */
+.books-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px; /* Separación entre botones */
+    width: 100%;
+}
+
+/* ESTILO BASE DE LOS BOTONES DE LIBRO */
+.book-btn {
+    width: 90%;
+    max-width: 1000px;
+    padding: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 1. AÑADIR (Estilo Principal - Negro Sólido) */
+.book-btn.add {
+    background-color: #101416;
+    color: white;
+    border: 2px solid #101416;
+}
+
+.book-btn.add:hover {
+    background-color: #333;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* 2. MODIFICAR (Estilo Secundario - Borde Negro) */
+.book-btn.edit {
+    background-color: transparent;
+    color: #101416;
+    border: 2px solid #101416;
+}
+
+.book-btn.edit:hover {
+    background-color: #101416;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* 3. BORRAR (Estilo Alerta - Rojo o Borde Rojo) */
+.book-btn.delete {
+    background-color: white;
+    color: #d9534f; /* Rojo suave elegante */
+    border: 2px solid #d9534f;
+}
+
+.book-btn.delete:hover {
+    background-color: #d9534f;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(217, 83, 79, 0.3);
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+    .books-topbar {
+        padding: 15px;
+    }
+    .book-btn {
+        font-size: 1rem;
+        padding: 20px;
+    }
 }
