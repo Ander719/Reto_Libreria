@@ -6,6 +6,9 @@ error_reporting(E_ALL);
 ini_set('log_errors', 1);
 ini_set('error_log', 'php_error.log');
 
+// 1. IMPORTANTE: Iniciar la gestión de sesión
+session_start();
+
 header("Content-Type: application/json");
 
 require_once '../controller/controller.php';

@@ -1,7 +1,15 @@
+import { currentUser, checkSession } from "./sesion.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
-  /******************************************************************************************************
-   *****************************************VARIABLE DECLARATION*****************************************
-   ******************************************************************************************************/
+  // 1. Intentamos obtener la sesión, pero SIN obligar
+  const isAuthenticated = await checkSession();
+
+  if (isAuthenticated) {
+    console.log("Modo: Usuario Registrado");
+    // Aquí podrías cambiar el icono de login por uno de logout si quisieras visualmente
+  } else {
+    console.log("Modo: Invitado (No logueado)");
+  }
 
   // Cargar el perfil actual del localStorage
   let profile = JSON.parse(localStorage.getItem("actualProfile"));
@@ -42,6 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* ----------ADMIN POPUP---------- */
   const modifyAdminPopup = document.getElementById("modifyAdminPopup");
+  // Verificamos existencia para evitar errores si el elemento no está en el DOM
   const closeAdminSpan = document.getElementsByClassName("close")[0];
   const changePwdBtnAdmin = document.getElementById("changePwdBtnAdmin");
   // const adminTableModal ya definido arriba
@@ -75,6 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(deleteBtn) deleteBtn.style.display = "none";
     }
   };
+  /* ---------- RESTO DE FUNCIONALIDADES (Solo funcionan si el modal se abre) ---------- */
 
   /* ----------USER POPUP---------- */
   changePwdBtn.onclick = function () {
@@ -138,9 +148,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      document.getElementById("messageOldPassword").innerHTML = "";
-      document.getElementById("messageWrongPassword").innerHTML = "";
-      document.getElementById("message").innerHTML = "";
+    document.getElementById("messageOldPassword").innerHTML = "";
+    document.getElementById("messageWrongPassword").innerHTML = "";
+    document.getElementById("message").innerHTML = "";
 
       let actualProfile;
       // Recargar perfil para asegurar datos frescos
@@ -167,17 +177,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         hasErrors = true;
       }
 
-      if (userPassword == newPassword) {
-        document.getElementById("messageWrongPassword").innerHTML =
-          "Password used before, try another one";
-        hasErrors = true;
-      }
+    if (userPassword != password) {
+      document.getElementById("messageOldPassword").innerHTML = "Esa no es tu contraseña actual";
+      hasErrors = true;
+    }
 
-      if (newPassword != confirmPassword) {
-        document.getElementById("messageWrongPassword").innerHTML =
-          "The passwords are not the same";
-        hasErrors = true;
-      }
+    if (userPassword == newPassword) {
+      document.getElementById("messageWrongPassword").innerHTML = "La contraseña es igual a la anterior";
+      hasErrors = true;
+    }
+
+    if (newPassword != confirmPassword) {
+      document.getElementById("messageWrongPassword").innerHTML = "Las contraseñas no coinciden";
+      hasErrors = true;
+    }
 
       if (!hasErrors) {
         try {
@@ -226,16 +239,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
           console.log(error);
         }
+      } catch (error) {
+        console.log(error);
       }
-    });
-});
+    }
+  });
+}
+/* ---------- METHODS ---------- */
 
-/******************************************************************************************************
- ***********************************************METHODS************************************************
- ******************************************************************************************************/
-
-/* ----------HOME---------- */
-function openModifyUserPopup(actualProfile) {
+function openModifyUserPopup() {
   document.getElementById("message").innerHTML = "";
   localStorage.setItem("actualUser", JSON.stringify(actualProfile));
 
@@ -266,7 +278,6 @@ function openModifyUserPopup(actualProfile) {
   modifyUserPopup.style.display = "flex";
 }
 
-/* ----------USER POPUP---------- */
 async function modifyUser() {
   const actualProfile = JSON.parse(localStorage.getItem("actualUser"));
 
@@ -282,7 +293,6 @@ async function modifyUser() {
     card_no: actualProfile.CARD_NO
   };
 
-  const profile_code = usuario.profile_code;
   const name = document.getElementById("firstNameUser").value;
   const surname = document.getElementById("lastNameUser").value;
   const email = document.getElementById("emailUser").value;
@@ -330,17 +340,7 @@ async function modifyUser() {
   } else {
     try {
       const response = await fetch(
-        `../../api/ModifyUser.php?profile_code=${encodeURIComponent(
-          profile_code
-        )}&name=${encodeURIComponent(name)}&surname=${encodeURIComponent(
-          surname
-        )}&email=${encodeURIComponent(email)}&username=${encodeURIComponent(
-          username
-        )}&telephone=${encodeURIComponent(
-          telephone
-        )}&gender=${encodeURIComponent(gender)}&card_no=${encodeURIComponent(
-          card_no
-        )}`
+        `../../api/ModifyUser.php?profile_code=${encodeURIComponent(profile_code)}&name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&telephone=${encodeURIComponent(telephone)}&gender=${encodeURIComponent(gender)}&card_no=${encodeURIComponent(card_no)}`
       );
       const data = await response.json();
 
@@ -380,7 +380,6 @@ async function modifyUser() {
   }
 }
 
-/* ----------ADMIN POPUP---------- */
 async function get_all_users() {
   const response = await fetch("../../api/GetAllUsers.php");
   const data = await response.json();
@@ -389,11 +388,7 @@ async function get_all_users() {
 
 async function delete_user_admin(id) {
   if (!confirm("Are you sure you want to delete this user?")) return;
-
-  const response = await fetch(
-    `../../api/DeleteUser.php?id=${encodeURIComponent(id)}`
-  );
-
+  const response = await fetch(`../../api/DeleteUser.php?id=${encodeURIComponent(id)}`);
   const data = await response.json();
 
   if (data.error) {
@@ -484,21 +479,30 @@ async function refreshAdminTable(mode = null) {
   }
 }
 
-function openModifyAdminPopup() {
-  document.getElementById("messageAdmin").innerHTML = "";
-  const actualProfile = JSON.parse(localStorage.getItem("actualProfile"));
-  let modifyAdminPopup = document.getElementById("modifyAdminPopup");
+// Función auxiliar necesaria para abrir el popup desde la tabla de administración
+// Ya que 'openModifyUserPopup' ahora usa 'currentUser', creamos esta variante para ver OTROS usuarios
+function openModifyUserPopupFromAdmin(user) {
+  // Al ser admin editando a otro, aquí SI pasamos los datos por parámetro
+  // Pero OJO: reutilizas el mismo popup. Esto podría sobrescribir la variable de memoria.
+  // Para simplificar: Solo rellenamos los inputs visualmente
+  document.getElementById("message").innerHTML = "";
+  document.getElementById("usernameUser").value = user.USER_NAME;
+  document.getElementById("emailUser").value = user.EMAIL;
+  document.getElementById("phoneUser").value = user.TELEPHONE;
+  document.getElementById("firstNameUser").value = user.NAME_;
+  document.getElementById("lastNameUser").value = user.SURNAME;
+  document.getElementById("genderUser").value = user.GENDER;
+  document.getElementById("cardNumberUser").value = user.CARD_NO;
 
-  const usuario = {
-    profile_code: actualProfile.PROFILE_CODE,
-    password: actualProfile.PSWD,
-    email: actualProfile.EMAIL,
-    username: actualProfile.USER_NAME,
-    telephone: actualProfile.TELEPHONE,
-    name: actualProfile.NAME_,
-    surname: actualProfile.SURNAME,
-    current_account: actualProfile.CURRENT_ACCOUNT,
-  };
+  // NOTA: La función 'modifyUser' original usa 'currentUser'.
+  // Si el admin guarda cambios aquí, necesitamos que 'modifyUser' sepa qué ID usar.
+  // Hack rápido para que funcione tu estructura actual:
+  // Temporalmente suplantamos currentUser solo para la edición
+  currentUser = user;
+
+  let modifyUserPopup = document.getElementById("modifyUserPopupAdmin");
+  modifyUserPopup.style.display = "flex";
+}
 
   document.getElementById("usernameAdmin").value = usuario.username;
   document.getElementById("emailAdmin").value = usuario.email;
@@ -509,6 +513,7 @@ function openModifyAdminPopup() {
   document.getElementById("currentAccountAdmin").value =
     usuario.current_account;
 
+  let modifyAdminPopup = document.getElementById("modifyAdminPopup");
   modifyAdminPopup.style.display = "flex";
 }
 
@@ -526,7 +531,6 @@ async function modifyAdmin() {
     current_account: actualProfile.CURRENT_ACCOUNT,
   };
 
-  const profile_code = usuario.profile_code;
   const name = document.getElementById("firstNameAdmin").value;
   const surname = document.getElementById("lastNameAdmin").value;
   const email = document.getElementById("emailAdmin").value;
@@ -571,17 +575,8 @@ async function modifyAdmin() {
   } else {
     try {
       const response = await fetch(
-        `../../api/ModifyAdmin.php?profile_code=${encodeURIComponent(
-          profile_code
-        )}&name=${encodeURIComponent(name)}&surname=${encodeURIComponent(
-          surname
-        )}&email=${encodeURIComponent(email)}&username=${encodeURIComponent(
-          username
-        )}&telephone=${encodeURIComponent(
-          telephone
-        )}&current_account=${encodeURIComponent(current_account)}`
+        `../../api/ModifyAdmin.php?profile_code=${encodeURIComponent(profile_code)}&name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&telephone=${encodeURIComponent(telephone)}&current_account=${encodeURIComponent(current_account)}`
       );
-
       const data = await response.json();
 
       if (data.success) {
@@ -614,12 +609,8 @@ function resetPasswordModal() {
 }
 
 async function delete_user(id) {
-  if (!confirm("Are you sure you want to your account?")) return;
-
-  const response = await fetch(
-    `../../api/DeleteUser.php?id=${encodeURIComponent(id)}`
-  );
-
+  if (!confirm("Are you sure you want to delete your account?")) return;
+  const response = await fetch(`../../api/DeleteUser.php?id=${encodeURIComponent(id)}`);
   const data = await response.json();
 
   if (data.error) {

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Details</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <script src="../assets/js/bookDetails.js" defer></script>
+
+</head>
+
+<body>
+
+    <header class="headHome">
+        <div class="logo-container">
+            <a href="store.html"><img src="../assets/img/Nike logo for some reason.png" alt="Logo" class="topPic" /></a>
+        </div>
+        <div class="nav-icons">
+            <a href="cart.html" class="cartIcon">Cart</a> <a href="login.html" class="logoutIcon">Log Out</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="details-container">
+            <div class="details-image">
+                <img src="https://placehold.co/400x600" id="bookCover" alt="Book Cover">
+            </div>
+
+            <div class="details-info">
+                <h1 id="bookTitle">Loading Title...</h1>
+                <h3 id="bookAuthor" style="color: #666;">Author Name</h3>
+
+                <div class="details-price" id="bookPrice">0.00€</div>
+
+                <p>Status: <span id="stockBadge" class="stock-badge">In Stock</span></p>
+
+                <div style="margin-top: 20px;">
+                    <h4>Synopsis</h4>
+                    <p id="bookSynopsis" style="line-height: 1.6;">
+                        Description loading...
+                    </p>
+                </div>
+
+                <div class="meta-info">
+                    <p><strong>ISBN:</strong> <span id="bookISBN">---</span></p>
+                    <p><strong>Pages:</strong> <span id="bookPages">0</span></p>
+                    <p><strong>Publisher:</strong> <span id="bookEditorial">---</span></p>
+                </div>
+
+                <div class="actions">
+                    <label for="qtyInput">Qty:</label>
+                    <input type="number" id="qtyInput" class="qty-input" value="1" min="1" max="10">
+                    <button id="addToCartBtn" class="action-btn" style="padding: 10px 30px; font-size: 1.1rem;">Add to
+                        Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="comments-section">
+            <h2>User Reviews</h2>
+
+            <div id="commentsList">
+                <p style="color: #888;">No reviews yet.</p>
+            </div>
+
+            <div id="userActionContainer" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p class="copyright">© 2025 MyBookStore. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
