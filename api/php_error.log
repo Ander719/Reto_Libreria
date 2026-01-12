@@ -155,3 +155,23 @@ Stack trace:
 #2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('9788445073727', 'qw4ert', '1', '234', '23', 'ttyjgu', '23', 'weert', 'download.jpg')
 #3 {main}
   thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[10-Jan-2026 15:27:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:28:03 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:31:41 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:31:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:32:01 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18

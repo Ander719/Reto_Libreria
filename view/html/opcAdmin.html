@@ -32,24 +32,21 @@
                 <span>Home</span>
             </a>
 
-            <form action="/logout" method="post">
-                <button type="submit" class="btn-logout">Log Out</button>
+            <form action="/logout" method="post" style="margin:0;">
+                <button type="submit" class="btn btn-primary btn-sm">Log Out</button>
             </form>
         </div>
 
         <div class="admin-actions">
-            <button class="admin-btn filled" onclick="window.location.href='main.html?mode=deleteUser'">Delete
-                User</button>
+            <button class="btn btn-primary" onclick="window.location.href='main.html?mode=deleteUser'">Delete User</button>
 
-            <button class="admin-btn outlined" onclick="window.location.href='deleteComment.html'">Eliminar
-                comentario</button>
+            <button class="btn btn-secondary" onclick="window.location.href='deleteComment.html'">Eliminar comentario</button>
 
-            <button class="admin-btn filled" onclick="window.location.href='main.html?mode=modifyUser'">Modify
-                User</button>
+            <button class="btn btn-primary" onclick="window.location.href='main.html?mode=modifyUser'">Modify User</button>
 
-            <button class="admin-btn outlined" onclick="window.location.href='bookOptions.html'">Libro</button>
+            <button class="btn btn-secondary" onclick="window.location.href='bookOptions.html'">Libro</button>
 
-            <button class="admin-btn filled" onclick="window.location.href='main.html'">Return</button>
+            <button class="btn btn-primary" onclick="window.location.href='main.html'">Return</button>
         </div>
     </main>
 

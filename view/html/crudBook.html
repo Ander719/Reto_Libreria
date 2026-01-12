@@ -10,20 +10,21 @@
 <body>
     <main class="books-page">
         <div class="books-topbar">
-            <h2 id="pageTitle">Gestión de Libro</h2> <a href="bookOptions.html" class="btn-back">Volver</a>
+            <h2 id="pageTitle">Gestión de Libro</h2> 
+            <a href="bookOptions.html" class="btn btn-secondary btn-sm">Volver</a>
         </div>
 
         <div class="crud-container"
-            style="max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px;">
+            style="max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; border: 1px solid #ddd;">
 
             <div id="searchSection"
                 style="display:none; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 20px;">
                 <label for="searchIsbn">Introduce el ISBN del libro:</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="searchIsbn" placeholder="Ej: 978-3-16-148410-0">
-                    <button id="btnSearch" class="book-btn edit" style="padding: 5px 15px;">Buscar</button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" id="searchIsbn" placeholder="Ej: 978-3-16-148410-0" style="margin-bottom:0;">
+                    <button id="btnSearch" class="btn btn-secondary btn-sm">Buscar</button>
                 </div>
-                <p id="searchMessage" style="color: red;"></p>
+                <p id="searchMessage" style="color: red; margin-top: 5px;"></p>
             </div>
 
             <form id="bookForm" class="profileForm">
@@ -38,8 +39,12 @@
                         <input type="text" id="title" name="title" required>
                     </div>
                     <div class="field half">
-                        <label for="author">Autor</label>
-                        <input type="text" id="author" name="author">
+                        <label for="authorName">Nombre Autor</label>
+                        <input type="text" id="authorName" name="authorName" required placeholder="Ej: Brandon">
+                    </div>
+                    <div class="field half">
+                        <label for="authorSurname">Apellido Autor</label>
+                        <input type="text" id="authorSurname" name="authorSurname" required placeholder="Ej: Sanderson">
                     </div>
 
                     <div class="field half">
@@ -65,20 +70,19 @@
 
                         <div class="drop-zone" id="dropZone">
                             <span class="drop-zone__prompt">Arrastra la imagen aquí o haz clic para buscar</span>
-                            <input type="file" name="coverFile" class="drop-zone__input" id="coverInput"
-                                accept="image/*">
+                            <input type="file" name="coverFile" class="drop-zone__input" id="coverInput" accept="image/*">
                         </div>
-
                         <input type="hidden" id="cover" name="cover">
                     </div>
+
                     <div class="field full">
                         <label for="synopsis">Sinopsis</label>
-                        <textarea id="synopsis" name="synopsis" rows="4" style="width:100%"></textarea>
+                        <textarea id="synopsis" name="synopsis" rows="4"></textarea>
                     </div>
                 </div>
 
                 <div class="actions" style="margin-top: 20px; text-align: center;">
-                    <button type="submit" id="actionBtn" class="saveBtn">Guardar</button>
+                    <button type="submit" id="actionBtn" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
         </div>
@@ -86,5 +90,4 @@
 
     <script src="../assets/js/crudBook.js"></script>
 </body>
-
 </html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { currentUser, checkSession } from "./sesion.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -72,82 +73,70 @@ document.addEventListener("DOMContentLoaded", async () => {
   homeBtn.onclick = function () {
     // Recargamos el perfil por si acaso
     profile = JSON.parse(localStorage.getItem("actualProfile"));
+=======
+document.addEventListener('DOMContentLoaded', () => {
+    // --- REFERENCIAS ---
+    const adjustDataBtn = document.getElementById('adjustData');
+    const adminPanelSection = document.getElementById('adminPanelSection');
+    const tableBody = document.getElementById('adminTableBody');
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
     
-    if (profile && ["CARD_NO"] in profile) {
-      document.getElementById("message").innerHTML = "";
-      openModifyUserPopup(profile);
-    } else if (profile && ["CURRENT_ACCOUNT"] in profile) {
-      // Si entra como admin desde el botón "Adjust Data", muestra la tabla normal (ambos iconos)
-      refreshAdminTable(); 
-      adminTableModal.style.display = "block";
-      // Ocultar botón borrar en popup usuario (lógica original)
-      if(deleteBtn) deleteBtn.style.display = "none";
+    // Modales
+    const modifyUserPopup = document.getElementById('modifyUserPopupAdmin');
+    const modifyAdminPopup = document.getElementById('modifyAdminPopup');
+    
+    // Botones Guardar
+    const saveBtnUser = document.getElementById('saveBtnUser');
+    const saveBtnAdmin = document.getElementById('saveBtnAdmin');
+    
+    // BOTÓN BORRAR (DEL MODAL)
+    const deleteBtnModal = document.getElementById('deleteBtn'); 
+
+    // Botones Cerrar
+    const closeUser = document.getElementById('closeUserModal');
+    const closeAdmin = document.getElementById('closeAdminModal');
+
+    window.allUsers = [];
+
+    // 1. INICIO
+    checkUserRole();
+
+    // 2. EVENTOS DE APERTURA
+    if (adjustDataBtn) {
+        adjustDataBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadMyProfile();
+        });
     }
+<<<<<<< HEAD
   };
   /* ---------- RESTO DE FUNCIONALIDADES (Solo funcionan si el modal se abre) ---------- */
+=======
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
 
-  /* ----------USER POPUP---------- */
-  changePwdBtn.onclick = function () {
-    changePwdModal.style.display = "block";
-    resetPasswordModal();
-  };
-
-  saveBtnUser.onclick = function () {
-    modifyUser();
-  };
-
-  /* ----------ADMIN POPUP---------- */
-  closeAdminSpan.onclick = function () {
-    adminTableModal.style.display = "none";
-    // Limpiamos la URL al cerrar para que si recarga no se vuelva a abrir solo
-    window.history.pushState({}, document.title, window.location.pathname);
-  };
-
-  changePwdBtnAdmin.onclick = function () {
-    changePwdModal.style.display = "block";
-    resetPasswordModal();
-  };
-
-  modifyAdminBtn.onclick = function () {
-    openModifyAdminPopup();
-  };
-
-  saveBtnAdmin.onclick = function () {
-    modifyAdmin();
-  };
-
-  /* ----------SHARED ELEMENTS---------- */
-  if(deleteBtn) {
-      deleteBtn.onclick = function () {
-        delete_user(profile["PROFILE_CODE"]);
-      };
-  }
-
-  closePasswordSpan.onclick = function () {
-    changePwdModal.style.display = "none";
-  };
-
-  // Cerrar popups al hacer click fuera
-  window.onclick = function (event) {
-    if (event.target == adminTableModal) {
-      adminTableModal.style.display = "none";
-      // Limpiamos URL
-      window.history.pushState({}, document.title, window.location.pathname);
-    } else if (event.target == modifyUserPopup) {
-      modifyUserPopup.style.display = "none";
-    } else if (event.target == modifyAdminPopup) {
-      modifyAdminPopup.style.display = "none";
-    } else if (event.target == changePwdModal) {
-      changePwdModal.style.display = "none";
+    const modifySelfBtn = document.getElementById('modifySelfButton');
+    if (modifySelfBtn) {
+        modifySelfBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadMyProfile();
+        });
     }
-  };
 
-  // Lógica de cambio de contraseña
-  document
-    .getElementById("changePasswordForm")
-    .addEventListener("submit", async function (e) {
-      e.preventDefault();
+    // 3. EVENTOS DE GUARDADO
+    if (saveBtnUser) {
+        saveBtnUser.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveUserData('user'); 
+        });
+    }
+    if (saveBtnAdmin) {
+        saveBtnAdmin.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveUserData('admin');
+        });
+    }
 
+<<<<<<< HEAD
     document.getElementById("messageOldPassword").innerHTML = "";
     document.getElementById("messageWrongPassword").innerHTML = "";
     document.getElementById("message").innerHTML = "";
@@ -211,21 +200,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             actualProfile.PSWD = newPassword;
             document.getElementById("messageSuccessPassword").innerHTML =
               "Password correctly changed";
+=======
+    // 4. EVENTO DE BORRADO DESDE EL MODAL (NUEVO)
+    if (deleteBtnModal) {
+        deleteBtnModal.addEventListener('click', (e) => {
+            e.preventDefault();
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
             
-            // Actualizar localStorage
-            if (["CARD_NO"] in profile) {
-              localStorage.setItem("actualUser", JSON.stringify(actualProfile));
-              // También actualizar el perfil principal si es el mismo usuario
-              if(profile.PROFILE_CODE === actualProfile.PROFILE_CODE) {
-                  localStorage.setItem("actualProfile", JSON.stringify(actualProfile));
-              }
-            } else if (["CURRENT_ACCOUNT"] in profile) {
-              localStorage.setItem(
-                "actualProfile",
-                JSON.stringify(actualProfile)
-              );
+            // Recuperamos el ID que guardamos al abrir el modal
+            const targetId = deleteBtnModal.getAttribute('data-target-id');
+            
+            if(!targetId) {
+                alert("Error: No se ha identificado el usuario a borrar.");
+                return;
             }
 
+<<<<<<< HEAD
             setTimeout(() => {
               document.getElementById("messageSuccessPassword").innerHTML = ""; 
               document.getElementById("changePasswordForm").reset(); 
@@ -330,10 +320,34 @@ async function modifyUser() {
       card_no !== usuario.card_no
     ) {
       changes = true;
+=======
+            if(confirm("¿ESTÁS SEGURO? Esta acción borrará la cuenta permanentemente.")) {
+                // Usamos la misma API que la tabla
+                fetch(`../../api/DeleteUser.php?id=${targetId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.result === true) {
+                            alert("Cuenta eliminada correctamente.");
+                            
+                            // Si me borré a mí mismo -> Ir al Login
+                            if (data.isSelfDelete === true) {
+                                window.location.href = 'login.html';
+                            } else {
+                                // Si borré a otro (admin borrando usuario) -> Cerrar modal y recargar tabla
+                                document.getElementById('modifyUserPopupAdmin').style.display = 'none';
+                                loadUsers();
+                            }
+                        } else {
+                            alert("Error al borrar: " + (data.error || "Desconocido"));
+                        }
+                    })
+                    .catch(err => console.error("Error:", err));
+            }
+        });
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
     }
-    return changes;
-  }
 
+<<<<<<< HEAD
   if (!hasChanges()) {
     document.getElementById("message").innerHTML = "No changes detected";
     document.getElementById("message").style.color = "red";
@@ -343,43 +357,176 @@ async function modifyUser() {
         `../../api/ModifyUser.php?profile_code=${encodeURIComponent(profile_code)}&name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&telephone=${encodeURIComponent(telephone)}&gender=${encodeURIComponent(gender)}&card_no=${encodeURIComponent(card_no)}`
       );
       const data = await response.json();
+=======
+    // Cerrar Modales
+    if(closeUser) closeUser.onclick = () => modifyUserPopup.style.display = 'none';
+    if(closeAdmin) closeAdmin.onclick = () => modifyAdminPopup.style.display = 'none';
+    window.onclick = (e) => {
+        if(e.target === modifyUserPopup) modifyUserPopup.style.display = 'none';
+        if(e.target === modifyAdminPopup) modifyAdminPopup.style.display = 'none';
+    };
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
 
-      if (data.success) {
-        document.getElementById("message").innerHTML = data.message;
-        document.getElementById("message").style.color = "green";
+    // --- FUNCIONES ---
 
-        actualProfile.NAME_ = name;
-        actualProfile.SURNAME = surname;
-        actualProfile.EMAIL = email;
-        actualProfile.USER_NAME = username;
-        actualProfile.TELEPHONE = telephone;
-        actualProfile.CARD_NO = card_no;
-        actualProfile.GENDER = gender;
-
-        localStorage.setItem("actualUser", JSON.stringify(actualProfile));
-
-        // Refrescar tabla si el admin está viéndola
-        if (
-          ["CURRENT_ACCOUNT"] in
-          JSON.parse(localStorage.getItem("actualProfile"))
-        ) {
-          // Detectamos el modo actual de la URL para refrescar manteniendo el estado visual
-          const urlParams = new URLSearchParams(window.location.search);
-          const currentMode = urlParams.get('mode');
-          refreshAdminTable(currentMode);
-        } else {
-          localStorage.setItem("actualProfile", JSON.stringify(actualProfile));
-        }
-      } else {
-        document.getElementById("message").innerHTML = data.error;
-        document.getElementById("message").style.color = "red";
-      }
-    } catch (error) {
-      console.log(error);
+    function checkUserRole() {
+        if(adminPanelSection) adminPanelSection.style.display = 'none';
+        fetch('../../api/CheckUserType.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.isAdmin === true && adminPanelSection) {
+                    adminPanelSection.style.display = 'flex';
+                    loadUsers();
+                }
+            });
     }
-  }
-}
 
+    function loadUsers() {
+        if (!tableBody) return;
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode'); 
+
+        fetch('../../api/GetAllUsers.php')
+            .then(res => res.json())
+            .then(data => {
+                tableBody.innerHTML = '';
+                const users = data.resultado || [];
+                window.allUsers = users;
+
+                if(users.length > 0){
+                    users.forEach((user, index) => {
+                        const tr = document.createElement('tr');
+                        const userId = user.PROFILE_CODE || user.id;
+                        let buttonsHTML = '';
+                        
+                        // Lógica de visualización de botones en tabla
+                        if (mode === 'modifyUser') {
+                            buttonsHTML = `<button class="saveBtn" style="padding:5px 10px; font-size:0.8rem;" onclick="prepareEditUser(${index})">Edit</button>`;
+                        } else if (mode === 'deleteUser') {
+                            buttonsHTML = `<button class="deleteBtn" style="padding:5px 10px; font-size:0.8rem; color:red; border-color:red;" onclick="deleteUser('${userId}')">Del</button>`;
+                        } else {
+                            buttonsHTML = `
+                                <button class="saveBtn" style="padding:5px 10px; font-size:0.8rem; margin-right:5px;" onclick="prepareEditUser(${index})">Edit</button>
+                                <button class="deleteBtn" style="padding:5px 10px; font-size:0.8rem; color:red; border-color:red;" onclick="deleteUser('${userId}')">Del</button>
+                            `;
+                        }
+
+                        tr.innerHTML = `
+                            <td>${user.USER_NAME || user.username}</td>
+                            <td>${user.NAME_ || user.name} ${user.SURNAME || user.surname}</td>
+                            <td>${user.EMAIL || user.email}</td>
+                            <td>${buttonsHTML}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                }
+            });
+    }
+
+    window.prepareEditUser = function(index) {
+        const u = window.allUsers[index];
+        if (!u) return;
+        
+        setValue('firstNameUser', u.NAME_ || u.name);
+        setValue('lastNameUser', u.SURNAME || u.surname);
+        setValue('emailUser', u.EMAIL || u.email);
+        setValue('usernameUser', u.USER_NAME || u.username);
+        setValue('phoneUser', u.TELEPHONE || u.telephone);
+        setValue('cardNumberUser', u.CARD_NO || '');
+        if(document.getElementById('genderUser')) document.getElementById('genderUser').value = u.GENDER || 'Other';
+
+        // GUARDAMOS EL ID EN EL BOTÓN "SAVE" Y EN EL BOTÓN "DELETE"
+        const targetId = u.PROFILE_CODE;
+        if(saveBtnUser) saveBtnUser.setAttribute('data-target-id', targetId);
+        
+        // --- AQUÍ ESTÁ LA CLAVE DEL BORRADO ---
+        if(deleteBtnModal) deleteBtnModal.setAttribute('data-target-id', targetId);
+
+        document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
+    };
+
+    function loadMyProfile() {
+        fetch('../../api/GetProfile.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.exito && data.user) {
+                    const u = data.user;
+                    const isAdmin = (u.ROLE_TYPE === 'admin') || (u.CURRENT_ACCOUNT !== undefined);
+                    const targetId = u.PROFILE_CODE;
+
+                    if (isAdmin) {
+                        setValue('firstNameAdmin', u.NAME_ || u.name);
+                        setValue('lastNameAdmin', u.SURNAME || u.surname);
+                        setValue('emailAdmin', u.EMAIL || u.email);
+                        setValue('usernameAdmin', u.USER_NAME || u.username);
+                        setValue('phoneAdmin', u.TELEPHONE || u.telephone);
+                        setValue('profileCodeAdmin', u.PROFILE_CODE);
+                        setValue('currentAccountAdmin', u.CURRENT_ACCOUNT);
+                        
+                        // En Admin Modal no solemos poner delete, pero si lo hubiera:
+                        // if(deleteBtnAdmin) deleteBtnAdmin.setAttribute('data-target-id', targetId);
+                        
+                        document.getElementById('modifyAdminPopup').style.display = 'flex';
+                    } else {
+                        setValue('firstNameUser', u.NAME_ || u.name);
+                        setValue('lastNameUser', u.SURNAME || u.surname);
+                        setValue('emailUser', u.EMAIL || u.email);
+                        setValue('usernameUser', u.USER_NAME || u.username);
+                        setValue('phoneUser', u.TELEPHONE || u.telephone);
+                        setValue('cardNumberUser', u.CARD_NO);
+                        if(document.getElementById('genderUser')) document.getElementById('genderUser').value = u.GENDER || 'Other';
+                        
+                        // GUARDAR ID PARA BORRARSE A UNO MISMO
+                        if(deleteBtnModal) deleteBtnModal.setAttribute('data-target-id', targetId);
+                        
+                        document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
+                    }
+                }
+            });
+    }
+
+    function saveUserData(role) {
+        let formData = new FormData();
+        let targetId = null;
+
+        if (role === 'admin') {
+            formData.append('name', document.getElementById('firstNameAdmin').value);
+            formData.append('surname', document.getElementById('lastNameAdmin').value);
+            formData.append('email', document.getElementById('emailAdmin').value);
+            formData.append('username', document.getElementById('usernameAdmin').value);
+            formData.append('phone', document.getElementById('phoneAdmin').value);
+            formData.append('accountNumber', document.getElementById('currentAccountAdmin').value);
+            targetId = document.getElementById('saveBtnAdmin').getAttribute('data-target-id');
+        } else {
+            formData.append('name', document.getElementById('firstNameUser').value);
+            formData.append('surname', document.getElementById('lastNameUser').value);
+            formData.append('email', document.getElementById('emailUser').value);
+            formData.append('username', document.getElementById('usernameUser').value);
+            formData.append('phone', document.getElementById('phoneUser').value);
+            formData.append('cardNumber', document.getElementById('cardNumberUser').value);
+            let genderVal = document.getElementById('genderUser') ? document.getElementById('genderUser').value : 'Other';
+            formData.append('gender', genderVal);
+            targetId = document.getElementById('saveBtnUser').getAttribute('data-target-id');
+        }
+
+        if (targetId) formData.append('target_id', targetId);
+        formData.append('role', role);
+
+        fetch('../../api/modifyUser.php', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            if (data.exito) {
+                alert("Datos guardados.");
+                loadUsers();
+                document.getElementById('modifyUserPopupAdmin').style.display = 'none';
+                document.getElementById('modifyAdminPopup').style.display = 'none';
+            } else {
+                alert("Error: " + (data.error || "Desconocido"));
+            }
+        });
+    }
+
+<<<<<<< HEAD
 async function get_all_users() {
   const response = await fetch("../../api/GetAllUsers.php");
   const data = await response.json();
@@ -565,10 +712,14 @@ async function modifyAdmin() {
       current_account !== usuario.current_account
     ) {
       changes = true;
+=======
+    function setValue(id, val) {
+        const el = document.getElementById(id);
+        if(el) el.value = val || '';
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
     }
-    return changes;
-  }
 
+<<<<<<< HEAD
   if (!hasChanges()) {
     document.getElementById("messageAdmin").innerHTML = "No changes detected";
     document.getElementById("messageAdmin").style.color = "red";
@@ -619,3 +770,17 @@ async function delete_user(id) {
     window.location.href = "login.html";
   }
 }
+=======
+    // BORRADO DESDE LA TABLA
+    window.deleteUser = function(id) {
+        if(confirm("¿Eliminar usuario permanentemente?")) {
+            fetch(`../../api/DeleteUser.php?id=${id}`).then(r => r.json()).then(d => {
+                if(d.result) {
+                    if(d.isSelfDelete) window.location.href='login.html';
+                    else loadUsers();
+                } else alert("Error al eliminar");
+            });
+        }
+    };
+});
+>>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
