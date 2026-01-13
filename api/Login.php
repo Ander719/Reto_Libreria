@@ -1,22 +1,7 @@
 <?php
-<<<<<<< HEAD
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-ini_set('log_errors', 1);
-ini_set('error_log', 'php_error.log');
-
-// 1. IMPORTANTE: Iniciar la gestión de sesión
-session_start();
-
-header("Content-Type: application/json");
-
-=======
 // api/Login.php
 session_start();
 header("Content-Type: application/json; charset=utf-8");
->>>>>>> 3f91231 (ultimos cambios de la ventana main.html, no funciona  el registro ni las ventanas de crud libro)
 require_once '../controller/controller.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
