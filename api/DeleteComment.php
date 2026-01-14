@@ -12,24 +12,13 @@ $commentModel = new CommentModel($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
-if (
-    !empty($data->profileCode) &&
-    !empty($data->isbn) &&
-    !empty($data->comment) &&
-    !empty($data->valoration)
-) {
-    if ($commentModel->createComment(
-        $data->profileCode,
-        $data->isbn,
-        $data->comment,
-        $data->valoration,
-        $data->date
-    )) {
-        http_response_code(201);
-        echo json_encode(array("message" => "Review posted successfully."));
+if(!empty($data->isbn) && !empty($data->profileCode)) {
+    if($commentModel->deleteComment($data->isbn, $data->profileCode)) {
+        http_response_code(200);
+        echo json_encode(array("message" => "Comment deleted."));
     } else {
         http_response_code(503);
-        echo json_encode(array("message" => "Unable to post review. SQL Error."));
+        echo json_encode(array("message" => "Unable to delete comment (or permission denied/not found)."));
     }
 } else {
     http_response_code(400);

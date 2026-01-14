@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await checkSession();
     // 2. Gestionar la zona de comentarios
     handleCommentSection();
+
+    // 3. Cargar comentarios existentes
+    loadComments(isbn);
 });
 
 async function loadBookDetails(isbn) {
@@ -104,18 +107,16 @@ function agregarAlCarrito(isbn, cantidad) {
 
 function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');
-
-    // RECUPERAR USUARIO (Esto es clave para la rúbrica de Seguridad IL8.4)
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = getCurrentUser();
 
     if (currentUser) {
-        // A) USUARIO LOGUEADO -> MOSTRAR FORMULARIO
         actionContainer.innerHTML = `
-            <h3>Write a Review</h3>
-            <p>Commenting as: <strong>${currentUser.username}</strong></p>
-            <form id="commentForm" class="actions" style="background: white; border: none; padding: 0; box-shadow: none;">
+            <h3 id="formTitle">Write a Review</h3>
+            <p>Commenting as: <strong>${currentUser.USER_NAME}</strong></p>
+            
+            <form id="commentForm" class="actions review-form">
                 <label for="ratingScore">Rating:</label>
-                <select id="ratingScore" class="qty-input" style="width: 150px; margin-bottom: 10px;">
+                <select id="ratingScore" class="qty-input rating-select">
                     <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
                     <option value="4">⭐⭐⭐⭐ - Very Good</option>
                     <option value="3">⭐⭐⭐ - Average</option>
@@ -124,22 +125,27 @@ function handleCommentSection() {
                 </select>
                 
                 <label for="commentBody">Your Review:</label>
-                <textarea id="commentBody" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" placeholder="What did you think about this book?"></textarea>
+                <textarea id="commentBody" rows="4" class="review-textarea" placeholder="What did you think about this book?"></textarea>
                 
-                <button type="submit" class="action-btn" style="margin-top: 10px; width: auto;">Submit Review</button>
-                <span id="formMessage" style="color: green; display: none; margin-top: 10px; font-weight: bold;"></span>
+                <div class="btn-container">
+                    <button type="submit" id="submitBtn" class="action-btn btn-auto">Submit Review</button>
+                    <button type="button" id="cancelEditBtn" class="action-btn btn-cancel btn-auto" style="display:none;">Cancel</button>
+                </div>
+                <span id="formMessage" class="success-message"></span>
             </form>
         `;
 
-        // Añadir el Listener para enviar el comentario
+        // Listeners
         document.getElementById('commentForm').addEventListener('submit', (e) => submitComment(e, currentUser));
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+            resetForm();
+        });
 
     } else {
-        // B) NO LOGUEADO -> MOSTRAR ENLACE AL LOGIN
         actionContainer.innerHTML = `
-            <div style="text-align: center; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
+            <div class="login-prompt">
                 <p>You must be logged in to post a review.</p>
-                <a href="login.html" class="action-btn" style="display: inline-block; width: auto; text-decoration: none; margin-top: 10px;">Log In Now</a>
+                <a href="login.html" class="action-btn btn-auto login-link-btn">Log In Now</a>
             </div>
         `;
     }
@@ -148,73 +154,220 @@ function handleCommentSection() {
 async function submitComment(e, user) {
     e.preventDefault();
 
-    // Obtener datos del formulario
     const rating = document.getElementById('ratingScore').value;
     const text = document.getElementById('commentBody').value;
     const messageSpan = document.getElementById('formMessage');
-
-    // Obtener el ISBN de la URL (asumiendo ?isbn=123)
     const urlParams = new URLSearchParams(window.location.search);
     const isbn = urlParams.get('isbn');
 
-    // Validaciones básicas antes de enviar
-    if (!text) {
-        alert("Please write a comment!");
-        return;
-    }
-    if (!isbn) {
-        alert("Error: No book loaded (ISBN missing)");
+    messageSpan.className = '';
+    messageSpan.innerText = '';
+    messageSpan.style.display = 'block';
+
+    if (!text || !isbn) {
+        messageSpan.innerText = "Please complete all fields.";
+        messageSpan.classList.add('msg-error');
         return;
     }
 
-    // OBJETO DE DATOS PARA ENVIAR AL SERVIDOR (PHP)
-    const commentData = {
-        profileCode: user.profileCode, // ID del usuario logueado
+    const profileCode = user.PROFILE_CODE || user.profileCode;
+
+    const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
+
+    const payload = {
+        profileCode: profileCode,
         isbn: isbn,
         comment: text,
+        text: text,
+        rating: rating,
         valoration: rating,
-        date: new Date().toISOString().slice(0, 10) // Fecha actual YYYY-MM-DD
+        date: new Date().toISOString().slice(0, 10)
     };
 
-    console.log("Enviando al servidor:", commentData);
+    console.log("Sending payload:", payload);
 
     try {
-        // PETICIÓN REAL AL PHP
-        const response = await fetch('../api/AddComment.php', {
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(commentData)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
 
-        // Convertimos la respuesta del servidor a JSON
-        const result = await response.json();
-
         if (response.ok) {
-            // ÉXITO (HTTP 200-299)
-            messageSpan.innerText = result.message || "Review submitted successfully!";
-            messageSpan.style.color = "green";
-            messageSpan.style.display = "block";
+            messageSpan.innerText = isEditing ? "Updated successfully!" : "Posted successfully!";
+            messageSpan.classList.add('msg-success');
 
-            // Limpiar campo
-            document.getElementById('commentBody').value = "";
+            resetForm();
+            loadComments(isbn);
 
-            // Opcional: Recargar los comentarios para ver el nuevo
-            // loadComments(isbn); 
+            setTimeout(() => {
+                messageSpan.innerText = '';
+                messageSpan.className = '';
+            }, 3000);
 
         } else {
-            // ERROR DEL SERVIDOR (HTTP 400, 500, etc.)
-            messageSpan.innerText = "Error: " + (result.message || "Could not save review.");
-            messageSpan.style.color = "red";
-            messageSpan.style.display = "block";
+            const errorText = await response.text();
+            console.error("Server Error:", errorText);
+
+            try {
+                const errJson = JSON.parse(errorText);
+                messageSpan.innerText = errJson.message || "Error saving review.";
+            } catch (e) {
+                messageSpan.innerText = "Error (Maybe duplicate review?)";
+            }
+            messageSpan.classList.add('msg-error');
+        }
+    } catch (error) {
+        console.error(error);
+        messageSpan.innerText = "Connection error.";
+        messageSpan.classList.add('msg-error');
+    }
+}
+
+async function loadComments(isbn) {
+    const commentsList = document.getElementById('commentsList');
+    const currentUser = getCurrentUser();
+    const myProfileCode = currentUser ? (currentUser.PROFILE_CODE || currentUser.profileCode) : null;
+
+    try {
+        const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
+        const comments = await response.json();
+
+        commentsList.innerHTML = '';
+        let myReview = null;
+
+        if (comments.length > 0) {
+            comments.forEach(c => {
+                const item = document.createElement('div');
+                item.classList.add('comment-item');
+
+                const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
+                if (isMine) myReview = c;
+
+                let buttonsHtml = '';
+                if (isMine) {
+                    const safeText = c.comment_text.replace(/'/g, "\\'");
+                    buttonsHtml = `
+                        <div class="comment-actions">
+                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Edit">✏️</button>
+                            <button onclick="deleteComment('${isbn}')" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                        </div>
+                    `;
+                }
+
+                item.innerHTML = `
+                    ${buttonsHtml}
+                    <p class="comment-header">
+                        ${c.USER_NAME} 
+                        <span class="comment-date">${c.dateComent}</span>
+                    </p>
+                    <div class="star-rating">${'⭐'.repeat(c.valoration)}</div>
+                    <p class="comment-text"></p> <div class="clear-fix"></div>
+                `;
+                item.querySelector('.comment-text').textContent = c.comment_text;
+                commentsList.appendChild(item);
+            });
+        } else {
+            commentsList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to write one!</p>';
+        }
+
+        if (myReview) {
+            console.log("User already has a review. Switching to Edit Mode.");
+            startEdit(myReview.comment_text, myReview.valoration, false);
         }
 
     } catch (error) {
-        // ERROR DE RED O DE CONEXIÓN
-        console.error("Error en la petición:", error);
-        messageSpan.innerText = "Network Error. Please try again later.";
-        messageSpan.style.color = "red";
-        messageSpan.style.display = "block";
+        console.error(error);
+        commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
+    }
+}
+
+window.deleteComment = async function (isbn) {
+    if (!confirm("Are you sure you want to delete this review?")) return;
+
+    const currentUser = getCurrentUser();
+    const profileCode = currentUser.PROFILE_CODE || currentUser.profileCode;
+
+    try {
+        const response = await fetch('../../api/DeleteComment.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isbn: isbn, profileCode: profileCode })
+        });
+
+        if (response.ok) {
+            loadComments(isbn);
+            resetForm();
+        } else {
+            alert("Error deleting comment");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Connection error");
+    }
+};
+
+window.startEdit = function (text, rating, doScroll = true) {
+    isEditing = true;
+    document.getElementById('commentBody').value = text;
+    document.getElementById('ratingScore').value = parseInt(rating);
+    document.getElementById('formTitle').innerText = "Edit your Review";
+    document.getElementById('submitBtn').innerText = "Update Review";
+    document.getElementById('cancelEditBtn').style.display = "inline-block";
+
+    if (doScroll) {
+        document.getElementById('userActionContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+};
+
+function resetForm() {
+    isEditing = false;
+    document.getElementById('commentBody').value = "";
+    document.getElementById('formTitle').innerText = "Write a Review";
+    document.getElementById('submitBtn').innerText = "Submit Review";
+    document.getElementById('cancelEditBtn').style.display = "none";
+    document.getElementById('formMessage').innerText = "";
+    document.getElementById('formMessage').className = "";
+}
+
+async function loadBookDetails(isbn) {
+    try {
+        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
+        if (!response.ok) throw new Error('Book not found');
+
+        const book = await response.json();
+
+        document.getElementById('bookTitle').innerText = book.title || "Untitled";
+
+        let authorName = "Unknown Author";
+        if (book.NameAuthor || book.LastName) {
+            authorName = `${book.NameAuthor || ''} ${book.LastName || ''}`.trim();
+        }
+        document.getElementById('bookAuthor').innerText = authorName;
+
+        document.getElementById('bookPrice').innerText = (book.price || 0) + "€";
+        document.getElementById('bookSynopsis').innerText = book.sipnosis || "No description available.";
+
+        document.getElementById('bookISBN').innerText = book.Isbn || isbn;
+        document.getElementById('bookPages').innerText = book.pages || "N/A";
+        document.getElementById('bookEditorial').innerText = book.editorial || "N/A";
+
+        const stockBadge = document.getElementById('stockBadge');
+        if (stockBadge) {
+            stockBadge.innerText = (book.stock > 0) ? "In Stock" : "Out of Stock";
+            stockBadge.className = (book.stock > 0) ? "stock-badge" : "stock-badge out-of-stock";
+        }
+
+        if (book.cover) {
+            if (book.cover.startsWith('http')) {
+                document.getElementById('bookCover').src = book.cover;
+            } else {
+                document.getElementById('bookCover').src = `../assets/img/${book.cover}`;
+            }
+        }
+
+    } catch (error) {
+        console.error("Error loading book details:", error);
+        document.getElementById('bookTitle').innerText = "Book not found";
     }
 }

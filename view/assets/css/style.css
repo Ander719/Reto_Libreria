@@ -3,16 +3,23 @@
    ====================================================== */
 :root {
   /* Colores */
-  --primary-color: #101416;   /* Negro corporativo */
-  --primary-hover: #333333;   /* Gris oscuro para hover */
-  --secondary-color: #ffffff; /* Blanco */
-  --danger-color: #d9534f;    /* Rojo para acciones destructivas */
+  --primary-color: #101416;
+  /* Negro corporativo */
+  --primary-hover: #333333;
+  /* Gris oscuro para hover */
+  --secondary-color: #ffffff;
+  /* Blanco */
+  --danger-color: #d9534f;
+  /* Rojo para acciones destructivas */
   --danger-hover: #c9302c;
-  --background-color: #f1f1f1;/* Gris fondo */
-  
+  --background-color: #f1f1f1;
+  /* Gris fondo */
+
   /* Configuración UI */
-  --border-radius: 12px;      /* Redondeo unificado */
-  --input-padding: 12px;      /* Relleno inputs/botones */
+  --border-radius: 12px;
+  /* Redondeo unificado */
+  --input-padding: 12px;
+  /* Relleno inputs/botones */
   --font-family: "Segoe UI", sans-serif;
 }
 
@@ -80,7 +87,9 @@ textarea {
   transition: border-color 0.3s ease;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--primary-color);
 }
@@ -102,8 +111,10 @@ input:focus, select:focus, textarea:focus {
   letter-spacing: 1px;
   transition: all 0.3s ease;
   border: 2px solid transparent;
-  width: 100%; /* Por defecto ocupan todo el ancho disponible */
-  max-width: 400px; /* Pero no se hacen infinitos en pantallas grandes */
+  width: 100%;
+  /* Por defecto ocupan todo el ancho disponible */
+  max-width: 400px;
+  /* Pero no se hacen infinitos en pantallas grandes */
   margin: 5px 0;
 }
 
@@ -113,10 +124,11 @@ input:focus, select:focus, textarea:focus {
   color: white;
   border-color: var(--primary-color);
 }
+
 .btn-primary:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Estilo 2: Borde (Volver, Editar) */
@@ -125,6 +137,7 @@ input:focus, select:focus, textarea:focus {
   color: var(--primary-color);
   border-color: var(--primary-color);
 }
+
 .btn-secondary:hover {
   background-color: var(--primary-color);
   color: white;
@@ -136,6 +149,7 @@ input:focus, select:focus, textarea:focus {
   color: var(--danger-color);
   border-color: var(--danger-color);
 }
+
 .btn-danger:hover {
   background-color: var(--danger-color);
   color: white;
@@ -158,10 +172,19 @@ input:focus, select:focus, textarea:focus {
   justify-content: space-between;
   align-items: center;
   padding: 10px 2%;
-  background: white; /* Opcional si quieres header blanco */
+  background: white;
+  /* Opcional si quieres header blanco */
 }
-.topPic { width: 80px; object-fit: contain; }
-.logoutIcon { width: 30px; cursor: pointer; }
+
+.topPic {
+  width: 80px;
+  object-fit: contain;
+}
+
+.logoutIcon {
+  width: 30px;
+  cursor: pointer;
+}
 
 footer {
   background-color: #333;
@@ -169,7 +192,7 @@ footer {
   text-align: center;
   padding: 20px 0;
   /* El footer fijo a veces molesta en móviles, considera quitar position:fixed si hay scroll */
-  position: fixed; 
+  position: fixed;
   width: 100%;
   bottom: 0;
   display: flex;
@@ -177,127 +200,339 @@ footer {
   align-items: center;
   z-index: 100;
 }
-.copyright { position: absolute; bottom: 5px; width: 100%; font-size: 0.8rem; opacity: 0.7; pointer-events: none; }
-ul { list-style: none; }
-li { margin-bottom: 5px; }
-.listTitle { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+
+.copyright {
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+.listTitle {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
 
 
 /* --- LOGIN / SIGNUP --- */
-.container { display: flex; height: 100vh; }
-.leftPanel { width: 50%; height: 100%; overflow: hidden; }
-.leftPanel img { width: 100%; height: 100%; object-fit: cover; }
+.container {
+  display: flex;
+  height: 100vh;
+}
 
-.rightPanel { 
-  width: 50%; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
+.leftPanel {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.leftPanel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rightPanel {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
 }
 
-.loginForm { 
-  width: 100%; 
-  max-width: 400px; 
-  padding: 40px; 
-  background: white; 
+.loginForm {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: white;
   border-radius: var(--border-radius);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Sombra suave */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  /* Sombra suave */
 }
-.loginForm h2 { text-align: center; margin-bottom: 30px; }
-.registerLink { text-align: center; margin-top: 15px; font-size: 0.9rem; }
+
+.loginForm h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.registerLink {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
 
 
 /* --- HOME PAGE --- */
-.mainHome { padding-bottom: 150px; /* Espacio para el footer */ }
-.saveDataBox { 
-  position: absolute; 
-  left: 50%; 
-  top: 30%; 
-  transform: translate(-50%, -50%); 
-  text-align: center; 
-  background: rgba(255,255,255,0.9);
+.mainHome {
+  padding-bottom: 150px;
+  /* Espacio para el footer */
+}
+
+.saveDataBox {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
   padding: 40px;
   border-radius: var(--border-radius);
 }
-.saveDataBox h1 { margin-bottom: 20px; font-size: 2.5rem; }
-.buttons { display: flex; gap: 20px; justify-content: center; }
+
+.saveDataBox h1 {
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
 
 
 /* --- ADMIN & BOOK OPTIONS --- */
 /* Barras superiores unificadas */
-.topbar-admin, .books-topbar {
-  display: flex; justify-content: space-between; align-items: center;
-  background-color: white; padding: 15px 30px; margin: 20px auto;
-  border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  width: 90%; max-width: 1000px;
+.topbar-admin,
+.books-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 15px 30px;
+  margin: 20px auto;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  width: 90%;
+  max-width: 1000px;
 }
-.user-info, .home-link { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; color: var(--primary-color); }
-.logo-diamond { font-weight: 800; border: 2px solid var(--primary-color); padding: 5px 15px; transform: skew(-10deg); }
+
+.user-info,
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+.logo-diamond {
+  font-weight: 800;
+  border: 2px solid var(--primary-color);
+  padding: 5px 15px;
+  transform: skew(-10deg);
+}
 
 /* Contenedores de botones de acción central */
-.admin-actions, .books-actions {
-  display: flex; flex-direction: column; align-items: center; gap: 15px;
-  width: 100%; margin-top: 40px; padding-bottom: 100px;
+.admin-actions,
+.books-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  margin-top: 40px;
+  padding-bottom: 100px;
 }
 
 
 /* --- MODALES & POPUPS --- */
-.adminTableModal, .changePasswordModal, .modifyUserPopupAdmin, .modifyAdminPopup {
-  display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);
+.adminTableModal,
+.changePasswordModal,
+.modifyUserPopupAdmin,
+.modifyAdminPopup {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
 }
 
-.popupCard, .adminTableModalContent, .changePasswordModalContent {
-  background-color: #fff; margin: auto; padding: 30px; 
-  border: 2px solid var(--primary-color); border-radius: var(--border-radius);
-  width: 90%; max-width: 900px; 
-  position: relative; top: 50%; transform: translateY(-50%);
-  max-height: 90vh; overflow-y: auto;
+.popupCard,
+.adminTableModalContent,
+.changePasswordModalContent {
+  background-color: #fff;
+  margin: auto;
+  padding: 30px;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 900px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 90vh;
+  overflow-y: auto;
 }
-.changePasswordModalContent { max-width: 500px; }
+
+.changePasswordModalContent {
+  max-width: 500px;
+}
 
 /* Perfil Forms */
-.profileHeader { display: flex; gap: 20px; align-items: center; margin-bottom: 30px; }
-.avatar { width: 100px; height: 100px; border-radius: 50%; background: #ddd; overflow: hidden; }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profileHeader {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
-.fields { display: flex; flex-wrap: wrap; gap: 20px; }
-.field { display: flex; flex-direction: column; }
-.field.half { width: calc(50% - 10px); }
-.field.full { width: 100%; }
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #ddd;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field.half {
+  width: calc(50% - 10px);
+}
+
+.field.full {
+  width: 100%;
+}
 
 /* Tablas Admin */
-.adminTable { width: 100%; border-collapse: collapse; margin-top: 20px; }
-.adminTable th { background-color: var(--primary-color); color: white; padding: 12px; }
-.adminTable td { padding: 12px; border-bottom: 1px solid #ddd; text-align: center; }
-.center-flex-div { display: flex; justify-content: center; gap: 10px; }
-.size-small { width: 24px; cursor: pointer; transition: transform 0.2s; }
-.size-small:hover { transform: scale(1.1); }
-.close, .closePasswordSpan { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; }
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.adminTable th {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px;
+}
+
+.adminTable td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.center-flex-div {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.size-small {
+  width: 24px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.size-small:hover {
+  transform: scale(1.1);
+}
+
+.close,
+.closePasswordSpan {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #aaa;
+}
 
 
 /* --- DRAG & DROP ZONE --- */
 .drop-zone {
-  width: 100%; height: 200px; padding: 25px;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  font-weight: 500; font-size: 1.2rem; cursor: pointer; color: #aaa;
-  border: 4px dashed var(--primary-color); border-radius: var(--border-radius);
-  background-color: #fafafa; position: relative;
+  width: 100%;
+  height: 200px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #aaa;
+  border: 4px dashed var(--primary-color);
+  border-radius: var(--border-radius);
+  background-color: #fafafa;
+  position: relative;
   transition: all 0.2s;
 }
-.drop-zone:hover { background-color: #fff; }
-.drop-zone.disabled { opacity: 0.5; background-color: #e9ecef; cursor: not-allowed; pointer-events: none; }
-.drop-zone--over { border-style: solid; background-color: #e1e1e1; color: var(--primary-color); }
+
+.drop-zone:hover {
+  background-color: #fff;
+}
+
+.drop-zone.disabled {
+  opacity: 0.5;
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.drop-zone--over {
+  border-style: solid;
+  background-color: #e1e1e1;
+  color: var(--primary-color);
+}
 
 .drop-zone__thumb {
-  width: 100%; height: 100%; border-radius: calc(var(--border-radius) - 4px);
-  overflow: hidden; background-color: #ccc; background-size: contain; background-repeat: no-repeat; background-position: center;
-  position: absolute; top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--border-radius) - 4px);
+  overflow: hidden;
+  background-color: #ccc;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
+
 .drop-zone__thumb::after {
-  content: attr(data-label); position: absolute; bottom: 0; left: 0; width: 100%;
-  padding: 5px 0; color: white; background: rgba(0,0,0,0.75); font-size: 14px;
+  content: attr(data-label);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 0;
+  color: white;
+  background: rgba(0, 0, 0, 0.75);
+  font-size: 14px;
 }
 
 
@@ -305,157 +540,666 @@ li { margin-bottom: 5px; }
    5. MEDIA QUERIES (RESPONSIVE)
    ====================================================== */
 @media (max-width: 768px) {
-  .container { flex-direction: column; }
-  .leftPanel { width: 100%; height: 250px; }
-  .rightPanel { width: 100%; height: auto; }
-  
-  .field.half { width: 100%; }
-  .saveDataBox { width: 90%; }
-  .saveDataBox h1 { font-size: 2rem; width: auto;}
-  .buttons { flex-direction: column; }
-  
-  .headHome { flex-direction: column; gap: 10px; }
-  footer { position: relative; flex-direction: column; gap: 20px; padding-bottom: 60px;}
+  .container {
+    flex-direction: column;
+  }
+
+  .leftPanel {
+    width: 100%;
+    height: 250px;
+  }
+
+  .rightPanel {
+    width: 100%;
+    height: auto;
+  }
+
+  .field.half {
+    width: 100%;
+  }
+
+  .saveDataBox {
+    width: 90%;
+  }
+
+  .saveDataBox h1 {
+    font-size: 2rem;
+    width: auto;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .headHome {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  footer {
+    position: relative;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 60px;
+  }
 }
+
 /* --- RESET & BASICS --- */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body, html { height: 100%; font-family: "Segoe UI", sans-serif; background-color: #f4f4f4; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f4f4f4;
+}
 
 /* HEADER */
-.headHome { display: flex; justify-content: space-between; padding: 10px 20px; background: white; align-items: center; border-bottom: 1px solid #ddd; }
-.topPic { width: 60px; }
-.logoutIcon { width: 30px; cursor: pointer; }
+.headHome {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: white;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.topPic {
+  width: 60px;
+}
+
+.logoutIcon {
+  width: 30px;
+  cursor: pointer;
+}
 
 /* MAIN LAYOUT */
-.mainHome { position: relative; min-height: 100vh; padding-bottom: 60px; }
+.mainHome {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
 
 /* HERO SECTION (Imagen + Caja Flotante) */
-.hero-section { position: relative; height: 500px; width: 100%; }
-.mainPic { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-section {
+  position: relative;
+  height: 500px;
+  width: 100%;
+}
+
+.mainPic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* CAJA CENTRAL FLOTANTE */
 .saveDataBox {
   position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%); /* Centrado perfecto sobre la imagen */
-  background: rgba(255,255,255,0.95);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Centrado perfecto sobre la imagen */
+  background: rgba(255, 255, 255, 0.95);
   padding: 40px;
   text-align: center;
   border-radius: 12px;
-  width: 90%; max-width: 600px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
-.saveDataBox h1 { margin-bottom: 20px; font-size: 2rem; color: #333; }
-.buttons { display: flex; justify-content: center; gap: 20px; }
+
+.saveDataBox h1 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
 
 /* Botones Principales */
 .adjustData {
-  padding: 12px 25px; background: white; border: 2px solid #111; cursor: pointer; font-weight: bold; transition: 0.3s;
+  padding: 12px 25px;
+  background: white;
+  border: 2px solid #111;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
 }
-.adjustData:hover { background: #eee; }
+
+.adjustData:hover {
+  background: #eee;
+}
+
 .checkUsOut {
-  padding: 12px 25px; background: #111; color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.3s;
+  padding: 12px 25px;
+  background: #111;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
 }
-.checkUsOut:hover { background: #444; }
+
+.checkUsOut:hover {
+  background: #444;
+}
 
 
 /* ============================================================
    SECCIÓN TABLA ADMIN (INCRUSTADA EN LA PÁGINA)
    ============================================================ */
 .adminPanelSection {
-    width: 100%;
-    padding: 40px 20px;
-    background-color: #f4f4f4; /* Fondo gris claro para diferenciar */
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
+  background-color: #f4f4f4;
+  /* Fondo gris claro para diferenciar */
+  display: flex;
+  justify-content: center;
 }
 
 .adminPanelContainer {
-    width: 100%; max-width: 1000px;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 1000px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.panelHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-.panelHeader h2 { color: #333; }
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.panelHeader h2 {
+  color: #333;
+}
 
 .modifySelfButton {
-    padding: 8px 15px; background: transparent; border: 1px solid #333; border-radius: 5px; cursor: pointer; transition: 0.2s;
+  padding: 8px 15px;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
 }
-.modifySelfButton:hover { background: #333; color: white; }
+
+.modifySelfButton:hover {
+  background: #333;
+  color: white;
+}
 
 /* TABLA */
-.adminTable { width: 100%; border-collapse: collapse; margin-top: 10px; }
-.adminTable th { text-align: left; padding: 15px; background: #fafafa; color: #555; font-weight: 600; border-bottom: 2px solid #eee; }
-.adminTable td { padding: 15px; border-bottom: 1px solid #eee; color: #333; }
-.adminTable tr:hover { background-color: #fcfcfc; }
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.adminTable th {
+  text-align: left;
+  padding: 15px;
+  background: #fafafa;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+}
+
+.adminTable td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+.adminTable tr:hover {
+  background-color: #fcfcfc;
+}
 
 /* Botón Borrar en Tabla */
-.btn-danger { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-.btn-danger:hover { background: #cc0000; }
+.btn-danger {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-danger:hover {
+  background: #cc0000;
+}
 
 
 /* ============================================================
    MODALES DE PERFIL (ESTILO TARJETA / POPUP)
    ============================================================ */
-.modifyUserPopupAdmin, .modifyAdminPopup {
-  display: none; position: fixed; inset: 0; 
-  background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px);
-  z-index: 2000; justify-content: center; align-items: center;
+.modifyUserPopupAdmin,
+.modifyAdminPopup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
 }
 
 .popupCard {
-  width: 90%; max-width: 700px;
+  width: 90%;
+  max-width: 700px;
   background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-  padding: 40px; position: relative;
-  max-height: 90vh; overflow-y: auto; /* Por si la pantalla es pequeña */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  /* Por si la pantalla es pequeña */
 }
 
-.close-card { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #aaa; cursor: pointer; }
-.close-card:hover { color: #333; }
+.close-card {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 28px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.close-card:hover {
+  color: #333;
+}
 
 /* Estructura Formulario Perfil */
-.profileHeader { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 25px; }
-.avatar img { width: 90px; height: 90px; border-radius: 50%; background: #eee; object-fit: cover; }
-.infoArea { flex-grow: 1; }
-
-.fields { display: flex; flex-wrap: wrap; gap: 20px; }
-.field { display: flex; flex-direction: column; }
-.field.half { width: calc(50% - 10px); }
-.field.full { width: 100%; }
-
-.profileForm input, .profileForm select, .changePwdBtn {
-  width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;
-  font-size: 1rem; margin-top: 5px; outline: none; background: #fff;
+.profileHeader {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 25px;
 }
-.profileForm input:disabled { background: #f9f9f9; color: #888; }
-.changePwdBtn { background: #f5f5f5; text-align: left; color: #444; cursor: pointer; }
-.changePwdBtn:hover { background: #e0e0e0; }
 
-.profileForm label { font-size: 0.9rem; color: #555; font-weight: 600; margin-left: 2px; }
+.avatar img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #eee;
+  object-fit: cover;
+}
 
-.actions { margin-top: 30px; display: flex; gap: 15px; }
-.saveBtn { padding: 12px 25px; background: #222; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.saveBtn:hover { background: #000; }
-.deleteBtn { padding: 12px 25px; background: white; border: 1px solid #ccc; color: #555; border-radius: 8px; cursor: pointer; }
-.deleteBtn:hover { border-color: red; color: red; }
+.infoArea {
+  flex-grow: 1;
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field.half {
+  width: calc(50% - 10px);
+}
+
+.field.full {
+  width: 100%;
+}
+
+.profileForm input,
+.profileForm select,
+.changePwdBtn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-top: 5px;
+  outline: none;
+  background: #fff;
+}
+
+.profileForm input:disabled {
+  background: #f9f9f9;
+  color: #888;
+}
+
+.changePwdBtn {
+  background: #f5f5f5;
+  text-align: left;
+  color: #444;
+  cursor: pointer;
+}
+
+.changePwdBtn:hover {
+  background: #e0e0e0;
+}
+
+.profileForm label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+}
+
+.saveBtn {
+  padding: 12px 25px;
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.saveBtn:hover {
+  background: #000;
+}
+
+.deleteBtn {
+  padding: 12px 25px;
+  background: white;
+  border: 1px solid #ccc;
+  color: #555;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  border-color: red;
+  color: red;
+}
 
 /* Responsive Mobile */
 @media (max-width: 650px) {
-    .profileHeader { flex-direction: column; align-items: center; text-align: center; }
-    .field.half { width: 100%; }
-    .hero-section { height: auto; padding-bottom: 50px; }
-    .saveDataBox { position: relative; transform: none; top: 0; left: 0; margin: -50px auto 0 auto; }
+  .profileHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .field.half {
+    width: 100%;
+  }
+
+  .hero-section {
+    height: auto;
+    padding-bottom: 50px;
+  }
+
+  .saveDataBox {
+    position: relative;
+    transform: none;
+    top: 0;
+    left: 0;
+    margin: -50px auto 0 auto;
+  }
 }
 
 /* FOOTER */
-footer { text-align: center; padding: 15px; background: #333; color: white; position: fixed; bottom: 0; width: 100%; z-index: 10; }
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #333;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+}
 
 /* Modal Password */
-.changePasswordModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2001; justify-content: center; align-items: center;}
-.changePasswordModalContent { background: white; padding: 30px; border-radius: 10px; position: relative; width: 320px; }
-.closePasswordSpan { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 1.5rem;}
+.changePasswordModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2001;
+  justify-content: center;
+  align-items: center;
+}
+
+.changePasswordModalContent {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  position: relative;
+  width: 320px;
+}
+
+.closePasswordSpan {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.comments-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#commentsList {
+  background: #fff;
+}
+
+/* 7. RESPONSIVE DESIGN TIENDA */
+@media (max-width: 768px) {
+  .details-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .details-image,
+  .details-info {
+    flex: none;
+    width: 100%;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .details-image img {
+    max-height: 350px;
+  }
+}
+
+
+/* --- Estilos para la sección de reseñas --- */
+.review-form {
+  background: white;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.rating-select {
+  width: 150px;
+  margin-bottom: 10px;
+  padding: 5px;
+  /* Un poco de aire queda mejor */
+}
+
+.review-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  /* Permite estirar solo hacia abajo */
+  font-family: inherit;
+}
+
+.btn-container {
+  margin-top: 10px;
+}
+
+.btn-cancel {
+  background-color: #999;
+  display: none;
+  /* Oculto por defecto */
+  margin-left: 5px;
+}
+
+.login-prompt {
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.success-message {
+  color: green;
+  display: none;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+
+
+/* ==========================================================================
+   ESTILOS PARA LA LISTA DE COMENTARIOS (Generados por JS)
+   ========================================================================== */
+
+.comment-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Contenedor de los botones editar/borrar */
+.comment-actions {
+  float: right;
+  /* Mantenemos float para que se vaya a la derecha del todo */
+}
+
+/* Botones de iconos (lápiz y basura) */
+.btn-icon {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.btn-delete {
+  color: #dc3545;
+  /* Rojo estándar */
+  margin-left: 8px;
+}
+
+/* Cabecera del comentario (Nombre y Fecha) */
+.comment-header {
+  margin: 0;
+  font-weight: 700;
+  color: #333;
+  font-size: 1rem;
+}
+
+.comment-date {
+  font-weight: 400;
+  font-size: 0.85em;
+  margin-left: 10px;
+  color: #767676;
+  /* Gris suave */
+}
+
+/* Estrellas */
+.star-rating {
+  color: #ffa41c;
+  /* Naranja/Dorado tipo Amazon */
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+/* Texto del comentario */
+.comment-text {
+  margin: 0;
+  color: #333;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* Utilidad para limpiar floats si fuera necesario */
+.clear-fix {
+  clear: both;
+}
+
+/* Mensajes de estado */
+.no-reviews {
+  color: #565959;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.error-msg {
+  color: red;
+  font-weight: bold;
+}
+
+
+
+/* Clases para mensajes de estado */
+.msg-success {
+  color: green;
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.msg-error {
+  color: #dc3545;
+  /* Rojo */
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+
+/* --- Utilidades para botones y enlaces --- */
+
+/* Hace que el botón se ajuste al texto en lugar de ocupar todo el ancho */
+.btn-auto {
+  width: auto !important;
+  display: inline-block;
+}
+
+/* Estilos específicos para el enlace de Login */
+.login-link-btn {
+  text-decoration: none;
+  margin-top: 10px;
+}
