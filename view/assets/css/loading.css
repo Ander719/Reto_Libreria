@@ -1,0 +1,143 @@
+/* assets/css/loading.css */
+
+/* --- CONFIGURACIÓN DE PANTALLA --- */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: #f1f1f1; /* Mismo gris que tu login */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Evita barras de scroll durante el vuelo */
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* El "carril" invisible por donde viaja el libro */
+.flight-path {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+}
+
+/* --- ANIMACIÓN DEL LIBRO (TU CÓDIGO) --- */
+
+/* Contenedor que se mueve de izquierda a derecha */
+/* assets/css/loading.css */
+
+/* ... (MANTÉN EL CSS ANTERIOR DEL BODY Y FLIGHT-PATH) ... */
+
+/* --- CONFIGURACIÓN DE LOS LIBROS --- */
+
+/* Clase base para todos los libros */
+.book-container {
+    position: absolute;
+    left: -15%; /* Empiezan fuera */
+    /* Importante: animation-fill-mode: backwards para que esperen fuera antes del delay */
+    animation: flyAcross 3.5s linear forwards; 
+}
+
+/* VARIACIONES INDIVIDUALES */
+
+/* Libro 1: Normal */
+.b1 {
+    top: 50%; /* Centrado vertical */
+    animation-delay: 0s;
+    z-index: 3;
+}
+
+/* Libro 2: Más arriba y sale más tarde */
+.b2 {
+    top: 30%; /* Más arriba */
+    animation-delay: 0.3s; /* Retraso */
+    transform: scale(0.8); /* Un poco más pequeño (perspectiva) */
+    opacity: 0.9;
+    z-index: 1;
+}
+
+/* Libro 3: Más abajo y sale aún más tarde */
+.b3 {
+    top: 65%; /* Más abajo */
+    animation-delay: 0.6s; /* Más retraso */
+    transform: scale(0.9);
+    z-index: 2;
+}
+
+/* ... (MANTÉN EL RESTO DEL CSS: .book, .page, keyframes, etc.) ... */
+
+/* El libro en sí */
+.book {
+    position: relative;
+    width: 60px;
+    height: 40px;
+    background: #333; /* Color de la cubierta (lomo) */
+    border-radius: 2px;
+    /* Animación de rebote vertical */
+    animation: bounce 0.6s ease-in-out infinite alternate;
+}
+
+/* Páginas (Alas) */
+.page {
+    width: 30px;
+    height: 40px;
+    background: white;
+    position: absolute;
+    top: -5px;
+    border: 1px solid #ccc;
+}
+
+.page.left {
+    left: 0;
+    border-radius: 5px 0 0 5px;
+    transform-origin: right center;
+    animation: flapLeft 0.6s ease-in-out infinite alternate;
+}
+
+.page.right {
+    right: 0;
+    border-radius: 0 5px 5px 0;
+    transform-origin: left center;
+    animation: flapRight 0.6s ease-in-out infinite alternate;
+}
+
+/* --- TEXTO DE CARGA --- */
+.loading-text {
+    font-size: 1.5rem;
+    color: #333;
+    margin-top: 20px;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+    animation-delay: 0.5s;
+}
+
+/* --- KEYFRAMES --- */
+
+@keyframes flapLeft {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(-50deg); }
+}
+
+@keyframes flapRight {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(50deg); }
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-15px); }
+}
+
+@keyframes flyAcross {
+    0% { left: -15%; }
+    100% { left: 115%; }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

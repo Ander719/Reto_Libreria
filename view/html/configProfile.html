@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head class="headHome">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Page</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/configProfile.js"></script>
+</head>
+
+<body>
+  <header class="headHome">
+    <img src="../assets/img/Nike logo for some reason.png" alt="Nike logo" class="topPic" />
+    <a href="login.html" class="logoutIcon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">
+        <path fill-rule="evenodd" d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6ZM5.78 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 0 0 0 1.06l3 3a.75.75 0 0 0 1.06-1.06l-1.72-1.72H15a.75.75 0 0 0 0-1.5H4.06l1.72-1.72a.75.75 0 0 0 0-1.06Z" clip-rule="evenodd" />
+      </svg>
+    </a>
+  </header>
+
+  <main class="mainHome">
+    <section class="hero-section">
+      <img src="../assets/img/mountainHorizontal.jpg" alt="Photo of mountains" class="mainPic" />
+      
+      <aside class="saveDataBox">
+        <h1>Save your data for the next trip now</h1>
+        <div class="buttons">
+          <button id="adjustData" class="adjustData">Adjust data</button>
+        </div>
+      </aside>
+    </section>
+
+    <div id="adminPanelSection" class="adminPanelSection" style="display:none;">
+      <div class="adminPanelContainer">
+        <div class="panelHeader">
+            <h2>User Management</h2>
+            
+        </div>
+
+        <table class="adminTable" id="adminTable">
+          <thead>
+            <tr class="adminTableHead">
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="modifyUserPopupAdmin" class="modifyUserPopupAdmin">
+      <div class="popupCard">
+        <span class="close-card" id="closeUserModal">×</span>
+        <form class="loginForm profileForm" id="profileFormUser">
+          <div class="profileHeader">
+            <div class="avatar"><img src="https://placehold.co/280x280/png" alt="avatar" /></div>
+            <div class="infoArea">
+              <div class="fields" style="margin-top:0;">
+                <div class="field half"><label>Name</label><input id="firstNameUser" name="firstName" type="text" /></div>
+                <div class="field half"><label>Surname</label><input id="lastNameUser" name="lastName" type="text" /></div>
+                <div class="field full"><label>Email</label><input id="emailUser" name="email" type="email" /></div>
+              </div>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field half"><label>Username</label><input id="usernameUser" name="username" type="text" disabled /></div>
+            <div class="field half"><label>Password</label><button type="button" id="changePwdBtn" class="changePwdBtn">Change Password</button></div>
+            <div class="field half"><label>Phone</label><input id="phoneUser" name="phone" type="number" /></div>
+            <div class="field half"><label>Gender</label>
+              <select name="gender" id="genderUser" class="gender">
+                <option value="Man">Man</option><option value="Female">Woman</option><option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field full"><label>Card Number</label><input id="cardNumberUser" name="cardNumber" type="text" /></div>
+          </div>
+          <span style="color: green; display:block; text-align:center;" id="message"></span>
+          <div class="actions">
+            <button id="deleteBtn" class="deleteBtn" type="button">Delete Account</button>
+            <button class="saveBtn" type="button" id="saveBtnUser">Save Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modifyAdminPopup" class="modifyAdminPopup">
+      <div class="popupCard">
+        <span class="close-card" id="closeAdminModal">×</span>
+        <form class="loginForm profileForm" id="profileFormAdmin">
+          <div class="profileHeader">
+            <div class="avatar"><img src="https://placehold.co/280x280/png" alt="avatar" /></div>
+            <div class="infoArea">
+              <div class="fields" style="margin-top:0;">
+                <div class="field half"><label>Name</label><input id="firstNameAdmin" name="firstName" type="text" /></div>
+                <div class="field half"><label>Surname</label><input id="lastNameAdmin" name="lastName" type="text" /></div>
+                <div class="field full"><label>Email</label><input id="emailAdmin" name="email" type="email" /></div>
+              </div>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field half"><label>Username</label><input id="usernameAdmin" name="username" type="text" disabled /></div>
+            <div class="field half"><label>Password</label><button type="button" id="changePwdBtnAdmin" class="changePwdBtn">Change Password</button></div>
+            <div class="field half"><label>Phone</label><input id="phoneAdmin" name="phone" type="number" /></div>
+            <div class="field half"><label>Profile Code</label><input id="profileCodeAdmin" name="profileCode" type="tel" disabled /></div>
+            <div class="field full"><label>Bank Account</label><input id="currentAccountAdmin" name="accountNumber" type="text" /></div>
+          </div>
+          <span style="color: green; display:block; text-align:center;" id="messageAdmin"></span>
+          <div class="actions">
+            <button id="saveBtnAdmin" class="saveBtn" type="button">Save Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="changePasswordModal" class="changePasswordModal">
+      <div class="changePasswordModalContent">
+        <span class="closePasswordSpan">×</span>
+        <h2>Change Password</h2>
+        <form id="changePasswordForm">
+             <label>Old Password</label><input type="password" id="currentPassword">
+             <label>New Password</label><input type="password" id="newPassword">
+             <label>Confirm</label><input type="password" id="confirmNewPassword">
+             <button type="submit" class="saveBtn" style="margin-top:10px;">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
+  </footer>
+</body>
+</html>

@@ -1,191 +1,186 @@
 <?php
-require_once 'User.php';
-require_once 'Admin.php';
+require_once '../Config/Database.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-ini_set('log_errors', 1);
-ini_set('error_log', 'php_error.log');
-
-class UserModel
-{
+class UserModel {
     private $conn;
 
-    public function __construct($db)
-    {
+    public function __construct($db) {
         $this->conn = $db;
     }
 
-    public function loginUser($username, $password)
-    {
-        $query = "SELECT * FROM PROFILE_ P JOIN USER_ U ON P.PROFILE_CODE = U.PROFILE_CODE
-        WHERE USER_NAME = :username AND PSWD = :pass";
+    // ==========================================
+    // 1. FUNCIONES DE LOGIN (CRÍTICAS)
+    // ==========================================
+    
+    public function loginUser($username, $password) {
+        // Verifica si tus columnas se llaman USER_NAME o Username
+        $query = "SELECT * FROM profile_ P 
+                  JOIN user_ U ON P.profile_code = U.profile_code 
+                  WHERE P.user_name = :username AND P.pswd = :pass";
+        
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $username);
         $stmt->bindParam(":pass", $password);
         $stmt->execute();
-
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($result) {
-            return $result;
-        } else {
-            return null;
-        }
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function loginAdmin($username, $password)
-    {
-        $query = " SELECT * FROM PROFILE_ P JOIN ADMIN_ A ON P.PROFILE_CODE=A.PROFILE_CODE
-        WHERE USER_NAME = :username AND PSWD = :pass";
+    public function loginAdmin($username, $password) {
+        $query = "SELECT * FROM profile_ P 
+                  JOIN admin_ A ON P.profile_code = A.profile_code 
+                  WHERE P.user_name = :username AND P.pswd = :pass";
+        
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $username);
         $stmt->bindParam(":pass", $password);
         $stmt->execute();
-
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($result) {
-            return $result;
-        } else {
-            return null;
-        }
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function checkUser($username, $password)
-    {
-        $query = "SELECT * FROM PROFILE_ P JOIN USER_ U ON P.PROFILE_CODE = U.PROFILE_CODE
-        WHERE USER_NAME = :username AND PSWD = :pass";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":username", $username);
-        $stmt->bindParam(":pass", $password);
+    // ==========================================
+    // 2. OBTENER DATOS (PARA PERFIL Y TABLA)
+    // ==========================================
+
+    public function getUserById($id) {
+        // 1. Intentar Admin
+        $qAdmin = "SELECT P.*, A.CURRENT_ACCOUNT 
+                   FROM PROFILE_ P 
+                   JOIN ADMIN_ A ON P.PROFILE_CODE = A.PROFILE_CODE 
+                   WHERE P.PROFILE_CODE = :id";
+        $stmt = $this->conn->prepare($qAdmin);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $row['ROLE_TYPE'] = 'admin'; 
+            return $row;
+        }
+
+        // 2. Intentar Usuario
+        $qUser = "SELECT P.*, U.CARD_NO, U.GENDER 
+                  FROM PROFILE_ P 
+                  JOIN USER_ U ON P.PROFILE_CODE = U.PROFILE_CODE 
+                  WHERE P.PROFILE_CODE = :id";
+        $stmt = $this->conn->prepare($qUser);
+        $stmt->bindParam(":id", $id);
         $stmt->execute();
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($result) {
-            return false;
-        } else {
-            $query = " SELECT * FROM PROFILE_ P JOIN ADMIN_ A ON P.PROFILE_CODE=A.PROFILE_CODE
-        WHERE USER_NAME = :username AND PSWD = :pass";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":username", $username);
-            $stmt->bindParam(":pass", $password);
-            $stmt->execute();
-
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($result) {
-                return true;
-            }
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $row['ROLE_TYPE'] = 'user';
+            return $row;
         }
-        return "There was an error when processing the profile.";
+        return null;
     }
 
-    public function create_user($username, $pswd1)
-    {
-        $checkQuery = "SELECT * FROM PROFILE_ WHERE USER_NAME = ?";
-        $checkStmt = $this->conn->prepare($checkQuery);
-        $checkStmt->bindValue(1, $username);
-        $checkStmt->execute();
-        if ($checkStmt->rowCount() > 0) {
-            return null;
-        }
-        $createQuery = "CALL RegistrarUsuario(?, ?)";
-        $createStmt = $this->conn->prepare($createQuery);
-        $createStmt->bindValue(1, $username);
-        $createStmt->bindValue(2, $pswd1);
-        $createStmt->execute();
-        $result = $createStmt->fetch(PDO::FETCH_ASSOC);
-        return $result;
-    }
-
-
-    public function get_all_users()
-    {
-        $query = "SELECT * FROM PROFILE_ AS P, USER_ AS U WHERE P.PROFILE_CODE = U.PROFILE_CODE";
-
+    public function get_all_users() {
+        $query = "SELECT P.*, U.CARD_NO, U.GENDER FROM PROFILE_ P JOIN USER_ U ON P.PROFILE_CODE = U.PROFILE_CODE";
         $stmt = $this->conn->prepare($query);
-
         $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function delete_user($id)
-    {
-        $query = "DELETE U, P FROM USER_ U JOIN PROFILE_ P ON P.PROFILE_CODE = U.PROFILE_CODE WHERE P.PROFILE_CODE = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
+    // ==========================================
+    // 3. MODIFICAR DATOS (TRANSACCIONES)
+    // ==========================================
 
-        if ($stmt->rowCount() > 0) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
+    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code) {
+        try {
+            $this->conn->beginTransaction();
 
-    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code)
-    {
-        $query = "UPDATE USER_ U JOIN PROFILE_ P ON U.PROFILE_CODE = P.PROFILE_CODE 
-        SET P.EMAIL = :email, P.USER_NAME = :username, P.TELEPHONE = :telephone, P.NAME_ = :name_, P.SURNAME = :surname, U.GENDER = :gender, U.CARD_NO = :card_no
-        WHERE P.PROFILE_CODE = :profile_code";
+            // Actualizar PROFILE_
+            // NOTA: Si tu columna en BD es 'Name' (sin guion bajo), cambia NAME_ por Name aquí
+            $query1 = "UPDATE PROFILE_ SET 
+                        EMAIL = :email, 
+                        USER_NAME = :username, 
+                        TELEPHONE = :telephone, 
+                        NAME_ = :name, 
+                        SURNAME = :surname 
+                       WHERE PROFILE_CODE = :code";
+            
+            $stmt1 = $this->conn->prepare($query1);
+            $stmt1->bindParam(":email", $email);
+            $stmt1->bindParam(":username", $username);
+            $stmt1->bindParam(":telephone", $telephone);
+            $stmt1->bindParam(":name", $name);
+            $stmt1->bindParam(":surname", $surname);
+            $stmt1->bindParam(":code", $profile_code);
+            $stmt1->execute();
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindparam(':email', $email);
-        $stmt->bindparam(':username', $username);
-        $stmt->bindparam(':telephone', $telephone);
-        $stmt->bindparam(':name_', $name);
-        $stmt->bindparam(':surname', $surname);
-        $stmt->bindparam(':gender', $gender);
-        $stmt->bindparam(':card_no', $card_no);
-        $stmt->bindparam(':profile_code', $profile_code);
+            // Actualizar USER_
+            $query2 = "UPDATE USER_ SET 
+                        GENDER = :gender, 
+                        CARD_NO = :card 
+                       WHERE PROFILE_CODE = :code";
+            
+            $stmt2 = $this->conn->prepare($query2);
+            $stmt2->bindParam(":gender", $gender);
+            $stmt2->bindParam(":card", $card_no);
+            $stmt2->bindParam(":code", $profile_code);
+            $stmt2->execute();
 
-        if ($stmt->execute()) {
+            $this->conn->commit();
             return true;
-        } else {
+
+        } catch (Exception $e) {
+            $this->conn->rollBack();
             return false;
         }
     }
 
-    public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
-    {
-        $query = "UPDATE ADMIN_ A JOIN PROFILE_ P ON A.PROFILE_CODE = P.PROFILE_CODE 
-        SET P.EMAIL = :email, P.USER_NAME = :username, P.TELEPHONE = :telephone, P.NAME_ = :name_, P.SURNAME = :surname, A.CURRENT_ACCOUNT = :current_account
-        WHERE P.PROFILE_CODE = :profile_code";
+    public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code) {
+        try {
+            $this->conn->beginTransaction();
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindparam(':email', $email);
-        $stmt->bindparam(':username', $username);
-        $stmt->bindparam(':telephone', $telephone);
-        $stmt->bindparam(':name_', $name);
-        $stmt->bindparam(':surname', $surname);
-        $stmt->bindparam(':current_account', $current_account);
-        $stmt->bindparam(':profile_code', $profile_code);
+            $query1 = "UPDATE PROFILE_ SET 
+                        EMAIL = :email, 
+                        USER_NAME = :username, 
+                        TELEPHONE = :telephone, 
+                        NAME_ = :name, 
+                        SURNAME = :surname 
+                       WHERE PROFILE_CODE = :code";
+            
+            $stmt1 = $this->conn->prepare($query1);
+            $stmt1->bindParam(":email", $email);
+            $stmt1->bindParam(":username", $username);
+            $stmt1->bindParam(":telephone", $telephone);
+            $stmt1->bindParam(":name", $name);
+            $stmt1->bindParam(":surname", $surname);
+            $stmt1->bindParam(":code", $profile_code);
+            $stmt1->execute();
 
-        if ($stmt->execute()) {
+            $query2 = "UPDATE ADMIN_ SET 
+                        CURRENT_ACCOUNT = :account 
+                       WHERE PROFILE_CODE = :code";
+            
+            $stmt2 = $this->conn->prepare($query2);
+            $stmt2->bindParam(":account", $current_account);
+            $stmt2->bindParam(":code", $profile_code);
+            $stmt2->execute();
+
+            $this->conn->commit();
             return true;
-        } else {
+
+        } catch (Exception $e) {
+            $this->conn->rollBack();
             return false;
         }
     }
 
-    public function modifyPassword($profile_code, $password)
-    {
-        $query = "UPDATE PROFILE_ SET PSWD = :password_ WHERE PROFILE_CODE = :profile_code";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindparam(':profile_code', $profile_code);
-        $stmt->bindparam(':password_', $password);
+    // ==========================================
+    // 4. BORRAR Y CREAR
+    // ==========================================
 
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+    public function delete_user($id) {
+        $query = "DELETE FROM PROFILE_ WHERE PROFILE_CODE = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
+    }
+    
+    // Función de registro (si la usas en otro lado)
+    public function create_user($username, $pswd) {
+        // ... tu código de registro si lo necesitas ...
+        return false; 
     }
 }
 ?>

@@ -1,63 +1,59 @@
 document.addEventListener("DOMContentLoaded", () => {
-  document
-    .getElementById("loginForm")
-    .addEventListener("submit", async function (e) {
-      e.preventDefault();
+    const loginForm = document.getElementById("loginForm");
 
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+    if (loginForm) {
+        loginForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-      let data = await login(username, password);
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
 
-      if (data) {
-        if (data["error"]) {
-          alert("El nombre de usuario o la contraseña son incorrectas.");
-        } else if (data["resultado"]) {
-          console.log("Login correcto, redirigiendo...");
-          setTimeout(() => {
-            window.location.href = "main.html";
-          }
-            , 1000);
-        }
-      } else {
-        console.log("Error al cargar JSON.");
-      }
+            console.log("Intentando login con:", username); // Debug
 
-    });
+            let data = await login(username, password);
+            console.log("Respuesta servidor:", data); // Debug
 
-  async function login(username, password) {
-    try {
-      const response = await fetch(`../../api/Login.php`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-        // Credentials include es vital para que viaje la cookie si usas dominios distintos
-        // pero en localhost ayuda a mantener la consistencia
-        credentials: "include",
-      });
+            if (data.exito) {
+                // YA NO NECESITAS ESTO:
+                // localStorage.setItem("actualProfile", ...); BORRAR
+                alert("Login correcto. Redirigiendo...");
 
-      if (!response.ok) throw new Error("Error en la petición");
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return null;
+                // Simplemente rediriges. La cookie ya está grabada en el navegador.
+                if (data.rol === "admin") {
+                    window.location.href = "opcAdmin.html";
+                } else {
+                    window.location.href = "main.html";
+                }
+            } else {
+                alert("Error: " + (data.error || "Credenciales incorrectas"));
+            }
+        });
     }
-  }
-  /*
-  const response = await fetch(`../../api/Login.php`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-      credentials: "include",
-    });
 
-    let data = await response.json();
+    async function login(username, password) {
+        try {
+            const response = await fetch(`../../api/Login.php`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+                credentials: 'include', // Importante para enviar/recibir cookies
+            });
+            // Si el archivo PHP falla (Error 500, 404), lanzamos error
+            if (!response.ok) return { exito: false, error: `Error del servidor (${response.status}). Ver consola.` };
 
-    return data;
-    
-  */
+            let data;
+            try {
+                data = await response.text();
+                data = JSON.parse(data);
+            } catch (e) {
+                console.error("Error al parsear JSON:", e.message);
+                throw new Error("Respuesta inválida del servidor: " + e.message);
+            }
+
+            return data;
+            
+        } catch (error) {
+            console.error("Error en fetch:", error);
+        }
+    }
 });

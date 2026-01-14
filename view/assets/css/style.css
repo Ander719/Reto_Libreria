@@ -1,34 +1,24 @@
-.logoutIcon {
-  width: 4%;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.headHome {
-  display: flex;
-  justify-content: space-between;
-  padding-right: 1%;
-}
-
+/* ======================================================
+   1. VARIABLES GLOBALES (Configura tu tema aquí)
+   ====================================================== */
 :root {
-  --background-color: #f1f1f1;
-}
-/*Footer*/
-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  /* Colores */
+  --primary-color: #101416;   /* Negro corporativo */
+  --primary-hover: #333333;   /* Gris oscuro para hover */
+  --secondary-color: #ffffff; /* Blanco */
+  --danger-color: #d9534f;    /* Rojo para acciones destructivas */
+  --danger-hover: #c9302c;
+  --background-color: #f1f1f1;/* Gris fondo */
+  
+  /* Configuración UI */
+  --border-radius: 12px;      /* Redondeo unificado */
+  --input-padding: 12px;      /* Relleno inputs/botones */
+  --font-family: "Segoe UI", sans-serif;
 }
 
-/*Login / Signup*/
+/* ======================================================
+   2. RESET Y BASE
+   ====================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -63,862 +53,409 @@ html {
   justify-content: center;
   align-items: center;
   background-color: var(--background-color);
+  color: #333;
 }
 
-.loginForm {
-  width: 80%;
-  max-width: 400px;
-  padding: 40px;
+/* ======================================================
+   3. COMPONENTES GLOBALES (LO MÁS IMPORTANTE)
+   ====================================================== */
+
+/* --- A) INPUTS UNIFICADOS --- */
+/* Aplica automáticamente a todos los formularios */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea {
+  width: 100%;
+  padding: var(--input-padding);
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: var(--border-radius);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.3s ease;
 }
 
-.loginForm h2 {
-  margin-bottom: 20px;
-  text-align: center;
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
-.loginForm label {
-  display: block;
-  margin-top: 15px;
+/* --- B) BOTONES UNIFICADOS (.btn) --- */
+/* Usa estas clases en tu HTML: btn btn-primary, btn btn-secondary, btn btn-danger */
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 24px;
+  font-size: 1.1rem;
   font-weight: bold;
-}
-
-.loginForm input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-}
-
-.loginForm button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background-color: #222020;
-  color: white;
-  border: none;
-  border-radius: 15px;
+  border-radius: var(--border-radius);
   cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  width: 100%; /* Por defecto ocupan todo el ancho disponible */
+  max-width: 400px; /* Pero no se hacen infinitos en pantallas grandes */
+  margin: 5px 0;
 }
 
-.loginForm button:hover {
-  background-color: #005fa3;
+/* Estilo 1: Sólido (Login, Guardar, Crear) */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.registerLink {
-  align-self: center;
-  margin-top: 15px;
+/* Estilo 2: Borde (Volver, Editar) */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn-secondary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Estilo 3: Peligro (Borrar) */
+.btn-danger {
+  background-color: white;
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+.btn-danger:hover {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+/* Estilo 4: Pequeño (Para Logout o acciones secundarias) */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  width: auto;
+}
+
+/* ======================================================
+   4. LAYOUTS ESPECÍFICOS
+   ====================================================== */
+
+/* --- HEADER & FOOTER --- */
+.headHome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 2%;
+  background: white; /* Opcional si quieres header blanco */
+}
+.topPic { width: 80px; object-fit: contain; }
+.logoutIcon { width: 30px; cursor: pointer; }
+
+footer {
+  background-color: #333;
+  color: white;
   text-align: center;
-  font-size: 14px;
-  color: #555;
+  padding: 20px 0;
+  /* El footer fijo a veces molesta en móviles, considera quitar position:fixed si hay scroll */
+  position: fixed; 
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+.copyright { position: absolute; bottom: 5px; width: 100%; font-size: 0.8rem; opacity: 0.7; pointer-events: none; }
+ul { list-style: none; }
+li { margin-bottom: 5px; }
+.listTitle { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+
+
+/* --- LOGIN / SIGNUP --- */
+.container { display: flex; height: 100vh; }
+.leftPanel { width: 50%; height: 100%; overflow: hidden; }
+.leftPanel img { width: 100%; height: 100%; object-fit: cover; }
+
+.rightPanel { 
+  width: 50%; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 20px;
 }
 
-.registerLink a {
-  color: #555;
-  text-decoration: underline;
-  font-weight: bold;
+.loginForm { 
+  width: 100%; 
+  max-width: 400px; 
+  padding: 40px; 
+  background: white; 
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Sombra suave */
+}
+.loginForm h2 { text-align: center; margin-bottom: 30px; }
+.registerLink { text-align: center; margin-top: 15px; font-size: 0.9rem; }
+
+
+/* --- HOME PAGE --- */
+.mainHome { padding-bottom: 150px; /* Espacio para el footer */ }
+.saveDataBox { 
+  position: absolute; 
+  left: 50%; 
+  top: 30%; 
+  transform: translate(-50%, -50%); 
+  text-align: center; 
+  background: rgba(255,255,255,0.9);
+  padding: 40px;
+  border-radius: var(--border-radius);
+}
+.saveDataBox h1 { margin-bottom: 20px; font-size: 2.5rem; }
+.buttons { display: flex; gap: 20px; justify-content: center; }
+
+
+/* --- ADMIN & BOOK OPTIONS --- */
+/* Barras superiores unificadas */
+.topbar-admin, .books-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  background-color: white; padding: 15px 30px; margin: 20px auto;
+  border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  width: 90%; max-width: 1000px;
+}
+.user-info, .home-link { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; color: var(--primary-color); }
+.logo-diamond { font-weight: 800; border: 2px solid var(--primary-color); padding: 5px 15px; transform: skew(-10deg); }
+
+/* Contenedores de botones de acción central */
+.admin-actions, .books-actions {
+  display: flex; flex-direction: column; align-items: center; gap: 15px;
+  width: 100%; margin-top: 40px; padding-bottom: 100px;
 }
 
-.registerLink a:hover {
-  text-decoration: underline;
+
+/* --- MODALES & POPUPS --- */
+.adminTableModal, .changePasswordModal, .modifyUserPopupAdmin, .modifyAdminPopup {
+  display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);
 }
 
-#mensaje {
-  text-align: center;
+.popupCard, .adminTableModalContent, .changePasswordModalContent {
+  background-color: #fff; margin: auto; padding: 30px; 
+  border: 2px solid var(--primary-color); border-radius: var(--border-radius);
+  width: 90%; max-width: 900px; 
+  position: relative; top: 50%; transform: translateY(-50%);
+  max-height: 90vh; overflow-y: auto;
+}
+.changePasswordModalContent { max-width: 500px; }
+
+/* Perfil Forms */
+.profileHeader { display: flex; gap: 20px; align-items: center; margin-bottom: 30px; }
+.avatar { width: 100px; height: 100px; border-radius: 50%; background: #ddd; overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.fields { display: flex; flex-wrap: wrap; gap: 20px; }
+.field { display: flex; flex-direction: column; }
+.field.half { width: calc(50% - 10px); }
+.field.full { width: 100%; }
+
+/* Tablas Admin */
+.adminTable { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.adminTable th { background-color: var(--primary-color); color: white; padding: 12px; }
+.adminTable td { padding: 12px; border-bottom: 1px solid #ddd; text-align: center; }
+.center-flex-div { display: flex; justify-content: center; gap: 10px; }
+.size-small { width: 24px; cursor: pointer; transition: transform 0.2s; }
+.size-small:hover { transform: scale(1.1); }
+.close, .closePasswordSpan { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; }
+
+
+/* --- DRAG & DROP ZONE --- */
+.drop-zone {
+  width: 100%; height: 200px; padding: 25px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  font-weight: 500; font-size: 1.2rem; cursor: pointer; color: #aaa;
+  border: 4px dashed var(--primary-color); border-radius: var(--border-radius);
+  background-color: #fafafa; position: relative;
+  transition: all 0.2s;
+}
+.drop-zone:hover { background-color: #fff; }
+.drop-zone.disabled { opacity: 0.5; background-color: #e9ecef; cursor: not-allowed; pointer-events: none; }
+.drop-zone--over { border-style: solid; background-color: #e1e1e1; color: var(--primary-color); }
+
+.drop-zone__thumb {
+  width: 100%; height: 100%; border-radius: calc(var(--border-radius) - 4px);
+  overflow: hidden; background-color: #ccc; background-size: contain; background-repeat: no-repeat; background-position: center;
+  position: absolute; top: 0; left: 0;
+}
+.drop-zone__thumb::after {
+  content: attr(data-label); position: absolute; bottom: 0; left: 0; width: 100%;
+  padding: 5px 0; color: white; background: rgba(0,0,0,0.75); font-size: 14px;
 }
 
-/* Pantallas pequeñas (móviles) */
-@media (max-width: 600px) {
-  .container {
-    flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-  }
 
-  .leftPanel {
-    width: 100%;
-    height: 30vh;
-  }
-
-  .leftPanel img {
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .rightPanel {
-    width: 100%;
-    height: 70vh;
-    padding: 20px 0;
-  }
-
-  .loginForm {
-    width: 90%;
-    padding: 25px;
-    max-width: 350px;
-  }
-
-  .loginForm h2 {
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-  }
-
-  .loginForm input {
-    padding: 12px;
-  }
-
-  .loginForm button {
-    padding: 12px;
-  }
+/* ======================================================
+   5. MEDIA QUERIES (RESPONSIVE)
+   ====================================================== */
+@media (max-width: 768px) {
+  .container { flex-direction: column; }
+  .leftPanel { width: 100%; height: 250px; }
+  .rightPanel { width: 100%; height: auto; }
+  
+  .field.half { width: 100%; }
+  .saveDataBox { width: 90%; }
+  .saveDataBox h1 { font-size: 2rem; width: auto;}
+  .buttons { flex-direction: column; }
+  
+  .headHome { flex-direction: column; gap: 10px; }
+  footer { position: relative; flex-direction: column; gap: 20px; padding-bottom: 60px;}
 }
+/* --- RESET & BASICS --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body, html { height: 100%; font-family: "Segoe UI", sans-serif; background-color: #f4f4f4; }
 
-/* Pantallas medianas (tablets) */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .container {
-    flex-direction: row;
-  }
+/* HEADER */
+.headHome { display: flex; justify-content: space-between; padding: 10px 20px; background: white; align-items: center; border-bottom: 1px solid #ddd; }
+.topPic { width: 60px; }
+.logoutIcon { width: 30px; cursor: pointer; }
 
-  .leftPanel {
-    width: 40%;
-  }
+/* MAIN LAYOUT */
+.mainHome { position: relative; min-height: 100vh; padding-bottom: 60px; }
 
-  .rightPanel {
-    width: 60%;
-  }
+/* HERO SECTION (Imagen + Caja Flotante) */
+.hero-section { position: relative; height: 500px; width: 100%; }
+.mainPic { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .loginForm {
-    padding: 30px;
-    width: 85%;
-  }
-
-  .loginForm h2 {
-    font-size: 1.4rem;
-  }
-}
-
-/* Pantallas grandes (escritorios) */
-@media (min-width: 1200px) {
-  .loginForm {
-    max-width: 450px;
-    padding: 50px;
-  }
-
-  .loginForm h2 {
-    font-size: 1.8rem;
-  }
-
-  .loginForm input,
-  .loginForm button {
-    padding: 12px;
-  }
-}
-
-/*Home Page*/
-.topPic {
-  width: 10%;
-}
-
-.map {
-  padding-right: 2%;
-}
-
-.mainPic {
-  float: left;
-  width: 40%;
-  padding: 7px 6px;
-}
-
+/* CAJA CENTRAL FLOTANTE */
 .saveDataBox {
   position: absolute;
-  left: 50%;
-  top: 20%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%); /* Centrado perfecto sobre la imagen */
+  background: rgba(255,255,255,0.95);
+  padding: 40px;
+  text-align: center;
+  border-radius: 12px;
+  width: 90%; max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
+.saveDataBox h1 { margin-bottom: 20px; font-size: 2rem; color: #333; }
+.buttons { display: flex; justify-content: center; gap: 20px; }
 
-.saveDataBox h1 {
-  font-size: 50px;
-  width: 500px;
-}
-
-.buttons {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 20px;
-}
-
+/* Botones Principales */
 .adjustData {
-  width: 200px;
-  height: 50px;
-  background-color: #ffffff;
-  border-style: solid;
-  border-color: #000;
-  cursor: pointer;
+  padding: 12px 25px; background: white; border: 2px solid #111; cursor: pointer; font-weight: bold; transition: 0.3s;
 }
-
-.adjustData:hover {
-  background-color: #d3d3d3;
-  transition-duration: 0.5s;
-}
-
+.adjustData:hover { background: #eee; }
 .checkUsOut {
-  width: 200px;
-  height: 50px;
-  background-color: #101416;
-  color: white;
-  border: none;
-  cursor: pointer;
+  padding: 12px 25px; background: #111; color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.3s;
+}
+.checkUsOut:hover { background: #444; }
+
+
+/* ============================================================
+   SECCIÓN TABLA ADMIN (INCRUSTADA EN LA PÁGINA)
+   ============================================================ */
+.adminPanelSection {
+    width: 100%;
+    padding: 40px 20px;
+    background-color: #f4f4f4; /* Fondo gris claro para diferenciar */
+    display: flex;
+    justify-content: center;
 }
 
-.checkUsOut:hover {
-  background-color: #4d4a4a;
-  transition-duration: 0.5s;
+.adminPanelContainer {
+    width: 100%; max-width: 1000px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-.desc {
-  width: 25%;
-  padding-left: 1%;
-}
-
-p.copyright {
-  position: absolute;
-  width: 100%;
-  color: #fff;
-  line-height: 40px;
-  font-size: 0.7em;
-  text-align: center;
-  bottom: 0;
-}
-
-ul {
-  list-style-type: none;
-}
-
-li {
-  text-align: left;
-  padding: 3px 0px;
-}
-
-.listTitle {
-  font-weight: bold;
-  font-size: 20px;
-  text-align: left;
-}
-
-/*-----Admin Page CSS-----*/
-/*Modal*/
-.adminTableModal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modifyUserPopupAdmin {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 999;
-}
-
-.modifyAdminPopup {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 999;
-}
-
-/* Modal Content */
-.adminTableModalContent {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 3px solid black;
-  border-radius: 10px;
-  width: 80%;
-  height: 80%;
-}
-
-/* The Close Button */
-.close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.adminTable {
-  width: 100%;
-  display: block;
-  max-height: 90%;
-  overflow-y: auto;
-}
-
-.adminTableHead {
-  position: sticky;
-  top: 0;
-}
-
-.adminTable th {
-  background-color: #101416;
-  color: #ffffff;
-  width: 33%;
-  height: 10%;
-  padding: 5px;
-  outline: 3px solid #101416;
-}
-
-.adminTable tr {
-  text-align: center;
-}
-
-.adminTableData td {
-  outline: 3px solid #101416;
-}
-
-.center-flex-div {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-}
-
-.center-flex-div>* {
-  margin-left: 5px;
-  margin-right: 5px;
-  cursor: pointer;
-}
-
-.size-small {
-  width: 10%;
-}
-
-.flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px;
-}
+.panelHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+.panelHeader h2 { color: #333; }
 
 .modifySelfButton {
-  width: 30%;
-  background-color: #101416;
-  font-weight: bold;
-  color: white;
-  border: 0px;
-  border-radius: 10px;
-  cursor: pointer;
+    padding: 8px 15px; background: transparent; border: 1px solid #333; border-radius: 5px; cursor: pointer; transition: 0.2s;
 }
+.modifySelfButton:hover { background: #333; color: white; }
 
-/* Profile Popup */
-/* to blurr the background */
-.popupOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 999;
+/* TABLA */
+.adminTable { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.adminTable th { text-align: left; padding: 15px; background: #fafafa; color: #555; font-weight: 600; border-bottom: 2px solid #eee; }
+.adminTable td { padding: 15px; border-bottom: 1px solid #eee; color: #333; }
+.adminTable tr:hover { background-color: #fcfcfc; }
+
+/* Botón Borrar en Tabla */
+.btn-danger { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+.btn-danger:hover { background: #cc0000; }
+
+
+/* ============================================================
+   MODALES DE PERFIL (ESTILO TARJETA / POPUP)
+   ============================================================ */
+.modifyUserPopupAdmin, .modifyAdminPopup {
+  display: none; position: fixed; inset: 0; 
+  background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px);
+  z-index: 2000; justify-content: center; align-items: center;
 }
 
 .popupCard {
-  width: 100%;
-  max-width: 980px;
-  background: var(--background-color, #f1f1f1);
-  border-radius: 18px;
-  border: 4px black solid;
-  padding: 24px;
-}
-
-.profileForm {
-  width: 100%;
-  max-width: 100%;
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-}
-
-.profileHeader {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.avatar {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #e6e6e6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 140px;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.infoArea {
-  flex: 1 1 auto;
-}
-
-.fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px 22px;
-  margin-top: 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-}
-
-.field label {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.field.half {
-  width: calc(50% - 11px);
-}
-
-.field.full {
-  width: 100%;
-}
-
-.inline {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.passwordWrap {
-  position: relative;
-  flex: 1;
-}
-
-.passwordWrap input {
-  width: 100%;
-}
-
-.togglePwd {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 1px solid #d0d0d0;
-  background: #f7f7f7;
-  border-radius: 18px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.changePwdBtn {
-  white-space: nowrap;
-}
-
-.actions {
-  display: flex;
-  margin-top: 22px;
-}
-
-.saveBtn {
-  width: 100%;
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.deleteBtn {
-  width: 50%;
-  border-radius: 18px;
-  padding: 14px;
-  background-color: #f0f0f0;
-  border-color: 1px #000;
-}
-
-.gender {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  background-color: white;
-  font-family: "Segoe UI", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/*Change Password pop up*/
-.changePasswordModal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.changePasswordModalContent {
-  background-color: var(--background-color, #f1f1f1);
-  margin: 5% auto;
-  padding: 24px;
-  border: 4px black solid;
-  border-radius: 18px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-}
-
-.changePasswordModal h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-}
-
-.changePasswordModal label {
-  display: block;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-.changePasswordModal input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-}
-
-.changePasswordModal button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background-color: #101416;
-  color: white;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.changePasswordModal button:hover {
-  background-color: #4d4a4a;
-  transition-duration: 0.5s;
-}
-
-.closePasswordSpan {
-  color: #aaaaaa;
-  cursor: pointer;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
-
-.closePasswordModal:hover,
-.closePasswordModal:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-@media (max-width: 780px) {
-  .profileHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .field.half {
-    width: 100%;
-  }
-
-}
-
-
-/* ==========================================================================
-   ==========================================================================
-   PARTE 2: ESTILOS NUEVOS - TIENDA TIPO AMAZON (STYLE 2)
-   (Pega esto al final de tu archivo style.css original)
-   ==========================================================================
-   ========================================================================== */
-
-/* 1. VARIABLES & CONFIGURACIÓN GLOBAL */
-:root {
-  /* Paleta de Colores estilo E-commerce Pro */
-  --bg-body: #ffffff;
-  --text-main: #333333;
-  /* Gris muy oscuro para lectura cómoda */
-  --text-muted: #565959;
-  /* Gris Amazon para autores/meta info */
-  --price-color: #b12704;
-  /* Rojo oscuro para precios */
-  --link-color: #007185;
-  /* Azul "Amazon" para enlaces */
-  --link-hover: #c7511f;
-  /* Naranja al pasar el ratón */
-
-  /* Botones y Acciones */
-  --btn-primary: #ffd814;
-  /* Amarillo "Buy Box" */
-  --btn-hover: #f7ca00;
-  --btn-border: #fcd200;
-
-  /* Bordes y Fondos */
-  --border-light: #e7e7e7;
-  --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-/* Ajuste de fuente para la tienda (Cascada sobre el body original) */
-body {
-  font-family: "Amazon Ember", Arial, sans-serif, "Segoe UI";
-  line-height: 1.6;
-}
-
-/* 2. HEADER MODIFICADO (Sobrescribe para dar look oscuro Amazon) */
-.headHome {
-  background-color: #131921;
-  /* Negro Amazon */
-  align-items: center;
-  color: white;
-  padding: 10px 20px;
-}
-
-.topPic {
-  height: 40px;
-  width: auto;
-  /* Reseteamos el ancho para que no se deforme el logo */
-  object-fit: contain;
-}
-
-.nav-icons a {
-  color: white;
-  text-decoration: none;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-}
-
-.nav-icons a:hover {
-  text-decoration: underline;
-}
-
-/* 3. LAYOUT PRINCIPAL */
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-bottom: 80px;
-  /* Espacio extra para el footer */
-}
-
-/* 4. SECCIÓN DE DETALLES DEL LIBRO (Book Details) */
-.details-container {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 40px;
-  align-items: flex-start;
-}
-
-.details-image {
-  flex: 0 0 35%;
-  display: flex;
-  justify-content: center;
-  background-color: #fff;
-  border: 1px solid var(--border-light);
-  padding: 10px;
-  border-radius: 4px;
-}
-
-.details-image img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  max-height: 500px;
-}
-
-.details-info {
-  flex: 1;
-}
-
-#bookTitle {
-  font-size: 1.8rem;
-  font-weight: 500;
-  line-height: 1.2;
-  margin-bottom: 5px;
-  color: var(--text-main);
-}
-
-#bookAuthor {
-  font-size: 0.9rem;
-  font-weight: normal;
-  color: var(--link-color);
-  margin-bottom: 15px;
-  cursor: pointer;
-}
-
-#bookAuthor:hover {
-  color: var(--link-hover);
-  text-decoration: underline;
-}
-
-.details-price {
-  font-size: 1.5rem;
-  color: var(--price-color);
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-
-.stock-badge {
-  color: #007600;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.details-info h4 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-  color: var(--text-main);
-}
-
-.details-info p {
-  color: var(--text-main);
-  margin-bottom: 20px;
-}
-
-/* Tabla de info técnica */
-.meta-info {
-  border-top: 1px solid var(--border-light);
-  border-bottom: 1px solid var(--border-light);
-  padding: 15px 0;
-  margin: 20px 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-}
-
-.meta-info p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.meta-info strong {
-  color: var(--text-main);
-}
-
-/* 5. ZONA DE ACCIÓN (Caja de compra) */
-.actions {
-  background-color: #fcfbfb;
-  border: 1px solid var(--border-light);
-  padding: 20px;
-  border-radius: 8px;
-  width: fit-content;
-  display: flex;
-  /* Sobrescribe el display block si existía */
-  flex-direction: column;
-  gap: 15px;
-  box-shadow: var(--shadow-soft);
-  margin-top: 0;
-}
-
-.actions label {
-  font-size: 0.85rem;
-  font-weight: bold;
-}
-
-.qty-input {
-  padding: 8px;
-  border: 1px solid #888;
-  border-radius: 4px;
-  width: 60px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
-}
-
-.action-btn {
-  background-color: var(--btn-primary);
-  border: 1px solid var(--btn-border);
+  width: 90%; max-width: 700px;
+  background: #ffffff;
   border-radius: 20px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #0F1111;
-  box-shadow: 0 2px 5px rgba(213, 217, 217, .5);
-  transition: background-color 0.2s ease;
-  width: 100%;
-  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  padding: 40px; position: relative;
+  max-height: 90vh; overflow-y: auto; /* Por si la pantalla es pequeña */
 }
 
-.action-btn:hover {
-  background-color: var(--btn-hover);
+.close-card { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #aaa; cursor: pointer; }
+.close-card:hover { color: #333; }
+
+/* Estructura Formulario Perfil */
+.profileHeader { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 25px; }
+.avatar img { width: 90px; height: 90px; border-radius: 50%; background: #eee; object-fit: cover; }
+.infoArea { flex-grow: 1; }
+
+.fields { display: flex; flex-wrap: wrap; gap: 20px; }
+.field { display: flex; flex-direction: column; }
+.field.half { width: calc(50% - 10px); }
+.field.full { width: 100%; }
+
+.profileForm input, .profileForm select, .changePwdBtn {
+  width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;
+  font-size: 1rem; margin-top: 5px; outline: none; background: #fff;
+}
+.profileForm input:disabled { background: #f9f9f9; color: #888; }
+.changePwdBtn { background: #f5f5f5; text-align: left; color: #444; cursor: pointer; }
+.changePwdBtn:hover { background: #e0e0e0; }
+
+.profileForm label { font-size: 0.9rem; color: #555; font-weight: 600; margin-left: 2px; }
+
+.actions { margin-top: 30px; display: flex; gap: 15px; }
+.saveBtn { padding: 12px 25px; background: #222; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.saveBtn:hover { background: #000; }
+.deleteBtn { padding: 12px 25px; background: white; border: 1px solid #ccc; color: #555; border-radius: 8px; cursor: pointer; }
+.deleteBtn:hover { border-color: red; color: red; }
+
+/* Responsive Mobile */
+@media (max-width: 650px) {
+    .profileHeader { flex-direction: column; align-items: center; text-align: center; }
+    .field.half { width: 100%; }
+    .hero-section { height: auto; padding-bottom: 50px; }
+    .saveDataBox { position: relative; transform: none; top: 0; left: 0; margin: -50px auto 0 auto; }
 }
 
-/* 6. COMENTARIOS */
-.comments-section {
-  margin-top: 50px;
-  padding-top: 30px;
-  border-top: 1px solid var(--border-light);
-  margin-bottom: 60px;
-}
+/* FOOTER */
+footer { text-align: center; padding: 15px; background: #333; color: white; position: fixed; bottom: 0; width: 100%; z-index: 10; }
 
-.comments-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-}
-
-#commentsList {
-  background: #fff;
-}
-
-/* 7. RESPONSIVE DESIGN TIENDA */
-@media (max-width: 768px) {
-  .details-container {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .details-image,
-  .details-info {
-    flex: none;
-    width: 100%;
-  }
-
-  .actions {
-    width: 100%;
-  }
-
-  .details-image img {
-    max-height: 350px;
-  }
-}
+/* Modal Password */
+.changePasswordModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2001; justify-content: center; align-items: center;}
+.changePasswordModalContent { background: white; padding: 30px; border-radius: 10px; position: relative; width: 320px; }
+.closePasswordSpan { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 1.5rem;}

@@ -1,13 +1,106 @@
-// Simulación: En un caso real, esto vendría de tu login.js al hacer el inicio de sesión.
-// localStorage.setItem('currentUser', JSON.stringify({ username: 'JuanP', profileCode: 1 }));
+import { currentUser, checkSession } from './sesion.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // 1. Obtener el ISBN de la URL
+    // Esto lee lo que hay después del signo ? (ej: ?isbn=1234)
+    const params = new URLSearchParams(window.location.search);
+    const isbn = params.get('isbn');
+
+    if (!isbn) {
+        alert("No se ha especificado un libro.");
+        window.location.href = "main.html"; // Volver al inicio si no hay ISBN
+        return;
+    }
+
     // 1. Cargar detalles del libro (Tu lógica actual)...
-    // ... loadBookDetails();
-
+    loadBookDetails(isbn);
+    await checkSession();
     // 2. Gestionar la zona de comentarios
     handleCommentSection();
 });
+
+async function loadBookDetails(isbn) {
+    try {
+        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`, { method: 'GET' });
+        console.log(response)
+        let data;
+        try {
+            data = await response.text();
+            data = JSON.parse(data);
+        } catch (err) {
+            throw new Error('Invalid JSON response: ' + err.message);
+        }
+
+        console.log("Datos recibidos del servidor:", data);
+        if (data.exito) {
+            rellenarVista(data.libro);
+        } else {
+            document.querySelector('.details-info').innerHTML = "<h2>Libro no encontrado</h2>";
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+function rellenarVista(libro) {
+    // A. Textos Básicos
+    document.getElementById('bookTitle').textContent = libro.title || "Título Desconocido";
+    document.getElementById('bookAuthor').textContent = (libro.name_author || "Autor Desconocido") + " " + (libro.last_name || "");
+    document.getElementById('bookPrice').textContent = parseFloat(libro.price).toFixed(2) + "€";
+    document.getElementById('bookSynopsis').textContent = libro.synopsis || "Sin descripción disponible.";
+
+    // B. Metadatos
+    document.getElementById('bookISBN').textContent = libro.isbn;
+    document.getElementById('bookPages').textContent = libro.pages;
+    document.getElementById('bookEditorial').textContent = libro.editorial;
+
+    // C. Imagen (con fallback si falla)
+    const img = document.getElementById('bookCover');
+    img.src = libro.cover ? `../assets/img/${libro.cover}` : "../assets/img/mood-heart.png";
+    console.log("Cargando imagen de portada:", img.src);
+    img.alt = `Portada de ${libro.title}`;
+
+    // D. Lógica de Stock
+    const badge = document.getElementById('stockBadge');
+    const btnCart = document.getElementById('addToCartBtn');
+    const qtyInput = document.getElementById('qtyInput');
+
+    if (libro.stock > 0) {
+        badge.textContent = "In Stock";
+        badge.className = "stock-badge success"; // Asegúrate de tener estilo verde en CSS
+        badge.style.color = "green";
+
+        // Configurar máximo del input según stock real
+        qtyInput.max = libro.stock;
+    } else {
+        badge.textContent = "Out of Stock";
+        badge.className = "stock-badge error";
+        badge.style.color = "red";
+
+        // Desactivar compra
+        btnCart.disabled = true;
+        btnCart.textContent = "Agotado";
+        btnCart.style.backgroundColor = "#ccc";
+        qtyInput.disabled = true;
+    }
+
+    // E. Evento del Botón Añadir al Carrito
+    btnCart.addEventListener('click', () => {
+        if (!currentUser) {
+            alert("Debes iniciar sesión para comprar.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const cantidad = qtyInput.value;
+        agregarAlCarrito(libro.isbn, cantidad);
+    });
+}
+function agregarAlCarrito(isbn, cantidad) {
+    // Aquí iría tu fetch a api/AddToCart.php
+    console.log(`Añadiendo ${cantidad} copia(s) del libro ${isbn} al carrito.`);
+    alert("Producto añadido al carrito (Simulación)");
+}
 
 function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');

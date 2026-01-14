@@ -1,0 +1,177 @@
+[29-Dec-2025 21:39:08 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:08 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:10 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:10 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:13 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:13 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:49 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:50 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:50 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:39:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:42:09 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:42:09 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:42:10 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:42:10 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:42:10 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:42:10 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:43:22 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:43:22 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:50:56 Europe/Berlin] PHP Warning:  require_once(../model/BookDAO.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 21:50:56 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../model/BookDAO.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\retoDW2eval\controller\controller.php:4
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(11): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 4
+[29-Dec-2025 22:02:20 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(17): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[29-Dec-2025 22:06:31 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(17): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[29-Dec-2025 22:07:51 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\AddUser.php(18): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[29-Dec-2025 22:08:01 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\AddUser.php(18): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[29-Dec-2025 22:08:24 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\AddUser.php(18): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[29-Dec-2025 22:14:00 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\AddUser.php(18): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[29-Dec-2025 22:14:59 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "BookDAO" not found in C:\xampp\htdocs\retoDW2eval\controller\controller.php:16
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\api\Login.php(17): controller->__construct()
+#1 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\controller\controller.php on line 16
+[30-Dec-2025 18:06:53 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'aefsr' for column 'id_author' at row 1 in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('fgdt', 'sgdt', 'aefsr', '333', '23', 'rw4et5', '34', '', '61k5K+9pNyL._AC...')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[30-Dec-2025 18:07:42 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'aefsr' for column 'id_author' at row 1 in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('fgdt', 'sgdt', 'aefsr', '333', '23', 'rw4et5', '34', '', '61k5K+9pNyL._AC...')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[30-Dec-2025 18:08:47 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`crud_adt`.`book_`, CONSTRAINT `book__ibfk_1` FOREIGN KEY (`id_author`) REFERENCES `author_` (`ID_AUTHOR`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('fgdt', 'sgdt', '1', '333', '23', 'rw4et5', '34', '', '61k5K+9pNyL._AC...')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[30-Dec-2025 18:09:59 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`crud_adt`.`book_`, CONSTRAINT `book__ibfk_1` FOREIGN KEY (`id_author`) REFERENCES `author_` (`ID_AUTHOR`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('1234567891011', 'eowfn', '1', '200', '20', 'dragone sy mazm...', '20', 'fonw', '61k5K+9pNyL._AC...')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[30-Dec-2025 18:12:54 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function prepare() on null in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:45
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#1 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('acdwerswerqwe', 'dragones y mazm...', '1', '200', '20', 'dragones y mazm...', '20', 'editorial', '61k5K+9pNyL._AC...')
+#2 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 45
+[30-Dec-2025 18:17:08 Europe/Berlin] Error de conexión: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: NO)
+[30-Dec-2025 18:17:08 Europe/Berlin] Error de conexión: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: NO)
+[30-Dec-2025 18:17:08 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function prepare() on null in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:45
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#1 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('aisodmafetpals', 'dragones yy maz...', '1', '200', '22', 'dragoness y maz...', '20', 'editorial', '61k5K+9pNyL._AC...')
+#2 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 45
+[08-Jan-2026 12:09:27 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`crud_adt`.`book_`, CONSTRAINT `book__ibfk_1` FOREIGN KEY (`id_author`) REFERENCES `author_` (`ID_AUTHOR`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('9788445073727', 'prueba', '9', '200', '3', 'irwnfio', '20', 'elkar', 'download.jpg')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[08-Jan-2026 12:10:20 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '9788445073727' for key 'book_.PRIMARY' in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php:67
+Stack trace:
+#0 C:\xampp\htdocs\retoDW2eval\model\bookDAO.php(67): PDOStatement->execute()
+#1 C:\xampp\htdocs\retoDW2eval\controller\controller.php(49): BookDAO->createBook(Object(Book))
+#2 C:\xampp\htdocs\retoDW2eval\api\AddBook.php(26): controller->createBook('9788445073727', 'qw4ert', '1', '234', '23', 'ttyjgu', '23', 'weert', 'download.jpg')
+#3 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\model\bookDAO.php on line 67
+[10-Jan-2026 15:27:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:28:03 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:31:41 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:31:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18
+[10-Jan-2026 15:32:01 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method controller::loginUser() in C:\xampp\htdocs\retoDW2eval\api\Login.php:18
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\retoDW2eval\api\Login.php on line 18

@@ -1,16 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-ini_set('log_errors', 1);
-ini_set('error_log', 'php_error.log');
-
-// 1. IMPORTANTE: Iniciar la gestión de sesión
+// api/Login.php
 session_start();
-
-header("Content-Type: application/json");
-
+header("Content-Type: application/json; charset=utf-8");
 require_once '../controller/controller.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -18,24 +9,43 @@ $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 
 $controller = new controller();
-$user = $controller->loginUser($username, $password);
 
-if (is_null($user)) {
-    $admin = $controller->loginAdmin($username, $password);
-    if (is_null($admin)) {
-        echo json_encode(["error" => 'El nombre de usuario o contraseña son incorrectos.'], JSON_UNESCAPED_UNICODE);
-    } else {
-        // 2. Guardamos al ADMIN en la sesión del servidor
-        $_SESSION['user_data'] = $admin;
-        $_SESSION['logged_in'] = true;
-        
-        echo json_encode(["resultado" => $admin], JSON_UNESCAPED_UNICODE);
-    }
-} else {
-    // 3. Guardamos al USUARIO en la sesión del servidor
-    $_SESSION['user_data'] = $user;
+// 1. Probar Admin PRIMERO (para dar prioridad a privilegios)
+$admin = $controller->loginAdmin($username, $password);
+if ($admin) {
     $_SESSION['logged_in'] = true;
 
-    echo json_encode(["resultado" => $user], JSON_UNESCAPED_UNICODE);
+    $_SESSION['user_data'] = [
+        'id' => $admin['profile_code'],
+        'nombre' => $admin['user_name'], // En JS usarás currentUser.nombre
+        'rol' => 'admin'
+    ];
+
+    echo json_encode([
+        "exito" => true,
+        "rol" => "admin",
+        "user" => $_SESSION['user_data']
+    ]);
+    exit;
 }
-?>
+
+// 2. Probar Usuario
+$user = $controller->loginUser($username, $password);
+if ($user) {
+    $_SESSION['logged_in'] = true;
+
+    $_SESSION['user_data'] = [
+        'id' => $user['profile_code'],
+        'nombre' => $user['user_name'], // En JS usarás currentUser.nombre
+        'rol' => 'user'
+    ];
+
+    echo json_encode([
+        "exito" => true,
+        "rol" => "user",
+        "user" => $_SESSION['user_data']
+    ]);
+    exit;
+}
+
+echo json_encode(["exito" => false, "error" => "Credenciales incorrectas"]);

@@ -143,6 +143,38 @@ body {
     justify-content: center;
   }
 }
+/* --- main --- */
+/* Para que las estrellas sean doradas y estén en fila */
+.book-rating {
+    color: #FFD700;
+    margin: 10px 0;
+    font-size: 1.2rem;
+}
+
+/* Para que los productos se vean en rejilla (Grid) */
+.product-grid {
+    display: grid;
+    /* Esto crea columnas automáticas que se ajustan al tamaño (responsive) */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 20px;
+    padding: 20px;
+}
+
+.book-card {
+  cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.book-image-card {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
 /* --- Footer Styles --- */
 footer {
   background-color: #1a1b1f; /* Gris muy oscuro, casi negro: elegante para libros */
@@ -154,7 +186,6 @@ footer {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
   gap: 30px;
-  max-width: 1200px;
   margin: 0 auto; /* Centrar footer si la pantalla es muy ancha */
   width: 100%;
 }

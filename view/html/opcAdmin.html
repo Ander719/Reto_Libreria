@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <title>Panel de administración</title>
+</head>
+
+<body>
+    <header>
+        <h1>Panel de administración</h1>
+        <p>Bienvenido/a, administrador</p>
+    </header>
+
+    <main>
+        <div class="topbar-admin" role="navigation" aria-label="Barra de navegación">
+            <div class="user-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" />
+                    <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+                <span>Username</span>
+            </div>
+
+            <a href="main.html" class="home-link">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" stroke="currentColor"
+                        stroke-width="1.2" />
+                </svg>
+                <span>Home</span>
+            </a>
+
+            <form action="/logout" method="post" style="margin:0;">
+                <button type="submit" class="btn btn-primary btn-sm">Log Out</button>
+            </form>
+        </div>
+
+        <div class="admin-actions">
+            <button class="btn btn-primary" onclick="window.location.href='main.html?mode=deleteUser'">Delete User</button>
+
+            <button class="btn btn-secondary" onclick="window.location.href='deleteComment.html'">Eliminar comentario</button>
+
+            <button class="btn btn-primary" onclick="window.location.href='main.html?mode=modifyUser'">Modify User</button>
+
+            <button class="btn btn-secondary" onclick="window.location.href='bookOptions.html'">Libro</button>
+
+            <button class="btn btn-primary" onclick="window.location.href='main.html'">Return</button>
+        </div>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>
