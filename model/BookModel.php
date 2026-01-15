@@ -12,7 +12,7 @@ class BookModel
     public function getBookByIsbn($isbn)
     {
         $query = "SELECT b.Isbn, b.title, b.pages, b.stock, b.sipnosis, b.price, b.editorial, b.cover, 
-                         a.NameAuthor, a.LastName 
+                         a.name_author, a.last_name 
                   FROM " . $this->table_name . " b
                   LEFT JOIN AUTHOR_ a ON b.id_author = a.ID_AUTHOR
                   WHERE b.Isbn = :isbn 

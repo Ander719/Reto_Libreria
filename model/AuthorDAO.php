@@ -3,7 +3,7 @@ require_once '../Config/Database.php';
 
 class AuthorDAO {
     private $conn;
-    private $table_name = "AUTHOR_";
+    private $table_name = "author_";
 
     public function __construct() {
         $database = new Database();
@@ -12,7 +12,7 @@ class AuthorDAO {
 
     public function getOrCreateAuthorId($name, $surname) {
         // 1. Buscar si ya existe
-        $query = "SELECT ID_AUTHOR FROM " . $this->table_name . " WHERE NameAuthor = :name AND LastName = :surname LIMIT 1";
+        $query = "SELECT ID_AUTHOR FROM " . $this->table_name . " WHERE name_author = :name AND last_name = :surname LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":name", $name);
         $stmt->bindParam(":surname", $surname);
@@ -32,7 +32,7 @@ class AuthorDAO {
         $newId = ($row['max_id'] !== null) ? $row['max_id'] + 1 : 1;
 
         // 3. Insertar nuevo autor
-        $queryInsert = "INSERT INTO " . $this->table_name . " (ID_AUTHOR, NameAuthor, LastName) VALUES (:id, :name, :surname)";
+        $queryInsert = "INSERT INTO " . $this->table_name . " (ID_AUTHOR, name_author, last_name) VALUES (:id, :name, :surname)";
         $stmtInsert = $this->conn->prepare($queryInsert);
         $stmtInsert->bindParam(":id", $newId);
         $stmtInsert->bindParam(":name", $name);
