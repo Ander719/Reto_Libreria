@@ -2,10 +2,12 @@
 require_once '../Config/Database.php';
 require_once '../model/UserModel.php';
 require_once '../model/bookDAO.php'; 
+require_once '../model/OrderDao.php';
 
 class controller {
     private $UserModel;
     private $BookDAO;
+    private $OrderDao;
 
     public function __construct() {
         $database = new Database();
@@ -61,6 +63,11 @@ class controller {
 
     public function deleteBook($isbn) {
         return $this->BookDAO->deleteBook($isbn);
+    }
+
+
+    public function createDirectOrder($profileCode, $isbn, $quantity) {
+        return $this->OrderDao->createDirectOrder($profileCode, $isbn, $quantity);
     }
 }
 ?>

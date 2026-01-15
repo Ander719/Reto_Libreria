@@ -1,5 +1,5 @@
 import { currentUser, checkSession } from './sesion.js';
-
+let isEditing = false;
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el ISBN de la URL
     // Esto lee lo que hay después del signo ? (ej: ?isbn=1234)
@@ -87,15 +87,27 @@ function rellenarVista(libro) {
     }
 
     // E. Evento del Botón Añadir al Carrito
-    btnCart.addEventListener('click', () => {
+    // CAMBIO: Cambiar texto del botón
+    btnCart.textContent = "Comprar Ahora";
+
+    // E. NUEVO Evento de Compra Directa
+    // Clonamos el botón para borrar cualquier evento anterior (limpieza)
+    const newBtn = btnCart.cloneNode(true);
+    btnCart.parentNode.replaceChild(newBtn, btnCart);
+
+    newBtn.addEventListener('click', async () => {
         if (!currentUser) {
             alert("Debes iniciar sesión para comprar.");
             window.location.href = "login.html";
             return;
         }
 
-        const cantidad = qtyInput.value;
-        agregarAlCarrito(libro.isbn, cantidad);
+        const cantidad = parseInt(qtyInput.value);
+
+        // Confirmación simple antes de comprar
+        if (confirm(`¿Confirmar compra de ${cantidad} ejemplar(es) de "${libro.title}"?`)) {
+            await comprarAhora(libro.isbn, cantidad, currentUser.id);
+        }
     });
 }
 function agregarAlCarrito(isbn, cantidad) {
@@ -267,8 +279,29 @@ async function loadComments(isbn) {
         }
 
         if (myReview) {
-            console.log("User already has a review. Switching to Edit Mode.");
-            startEdit(myReview.comment_text, myReview.valoration, false);
+            // 1. Preguntamos al usuario
+            const quiereEditar = confirm("Ya has publicado una reseña para este libro. ¿Quieres editarla?");
+
+            if (quiereEditar) {
+                // CASO SI: Cargamos el modo edición como antes
+                console.log("Usuario acepta editar.");
+                startEdit(myReview.comment_text, myReview.valoration, false);
+            } else {
+                // CASO NO: Ocultamos el formulario de "Escribir reseña"
+                // Esto es importante para que no intenten enviar otra y de error de duplicado
+                const actionContainer = document.getElementById('userActionContainer');
+
+                // Preparamos el texto seguro por si tiene comillas simples
+                const safeText = myReview.comment_text.replace(/'/g, "\\'");
+
+                actionContainer.innerHTML = `
+                    <div class="login-prompt" style="background-color: #e8f5e9; border: 1px solid #c8e6c9;">
+                        <p style="color: #2e7d32; font-weight: bold;">✅ Ya has valorado este libro.</p>
+                        <p>Tu opinión ya está visible para otros usuarios.</p>
+                        <button onclick="startEdit('${safeText}', ${myReview.valoration})" class="action-btn btn-auto" style="margin-top:10px;">Editar mi reseña</button>
+                    </div>
+                `;
+            }
         }
 
     } catch (error) {
@@ -321,5 +354,34 @@ function resetForm() {
     document.getElementById('cancelEditBtn').style.display = "none";
     document.getElementById('formMessage').innerText = "";
     document.getElementById('formMessage').className = "";
+}
+
+
+
+// --- FUNCIÓN NUEVA PARA COMPRA DIRECTA ---
+async function comprarAhora(isbn, quantity, userId) {
+    try {
+        const response = await fetch('../../api/BuyNow.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                profileCode: userId,
+                isbn: isbn,
+                quantity: quantity
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.exito) {
+            alert("¡Compra realizada con éxito! Gracias por tu pedido.");
+            location.reload(); // Recargamos para actualizar el stock visualmente
+        } else {
+            alert("Error: " + (data.error || "No se pudo completar la compra."));
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error de conexión al procesar la compra.");
+    }
 }
 
