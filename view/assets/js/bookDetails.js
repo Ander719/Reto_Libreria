@@ -59,8 +59,7 @@ function rellenarVista(libro) {
 
     // C. Imagen (con fallback si falla)
     const img = document.getElementById('bookCover');
-    img.src = libro.cover ? `../assets/img/${libro.cover}` : "../assets/img/mood-heart.png";
-    console.log("Cargando imagen de portada:", img.src);
+    img.src = libro.cover ? `../assets/img/covers/${libro.cover}` : "../assets/img/mood-heart.png"; console.log("Cargando imagen de portada:", img.src);
     img.alt = `Portada de ${libro.title}`;
 
     // D. Lógica de Stock
@@ -107,12 +106,11 @@ function agregarAlCarrito(isbn, cantidad) {
 
 function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');
-    const currentUser = getCurrentUser();
 
     if (currentUser) {
         actionContainer.innerHTML = `
             <h3 id="formTitle">Write a Review</h3>
-            <p>Commenting as: <strong>${currentUser.USER_NAME}</strong></p>
+            <p>Commenting as: <strong>${currentUser.user_name}</strong></p>
             
             <form id="commentForm" class="actions review-form">
                 <label for="ratingScore">Rating:</label>
@@ -170,8 +168,7 @@ async function submitComment(e, user) {
         return;
     }
 
-    const profileCode = user.PROFILE_CODE || user.profileCode;
-
+    const profileCode = user.id;
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
     const payload = {
@@ -226,9 +223,7 @@ async function submitComment(e, user) {
 
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
-    const currentUser = getCurrentUser();
-    const myProfileCode = currentUser ? (currentUser.PROFILE_CODE || currentUser.profileCode) : null;
-
+    const myProfileCode = currentUser ? currentUser.id : null;
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
         const comments = await response.json();
@@ -285,9 +280,7 @@ async function loadComments(isbn) {
 window.deleteComment = async function (isbn) {
     if (!confirm("Are you sure you want to delete this review?")) return;
 
-    const currentUser = getCurrentUser();
-    const profileCode = currentUser.PROFILE_CODE || currentUser.profileCode;
-
+    const profileCode = currentUser.id;
     try {
         const response = await fetch('../../api/DeleteComment.php', {
             method: 'POST',
@@ -330,44 +323,3 @@ function resetForm() {
     document.getElementById('formMessage').className = "";
 }
 
-async function loadBookDetails(isbn) {
-    try {
-        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
-        if (!response.ok) throw new Error('Book not found');
-
-        const book = await response.json();
-
-        document.getElementById('bookTitle').innerText = book.title || "Untitled";
-
-        let authorName = "Unknown Author";
-        if (book.NameAuthor || book.LastName) {
-            authorName = `${book.NameAuthor || ''} ${book.LastName || ''}`.trim();
-        }
-        document.getElementById('bookAuthor').innerText = authorName;
-
-        document.getElementById('bookPrice').innerText = (book.price || 0) + "€";
-        document.getElementById('bookSynopsis').innerText = book.sipnosis || "No description available.";
-
-        document.getElementById('bookISBN').innerText = book.Isbn || isbn;
-        document.getElementById('bookPages').innerText = book.pages || "N/A";
-        document.getElementById('bookEditorial').innerText = book.editorial || "N/A";
-
-        const stockBadge = document.getElementById('stockBadge');
-        if (stockBadge) {
-            stockBadge.innerText = (book.stock > 0) ? "In Stock" : "Out of Stock";
-            stockBadge.className = (book.stock > 0) ? "stock-badge" : "stock-badge out-of-stock";
-        }
-
-        if (book.cover) {
-            if (book.cover.startsWith('http')) {
-                document.getElementById('bookCover').src = book.cover;
-            } else {
-                document.getElementById('bookCover').src = `../assets/img/${book.cover}`;
-            }
-        }
-
-    } catch (error) {
-        console.error("Error loading book details:", error);
-        document.getElementById('bookTitle').innerText = "Book not found";
-    }
-}

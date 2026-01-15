@@ -9,7 +9,7 @@ class CommentModel {
     }
 
     public function createComment($profileCode, $isbn, $comment, $valoration, $date) {
-        $query = "INSERT INTO COMENT_ (PROFILE_CODE, Isbn, coment, valoration, dateComent) 
+        $query = "INSERT INTO comment_ (PROFILE_CODE, Isbn, comment_text, valoration, date_comment) 
                   VALUES (:profile, :isbn, :comment, :rating, :date)";
         $stmt = $this->conn->prepare($query);
         $comment = htmlspecialchars(strip_tags($comment));
@@ -22,19 +22,55 @@ class CommentModel {
     }
 
     public function getCommentsByISBN($isbn) {
-        $query = "SELECT c.PROFILE_CODE, c.coment as comment_text, c.valoration, c.dateComent, p.USER_NAME 
-                  FROM COMENT_ c
-                  JOIN PROFILE_ p ON c.PROFILE_CODE = p.PROFILE_CODE
+        // 1. Incluimos la clase Coment para poder crear los objetos
+        require_once __DIR__ . '/Coment.php';
+
+        $query = "SELECT c.PROFILE_CODE, 
+                         c.comment_text, 
+                         c.valoration, 
+                         c.date_comment as dateComent, 
+                         p.USER_NAME 
+                  FROM comment_ c
+                  JOIN profile_ p ON c.PROFILE_CODE = p.PROFILE_CODE
                   WHERE c.Isbn = :isbn
-                  ORDER BY c.dateComent DESC";
+                  ORDER BY c.date_comment DESC";
+        
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':isbn', $isbn);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Obtenemos los datos crudos de la BD
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultArray = [];
+
+        foreach ($rows as $row) {
+            // 2. Guardamos los datos EN UN OBJETO (Instanciamos Coment)
+            $comentObj = new Coment();
+            
+            // Usamos los Setters para "guardar" la información dentro del objeto
+            $comentObj->setProfileCode($row['PROFILE_CODE']);
+            $comentObj->setIsbn($isbn); // El ISBN ya lo tenemos
+            $comentObj->setComent($row['comment_text']); // Mapeamos comment_text a la propiedad coment
+            $comentObj->setValoration($row['valoration']);
+            $comentObj->setDateComent($row['dateComent']);
+
+            // 3. Obtenemos los datos A PARTIR DEL OBJETO para la respuesta
+            // Usamos los Getters para extraer la info limpia del objeto
+            $resultArray[] = [
+                'PROFILE_CODE' => $comentObj->getProfileCode(),
+                'comment_text' => $comentObj->getComent(), // Recuperado del objeto
+                'valoration'   => $comentObj->getValoration(),
+                'dateComent'   => $comentObj->getDateComent(),
+                // USER_NAME viene de la tabla Profile (JOIN), no del objeto Coment, así que lo pasamos directo
+                'USER_NAME'    => $row['USER_NAME']
+            ];
+        }
+        
+        return $resultArray;
     }
 
     public function deleteComment($isbn, $profileCode) {
-        $query = "DELETE FROM COMENT_ WHERE Isbn = :isbn AND PROFILE_CODE = :profileCode";
+        $query = "DELETE FROM comment_ WHERE Isbn = :isbn AND PROFILE_CODE = :profileCode";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':isbn', $isbn);
         $stmt->bindParam(':profileCode', $profileCode);
@@ -45,7 +81,7 @@ class CommentModel {
     }
 
     public function updateComment($isbn, $profileCode, $text, $rating) {
-        $query = "UPDATE COMENT_ SET coment = :text, valoration = :rating 
+        $query = "UPDATE comment_ SET comment_text = :text, valoration = :rating 
                   WHERE Isbn = :isbn AND PROFILE_CODE = :profileCode";
         $stmt = $this->conn->prepare($query);
         $text = htmlspecialchars(strip_tags($text));

@@ -13,13 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
             let data = await login(username, password);
             console.log("Respuesta servidor:", data); // Debug
 
-            if (data.exito) {
+            if (data.success) {
                 // YA NO NECESITAS ESTO:
                 // localStorage.setItem("actualProfile", ...); BORRAR
                 alert("Login correcto. Redirigiendo...");
 
                 // Simplemente rediriges. La cookie ya está grabada en el navegador.
-                if (data.rol === "admin") {
+                if (data.role === "admin") {
                     window.location.href = "opcAdmin.html";
                 } else {
                     window.location.href = "main.html";
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             return data;
-            
+
         } catch (error) {
             console.error("Error en fetch:", error);
         }

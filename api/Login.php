@@ -17,13 +17,13 @@ if ($admin) {
 
     $_SESSION['user_data'] = [
         'id' => $admin['profile_code'],
-        'nombre' => $admin['user_name'], // En JS usarás currentUser.nombre
-        'rol' => 'admin'
+        'user_name' => $admin['user_name'], // En JS usarás currentUser.nombre
+        'role' => 'admin'
     ];
 
     echo json_encode([
-        "exito" => true,
-        "rol" => "admin",
+        "success" => true,
+        "role" => "admin",
         "user" => $_SESSION['user_data']
     ]);
     exit;
@@ -36,13 +36,13 @@ if ($user) {
 
     $_SESSION['user_data'] = [
         'id' => $user['profile_code'],
-        'nombre' => $user['user_name'], // En JS usarás currentUser.nombre
-        'rol' => 'user'
+        'user_name' => $user['user_name'], // En JS usarás currentUser.nombre
+        'role' => 'user'
     ];
 
     echo json_encode([
-        "exito" => true,
-        "rol" => "user",
+        "success" => true,
+        "role" => "user",
         "user" => $_SESSION['user_data']
     ]);
     exit;
