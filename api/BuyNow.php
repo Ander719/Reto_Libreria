@@ -19,6 +19,8 @@ if (!empty($input['profileCode']) && !empty($input['isbn']) && !empty($input['qu
 
     if ($result) {
         echo json_encode(['exito' => true, 'message' => 'Compra realizada con éxito.']);
+    } elseif ($result === "NO_STOCK") {
+        echo json_encode(['exito' => false, 'error' => 'Error: No hay suficiente stock...']);
     } else {
         echo json_encode(['exito' => false, 'error' => 'No se pudo procesar la compra (BD Error).']);
     }

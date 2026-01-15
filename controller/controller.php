@@ -15,6 +15,7 @@ class controller {
         
         $this->UserModel = new UserModel($db);
         $this->BookDAO = new BookDAO();
+        $this->OrderDao = new OrderDao();
     }
 
     // --- FUNCIONES DE USUARIO ---

@@ -14,12 +14,24 @@ class OrderDao {
             // 1. Iniciar Transacción
             $this->conn->beginTransaction();
 
+            $stmtCheck = $this->conn->prepare("SELECT stock FROM book_ WHERE isbn = :isbn FOR UPDATE");
+            $stmtCheck->bindParam(':isbn', $isbn);
+            $stmtCheck->execute();
+            $book = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+
+            if (!$book || $book['stock'] < $quantity) {
+                $this->conn->rollBack(); // Cancelamos transacción
+                return "NO_STOCK";       // Devolvemos un código de error específico
+            }
             // 2. Insertar el Pedido (ORDER_)
             // buyed = 1 (true) porque es compra directa
             $queryOrder = "INSERT INTO order_ (profile_code, date_buy, buyed) VALUES (:profile, NOW(), 1)";
             $stmtOrder = $this->conn->prepare($queryOrder);
             $stmtOrder->bindParam(':profile', $profileCode);
             $stmtOrder->execute();
+
+
 
             // 3. Obtener el ID del pedido recién creado
             $orderId = $this->conn->lastInsertId();

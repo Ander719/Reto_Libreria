@@ -235,7 +235,9 @@ async function submitComment(e, user) {
 
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
+    // Usamos el ID del usuario actual si existe
     const myProfileCode = currentUser ? currentUser.id : null;
+
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
         const comments = await response.json();
@@ -248,11 +250,14 @@ async function loadComments(isbn) {
                 const item = document.createElement('div');
                 item.classList.add('comment-item');
 
+                // Comprobamos si este comentario es mío
                 const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
                 if (isMine) myReview = c;
 
+                // Generamos los botones (Lápiz y Basura) solo si es mío
                 let buttonsHtml = '';
                 if (isMine) {
+                    // Escapamos las comillas simples para que no rompan el HTML del onclick
                     const safeText = c.comment_text.replace(/'/g, "\\'");
                     buttonsHtml = `
                         <div class="comment-actions">
@@ -269,38 +274,24 @@ async function loadComments(isbn) {
                         <span class="comment-date">${c.dateComent}</span>
                     </p>
                     <div class="star-rating">${'⭐'.repeat(c.valoration)}</div>
-                    <p class="comment-text"></p> <div class="clear-fix"></div>
+                    <p class="comment-text">${c.comment_text}</p> <div class="clear-fix"></div>
                 `;
-                item.querySelector('.comment-text').textContent = c.comment_text;
                 commentsList.appendChild(item);
             });
         } else {
             commentsList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to write one!</p>';
         }
 
+        // --- AQUÍ ESTÁ LA LÓGICA QUE PIDES ---
+        const actionContainer = document.getElementById('userActionContainer');
+
         if (myReview) {
-            // 1. Preguntamos al usuario
-            const quiereEditar = confirm("Ya has publicado una reseña para este libro. ¿Quieres editarla?");
-
-            if (quiereEditar) {
-                // CASO SI: Cargamos el modo edición como antes
-                console.log("Usuario acepta editar.");
-                startEdit(myReview.comment_text, myReview.valoration, false);
-            } else {
-                // CASO NO: Ocultamos el formulario de "Escribir reseña"
-                // Esto es importante para que no intenten enviar otra y de error de duplicado
-                const actionContainer = document.getElementById('userActionContainer');
-
-                // Preparamos el texto seguro por si tiene comillas simples
-                const safeText = myReview.comment_text.replace(/'/g, "\\'");
-
-                actionContainer.innerHTML = `
-                    <div class="login-prompt" style="background-color: #e8f5e9; border: 1px solid #c8e6c9;">
-                        <p style="color: #2e7d32; font-weight: bold;">✅ Ya has valorado este libro.</p>
-                        <p>Tu opinión ya está visible para otros usuarios.</p>
-                        <button onclick="startEdit('${safeText}', ${myReview.valoration})" class="action-btn btn-auto" style="margin-top:10px;">Editar mi reseña</button>
-                    </div>
-                `;
+            // SI YA COMENTÉ: Borro todo lo de abajo. Limpio total.
+            actionContainer.innerHTML = '';
+        } else {
+            // SI NO HE COMENTADO: Muestro el formulario (si no está ya pintado)
+            if (!document.getElementById('commentForm')) {
+                handleCommentSection();
             }
         }
 
@@ -334,12 +325,32 @@ window.deleteComment = async function (isbn) {
 };
 
 window.startEdit = function (text, rating, doScroll = true) {
+    // 1. SI EL FORMULARIO NO EXISTE, LO VOLVEMOS A PINTAR
+    if (!document.getElementById('commentForm')) {
+        handleCommentSection();
+    }
+
+    // 2. ACTIVAMOS MODO EDICIÓN
     isEditing = true;
     document.getElementById('commentBody').value = text;
     document.getElementById('ratingScore').value = parseInt(rating);
-    document.getElementById('formTitle').innerText = "Edit your Review";
-    document.getElementById('submitBtn').innerText = "Update Review";
-    document.getElementById('cancelEditBtn').style.display = "inline-block";
+
+    const title = document.getElementById('formTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    if (title) title.innerText = "Edit your Review";
+    if (submitBtn) submitBtn.innerText = "Update Review";
+
+    // 3. CONFIGURAMOS EL BOTÓN CANCELAR
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    if (cancelBtn) {
+        cancelBtn.style.display = "inline-block";
+
+        cancelBtn.onclick = () => {
+            isEditing = false;
+            // Borramos todo al cancelar para dejarlo limpio
+            document.getElementById('userActionContainer').innerHTML = '';
+        };
+    }
 
     if (doScroll) {
         document.getElementById('userActionContainer').scrollIntoView({ behavior: 'smooth' });
