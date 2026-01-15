@@ -27,17 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.innerText = "Guardar Cambios";
             isbnInput.readOnly = true; // El ISBN no se edita, es la clave
             toggleForm(true); // Bloquear hasta que se busque
-        } else if (mode === 'delete') {
-            pageTitle.innerText = "Eliminar Libro";
-            searchSection.style.display = "block";
-            actionBtn.innerText = "Confirmar Eliminación";
-            actionBtn.style.backgroundColor = "#d9534f"; // Rojo peligro
-            isbnInput.readOnly = true;
-            toggleForm(true);
         }
     }
-
-    -
     // --- LÓGICA DE BÚSQUEDA (CORREGIDA) ---
     document.getElementById('btnSearch').addEventListener('click', (e) => {
         e.preventDefault();
@@ -119,21 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(res => res.json())
             .then(handleResponse)
-            .catch(handleError);
-        }
-        
-        // CASO C: BORRAR
-        else if (mode === 'delete') {
-            fetch(url) // Asumiendo GET para delete según tu código antiguo
-            .then(res => res.json())
-            .then(data => {
-                if (data.result === true) { // DeleteBook.php devuelve {result: true}
-                    alert("Libro eliminado correctamente");
-                    window.location.href = 'bookOptions.html';
-                } else {
-                    alert("Error al eliminar: " + (data.error || "Desconocido"));
-                }
-            })
             .catch(handleError);
         }
     });
