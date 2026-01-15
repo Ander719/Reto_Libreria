@@ -74,9 +74,18 @@ function getEstrellasHTML(rating) {
 
 // --- NUEVA FUNCIÓN PARA PEDIR LIBROS ---
 async function cargarLibrosDesdeBD() {
+
     try {
         const response = await fetch('../../api/GetAllBooks.php'); // Tu nueva API
-        const data = await response.json();
+        console.log(response)
+        let data;
+        try {
+            data = await response.text();
+            //data = JSON.parse(data);
+        } catch (err) {
+            throw new Error('Invalid JSON response: ' + err.message);
+        }
+        console.log("Datos recibidos del servidor:", data);
 
         if (data.exito) {
             renderizarLibros(data.libros);
@@ -84,7 +93,7 @@ async function cargarLibrosDesdeBD() {
             console.error("Error al cargar libros");
         }
     } catch (error) {
-        console.error("Error de conexión:", error);
+        console.error("Error:", error);
     }
 }
 /**
@@ -104,7 +113,7 @@ function renderizarLibros(listaLibros) {
         // Rellenamos los datos buscando por clase dentro del clon
         clone.querySelector('.book-title').textContent = libro.titulo;
         clone.querySelector('.book-author').textContent = libro.autor;
-        clone.querySelector('.book-price').textContent = `${libro.precio}€`;
+        clone.querySelector('.book-price').textContent = `${libro.price}€`;
         clone.querySelector('.book-stock').textContent = `Stock: ${libro.stock}`;
 
         // Imagen (si no tienes imagen real, usa un placeholder)

@@ -13,28 +13,21 @@ $pswd2 = $input['pswd2'] ?? '';
 
 $response = ["exito" => false];
 
-try {
 
-    $controller = new controller();
-    $user = $controller->create_user($username, $pswd1);
 
-    if ($user) {
-        echo json_encode([
-            'resultado' => $user,
-            'exito' => true
-        ], JSON_UNESCAPED_UNICODE);
-    } else {
-        echo json_encode([
-            'error' => 'No se ha creado correctamente el usuario',
-            'exito' => false
-        ]);
-    }
-} catch (Exception $e) {
-    error_log($e->getMessage());
+$controller = new controller();
+// Esto ahora devuelve un objeto User gracias al DAO
+$newUserObj = $controller->create_user($username, $pswd1);
+
+if ($newUserObj) {
     echo json_encode([
-        'error' => 'Error del servidor: ' . $e->getMessage(),
-        'exito' => false
+        'exito' => true,
+        // Convertimos el objeto a array para enviarlo
+        'resultado' => $newUserObj->toArray()
+    ]);
+} else {
+    echo json_encode([
+        'exito' => false,
+        'error' => 'No se ha podido crear el usuario (¿Quizás ya existe?)'
     ]);
 }
-?>
-

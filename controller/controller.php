@@ -1,40 +1,14 @@
 <?php
-require_once '../Config/Database.php';
-require_once '../model/UserModel.php';
-require_once '../model/bookDAO.php'; 
+require_once '../model/dao/ProfileDAO.php';
+require_once '../model/dao/BookDAO.php'; 
 
 class controller {
-    private $UserModel;
     private $BookDAO;
+    private $CommentDAO;
 
     public function __construct() {
-        $database = new Database();
-        $db = $database->getConnection();
-        
-        $this->UserModel = new UserModel($db);
         $this->BookDAO = new BookDAO();
-    }
-
-    // --- FUNCIONES DE USUARIO ---
-    public function loginUser($username, $password) { return $this->UserModel->loginUser($username, $password); }
-    public function loginAdmin($username, $password) { return $this->UserModel->loginAdmin($username, $password); }
-    public function checkUser($username, $password) { return $this->UserModel->checkUser($username, $password); }
-    public function create_user($username, $pswd1) { return $this->UserModel->create_user($username, $pswd1); }
-    public function get_all_users() { return $this->UserModel->get_all_users(); }
-    public function delete_user($id) { return $this->UserModel->delete_user($id); }
-    public function modifyPassword($profile_code, $password) { return $this->UserModel->modifyPassword($profile_code, $password); }
-    
-    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code) {
-        return $this->UserModel->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code);
-    }
-    public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code) {
-        return $this->UserModel->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
-    }
-
-    // --- NUEVO: NECESARIO PARA EL BOTÓN 'ADJUST DATA' ---
-    public function getUserData($id) {
-        // Esta función llama al modelo para obtener tus datos
-        return $this->UserModel->getUserById($id);
+        $this->CommentDAO = new CommentDAO();
     }
 
     // --- FUNCIONES DE LIBROS ---

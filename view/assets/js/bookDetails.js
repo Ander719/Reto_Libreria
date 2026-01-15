@@ -45,6 +45,49 @@ async function loadBookDetails(isbn) {
         console.error("Error:", error);
     }
 }
+/*
+async function loadBookDetails(isbn) {
+    try {
+        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
+        if (!response.ok) throw new Error('Book not found');
+
+        const book = await response.json();
+
+        document.getElementById('bookTitle').innerText = book.title || "Untitled";
+
+        let authorName = "Unknown Author";
+        if (book.NameAuthor || book.LastName) {
+            authorName = `${book.NameAuthor || ''} ${book.LastName || ''}`.trim();
+        }
+        document.getElementById('bookAuthor').innerText = authorName;
+
+        document.getElementById('bookPrice').innerText = (book.price || 0) + "€";
+        document.getElementById('bookSynopsis').innerText = book.sipnosis || "No description available.";
+
+        document.getElementById('bookISBN').innerText = book.Isbn || isbn;
+        document.getElementById('bookPages').innerText = book.pages || "N/A";
+        document.getElementById('bookEditorial').innerText = book.editorial || "N/A";
+
+        const stockBadge = document.getElementById('stockBadge');
+        if (stockBadge) {
+            stockBadge.innerText = (book.stock > 0) ? "In Stock" : "Out of Stock";
+            stockBadge.className = (book.stock > 0) ? "stock-badge" : "stock-badge out-of-stock";
+        }
+
+        if (book.cover) {
+            if (book.cover.startsWith('http')) {
+                document.getElementById('bookCover').src = book.cover;
+            } else {
+                document.getElementById('bookCover').src = `../assets/img/${book.cover}`;
+            }
+        }
+
+    } catch (error) {
+        console.error("Error loading book details:", error);
+        document.getElementById('bookTitle').innerText = "Book not found";
+    }
+}
+*/
 function rellenarVista(libro) {
     // A. Textos Básicos
     document.getElementById('bookTitle').textContent = libro.title || "Título Desconocido";
@@ -89,7 +132,7 @@ function rellenarVista(libro) {
 
     // E. Evento del Botón Añadir al Carrito
     btnCart.addEventListener('click', () => {
-        if (!currentUser) {
+        if (!userSession) {
             alert("Debes iniciar sesión para comprar.");
             window.location.href = "login.html";
             return;
@@ -107,12 +150,12 @@ function agregarAlCarrito(isbn, cantidad) {
 
 function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');
-    const currentUser = getCurrentUser();
+    const userSession = currentUser;
 
-    if (currentUser) {
+    if (userSession) {
         actionContainer.innerHTML = `
             <h3 id="formTitle">Write a Review</h3>
-            <p>Commenting as: <strong>${currentUser.USER_NAME}</strong></p>
+            <p>Commenting as: <strong>${userSession.USER_NAME}</strong></p>
             
             <form id="commentForm" class="actions review-form">
                 <label for="ratingScore">Rating:</label>
@@ -136,7 +179,7 @@ function handleCommentSection() {
         `;
 
         // Listeners
-        document.getElementById('commentForm').addEventListener('submit', (e) => submitComment(e, currentUser));
+        document.getElementById('commentForm').addEventListener('submit', (e) => submitComment(e, userSession));
         document.getElementById('cancelEditBtn').addEventListener('click', () => {
             resetForm();
         });
@@ -226,8 +269,8 @@ async function submitComment(e, user) {
 
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
-    const currentUser = getCurrentUser();
-    const myProfileCode = currentUser ? (currentUser.PROFILE_CODE || currentUser.profileCode) : null;
+    const userSession = currentUser;
+    const myProfileCode = userSession ? (userSession.PROFILE_CODE || userSession.profileCode) : null;
 
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
@@ -285,8 +328,8 @@ async function loadComments(isbn) {
 window.deleteComment = async function (isbn) {
     if (!confirm("Are you sure you want to delete this review?")) return;
 
-    const currentUser = getCurrentUser();
-    const profileCode = currentUser.PROFILE_CODE || currentUser.profileCode;
+    const userSession = userSession();
+    const profileCode = userSession.PROFILE_CODE || userSession.profileCode;
 
     try {
         const response = await fetch('../../api/DeleteComment.php', {
@@ -328,46 +371,4 @@ function resetForm() {
     document.getElementById('cancelEditBtn').style.display = "none";
     document.getElementById('formMessage').innerText = "";
     document.getElementById('formMessage').className = "";
-}
-
-async function loadBookDetails(isbn) {
-    try {
-        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
-        if (!response.ok) throw new Error('Book not found');
-
-        const book = await response.json();
-
-        document.getElementById('bookTitle').innerText = book.title || "Untitled";
-
-        let authorName = "Unknown Author";
-        if (book.NameAuthor || book.LastName) {
-            authorName = `${book.NameAuthor || ''} ${book.LastName || ''}`.trim();
-        }
-        document.getElementById('bookAuthor').innerText = authorName;
-
-        document.getElementById('bookPrice').innerText = (book.price || 0) + "€";
-        document.getElementById('bookSynopsis').innerText = book.sipnosis || "No description available.";
-
-        document.getElementById('bookISBN').innerText = book.Isbn || isbn;
-        document.getElementById('bookPages').innerText = book.pages || "N/A";
-        document.getElementById('bookEditorial').innerText = book.editorial || "N/A";
-
-        const stockBadge = document.getElementById('stockBadge');
-        if (stockBadge) {
-            stockBadge.innerText = (book.stock > 0) ? "In Stock" : "Out of Stock";
-            stockBadge.className = (book.stock > 0) ? "stock-badge" : "stock-badge out-of-stock";
-        }
-
-        if (book.cover) {
-            if (book.cover.startsWith('http')) {
-                document.getElementById('bookCover').src = book.cover;
-            } else {
-                document.getElementById('bookCover').src = `../assets/img/${book.cover}`;
-            }
-        }
-
-    } catch (error) {
-        console.error("Error loading book details:", error);
-        document.getElementById('bookTitle').innerText = "Book not found";
-    }
 }

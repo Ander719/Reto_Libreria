@@ -1,8 +1,7 @@
 <?php
-// model/BookDAO.php
-require_once '../Config/Database.php';
-require_once 'Book.php';
-// Asegúrate de tener este archivo creado como te indiqué anteriormente
+// DAO/BookDAO.php
+require_once '../../Config/Database.php';
+require_once '../entities/Book.php';
 require_once 'AuthorDAO.php';
 
 class BookDAO

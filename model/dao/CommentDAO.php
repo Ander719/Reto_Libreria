@@ -1,11 +1,12 @@
 <?php
-require_once '../Config/Database.php';
+require_once '../../Config/Database.php';
 
-class CommentModel {
+class CommentDAO {
     private $conn;
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct() {
+        $database = new Database();
+        $this->conn = $database->getConnection();
     }
 
     public function createComment($profileCode, $isbn, $comment, $valoration, $date) {

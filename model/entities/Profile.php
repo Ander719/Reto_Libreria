@@ -8,7 +8,8 @@
     private $name_;
     private $surname;
 
-    public function __construct($profile_code, $email, $user_name, $pswd, $telephone, $name_, $surname) {
+    public function __construct($profile_code, $email, $user_name, $pswd, $telephone, $name_, $surname) 
+    {
         $this->profile_code = $profile_code;
         $this->email = $email;
         $this->user_name = $user_name;
@@ -21,17 +22,27 @@
     public function getProfile_code() { return $this->profile_code; }
     public function getEmail() { return $this->email; }
     public function getUser_name() { return $this->user_name; }
-    public function getPswd() { return $this->pswd; }
+    public function getPswd() { return $this->pswd; } // experimental para debug
     public function getTelephone() { return $this->telephone; }
     public function getName_() { return $this->name_; }
     public function getSurname() { return $this->surname; }
 
-    public function mostrar() {
-        return "[$this->profile_code] $this->email - $this->user_name" - $this->pswd - $this->telephone - $this->name_ - $this->surname;
+    public function mostrar() 
+    {
+        return "[$this->profile_code] $this->email - $this->user_name - $this->pswd - $this->telephone - $this->name_ - $this->surname";
+    }
+    public function toArray() {
+        return [
+            'profile_code' => $this->profile_code,
+            'email' => $this->email,
+            'user_name' => $this->user_name,
+            'pswd' => $this->pswd, // experimental para debug
+            'telephone' => $this->telephone,
+            'name' => $this->name_,
+            'surname' => $this->surname
+        ];
     }
     
-    public abstract function __toString();
-
-    
+    public abstract function __toString();   
 }
 ?>

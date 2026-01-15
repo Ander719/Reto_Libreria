@@ -1,14 +1,10 @@
 <?php
-class Author
-{
-    
-
-    private  $id_author;
-    private  $name;
+class Author {
+    private $id_author;
+    private $name;
     private $lastName;
 
-    public function __construct($id_author = null,  $name = null,  $lastName = null)
-    {
+    public function __construct($id_author = null, $name = null, $lastName = null) {
         $this->id_author = $id_author;
         $this->name = $name;
         $this->lastName = $lastName;
