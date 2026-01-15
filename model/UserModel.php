@@ -178,9 +178,37 @@ class UserModel {
     }
     
     // Función de registro (si la usas en otro lado)
-    public function create_user($username, $pswd) {
-        // ... tu código de registro si lo necesitas ...
-        return false; 
+    // Sustituye la función create_user actual por esta:
+    public function create_user($username, $pswd)
+    {
+        try {
+            // 1. Verificar si el usuario ya existe
+            $checkQuery = "SELECT * FROM PROFILE_ WHERE USER_NAME = ?";
+            $checkStmt = $this->conn->prepare($checkQuery);
+            $checkStmt->bindValue(1, $username);
+            $checkStmt->execute();
+            
+            if ($checkStmt->rowCount() > 0) {
+                return null; // El usuario ya existe
+            }
+
+            // 2. Llamar al procedimiento almacenado 'RegistrarUsuario'
+            // Asegúrate de haber ejecutado el script SQL que crea este procedimiento
+            $createQuery = "CALL register_user(?, ?)";
+            $createStmt = $this->conn->prepare($createQuery);
+            $createStmt->bindValue(1, $username);
+            $createStmt->bindValue(2, $pswd);
+            $createStmt->execute();
+
+            // 3. Devolver el usuario creado (el procedimiento hace un SELECT al final)
+            $result = $createStmt->fetch(PDO::FETCH_ASSOC);
+            return $result;
+
+        } catch (Exception $e) {
+            // Puedes loguear el error si es necesario
+            error_log("Error en create_user: " . $e->getMessage());
+            return null;
+        }
     }
 }
 ?>
