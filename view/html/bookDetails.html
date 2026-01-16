@@ -72,11 +72,16 @@
         <p class="copyright">© 2025 MyBookStore. All rights reserved.</p>
     </footer>
 
-    <dialog id="myDialog">
-        <h3 id="dialogTitle" style="margin-top:0;">Aviso</h3>
-        <p id="dialogMessage">Mensaje...</p>
-        <div style="text-align: center; margin-top: 15px;">
-            <button id="closeDialogBtn" style="padding: 5px 15px; cursor: pointer;">Cerrar</button>
+    <dialog id="myDialog" class="modal-dialog">
+        <div class="modal-content">
+            <h3 id="dialogTitle">Título</h3>
+            <p id="dialogMessage">Mensaje...</p>
+
+            <div class="modal-actions">
+                <button id="closeDialogBtn" class="action-btn btn-cancel">Cerrar</button>
+
+                <button id="confirmDialogBtn" class="action-btn" style="display:none;">Confirmar</button>
+            </div>
         </div>
     </dialog>
 </body>

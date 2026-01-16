@@ -6,19 +6,63 @@ const dialog = document.getElementById('myDialog');
 const dialogTitle = document.getElementById('dialogTitle');
 const dialogMessage = document.getElementById('dialogMessage');
 const closeBtn = document.getElementById('closeDialogBtn');
+const confirmBtn = document.getElementById('confirmDialogBtn');
 
-// Cerrar al pulsar el botón
+let confirmResolver = null;
+
+// 1. Configurar botón de CERRAR (Cancelar)
 if (closeBtn) {
     closeBtn.addEventListener('click', () => {
-        dialog.close(); // Función nativa de HTML5
+        dialog.close();
+        if (confirmResolver) {
+            confirmResolver(false); // Resuelve FALSE (Cancelado)
+            confirmResolver = null;
+        }
     });
 }
+
+// 2. Configurar botón de CONFIRMAR (Aceptar)
+if (confirmBtn) {
+    confirmBtn.addEventListener('click', () => {
+        dialog.close();
+        if (confirmResolver) {
+            confirmResolver(true); // Resuelve TRUE (Aceptado)
+            confirmResolver = null;
+        }
+    });
+}
+
 
 // Función reutilizable
 function showModal(titulo, mensaje) {
     dialogTitle.innerText = titulo;
     dialogMessage.innerText = mensaje;
-    dialog.showModal(); // Función nativa: muestra y bloquea el fondo
+
+    // Configuración visual: Solo botón cerrar
+    closeBtn.innerText = "Cerrar";
+    closeBtn.style.display = "inline-block";
+    confirmBtn.style.display = "none";
+
+    dialog.showModal();
+}
+
+// 3. Función para Confirmaciones (Sustituye a confirm)
+function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancelar = "Cancelar") {
+    dialogTitle.innerText = titulo;
+    dialogMessage.innerText = mensaje;
+
+    // Configuración visual: Ambos botones
+    closeBtn.innerText = textoCancelar;
+    closeBtn.style.display = "inline-block";
+    confirmBtn.innerText = textoConfirmar;
+    confirmBtn.style.display = "inline-block";
+
+    dialog.showModal();
+
+    // Devolvemos una promesa que espera a que pulsen un botón
+    return new Promise((resolve) => {
+        confirmResolver = resolve;
+    });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -28,8 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isbn = params.get('isbn');
 
     if (!isbn) {
-        alert("No se ha especificado un libro.");
-        window.location.href = "main.html"; // Volver al inicio si no hay ISBN
+        // CAMBIO AQUÍ
+        showModal("Error", "No se ha especificado un libro.");
+
+        // Damos un pequeño tiempo antes de redirigir para que se lea (opcional)
+        setTimeout(() => window.location.href = "main.html", 2000);
         return;
     }
 
@@ -124,9 +171,15 @@ function rellenarVista(libro) {
 
         const cantidad = parseInt(qtyInput.value);
 
-        // Confirmación simple antes de comprar
-        if (confirm(`¿Confirmar compra de ${cantidad} ejemplar(es) de "${libro.title}"?`)) {
-            await comprarAhora(libro.isbn, cantidad, currentUser.id);
+        const aceptado = await showConfirm(
+            "Confirmar Compra",
+            "¿Estás seguro de que quieres comprar este libro?",
+            "Si, comprar",
+            "Cancelar"
+        );
+
+        if (aceptado) {
+            comprarAhora(libro.isbn, cantidad, currentUser.id);
         }
     });
 }
@@ -322,8 +375,14 @@ async function loadComments(isbn) {
 }
 
 window.deleteComment = async function (isbn) {
-    if (!confirm("Are you sure you want to delete this review?")) return;
+    const aceptado = await showConfirm(
+        "Borrar Reseña",
+        "¿Estás seguro de que quieres eliminar tu reseña? Esta acción no se puede deshacer.",
+        "Borrar",
+        "Volver"
+    );
 
+    if (!aceptado) return;
     const profileCode = currentUser.id;
     try {
         const response = await fetch('../../api/DeleteComment.php', {
@@ -333,14 +392,16 @@ window.deleteComment = async function (isbn) {
         });
 
         if (response.ok) {
+            // Recargamos comentarios sin molestar al usuario o ponemos un modal de éxito
+            showModal("Éxito", "Comentario eliminado correctamente.");
             loadComments(isbn);
             resetForm();
         } else {
-            alert("Error deleting comment");
+            showModal("Error", "No se pudo eliminar el comentario.");
         }
     } catch (error) {
         console.error(error);
-        alert("Connection error");
+        showModal("Error de conexión", "Inténtalo de nuevo más tarde.");
     }
 };
 
