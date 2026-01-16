@@ -127,7 +127,7 @@ function renderizarLibros(listaLibros) {
 
         // Imagen (si no tienes imagen real, usa un placeholder)
         const imgElement = clone.querySelector('.book-image-card');
-        imgElement.src = "../assets/img/" + (libro.img || "mood-heart.png");
+        imgElement.src = "../assets/img/covers/" + (libro.cover|| "mood-heart.png");
         imgElement.alt = `Portada de ${libro.titulo}`;
 
         // Inyectamos las estrellas

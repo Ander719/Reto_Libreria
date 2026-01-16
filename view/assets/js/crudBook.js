@@ -27,17 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.innerText = "Guardar Cambios";
             isbnInput.readOnly = true; // El ISBN no se edita, es la clave
             toggleForm(true); // Bloquear hasta que se busque
-        } else if (mode === 'delete') {
-            pageTitle.innerText = "Eliminar Libro";
-            searchSection.style.display = "block";
-            actionBtn.innerText = "Confirmar Eliminación";
-            actionBtn.style.backgroundColor = "#d9534f"; // Rojo peligro
-            isbnInput.readOnly = true;
-            toggleForm(true);
         }
     }
-
-    // --- LÓGICA DE BÚSQUEDA (Para Edit/Delete) ---
+    // --- LÓGICA DE BÚSQUEDA (CORREGIDA) ---
     document.getElementById('btnSearch').addEventListener('click', (e) => {
         e.preventDefault();
         const isbnToSearch = document.getElementById('searchIsbn').value;
@@ -49,23 +41,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                if (data.exito) {
-                    fillForm(data.resultado);
+                // CORRECCIÓN AQUÍ: Usamos data.libro en lugar de data.resultado
+                if (data.exito && data.libro) {
+                    fillForm(data.libro); 
                     msgSearch.innerText = "";
 
-                    if (mode === 'edit') toggleForm(false); // Desbloquear form
-                    else if (mode === 'delete') actionBtn.disabled = false; // Habilitar botón borrar
+                    if (mode === 'edit') toggleForm(false);
+                    else if (mode === 'delete') actionBtn.disabled = false;
                 } else {
                     msgSearch.innerText = "Libro no encontrado.";
                     form.reset();
-                    // Restaurar el ISBN buscado
                     document.getElementById('searchIsbn').value = isbnToSearch;
                     if (mode !== 'create') toggleForm(true);
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert("Error al buscar el libro.");
+                alert("Error al buscar el libro (Revisa consola para detalles).");
             });
     });
 
@@ -120,21 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(handleResponse)
             .catch(handleError);
         }
-        
-        // CASO C: BORRAR
-        else if (mode === 'delete') {
-            fetch(url) // Asumiendo GET para delete según tu código antiguo
-            .then(res => res.json())
-            .then(data => {
-                if (data.result === true) { // DeleteBook.php devuelve {result: true}
-                    alert("Libro eliminado correctamente");
-                    window.location.href = 'bookOptions.html';
-                } else {
-                    alert("Error al eliminar: " + (data.error || "Desconocido"));
-                }
-            })
-            .catch(handleError);
-        }
     });
 
     // Manejador de respuesta común
@@ -160,22 +137,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Utilidad: Rellenar formulario con datos de la BD
+    f// Utilidad: Rellenar formulario con datos de la BD
     function fillForm(data) {
-        document.getElementById('isbn').value = data.isbn;
-        document.getElementById('title').value = data.title;
-        document.getElementById('pages').value = data.pages;
-        document.getElementById('stock').value = data.stock;
-        document.getElementById('price').value = data.price;
-        document.getElementById('editorial').value = data.editorial;
-        document.getElementById('synopsis').value = data.synopsis;
+        // 1. Rellenar campos de texto
+        document.getElementById('isbn').value = data.isbn || "";
+        document.getElementById('title').value = data.title || "";
+        document.getElementById('pages').value = data.pages || "";
+        document.getElementById('stock').value = data.stock || "";
+        document.getElementById('price').value = data.price || "";
+        document.getElementById('editorial').value = data.editorial || "";
+        document.getElementById('synopsis').value = data.synopsis || "";
         
-        // Input hidden para mantener el nombre de la portada anterior si no se sube una nueva
-        document.getElementById('cover').value = data.cover;
+        // 2. Rellenar ID Autor (Asegúrate de tener este input en tu HTML)
+        // Si tu input se llama 'authorName' o 'id_author', ajusta el ID aquí abajo:
+        if(document.getElementById('author')) {
+             document.getElementById('author').value = data.id_author || ""; 
+        }
 
-        // NOTA: GetBook devuelve author como ID (int). 
-        // Si quieres que aparezca el nombre en 'Edit', tendrás que actualizar GetBook.php
-        // Por ahora, dejamos los campos de texto vacíos o ponemos el ID si quieres depurar:
-        // document.getElementById('authorName').value = data.author; 
+        // 3. LOGICA PARA MOSTRAR LA PORTADA (COVER)
+        const coverName = data.cover; // Nombre del archivo (ej: cover_123.jpg)
+        
+        // Input hidden (para enviar el nombre antiguo si no se cambia)
+        document.getElementById('cover').value = coverName || "";
+
+        // Actualizar visualmente la zona de carga (DropZone)
+        const dropZone = document.getElementById("dropZone");
+        
+        if (dropZone && coverName) {
+            // A. Quitar el texto de "Arrastra tu archivo aquí" si existe
+            const prompt = dropZone.querySelector(".drop-zone__prompt");
+            if (prompt) prompt.remove();
+
+            // B. Buscar o crear el elemento del thumbnail
+            let thumbnailElement = dropZone.querySelector(".drop-zone__thumb");
+            if (!thumbnailElement) {
+                thumbnailElement = document.createElement("div");
+                thumbnailElement.classList.add("drop-zone__thumb");
+                dropZone.appendChild(thumbnailElement);
+            }
+
+            // C. Establecer la imagen de fondo
+            // IMPORTANTE: La ruta es relativa al archivo HTML (crudBook.html), no al JS.
+            // Si crudBook.html está en 'view/html/' y las imágenes en 'view/assets/img/covers/'
+            thumbnailElement.style.backgroundImage = `url('../assets/img/covers/${coverName}')`;
+            
+            // D. Mostrar el nombre del archivo al pasar el ratón
+            thumbnailElement.dataset.label = coverName;
+        }
     }
 
     /* ------------------------------------------------------

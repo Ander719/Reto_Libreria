@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
-  <script src="../assets/js/configProfile.js"></script>
+  <script type="module" src="../assets/js/configProfile.js"></script>
 </head>
 
 <body>
@@ -58,7 +58,6 @@
         <span class="close-card" id="closeUserModal">×</span>
         <form class="loginForm profileForm" id="profileFormUser">
           <div class="profileHeader">
-            <div class="avatar"><img src="https://placehold.co/280x280/png" alt="avatar" /></div>
             <div class="infoArea">
               <div class="fields" style="margin-top:0;">
                 <div class="field half"><label>Name</label><input id="firstNameUser" name="firstName" type="text" /></div>
@@ -92,7 +91,6 @@
         <span class="close-card" id="closeAdminModal">×</span>
         <form class="loginForm profileForm" id="profileFormAdmin">
           <div class="profileHeader">
-            <div class="avatar"><img src="https://placehold.co/280x280/png" alt="avatar" /></div>
             <div class="infoArea">
               <div class="fields" style="margin-top:0;">
                 <div class="field half"><label>Name</label><input id="firstNameAdmin" name="firstName" type="text" /></div>
@@ -116,15 +114,38 @@
       </div>
     </div>
 
+    <div id="verifyPasswordModal" class="changePasswordModal">
+      <div class="changePasswordModalContent" style="max-width: 400px; text-align:center;">
+        <span class="closePasswordSpan" id="closeVerifyModal">×</span>
+        <h2>Security Check</h2>
+        <p style="margin-bottom:15px; color:#666;">Por seguridad, introduce tu contraseña actual para continuar.</p>
+        
+        <form id="verifyPasswordForm">
+             <label style="text-align:left; display:block; font-weight:bold;">Contraseña Actual</label>
+             <input type="password" id="verifyCurrentPassword" required placeholder="Tu contraseña actual">
+             
+             <div class="actions" style="margin-top:20px; display:flex; gap:10px; justify-content: space-between;">
+                 <button type="button" id="btnCancelVerify" class="deleteBtn" style="border:1px solid #ccc; flex:1;">Cancelar</button>
+                 <button type="submit" class="saveBtn" style="flex:1;">Siguiente</button>
+             </div>
+        </form>
+      </div>
+    </div>
+
     <div id="changePasswordModal" class="changePasswordModal">
-      <div class="changePasswordModalContent">
-        <span class="closePasswordSpan">×</span>
-        <h2>Change Password</h2>
+      <div class="changePasswordModalContent" style="max-width: 400px;">
+        <span class="closePasswordSpan" id="closeChangeModal">×</span>
+        <h2>Cambiar Contraseña</h2>
         <form id="changePasswordForm">
-             <label>Old Password</label><input type="password" id="currentPassword">
-             <label>New Password</label><input type="password" id="newPassword">
-             <label>Confirm</label><input type="password" id="confirmNewPassword">
-             <button type="submit" class="saveBtn" style="margin-top:10px;">Confirm</button>
+             <label>Nueva Contraseña</label>
+             <input type="password" id="newPassword" required placeholder="Mínimo 4 caracteres">
+             
+             <label>Confirmar Contraseña</label>
+             <input type="password" id="confirmNewPassword" required placeholder="Repite la contraseña">
+             
+             <div class="actions" style="margin-top:20px;">
+                 <button type="submit" class="saveBtn" style="width:100%;">Confirmar Cambio</button>
+             </div>
         </form>
       </div>
     </div>

@@ -1222,3 +1222,11 @@ dialog {
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
 }
+/* SOBREESCRIBIR ESTILOS PARA QUE EL FORMULARIO OCUPE TODO EL MODAL */
+.profileForm {
+    width: 100% !important;
+    max-width: 100% !important; /* Anula el límite de 400px de .loginForm */
+    padding: 0 !important;      /* Elimina el relleno extra (la tarjeta ya tiene relleno) */
+    box-shadow: none !important; /* Elimina la sombra doble */
+    background-color: transparent !important;
+}

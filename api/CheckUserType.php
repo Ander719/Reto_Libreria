@@ -9,12 +9,16 @@ $response = [
     'role' => 'guest'
 ];
 
-if (isset($_SESSION['profile_code'])) {
+// CORRECCIÓN: Buscamos en 'user_data', que es donde Login.php guarda los datos
+if (isset($_SESSION['user_data'])) {
     $response['isLoggedIn'] = true;
-    $response['role'] = $_SESSION['role'] ?? 'user';
     
-    // Verificación estricta
-    if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    // Obtenemos el rol (asegurando que existe)
+    $role = $_SESSION['user_data']['rol'] ?? 'user';
+    $response['role'] = $role;
+    
+    // Verificamos si es admin
+    if ($role === 'admin') {
         $response['isAdmin'] = true;
     }
 }

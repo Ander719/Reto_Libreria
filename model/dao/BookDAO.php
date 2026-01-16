@@ -83,7 +83,7 @@ class BookDAO
      */
     public function createBook(Book $book)
     {
-        $query = "INSERT INTO BOOK_ (ISBN, Title, ID_Author, NumPages, Stock, Synopsis, Price, Editorial, Cover) 
+        $query = "INSERT INTO BOOK_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
                   VALUES (:isbn, :title, :author, :pages, :stock, :synopsis, :price, :editorial, :cover)";
 
         $stmt = $this->conn->prepare($query);
@@ -139,15 +139,15 @@ class BookDAO
     public function updateBook(Book $book)
     {
         $query = "UPDATE BOOK_ SET 
-                    Title = :title, 
-                    ID_Author = :author, 
-                    NumPages = :pages, 
-                    Stock = :stock, 
-                    Synopsis = :synopsis, 
-                    Price = :price, 
-                    Editorial = :editorial, 
-                    Cover = :cover 
-                  WHERE ISBN = :isbn";
+                    title = :title, 
+                    id_author = :author, 
+                    pages = :pages, 
+                    stock = :stock, 
+                    synopsis = :synopsis, 
+                    price = :price, 
+                    editorial = :editorial, 
+                    cover = :cover 
+                  WHERE isbn = :isbn";
 
         $stmt = $this->conn->prepare($query);
 
@@ -182,7 +182,7 @@ class BookDAO
      */
     public function deleteBook($isbn)
     {
-        $query = "DELETE FROM BOOK_ WHERE ISBN = :isbn";
+        $query = "DELETE FROM BOOK_ WHERE isbn = :isbn";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":isbn", $isbn);
 
