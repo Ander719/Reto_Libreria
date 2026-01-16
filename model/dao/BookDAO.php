@@ -1,8 +1,7 @@
 <?php
-// DAO/BookDAO.php
-require_once '../../Config/Database.php';
-require_once '../entities/Book.php';
-require_once 'AuthorDAO.php';
+require_once dirname(__DIR__, 2) . '/config/Database.php';
+require_once dirname(__DIR__) . '/entities/Book.php';
+require_once __DIR__ . '/AuthorDAO.php'; // AuthorDAO está en la misma carpeta, usamos __DIR__ directo
 
 class BookDAO
 {
@@ -40,10 +39,44 @@ class BookDAO
     {
         // Llamamos al procedimiento almacenado
         $sql = "CALL GetAllBooks()";
-
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $resultArray = [];
+        
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            
+            // PASO 1: Crear el objeto Autor con los datos del JOIN
+            $authorObj = new Author(
+                $row['id_author'],
+                $row['name_author'],
+                $row['last_name']
+            );
+
+            // PASO 2: Crear el objeto Libro pasándole el objeto Autor
+            $bookObj = new Book(
+                $row['title'],
+                $authorObj,
+                $row['isbn'],
+                $row['pages'],
+                $row['stock'],
+                $row['synopsis'],
+                $row['price'],
+                $row['editorial'],
+                $row['cover']
+            );
+            
+            // PASO 3: Convertir todo a array estructurado
+            // Gracias al cambio en Book.php, esto ya incluye al autor anidado
+            $bookArray = $bookObj->toArray();
+            
+            // Añadimos datos extra que no están en la clase (como rating)
+            $bookArray['rating'] = $row['rating'];
+
+            $resultArray[] = $bookArray;
+        }
+
+        return $resultArray;
     }
     /**
      * Inserta un objeto Book en la base de datos

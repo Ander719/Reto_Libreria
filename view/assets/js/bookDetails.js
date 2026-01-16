@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadBookDetails(isbn) {
     try {
         const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`, { method: 'GET' });
-        console.log(response)
         let data;
         try {
             data = await response.text();

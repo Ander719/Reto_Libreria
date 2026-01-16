@@ -1,8 +1,8 @@
 <?php
 header("Content-Type: application/json; charset=utf-8");
-require_once '../controller/controller.php';
+require_once '../controller/BookController.php';
 
-$controller = new controller();
+$controller = new BookController();
 $libros = $controller->getAllBooks(); // Llamamos a la función que acabamos de crear
 
 if ($libros) {

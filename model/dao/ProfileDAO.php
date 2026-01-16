@@ -1,6 +1,7 @@
 <?php
-require_once '../../config/Database.php';
-require_once '../entities/Admin.php';
+require_once dirname(__DIR__, 2) . '/Config/Database.php'; // Sube 2 niveles hasta la raíz y entra en Config
+require_once dirname(__DIR__) . '/entities/Admin.php';     // Sube 1 nivel hasta model y entra en entities
+require_once dirname(__DIR__) . '/entities/User.php';      // Aseguramos que User también esté disponible
 
 class ProfileDAO
 {
@@ -11,24 +12,16 @@ class ProfileDAO
         $database = new Database();
         $this->conn = $database->getConnection();
     }
-    public function createUser($username, $password)
+    public function register($username, $password)
     {
-        // 1. ENCRIPTAR LA CONTRASEÑA
-        // PASSWORD_DEFAULT usa el algoritmo bcrypt (el estándar actual)
-        // Esto genera algo como: $2y$10$e4.K7X... (siempre diferente)
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
         try {
             $query = "CALL register_user(:username, :password)";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":username", $username);
-
-            // 2. PASAMOS EL HASH, NO LA CONTRASEÑA PLANA
-            $stmt->bindParam(":password", $passwordHash);
+            $stmt->bindParam(":password", $password);
 
             $stmt->execute();
 
-            // ... resto de tu código de fetch ...
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row) {
                 return new User(
@@ -43,9 +36,17 @@ class ProfileDAO
                     $row['card_no']
                 );
             }
-            return false;
+            // Si llegamos aquí, SQL corrió pero no devolvió nada
+            return "ERROR_SILENCIOSO";
         } catch (PDOException $e) {
-            return false;
+            // ¡AQUÍ ESTÁ LA CLAVE!
+            // El código 23000 es el estándar SQL para "Integrity Constraint Violation" (Duplicado)
+            if ($e->getCode() == '23000') {
+                return "ERROR_DUPLICADO";
+            }
+
+            // Cualquier otro error (conexión, etc)
+            return "ERROR_BBDD: " . $e->getMessage();
         }
     }
     // ==========================================

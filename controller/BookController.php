@@ -1,16 +1,12 @@
 <?php
-require_once '../model/dao/ProfileDAO.php';
-require_once '../model/dao/BookDAO.php'; 
+require_once '../model/dao/BookDAO.php';
 
-class controller {
+class BookController {
     private $BookDAO;
-    private $CommentDAO;
 
     public function __construct() {
         $this->BookDAO = new BookDAO();
-        $this->CommentDAO = new CommentDAO();
     }
-
     // --- FUNCIONES DE LIBROS ---
     public function getBook($isbn) {
         return $this->BookDAO->getBookByIsbn($isbn);
@@ -37,4 +33,3 @@ class controller {
         return $this->BookDAO->deleteBook($isbn);
     }
 }
-?>

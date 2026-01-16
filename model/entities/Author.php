@@ -4,7 +4,7 @@ class Author {
     private $name;
     private $lastName;
 
-    public function __construct($id_author = null, $name = null, $lastName = null) {
+    public function __construct($id_author, $name, $lastName) {
         $this->id_author = $id_author;
         $this->name = $name;
         $this->lastName = $lastName;
@@ -17,4 +17,13 @@ class Author {
     public function setId(?int $id_author): void { $this->id_author = $id_author; }
     public function setName(?string $name): void { $this->name = $name; }
     public function setApellido(?string $lastName): void { $this->lastName = $lastName; }
+
+    // ESTO ES LO IMPORTANTE:
+    public function toArray() {
+        return [
+            'id' => $this->id_author,
+            'name' => $this->name,
+            'lastname' => $this->lastName
+        ];
+    }
 }

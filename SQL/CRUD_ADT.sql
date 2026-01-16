@@ -7,7 +7,7 @@ CREATE TABLE profile_ (
     profile_code INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(40) UNIQUE,
     user_name VARCHAR(30) UNIQUE,
-    pswd VARCHAR(30),
+    pswd VARCHAR(255),
     telephone BIGINT,
     name_ VARCHAR(30),
     surname VARCHAR(30)
@@ -76,6 +76,14 @@ CREATE TABLE comment_ (
     FOREIGN KEY (profile_code) REFERENCES profile_(profile_code) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+INSERT INTO profile_ (`profile_code`, `email`, `user_name`, `pswd`, `telephone`, `name_`, `surname`) VALUES 
+('1', 'admin@admin.com', 'admin', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', '123456789', 'Jefe', 'Supremo');
+
+INSERT INTO admin_ (profile_code, current_account) VALUES
+(1, 'ES12-3456-7890-1234-5678');
+
+/*
+
 -- 1. Perfiles
 INSERT INTO profile_ (profile_code, email, user_name, pswd, telephone, name_, surname) VALUES
 (1, 'juan.perez@email.com', 'juanP', '1234', 611223344, 'Juan', 'Pérez'),
@@ -94,6 +102,8 @@ INSERT INTO admin_ (profile_code, current_account) VALUES
 (4, 'ES12-3456-7890-1234-5678'),
 (5, 'ES98-7654-3210-9876-5432');
 
+*/
+
 -- 3. Autores
 INSERT INTO author_ (id_author, name_author, last_name) VALUES
 (1, 'J.K.', 'Rowling'),
@@ -109,6 +119,9 @@ INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editor
 ('9780451524935', '1984', 3, 328, 20, 'El Gran Hermano te vigila. Una distopía sobre el control total.', 12.00, 'Debolsillo', '1984.jpg'),
 ('9780307474728', 'Cien años de soledad', 4, 471, 8, 'La saga de la familia Buendía en el pueblo mágico de Macondo.', 18.50, 'Cátedra', 'cien_anos.jpg'),
 ('9788466657523', 'El Imperio Final', 5, 672, 12, 'En un mundo donde cae ceniza del cielo, un ladrón planea el robo definitivo.', 21.90, 'Nova', 'mistborn.jpg');
+
+
+/*
 
 -- 5. Pedidos
 INSERT INTO order_ (id_order, profile_code, date_buy, buyed) VALUES
@@ -130,26 +143,36 @@ INSERT INTO comment_ (profile_code, isbn, comment_text, valoration, date_comment
 (3, '9780451524935', 'Aterradoramente actual. Me encantó.', 5, '2024-11-20'),
 (2, '9780439139595', 'Entretenido, pero prefiero las películas.', 3, '2025-01-12');
 
+*/
 
 DELIMITER //
 
 -- Procedimiento: Registrar Usuario
-CREATE PROCEDURE register_user( IN p_username VARCHAR(30), IN p_pswd VARCHAR(30))
+CREATE PROCEDURE register_user(IN p_username VARCHAR(30), IN p_password VARCHAR(255))
 BEGIN
     DECLARE v_new_profile_code INT;
     
+    -- 1. Insertamos en la tabla padre (PROFILE)
+    -- Dejamos email, telefono, nombre y apellido como NULL por ahora
     INSERT INTO profile_ (email, user_name, pswd, telephone, name_, surname)
-    VALUES (null, p_username, p_pswd, null, null, null);
+    VALUES (NULL, p_username, p_password, NULL, NULL, NULL);
 
+    -- 2. Obtenemos el ID generado
     SET v_new_profile_code = LAST_INSERT_ID();
 
+    -- 3. Insertamos en la tabla hija (USER)
+    -- Por defecto creamos el usuario vacío (sin género ni tarjeta)
     INSERT INTO user_ (profile_code, gender, card_no)
-    VALUES (v_new_profile_code, null, null);
+    VALUES (v_new_profile_code, NULL, NULL);
     
-    SELECT * FROM profile_ p 
+    -- 4. Devolvemos los datos del usuario recién creado
+    -- Esto es lo que tu PHP leerá en $stmt->fetch()
+    SELECT p.*, u.gender, u.card_no 
+    FROM profile_ p 
     JOIN user_ u ON p.profile_code = u.profile_code 
     WHERE p.profile_code = v_new_profile_code;
- END //
+
+END //
 
 -- Procedimiento: Obtener Todos los Libros
 CREATE PROCEDURE GetAllBooks()

@@ -1,10 +1,11 @@
-import { checkSession, currentUser } from './sesion.js';
+import { checkSession, currentUser } from './session.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Ejecutamos la función de inicialización al cargar el script
+init();
 
+async function init() {
     console.log("Verificando sesión con el servidor...");
 
-    // 2. LLAMAMOS A TU FUNCIÓN REAL
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3. Actualizar Header y Cargar Libros (esto sigue igual)
     actualizarHeader(isLogged);
     cargarLibrosDesdeBD();
-});
+}
 
 /**
  * Función que maneja la lógica visual del Header
@@ -77,15 +78,19 @@ async function cargarLibrosDesdeBD() {
 
     try {
         const response = await fetch('../../api/GetAllBooks.php'); // Tu nueva API
-        console.log(response)
+        console.log(response);
+
+        const rawText = await response.text();
+
         let data;
         try {
-            data = await response.text();
-            //data = JSON.parse(data);
-        } catch (err) {
-            throw new Error('Invalid JSON response: ' + err.message);
+            data = JSON.parse(rawText);
+        } catch (error) {
+            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
+            return; // Salimos de la función
         }
-        console.log("Datos recibidos del servidor:", data);
+
+        console.log("Datos recibidos:", data);
 
         if (data.exito) {
             renderizarLibros(data.libros);

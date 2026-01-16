@@ -1,5 +1,7 @@
 <?php
-require_once '../../Config/Database.php';
+require_once '../config/Database.php';
+require_once dirname(__DIR__) . '/entities/Author.php';
+
 
 class AuthorDAO {
     private $conn;
