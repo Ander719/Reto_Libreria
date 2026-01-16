@@ -1,4 +1,69 @@
 import { currentUser, checkSession } from './sesion.js';
+let isEditing = false;
+
+// --- CONFIGURACIÓN DEL MODAL ---
+const dialog = document.getElementById('myDialog');
+const dialogTitle = document.getElementById('dialogTitle');
+const dialogMessage = document.getElementById('dialogMessage');
+const closeBtn = document.getElementById('closeDialogBtn');
+const confirmBtn = document.getElementById('confirmDialogBtn');
+
+let confirmResolver = null;
+
+// 1. Configurar botón de CERRAR (Cancelar)
+if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+        dialog.close();
+        if (confirmResolver) {
+            confirmResolver(false); // Resuelve FALSE (Cancelado)
+            confirmResolver = null;
+        }
+    });
+}
+
+// 2. Configurar botón de CONFIRMAR (Aceptar)
+if (confirmBtn) {
+    confirmBtn.addEventListener('click', () => {
+        dialog.close();
+        if (confirmResolver) {
+            confirmResolver(true); // Resuelve TRUE (Aceptado)
+            confirmResolver = null;
+        }
+    });
+}
+
+
+// Función reutilizable
+function showModal(titulo, mensaje) {
+    dialogTitle.innerText = titulo;
+    dialogMessage.innerText = mensaje;
+
+    // Configuración visual: Solo botón cerrar
+    closeBtn.innerText = "Cerrar";
+    closeBtn.style.display = "inline-block";
+    confirmBtn.style.display = "none";
+
+    dialog.showModal();
+}
+
+// 3. Función para Confirmaciones (Sustituye a confirm)
+function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancelar = "Cancelar") {
+    dialogTitle.innerText = titulo;
+    dialogMessage.innerText = mensaje;
+
+    // Configuración visual: Ambos botones
+    closeBtn.innerText = textoCancelar;
+    closeBtn.style.display = "inline-block";
+    confirmBtn.innerText = textoConfirmar;
+    confirmBtn.style.display = "inline-block";
+
+    dialog.showModal();
+
+    // Devolvemos una promesa que espera a que pulsen un botón
+    return new Promise((resolve) => {
+        confirmResolver = resolve;
+    });
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el ISBN de la URL
@@ -7,8 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isbn = params.get('isbn');
 
     if (!isbn) {
-        alert("No se ha especificado un libro.");
-        window.location.href = "main.html"; // Volver al inicio si no hay ISBN
+        // CAMBIO AQUÍ
+        showModal("Error", "No se ha especificado un libro.");
+
+        // Damos un pequeño tiempo antes de redirigir para que se lea (opcional)
+        setTimeout(() => window.location.href = "main.html", 2000);
         return;
     }
 
@@ -101,8 +169,7 @@ function rellenarVista(libro) {
 
     // C. Imagen (con fallback si falla)
     const img = document.getElementById('bookCover');
-    img.src = libro.cover ? `../assets/img/${libro.cover}` : "../assets/img/mood-heart.png";
-    console.log("Cargando imagen de portada:", img.src);
+    img.src = libro.cover ? `../assets/img/covers/${libro.cover}` : "../assets/img/mood-heart.png"; console.log("Cargando imagen de portada:", img.src);
     img.alt = `Portada de ${libro.title}`;
 
     // D. Lógica de Stock
@@ -130,15 +197,32 @@ function rellenarVista(libro) {
     }
 
     // E. Evento del Botón Añadir al Carrito
-    btnCart.addEventListener('click', () => {
-        if (!userSession) {
-            alert("Debes iniciar sesión para comprar.");
-            window.location.href = "login.html";
+    // CAMBIO: Cambiar texto del botón
+    btnCart.textContent = "Comprar Ahora";
+
+    // E. NUEVO Evento de Compra Directa
+    // Clonamos el botón para borrar cualquier evento anterior (limpieza)
+    const newBtn = btnCart.cloneNode(true);
+    btnCart.parentNode.replaceChild(newBtn, btnCart);
+
+    newBtn.addEventListener('click', async () => {
+        if (!currentUser) {
+            showModal("Atención", "Debes iniciar sesión para comprar.");
             return;
         }
 
-        const cantidad = qtyInput.value;
-        agregarAlCarrito(libro.isbn, cantidad);
+        const cantidad = parseInt(qtyInput.value);
+
+        const aceptado = await showConfirm(
+            "Confirmar Compra",
+            "¿Estás seguro de que quieres comprar este libro?",
+            "Si, comprar",
+            "Cancelar"
+        );
+
+        if (aceptado) {
+            comprarAhora(libro.isbn, cantidad, currentUser.id);
+        }
     });
 }
 function agregarAlCarrito(isbn, cantidad) {
@@ -212,8 +296,7 @@ async function submitComment(e, user) {
         return;
     }
 
-    const profileCode = user.PROFILE_CODE || user.profileCode;
-
+    const profileCode = user.id;
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
     const payload = {
@@ -268,8 +351,8 @@ async function submitComment(e, user) {
 
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
-    const userSession = currentUser;
-    const myProfileCode = userSession ? (userSession.PROFILE_CODE || userSession.profileCode) : null;
+    // Usamos el ID del usuario actual si existe
+    const myProfileCode = currentUser ? currentUser.id : null;
 
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
@@ -283,11 +366,14 @@ async function loadComments(isbn) {
                 const item = document.createElement('div');
                 item.classList.add('comment-item');
 
+                // Comprobamos si este comentario es mío
                 const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
                 if (isMine) myReview = c;
 
+                // Generamos los botones (Lápiz y Basura) solo si es mío
                 let buttonsHtml = '';
                 if (isMine) {
+                    // Escapamos las comillas simples para que no rompan el HTML del onclick
                     const safeText = c.comment_text.replace(/'/g, "\\'");
                     buttonsHtml = `
                         <div class="comment-actions">
@@ -304,18 +390,25 @@ async function loadComments(isbn) {
                         <span class="comment-date">${c.dateComent}</span>
                     </p>
                     <div class="star-rating">${'⭐'.repeat(c.valoration)}</div>
-                    <p class="comment-text"></p> <div class="clear-fix"></div>
+                    <p class="comment-text">${c.comment_text}</p> <div class="clear-fix"></div>
                 `;
-                item.querySelector('.comment-text').textContent = c.comment_text;
                 commentsList.appendChild(item);
             });
         } else {
             commentsList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to write one!</p>';
         }
 
+        // --- AQUÍ ESTÁ LA LÓGICA QUE PIDES ---
+        const actionContainer = document.getElementById('userActionContainer');
+
         if (myReview) {
-            console.log("User already has a review. Switching to Edit Mode.");
-            startEdit(myReview.comment_text, myReview.valoration, false);
+            // SI YA COMENTÉ: Borro todo lo de abajo. Limpio total.
+            actionContainer.innerHTML = '';
+        } else {
+            // SI NO HE COMENTADO: Muestro el formulario (si no está ya pintado)
+            if (!document.getElementById('commentForm')) {
+                handleCommentSection();
+            }
         }
 
     } catch (error) {
@@ -325,11 +418,15 @@ async function loadComments(isbn) {
 }
 
 window.deleteComment = async function (isbn) {
-    if (!confirm("Are you sure you want to delete this review?")) return;
+    const aceptado = await showConfirm(
+        "Borrar Reseña",
+        "¿Estás seguro de que quieres eliminar tu reseña? Esta acción no se puede deshacer.",
+        "Borrar",
+        "Volver"
+    );
 
-    const userSession = userSession();
-    const profileCode = userSession.PROFILE_CODE || userSession.profileCode;
-
+    if (!aceptado) return;
+    const profileCode = currentUser.id;
     try {
         const response = await fetch('../../api/DeleteComment.php', {
             method: 'POST',
@@ -338,24 +435,46 @@ window.deleteComment = async function (isbn) {
         });
 
         if (response.ok) {
+            // Recargamos comentarios sin molestar al usuario o ponemos un modal de éxito
+            showModal("Éxito", "Comentario eliminado correctamente.");
             loadComments(isbn);
             resetForm();
         } else {
-            alert("Error deleting comment");
+            showModal("Error", "No se pudo eliminar el comentario.");
         }
     } catch (error) {
         console.error(error);
-        alert("Connection error");
+        showModal("Error de conexión", "Inténtalo de nuevo más tarde.");
     }
 };
 
 window.startEdit = function (text, rating, doScroll = true) {
+    // 1. SI EL FORMULARIO NO EXISTE, LO VOLVEMOS A PINTAR
+    if (!document.getElementById('commentForm')) {
+        handleCommentSection();
+    }
+
+    // 2. ACTIVAMOS MODO EDICIÓN
     isEditing = true;
     document.getElementById('commentBody').value = text;
     document.getElementById('ratingScore').value = parseInt(rating);
-    document.getElementById('formTitle').innerText = "Edit your Review";
-    document.getElementById('submitBtn').innerText = "Update Review";
-    document.getElementById('cancelEditBtn').style.display = "inline-block";
+
+    const title = document.getElementById('formTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    if (title) title.innerText = "Edit your Review";
+    if (submitBtn) submitBtn.innerText = "Update Review";
+
+    // 3. CONFIGURAMOS EL BOTÓN CANCELAR
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    if (cancelBtn) {
+        cancelBtn.style.display = "inline-block";
+
+        cancelBtn.onclick = () => {
+            isEditing = false;
+            // Borramos todo al cancelar para dejarlo limpio
+            document.getElementById('userActionContainer').innerHTML = '';
+        };
+    }
 
     if (doScroll) {
         document.getElementById('userActionContainer').scrollIntoView({ behavior: 'smooth' });
@@ -371,3 +490,46 @@ function resetForm() {
     document.getElementById('formMessage').innerText = "";
     document.getElementById('formMessage').className = "";
 }
+
+
+
+async function comprarAhora(isbn, quantity, userId) {
+    try {
+        const response = await fetch('../../api/BuyNow.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                profileCode: userId,
+                isbn: isbn,
+                quantity: quantity
+            })
+        });
+
+        // Parseamos la respuesta con seguridad
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Respuesta no válida:", text);
+            showModal("Error", "Error inesperado del servidor.");
+            return;
+        }
+
+        if (data.exito) {
+            // AQUÍ ESTABA EL ALERT, LO CAMBIAMOS POR MODAL
+            showModal("¡Compra realizada!", "Gracias por tu pedido. Disfruta tu lectura.");
+
+            // Opcional: Actualizar la página tras 2 segundos para ver el stock bajar
+            // setTimeout(() => location.reload(), 2000); 
+        } else {
+            showModal("Error", data.error || "No se pudo completar la compra.");
+        }
+
+    } catch (error) {
+        console.error(error);
+        showModal("Error de conexión", "No se pudo contactar con el servidor.");
+    }
+}
+
+

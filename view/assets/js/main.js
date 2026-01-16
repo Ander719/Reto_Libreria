@@ -36,7 +36,7 @@ function actualizarHeader(isLogged) {
 
     if (isLogged && currentUser) {
         // --- MODO USUARIO LOGUEADO ---
-        welcomeText.textContent = `${currentUser.nombre}`;
+        welcomeText.textContent = `${currentUser.user_name}`;
 
         // Ocultamos "Iniciar Sesión"
         navItems[0].hidden = true;
@@ -120,7 +120,7 @@ function renderizarLibros(listaLibros) {
         const clone = template.content.cloneNode(true);
 
         // Rellenamos los datos buscando por clase dentro del clon
-        clone.querySelector('.book-title').textContent = libro.titulo;
+        clone.querySelector('.book-title').textContent = libro.title;
         clone.querySelector('.book-author').textContent = libro.autor;
         clone.querySelector('.book-price').textContent = `${libro.price}€`;
         clone.querySelector('.book-stock').textContent = `Stock: ${libro.stock}`;

@@ -1203,3 +1203,22 @@ footer {
   text-decoration: none;
   margin-top: 10px;
 }
+
+
+/* Estilo para el Modal Nativo (<dialog>) */
+dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  /* Aseguramos que se vea encima de todo */
+  z-index: 1000;
+}
+
+/* Fondo oscuro detrás del modal */
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
