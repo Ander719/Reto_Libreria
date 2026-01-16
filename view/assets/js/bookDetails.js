@@ -380,6 +380,7 @@ async function loadComments(isbn) {
 
                 // Comprobamos si este comentario es mío
                 const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
+                console.log("Comentario recibido:", c);
                 if (isMine) myReview = c;
 
                 // Generamos los botones (Lápiz y Basura) solo si es mío

@@ -1,6 +1,5 @@
 <?php
-require_once '../../Config/Database.php';
-
+require_once dirname(__DIR__, 2) . '/Config/Database.php';
 class CommentDAO {
     private $conn;
 
