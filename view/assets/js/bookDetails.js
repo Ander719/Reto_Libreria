@@ -1,5 +1,26 @@
 import { currentUser, checkSession } from './sesion.js';
 let isEditing = false;
+
+// --- CONFIGURACIÓN DEL MODAL ---
+const dialog = document.getElementById('myDialog');
+const dialogTitle = document.getElementById('dialogTitle');
+const dialogMessage = document.getElementById('dialogMessage');
+const closeBtn = document.getElementById('closeDialogBtn');
+
+// Cerrar al pulsar el botón
+if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+        dialog.close(); // Función nativa de HTML5
+    });
+}
+
+// Función reutilizable
+function showModal(titulo, mensaje) {
+    dialogTitle.innerText = titulo;
+    dialogMessage.innerText = mensaje;
+    dialog.showModal(); // Función nativa: muestra y bloquea el fondo
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el ISBN de la URL
     // Esto lee lo que hay después del signo ? (ej: ?isbn=1234)
@@ -97,8 +118,7 @@ function rellenarVista(libro) {
 
     newBtn.addEventListener('click', async () => {
         if (!currentUser) {
-            alert("Debes iniciar sesión para comprar.");
-            window.location.href = "login.html";
+            showModal("Atención", "Debes iniciar sesión para comprar.");
             return;
         }
 
@@ -369,7 +389,6 @@ function resetForm() {
 
 
 
-// --- FUNCIÓN NUEVA PARA COMPRA DIRECTA ---
 async function comprarAhora(isbn, quantity, userId) {
     try {
         const response = await fetch('../../api/BuyNow.php', {
@@ -382,17 +401,31 @@ async function comprarAhora(isbn, quantity, userId) {
             })
         });
 
-        const data = await response.json();
+        // Parseamos la respuesta con seguridad
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Respuesta no válida:", text);
+            showModal("Error", "Error inesperado del servidor.");
+            return;
+        }
 
         if (data.exito) {
-            alert("¡Compra realizada con éxito! Gracias por tu pedido.");
-            location.reload(); // Recargamos para actualizar el stock visualmente
+            // AQUÍ ESTABA EL ALERT, LO CAMBIAMOS POR MODAL
+            showModal("¡Compra realizada!", "Gracias por tu pedido. Disfruta tu lectura.");
+
+            // Opcional: Actualizar la página tras 2 segundos para ver el stock bajar
+            // setTimeout(() => location.reload(), 2000); 
         } else {
-            alert("Error: " + (data.error || "No se pudo completar la compra."));
+            showModal("Error", data.error || "No se pudo completar la compra.");
         }
+
     } catch (error) {
         console.error(error);
-        alert("Error de conexión al procesar la compra.");
+        showModal("Error de conexión", "No se pudo contactar con el servidor.");
     }
 }
+
 
