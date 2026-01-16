@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json; charset=utf-8');
-require_once '../controller/controller.php';
+require_once '../controller/BookController.php';
 
 $isbn = $_GET['isbn'] ?? '';
 
@@ -13,7 +13,7 @@ if (!$isbn) {
     exit;
 }
 
-$controller = new controller();
+$controller = new BookController();
 $book = $controller->getBook($isbn);
 
 // 3. Devolvemos el resultado

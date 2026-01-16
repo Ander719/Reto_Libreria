@@ -1,4 +1,4 @@
-import { currentUser, checkSession } from './sesion.js';
+import { currentUser, checkSession } from './session.js';
 let isEditing = false;
 
 // --- CONFIGURACIÓN DEL MODAL ---
@@ -93,12 +93,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadBookDetails(isbn) {
     try {
         const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`, { method: 'GET' });
+        const rawText = await response.text();
+
         let data;
         try {
-            data = await response.text();
-            data = JSON.parse(data);
-        } catch (err) {
-            throw new Error('Invalid JSON response: ' + err.message);
+            data = JSON.parse(rawText);
+        } catch (error) {
+            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
+            return; // Salimos de la función    
         }
 
         console.log("Datos recibidos del servidor:", data);
@@ -356,8 +358,18 @@ async function loadComments(isbn) {
 
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
-        const comments = await response.json();
 
+        const rawText = await response.text();
+
+        let comments;
+        try {
+            comments = JSON.parse(rawText);
+        } catch (error) {
+            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
+            return; // Salimos de la función
+        }
+
+        console.log("Datos recibidos del servidor:", comments);
         commentsList.innerHTML = '';
         let myReview = null;
 
