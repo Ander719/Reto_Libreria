@@ -9,11 +9,11 @@ class UserModel {
     }
 
     // ==========================================
-    // 1. FUNCIONES DE LOGIN (CRÍTICAS)
+    // 1. FUNCIONES DE LOGIN
     // ==========================================
     
     public function loginUser($username, $password) {
-        // Verifica si tus columnas se llaman USER_NAME o Username
+        // CORREGIDO: Tablas y columnas en minúsculas (profile_, user_, user_name...)
         $query = "SELECT * FROM profile_ P 
                   JOIN user_ U ON P.profile_code = U.profile_code 
                   WHERE P.user_name = :username AND P.pswd = :pass";
@@ -26,6 +26,7 @@ class UserModel {
     }
 
     public function loginAdmin($username, $password) {
+        // CORREGIDO: admin_ y columnas en minúsculas
         $query = "SELECT * FROM profile_ P 
                   JOIN admin_ A ON P.profile_code = A.profile_code 
                   WHERE P.user_name = :username AND P.pswd = :pass";
@@ -38,64 +39,66 @@ class UserModel {
     }
 
     // ==========================================
-    // 2. OBTENER DATOS (PARA PERFIL Y TABLA)
+    // 2. OBTENER DATOS
     // ==========================================
 
     public function getUserById($id) {
         // 1. Intentar Admin
-        $qAdmin = "SELECT P.*, A.CURRENT_ACCOUNT 
-                   FROM PROFILE_ P 
-                   JOIN ADMIN_ A ON P.PROFILE_CODE = A.PROFILE_CODE 
-                   WHERE P.PROFILE_CODE = :id";
+        $qAdmin = "SELECT P.*, A.current_account 
+                   FROM profile_ P 
+                   JOIN admin_ A ON P.profile_code = A.profile_code 
+                   WHERE P.profile_code = :id";
         $stmt = $this->conn->prepare($qAdmin);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $row['ROLE_TYPE'] = 'admin'; 
+            $row['role_type'] = 'admin'; // Añadimos marca de rol manualmente
             return $row;
         }
 
         // 2. Intentar Usuario
-        $qUser = "SELECT P.*, U.CARD_NO, U.GENDER 
-                  FROM PROFILE_ P 
-                  JOIN USER_ U ON P.PROFILE_CODE = U.PROFILE_CODE 
-                  WHERE P.PROFILE_CODE = :id";
+        $qUser = "SELECT P.*, U.card_no, U.gender 
+                  FROM profile_ P 
+                  JOIN user_ U ON P.profile_code = U.profile_code 
+                  WHERE P.profile_code = :id";
         $stmt = $this->conn->prepare($qUser);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $row['ROLE_TYPE'] = 'user';
+            $row['role_type'] = 'user';
             return $row;
         }
         return null;
     }
 
     public function get_all_users() {
-        $query = "SELECT P.*, U.CARD_NO, U.GENDER FROM PROFILE_ P JOIN USER_ U ON P.PROFILE_CODE = U.PROFILE_CODE";
+        // CORREGIDO: Todo en minúsculas
+        $query = "SELECT P.*, U.card_no, U.gender 
+                  FROM profile_ P 
+                  JOIN user_ U ON P.profile_code = U.profile_code";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // ==========================================
-    // 3. MODIFICAR DATOS (TRANSACCIONES)
+    // 3. MODIFICAR DATOS (¡AQUÍ ESTABA EL FALLO!)
     // ==========================================
 
     public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code) {
         try {
             $this->conn->beginTransaction();
 
-            // Actualizar PROFILE_
-            // NOTA: Si tu columna en BD es 'Name' (sin guion bajo), cambia NAME_ por Name aquí
-            $query1 = "UPDATE PROFILE_ SET 
-                        EMAIL = :email, 
-                        USER_NAME = :username, 
-                        TELEPHONE = :telephone, 
-                        NAME_ = :name, 
-                        SURNAME = :surname 
-                       WHERE PROFILE_CODE = :code";
+            // 1. Actualizar tabla PROFILE_ (Minúsculas: profile_, email, user_name, telephone, name_, surname)
+            $query1 = "UPDATE profile_ SET 
+                        email = :email, 
+                        user_name = :username, 
+                        telephone = :telephone, 
+                        name_ = :name, 
+                        surname = :surname 
+                       WHERE profile_code = :code";
             
             $stmt1 = $this->conn->prepare($query1);
             $stmt1->bindParam(":email", $email);
@@ -106,11 +109,11 @@ class UserModel {
             $stmt1->bindParam(":code", $profile_code);
             $stmt1->execute();
 
-            // Actualizar USER_
-            $query2 = "UPDATE USER_ SET 
-                        GENDER = :gender, 
-                        CARD_NO = :card 
-                       WHERE PROFILE_CODE = :code";
+            // 2. Actualizar tabla USER_ (Minúsculas: user_, gender, card_no)
+            $query2 = "UPDATE user_ SET 
+                        gender = :gender, 
+                        card_no = :card 
+                       WHERE profile_code = :code";
             
             $stmt2 = $this->conn->prepare($query2);
             $stmt2->bindParam(":gender", $gender);
@@ -131,13 +134,14 @@ class UserModel {
         try {
             $this->conn->beginTransaction();
 
-            $query1 = "UPDATE PROFILE_ SET 
-                        EMAIL = :email, 
-                        USER_NAME = :username, 
-                        TELEPHONE = :telephone, 
-                        NAME_ = :name, 
-                        SURNAME = :surname 
-                       WHERE PROFILE_CODE = :code";
+            // 1. Actualizar PROFILE_
+            $query1 = "UPDATE profile_ SET 
+                        email = :email, 
+                        user_name = :username, 
+                        telephone = :telephone, 
+                        name_ = :name, 
+                        surname = :surname 
+                       WHERE profile_code = :code";
             
             $stmt1 = $this->conn->prepare($query1);
             $stmt1->bindParam(":email", $email);
@@ -148,9 +152,10 @@ class UserModel {
             $stmt1->bindParam(":code", $profile_code);
             $stmt1->execute();
 
-            $query2 = "UPDATE ADMIN_ SET 
-                        CURRENT_ACCOUNT = :account 
-                       WHERE PROFILE_CODE = :code";
+            // 2. Actualizar ADMIN_ (Minúsculas: admin_, current_account)
+            $query2 = "UPDATE admin_ SET 
+                        current_account = :account 
+                       WHERE profile_code = :code";
             
             $stmt2 = $this->conn->prepare($query2);
             $stmt2->bindParam(":account", $current_account);
@@ -171,44 +176,33 @@ class UserModel {
     // ==========================================
 
     public function delete_user($id) {
-        $query = "DELETE FROM PROFILE_ WHERE PROFILE_CODE = :id";
+        // CORREGIDO: profile_ y profile_code
+        $query = "DELETE FROM profile_ WHERE profile_code = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }
     
-    // Función de registro (si la usas en otro lado)
-    // Sustituye la función create_user actual por esta:
-    public function create_user($username, $pswd)
-    {
+    public function create_user($username, $pswd) {
+        // ... (Si usas el procedimiento almacenado register_user, asegúrate que existe)
         try {
-            // 1. Verificar si el usuario ya existe
-            $checkQuery = "SELECT * FROM PROFILE_ WHERE USER_NAME = ?";
-            $checkStmt = $this->conn->prepare($checkQuery);
-            $checkStmt->bindValue(1, $username);
-            $checkStmt->execute();
-            
-            if ($checkStmt->rowCount() > 0) {
-                return null; // El usuario ya existe
-            }
-
-            // 2. Llamar al procedimiento almacenado 'RegistrarUsuario'
-            // Asegúrate de haber ejecutado el script SQL que crea este procedimiento
-            $createQuery = "CALL register_user(?, ?)";
-            $createStmt = $this->conn->prepare($createQuery);
-            $createStmt->bindValue(1, $username);
-            $createStmt->bindValue(2, $pswd);
-            $createStmt->execute();
-
-            // 3. Devolver el usuario creado (el procedimiento hace un SELECT al final)
-            $result = $createStmt->fetch(PDO::FETCH_ASSOC);
-            return $result;
-
+            $query = "CALL register_user(:username, :pswd)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":username", $username);
+            $stmt->bindParam(":pswd", $pswd);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            // Puedes loguear el error si es necesario
-            error_log("Error en create_user: " . $e->getMessage());
-            return null;
+            return false;
         }
+    }
+    
+    public function modifyPassword($profile_code, $password) {
+        $query = "UPDATE profile_ SET pswd = :password WHERE profile_code = :code";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":password", $password);
+        $stmt->bindParam(":code", $profile_code);
+        return $stmt->execute();
     }
 }
 ?>
