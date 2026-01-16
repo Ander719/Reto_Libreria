@@ -90,6 +90,22 @@ class ProfileController {
         // CASO 3: OTROS FALLOS
         return ["success" => false, "error" => "Error del sistema: " . $resultado];
     }
+
+     public function logout() {
+        // 1. Iniciamos sesión solo si no está iniciada (para tener acceso a ella)
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // 2. Borramos las variables de sesión ($_SESSION['user'] = null)
+        session_unset();
+
+        // 3. Destruimos la sesión completamente en el servidor
+        session_destroy();
+
+        return ["success" => true];
+    }
+
     public function get_all_users() { return $this->ProfileDAO->get_all_users(); }
     public function delete_user($id) { return $this->ProfileDAO->delete_user($id); }
     //public function modifyPassword($profile_code, $password) { return $this->ProfileDAO->modifyPassword($profile_code, $password); }

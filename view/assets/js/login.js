@@ -14,7 +14,8 @@ async function init() {
         return; // Detenemos la ejecución del script
     }
 }
-
+const dialog = document.getElementById("statusDialog");
+const dialogMessage = document.getElementById("dialogMessage");
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
@@ -29,10 +30,10 @@ if (loginForm) {
         let data = await login(username, password);
         console.log("Respuesta servidor:", data); // Debug
 
-        if (data.exito) {
-            // YA NO NECESITAS ESTO:
-            // localStorage.setItem("actualProfile", ...); BORRAR
-            alert("Login correcto. Redirigiendo...");
+        if (data.success) {
+            // Mostramos el error en el diálogo
+            dialogMessage.textContent = "Login exitoso. Redirigiendo...";
+            dialog.showModal();
 
             // Simplemente rediriges. La cookie ya está grabada en el navegador.
             if (data.rol === "admin") {
@@ -41,34 +42,40 @@ if (loginForm) {
                 window.location.href = "main.html";
             }
         } else {
-            alert("Error: " + (data.error || "Credenciales incorrectas"));
+            // Mostramos el error en el diálogo
+            dialogMessage.textContent = data.error || "Error desconocido durante el login.";
+            dialog.showModal();
         }
     });
 }
 
 async function login(username, password) {
     try {
-        const response = await fetch(`../../api/Login.php`, {
+        const response = await fetch(`../../api/LogIn.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
             credentials: 'include', // Importante para enviar/recibir cookies
         });
-        // Si el archivo PHP falla (Error 500, 404), lanzamos error
-        if (!response.ok) return { exito: false, error: `Error del servidor (${response.status}). Ver consola.` };
+        const rawText = await response.text();
 
         let data;
         try {
-            data = await response.text();
-            data = JSON.parse(data);
+            data = JSON.parse(rawText);
         } catch (e) {
-            console.error("Error al parsear JSON:", e.message);
-            throw new Error("Respuesta inválida del servidor: " + e.message);
+            return { success: false, error: "Error grave/formato: " + rawText };
         }
 
-        return data;
+        if (!response.ok) {
+            return {
+                success: false, error: data.error || `Error de conexión (${response.status})`
+            };
+        }
+
+        return data; // Si todo fue bien (200), devolvemos los datos tal cual
 
     } catch (error) {
         console.error("Error en fetch:", error);
+        return { success: false, error: "Fallo de red o servidor caído." };
     }
 }

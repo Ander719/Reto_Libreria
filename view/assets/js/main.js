@@ -1,8 +1,6 @@
-import { checkSession, currentUser } from './session.js';
+import { checkSession, currentUser , logout } from './session.js';
 
-// Ejecutamos la función de inicialización al cargar el script
 init();
-
 async function init() {
     console.log("Verificando sesión con el servidor...");
 
@@ -14,8 +12,14 @@ async function init() {
     } else {
         console.log("No hay sesión activa");
     }
+    const btnLogout = document.getElementById('btnLogout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita que ponga # en la URL
+            logout(); // Llamamos a la función de sesion.js
+        });
+    }
 
-    // 3. Actualizar Header y Cargar Libros (esto sigue igual)
     actualizarHeader(isLogged);
     cargarLibrosDesdeBD();
 }

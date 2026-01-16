@@ -27,3 +27,13 @@ export async function checkSession() {
         return false;
     }
 }
+export async function logout() {
+    try {
+        await fetch('../../api/Logout.php');
+        // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
+        location.reload(); // Recargamos la página para actualizar el estado 
+    } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        location.reload(); 
+    }
+}
