@@ -1,6 +1,7 @@
 import { checkSession, currentUser , logout } from './session.js';
 
 init();
+
 async function init() {
     console.log("Verificando sesión con el servidor...");
 
@@ -12,13 +13,27 @@ async function init() {
     } else {
         console.log("No hay sesión activa");
     }
-    const btnLogout = document.getElementById('btnLogout');
-    if (btnLogout) {
-        btnLogout.addEventListener('click', (e) => {
-            e.preventDefault(); // Evita que ponga # en la URL
-            logout(); // Llamamos a la función de sesion.js
-        });
-    }
+    document.querySelector('.nav-menu').addEventListener('click', (event) => {
+        if (event.target && event.target.id === 'btnLogout') {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
+            logout(); // Llamar a la función de logout
+        }
+        if (event.target && event.target.textContent === 'Opciones') {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
+            if (!isLogged) return; // Si no está logueado, no hacer nada
+            if (currentUser.role === 'admin') {
+                window.location.href = 'opcAdmin.html';
+            } else {
+                window.location.href = 'configProfile.html';
+            }
+        }
+        if (event.target && event.target.textContent === 'Historial de Compras') {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
+            if (!isLogged) return; // Si no está logueado, no hacer nada
+            window.location.href = 'ordersHistory.html';
+        }
+    });
+    
 
     actualizarHeader(isLogged);
     cargarLibrosDesdeBD();
@@ -44,6 +59,15 @@ function actualizarHeader(isLogged) {
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index > 0) item.hidden = false;
+            if (index === 4) {
+                item.hidden = true; // Ocultamos "Volver" en el main
+            }
+            /*
+            if (index === 4) {
+                // "Volver" apunta a la página anterior
+                item.querySelector('a').href = document.referrer || 'main.html';
+            }
+            */
         });
 
     } else {

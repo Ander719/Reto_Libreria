@@ -31,16 +31,12 @@ if (loginForm) {
         console.log("Respuesta servidor:", data); // Debug
 
         if (data.success) {
-            // Mostramos el error en el diálogo
             dialogMessage.textContent = "Login exitoso. Redirigiendo...";
             dialog.showModal();
 
-            // Simplemente rediriges. La cookie ya está grabada en el navegador.
-            if (data.rol === "admin") {
-                window.location.href = "opcAdmin.html";
-            } else {
+            setTimeout(() => {
                 window.location.href = "main.html";
-            }
+            }, 500);
         } else {
             // Mostramos el error en el diálogo
             dialogMessage.textContent = data.error || "Error desconocido durante el login.";

@@ -76,33 +76,21 @@ CREATE TABLE comment_ (
     FOREIGN KEY (profile_code) REFERENCES profile_(profile_code) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO profile_ (`profile_code`, `email`, `user_name`, `pswd`, `telephone`, `name_`, `surname`) VALUES 
-('1', 'admin@admin.com', 'admin', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', '123456789', 'Jefe', 'Supremo');
-
-INSERT INTO admin_ (profile_code, current_account) VALUES
-(1, 'ES12-3456-7890-1234-5678');
-
-/*
-
 -- 1. Perfiles
 INSERT INTO profile_ (profile_code, email, user_name, pswd, telephone, name_, surname) VALUES
-(1, 'juan.perez@email.com', 'juanP', '1234', 611223344, 'Juan', 'Pérez'),
-(2, 'maria.garcia@email.com', 'mariag', '1234', 622334455, 'María', 'García'),
-(3, 'carlos.lopez@email.com', 'carlosl', '1234', 633445566, 'Carlos', 'López'),
-(4, 'ana.martinez@email.com', 'anam', '1234', 644556677, 'Ana', 'Martínez'),
-(5, 'pedro.rodriguez@email.com', 'pedror', '1234', 655667788, 'Pedro', 'Rodríguez');
+(1, 'admin@admin.com', 'admin', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', 123456789, 'Jefe', 'Supremo'),
+(2, 'juan.perez@email.com', 'juanP', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', 611223344, 'Juan', 'Pérez'),
+(3, 'maria.garcia@email.com', 'mariag', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', 622334455, 'María', 'García'),
+(4, 'carlos.lopez@email.com', 'carlosl', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', 633445566, 'Carlos', 'López');
 
 -- 2. Usuarios y Admins
 INSERT INTO user_ (profile_code, gender, card_no) VALUES
-(1, 'Man', '1234-5678-9012-3456'),
-(2, 'Female', '2345-6789-0123-4567'),
-(3, 'Man', '3456-7890-1234-5678');
+(2, 'Man', '1234-5678-9012-3456'),
+(3, 'Female', '2345-6789-0123-4567'),
+(4, 'Man', '3456-7890-1234-5678');
 
 INSERT INTO admin_ (profile_code, current_account) VALUES
-(4, 'ES12-3456-7890-1234-5678'),
-(5, 'ES98-7654-3210-9876-5432');
-
-*/
+(1, 'ES12-3456-7890-1234-5678');
 
 -- 3. Autores
 INSERT INTO author_ (id_author, name_author, last_name) VALUES
@@ -120,14 +108,11 @@ INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editor
 ('9780307474728', 'Cien años de soledad', 4, 471, 8, 'La saga de la familia Buendía en el pueblo mágico de Macondo.', 18.50, 'Cátedra', 'cien_anos.jpg'),
 ('9788466657523', 'El Imperio Final', 5, 672, 12, 'En un mundo donde cae ceniza del cielo, un ladrón planea el robo definitivo.', 21.90, 'Nova', 'mistborn.jpg');
 
-
-/*
-
 -- 5. Pedidos
 INSERT INTO order_ (id_order, profile_code, date_buy, buyed) VALUES
-(101, 1, '2024-12-01', true),
-(102, 2, '2025-01-10', true),
-(103, 1, '2025-01-14', false); 
+(101, 2, '2024-12-01', true),
+(102, 3, '2025-01-10', true),
+(103, 2, '2025-01-14', false); 
 
 -- 6. Contenido Pedidos
 INSERT INTO content_ (id_order, isbn, quantity) VALUES
@@ -138,12 +123,11 @@ INSERT INTO content_ (id_order, isbn, quantity) VALUES
 
 -- 7. Comentarios
 INSERT INTO comment_ (profile_code, isbn, comment_text, valoration, date_comment) VALUES
-(1, '9780439139595', 'Increíble libro, la mejor entrega de la saga hasta ahora.', 5, '2024-12-05'),
-(2, '9788420412146', 'Un clásico imprescindible, aunque el lenguaje es denso.', 4, '2025-01-11'),
-(3, '9780451524935', 'Aterradoramente actual. Me encantó.', 5, '2024-11-20'),
-(2, '9780439139595', 'Entretenido, pero prefiero las películas.', 3, '2025-01-12');
+(2, '9780439139595', 'Increíble libro, la mejor entrega de la saga hasta ahora.', 5, '2024-12-05'),
+(3, '9788420412146', 'Un clásico imprescindible, aunque el lenguaje es denso.', 4, '2025-01-11'),
+(4, '9780451524935', 'Aterradoramente actual. Me encantó.', 5, '2024-11-20'),
+(3, '9780439139595', 'Entretenido, pero prefiero las películas.', 3, '2025-01-12');
 
-*/
 
 DELIMITER //
 

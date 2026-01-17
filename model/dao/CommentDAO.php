@@ -1,5 +1,6 @@
 <?php
-require_once '../../Config/Database.php';
+require_once '../Config/Database.php';
+require_once '../model/entities/Comment.php';
 
 class CommentDAO {
     private $conn;
@@ -10,7 +11,7 @@ class CommentDAO {
     }
 
     public function createComment($profileCode, $isbn, $comment, $valoration, $date) {
-        $query = "INSERT INTO comment_ (PROFILE_CODE, Isbn, comment_text, valoration, date_comment) 
+        $query = "INSERT INTO comment_ (profile_code, Isbn, comment_text, valoration, date_comment) 
                   VALUES (:profile, :isbn, :comment, :rating, :date)";
         $stmt = $this->conn->prepare($query);
         $comment = htmlspecialchars(strip_tags($comment));
@@ -23,16 +24,13 @@ class CommentDAO {
     }
 
     public function getCommentsByISBN($isbn) {
-        // 1. Incluimos la clase Coment para poder crear los objetos
-        require_once __DIR__ . '/Coment.php';
-
-        $query = "SELECT c.PROFILE_CODE, 
+        $query = "SELECT c.profile_code, 
                          c.comment_text, 
                          c.valoration, 
                          c.date_comment as dateComent, 
-                         p.USER_NAME 
+                         p.user_name 
                   FROM comment_ c
-                  JOIN profile_ p ON c.PROFILE_CODE = p.PROFILE_CODE
+                  JOIN profile_ p ON c.profile_code = p.profile_code
                   WHERE c.Isbn = :isbn
                   ORDER BY c.date_comment DESC";
         
@@ -49,7 +47,7 @@ class CommentDAO {
             $comentObj = new Coment();
             
             // Usamos los Setters para "guardar" la información dentro del objeto
-            $comentObj->setProfileCode($row['PROFILE_CODE']);
+            $comentObj->setProfileCode($row['profile_code']);
             $comentObj->setIsbn($isbn); // El ISBN ya lo tenemos
             $comentObj->setComent($row['comment_text']); // Mapeamos comment_text a la propiedad coment
             $comentObj->setValoration($row['valoration']);
@@ -58,12 +56,12 @@ class CommentDAO {
             // 3. Obtenemos los datos A PARTIR DEL OBJETO para la respuesta
             // Usamos los Getters para extraer la info limpia del objeto
             $resultArray[] = [
-                'PROFILE_CODE' => $comentObj->getProfileCode(),
+                'profile_code' => $comentObj->getProfileCode(),
                 'comment_text' => $comentObj->getComent(), // Recuperado del objeto
                 'valoration'   => $comentObj->getValoration(),
                 'dateComent'   => $comentObj->getDateComent(),
-                // USER_NAME viene de la tabla Profile (JOIN), no del objeto Coment, así que lo pasamos directo
-                'USER_NAME'    => $row['USER_NAME']
+                // user_name viene de la tabla Profile (JOIN), no del objeto Coment, así que lo pasamos directo
+                'user_name'    => $row['user_name']
             ];
         }
         
@@ -71,7 +69,7 @@ class CommentDAO {
     }
 
     public function deleteComment($isbn, $profileCode) {
-        $query = "DELETE FROM comment_ WHERE Isbn = :isbn AND PROFILE_CODE = :profileCode";
+        $query = "DELETE FROM comment_ WHERE Isbn = :isbn AND profile_code = :profileCode";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':isbn', $isbn);
         $stmt->bindParam(':profileCode', $profileCode);
@@ -83,7 +81,7 @@ class CommentDAO {
 
     public function updateComment($isbn, $profileCode, $text, $rating) {
         $query = "UPDATE comment_ SET comment_text = :text, valoration = :rating 
-                  WHERE Isbn = :isbn AND PROFILE_CODE = :profileCode";
+                  WHERE Isbn = :isbn AND profile_code = :profileCode";
         $stmt = $this->conn->prepare($query);
         $text = htmlspecialchars(strip_tags($text));
         $stmt->bindParam(':text', $text);

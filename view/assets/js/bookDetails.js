@@ -1,4 +1,4 @@
-import { currentUser, checkSession } from './sesion.js';
+import { currentUser, checkSession } from './session.js';
 let isEditing = false;
 
 // --- CONFIGURACIÓN DEL MODAL ---
@@ -93,12 +93,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadBookDetails(isbn) {
     try {
         const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`, { method: 'GET' });
+        const rawText = await response.text();
+
         let data;
         try {
-            data = await response.text();
-            data = JSON.parse(data);
-        } catch (err) {
-            throw new Error('Invalid JSON response: ' + err.message);
+            data = JSON.parse(rawText);
+        } catch (error) {
+            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
+            return; // Salimos de la función
         }
 
         console.log("Datos recibidos del servidor:", data);
@@ -233,47 +235,25 @@ function agregarAlCarrito(isbn, cantidad) {
 
 function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');
-    const userSession = currentUser;
+    const loginPrompt = document.getElementById('loginPrompt');
+    const formName = document.querySelector('#userActionContainer strong');
 
-    if (userSession) {
-        actionContainer.innerHTML = `
-            <h3 id="formTitle">Write a Review</h3>
-            <p>Commenting as: <strong>${userSession.USER_NAME}</strong></p>
-            
-            <form id="commentForm" class="actions review-form">
-                <label for="ratingScore">Rating:</label>
-                <select id="ratingScore" class="qty-input rating-select">
-                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-                    <option value="4">⭐⭐⭐⭐ - Very Good</option>
-                    <option value="3">⭐⭐⭐ - Average</option>
-                    <option value="2">⭐⭐ - Poor</option>
-                    <option value="1">⭐ - Terrible</option>
-                </select>
-                
-                <label for="commentBody">Your Review:</label>
-                <textarea id="commentBody" rows="4" class="review-textarea" placeholder="What did you think about this book?"></textarea>
-                
-                <div class="btn-container">
-                    <button type="submit" id="submitBtn" class="action-btn btn-auto">Submit Review</button>
-                    <button type="button" id="cancelEditBtn" class="action-btn btn-cancel btn-auto" style="display:none;">Cancel</button>
-                </div>
-                <span id="formMessage" class="success-message"></span>
-            </form>
-        `;
+    if (currentUser) {
 
-        // Listeners
-        document.getElementById('commentForm').addEventListener('submit', (e) => submitComment(e, userSession));
+        actionContainer.hidden = false;
+        loginPrompt.hidden = true;
+
+        formName.textContent = currentUser.name;
+
+        // Listener
+        document.getElementById('commentForm').addEventListener('submit', (e) => submitComment(e, currentUser));
         document.getElementById('cancelEditBtn').addEventListener('click', () => {
             resetForm();
         });
 
     } else {
-        actionContainer.innerHTML = `
-            <div class="login-prompt">
-                <p>You must be logged in to post a review.</p>
-                <a href="login.html" class="action-btn btn-auto login-link-btn">Log In Now</a>
-            </div>
-        `;
+        actionContainer.hidden = true;
+        loginPrompt.hidden = false;
     }
 }
 
@@ -356,7 +336,16 @@ async function loadComments(isbn) {
 
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
-        const comments = await response.json();
+        const rawText = await response.text();
+
+        let comments;
+        try {
+            comments = JSON.parse(rawText);
+        } catch (error) {
+            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
+            commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
+            return; // Salimos de la función
+        }
 
         commentsList.innerHTML = '';
         let myReview = null;
@@ -413,7 +402,6 @@ async function loadComments(isbn) {
 
     } catch (error) {
         console.error(error);
-        commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
     }
 }
 
