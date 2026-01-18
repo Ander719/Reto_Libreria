@@ -23,8 +23,7 @@ class CommentDAO {
 
     public function getCommentsByISBN($isbn) {
         // 1. Incluimos la clase Coment para poder crear los objetos
-        require_once __DIR__ . '/Coment.php';
-
+require_once dirname(__DIR__) . '/entities/Coment.php';
         $query = "SELECT c.PROFILE_CODE, 
                          c.comment_text, 
                          c.valoration, 

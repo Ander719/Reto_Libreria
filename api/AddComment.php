@@ -4,11 +4,10 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
 include_once '../Config/Database.php';
-include_once '../model/CommentModel.php';
-
+include_once '../model/dao/CommentDAO.php';
 $database = new Database();
 $db = $database->getConnection();
-$commentModel = new CommentModel($db);
+$commentModel = new CommentDAO($db);
 
 $data = json_decode(file_get_contents("php://input"));
 

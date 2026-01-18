@@ -223,7 +223,8 @@ function rellenarVista(libro) {
         );
 
         if (aceptado) {
-            comprarAhora(libro.isbn, cantidad, currentUser.id);
+            const userId = currentUser.profile_code || currentUser.id;
+            comprarAhora(libro.isbn, cantidad, userId);
         }
     });
 }
@@ -240,7 +241,7 @@ function handleCommentSection() {
     if (userSession) {
         actionContainer.innerHTML = `
             <h3 id="formTitle">Write a Review</h3>
-            <p>Commenting as: <strong>${userSession.USER_NAME}</strong></p>
+            <p>Commenting as: <strong>${userSession.user_name}</strong></p>
             
             <form id="commentForm" class="actions review-form">
                 <label for="ratingScore">Rating:</label>
