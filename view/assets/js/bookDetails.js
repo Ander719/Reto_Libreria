@@ -364,8 +364,7 @@ async function submitComment(e, user) {
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
     // Usamos el ID del usuario actual si existe
-    const myProfileCode = currentUser ? currentUser.id : null;
-
+    const myProfileCode = currentUser ? (currentUser.profile_code || currentUser.id || currentUser.PROFILE_CODE) : null;
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
 
@@ -449,7 +448,16 @@ window.deleteComment = async function (isbn) {
     );
 
     if (!aceptado) return;
-    const profileCode = currentUser.id;
+
+    // PROTECCIÓN: Si no hay usuario cargado, paramos
+    if (!currentUser) {
+        showModal("Error", "No se detecta la sesión. Recarga la página.");
+        return;
+    }
+
+    // Obtenemos el ID de forma segura
+    const profileCode = currentUser.profile_code || currentUser.id || currentUser.PROFILE_CODE;
+
     try {
         const response = await fetch('../../api/DeleteComment.php', {
             method: 'POST',
@@ -458,16 +466,18 @@ window.deleteComment = async function (isbn) {
         });
 
         if (response.ok) {
-            // Recargamos comentarios sin molestar al usuario o ponemos un modal de éxito
             showModal("Éxito", "Comentario eliminado correctamente.");
-            loadComments(isbn);
-            resetForm();
+            await loadComments(isbn);
+            if (document.getElementById('commentBody')) {
+                resetForm();
+            }
+
         } else {
             showModal("Error", "No se pudo eliminar el comentario.");
         }
     } catch (error) {
-        console.error(error);
-        showModal("Error de conexión", "Inténtalo de nuevo más tarde.");
+        console.error("Error en deleteComment:", error);
+        showModal("Error de conexión", "Mira la consola para más detalles.");
     }
 };
 
