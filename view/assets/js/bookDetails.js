@@ -299,7 +299,16 @@ async function submitComment(e, user) {
         return;
     }
 
-    const profileCode = user.id;
+    console.log("🕵️ OBJETO USUARIO:", user);
+
+    const profileCode = user.id || user.profile_code || user.PROFILE_CODE;
+
+    // Comprobación de seguridad
+    if (!profileCode) {
+        console.error("❌ Error: No se encuentra el ID del usuario en:", user);
+        alert("Error de sesión. Por favor, recarga la página e inicia sesión de nuevo.");
+        return;
+    }
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
     const payload = {
