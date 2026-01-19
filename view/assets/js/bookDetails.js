@@ -301,8 +301,7 @@ async function submitComment(e, user) {
 
     console.log("🕵️ OBJETO USUARIO:", user);
 
-    const profileCode = user.id || user.profile_code || user.PROFILE_CODE;
-
+    const profileCode = getUserId(user);
     // Comprobación de seguridad
     if (!profileCode) {
         console.error("❌ Error: No se encuentra el ID del usuario en:", user);
@@ -364,7 +363,8 @@ async function submitComment(e, user) {
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
     // Usamos el ID del usuario actual si existe
-    const myProfileCode = currentUser ? (currentUser.profile_code || currentUser.id || currentUser.PROFILE_CODE) : null;
+    const myProfileCode = getUserId(currentUser);
+
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
 
@@ -456,8 +456,7 @@ window.deleteComment = async function (isbn) {
     }
 
     // Obtenemos el ID de forma segura
-    const profileCode = currentUser.profile_code || currentUser.id || currentUser.PROFILE_CODE;
-
+    const profileCode = getUserId(currentUser);
     try {
         const response = await fetch('../../api/DeleteComment.php', {
             method: 'POST',
@@ -563,6 +562,13 @@ async function comprarAhora(isbn, quantity, userId) {
         console.error(error);
         showModal("Error de conexión", "No se pudo contactar con el servidor.");
     }
+}
+
+
+// Función auxiliar para obtener el ID, venga como venga
+export function getUserId(user) {
+    if (!user) return null;
+    return user.profile_code || user.id || user.PROFILE_CODE;
 }
 
 
