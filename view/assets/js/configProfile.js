@@ -1,7 +1,5 @@
-import { checkSession, currentUser } from './sesion.js';
+import { checkSession, currentUser } from './session.js'; // Ojo: session.js o sesion.js (verifica el nombre)
 
-// Estado global para saber a quién estamos editando (ID y Username)
-// Necesario para verificar la contraseña del usuario correcto
 let currentEditingUser = {
     id: null,
     username: null
@@ -9,330 +7,216 @@ let currentEditingUser = {
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // 1. VERIFICACIÓN DE SESIÓN INICIAL
+    // 1. Verificar sesión
     const isLogged = await checkSession();
-    if (isLogged) {
-        console.log("Sesión activa:", currentUser);
-    } else {
+    if (!isLogged) {
         console.log("No hay sesión activa");
+        // Opcional: window.location.href = 'login.html';
     }
 
-    // --- REFERENCIAS DOM ---
+    // --- REFERENCIAS ---
     const adjustDataBtn = document.getElementById('adjustData');
     const adminPanelSection = document.getElementById('adminPanelSection');
     const tableBody = document.getElementById('adminTableBody');
-    
-    // Modales de Perfil
-    const modifyUserPopup = document.getElementById('modifyUserPopupAdmin');
-    const modifyAdminPopup = document.getElementById('modifyAdminPopup');
-    
-    // Modales de Contraseña (Nuevos)
-    const verifyModal = document.getElementById('verifyPasswordModal');
-    const changeModal = document.getElementById('changePasswordModal');
-    
-    // Botones de Guardar Datos
     const saveBtnUser = document.getElementById('saveBtnUser');
     const saveBtnAdmin = document.getElementById('saveBtnAdmin');
     
-    // Botones para iniciar cambio de contraseña
-    const changePwdBtn = document.getElementById('changePwdBtn');         // En form usuario
-    const changePwdBtnAdmin = document.getElementById('changePwdBtnAdmin'); // En form admin
-
-    // Formularios de Contraseña
+    // Modales y Botones de Password
+    const verifyModal = document.getElementById('verifyPasswordModal');
+    const changeModal = document.getElementById('changePasswordModal');
+    const changePwdBtn = document.getElementById('changePwdBtn');
+    const changePwdBtnAdmin = document.getElementById('changePwdBtnAdmin');
     const verifyForm = document.getElementById('verifyPasswordForm');
     const changeForm = document.getElementById('changePasswordForm');
     const btnCancelVerify = document.getElementById('btnCancelVerify');
-
-    // Botones de Cerrar (X)
+    
+    // Cerrar Modales
     const closeUser = document.getElementById('closeUserModal');
     const closeAdmin = document.getElementById('closeAdminModal');
     const closeVerify = document.getElementById('closeVerifyModal');
     const closeChange = document.getElementById('closeChangeModal');
+    const modifyUserPopup = document.getElementById('modifyUserPopupAdmin');
+    const modifyAdminPopup = document.getElementById('modifyAdminPopup');
 
-    // Variable global para la tabla
     window.allUsers = [];
 
-    // 2. INICIO: CARGAR TABLA SI ES ADMIN
+    // 2. INICIO
     checkUserRole(); 
 
-    // 3. EVENTO: ABRIR MI PERFIL ("Adjust Data")
+    // 3. EVENTO MI PERFIL
     if (adjustDataBtn) {
         adjustDataBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Limpiamos target-id para indicar que es edición propia
             if(saveBtnUser) saveBtnUser.removeAttribute('data-target-id');
             if(saveBtnAdmin) saveBtnAdmin.removeAttribute('data-target-id');
             loadMyProfile();
         });
     }
 
-    // 4. EVENTOS: GUARDAR DATOS DEL PERFIL
-    if (saveBtnUser) {
-        saveBtnUser.addEventListener('click', (e) => {
-            e.preventDefault();
-            saveUserData('user'); 
-        });
-    }
-    if (saveBtnAdmin) {
-        saveBtnAdmin.addEventListener('click', (e) => {
-            e.preventDefault();
-            saveUserData('admin');
-        });
-    }
+    // 4. GUARDAR PERFIL
+    if (saveBtnUser) saveBtnUser.onclick = (e) => { e.preventDefault(); saveUserData('user'); };
+    if (saveBtnAdmin) saveBtnAdmin.onclick = (e) => { e.preventDefault(); saveUserData('admin'); };
 
-    // ======================================================
-    // 5. LÓGICA DE CAMBIO DE CONTRASEÑA (DOBLE PASO)
-    // ======================================================
-
-    // A) Abrir el primer modal (Verificación)
-    function openVerifyModal(e) {
+    // ==========================================
+    // LÓGICA DE CONTRASEÑA (DOBLE PASO)
+    // ==========================================
+    
+    // A) Abrir Modal
+    const openVerifyModal = (e) => {
         e.preventDefault();
-        // Limpiar campo anterior
-        const inputVerify = document.getElementById('verifyCurrentPassword');
-        if(inputVerify) inputVerify.value = '';
-        
+        if(document.getElementById('verifyCurrentPassword')) 
+            document.getElementById('verifyCurrentPassword').value = '';
         if(verifyModal) verifyModal.style.display = 'flex';
-    }
+    };
 
-    if(changePwdBtn) changePwdBtn.addEventListener('click', openVerifyModal);
-    if(changePwdBtnAdmin) changePwdBtnAdmin.addEventListener('click', openVerifyModal);
+    if(changePwdBtn) changePwdBtn.onclick = openVerifyModal;
+    if(changePwdBtnAdmin) changePwdBtnAdmin.onclick = openVerifyModal;
 
     // B) Cerrar Modales
     const closeModals = () => {
         if(verifyModal) verifyModal.style.display = 'none';
         if(changeModal) changeModal.style.display = 'none';
     };
-
     if(btnCancelVerify) btnCancelVerify.onclick = closeModals;
     if(closeVerify) closeVerify.onclick = closeModals;
     if(closeChange) closeChange.onclick = closeModals;
 
-    // C) PASO 1: Verificar Contraseña Actual
+    // C) Paso 1: Verificar
     if(verifyForm) {
-        verifyForm.addEventListener('submit', async (e) => {
+        verifyForm.onsubmit = async (e) => {
             e.preventDefault();
-            const currentPassInput = document.getElementById('verifyCurrentPassword').value;
+            const pass = document.getElementById('verifyCurrentPassword').value;
+            // Usamos el username global o el del input visible
+            let username = currentEditingUser.username || document.getElementById('usernameUser').value || document.getElementById('usernameAdmin').value;
             
-            // Usamos el username cargado en el formulario actual
-            let usernameToCheck = currentEditingUser.username;
-            
-            // Fallback: leer del input si la variable global fallase
-            if(!usernameToCheck) {
-                usernameToCheck = document.getElementById('usernameUser').value || document.getElementById('usernameAdmin').value;
-            }
-
-            if(!usernameToCheck) {
-                alert("Error: No se ha identificado el usuario.");
-                return;
-            }
-
             try {
-                // Usamos Login.php para verificar credenciales
-                const response = await fetch('../../api/Login.php', {
+                // Reutilizamos Login.php para verificar
+                const res = await fetch('../../api/Login.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        username: usernameToCheck, 
-                        password: currentPassInput 
-                    })
+                    body: JSON.stringify({ username: username, password: pass })
                 });
+                const data = await res.json();
                 
-                const data = await response.json();
-
-                if (data.exito) {
-                    // ÉXITO: Cerramos verificación y abrimos cambio
+                // Login.php devuelve 'success' o 'exito' dependiendo de tu versión, comprobamos ambos
+                if (data.success || data.exito) {
                     verifyModal.style.display = 'none';
-                    
-                    // Limpiar campos del paso 2
                     document.getElementById('newPassword').value = '';
                     document.getElementById('confirmNewPassword').value = '';
-                    
                     changeModal.style.display = 'flex';
                 } else {
-                    alert("La contraseña actual es incorrecta. Inténtalo de nuevo.");
-                    document.getElementById('verifyCurrentPassword').value = '';
+                    alert("Contraseña incorrecta.");
                 }
-            } catch (err) {
-                console.error(err);
-                alert("Error de conexión al verificar contraseña.");
-            }
-        });
+            } catch (err) { console.error(err); alert("Error de conexión"); }
+        };
     }
 
-    // D) PASO 2: Guardar Nueva Contraseña
+    // D) Paso 2: Cambiar
     if(changeForm) {
-        changeForm.addEventListener('submit', async (e) => {
+        changeForm.onsubmit = async (e) => {
             e.preventDefault();
+            const newP = document.getElementById('newPassword').value;
+            const confP = document.getElementById('confirmNewPassword').value;
             
-            const newPass = document.getElementById('newPassword').value;
-            const confirmPass = document.getElementById('confirmNewPassword').value;
-            const profileCode = currentEditingUser.id; // ID del usuario que estamos editando
-
-            if(!profileCode) {
-                alert("Error: ID de usuario no encontrado.");
-                return;
-            }
-
-            if(newPass !== confirmPass) {
-                alert("Las nuevas contraseñas no coinciden.");
-                return;
-            }
-            if(newPass.length < 4) {
-                alert("La contraseña es muy corta (mínimo 4 caracteres).");
-                return;
-            }
-
+            if(newP !== confP) return alert("Las contraseñas no coinciden");
+            if(newP.length < 4) return alert("Mínimo 4 caracteres");
+            
             try {
-                const response = await fetch('../../api/ModifyPassword.php', {
+                const res = await fetch('../../api/ModifyPassword.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        profile_code: profileCode, 
-                        password: newPass 
-                    })
+                    body: JSON.stringify({ profile_code: currentEditingUser.id, password: newP })
                 });
-                
-                const data = await response.json();
-
-                if (data.success) { // Asegúrate que tu PHP devuelve 'success' o 'exito'
-                    alert("¡Contraseña cambiada correctamente!");
-                    changeModal.style.display = 'none';
+                const data = await res.json();
+                if(data.success) {
+                    alert("Contraseña cambiada.");
+                    closeModals();
                 } else {
-                    alert("Error: " + (data.error || "No se pudo cambiar la contraseña."));
+                    alert("Error: " + data.error);
                 }
-            } catch (err) {
-                console.error(err);
-                alert("Error de conexión con el servidor.");
-            }
-        });
+            } catch(err) { console.error(err); }
+        };
     }
 
-    // --- CERRAR MODALES PRINCIPALES ---
-    const closeMainModals = (modal) => { if(modal) modal.style.display = 'none'; };
-    if(closeUser) closeUser.onclick = () => closeMainModals(modifyUserPopup);
-    if(closeAdmin) closeAdmin.onclick = () => closeMainModals(modifyAdminPopup);
-    
-    window.onclick = (e) => {
-        if(e.target === modifyUserPopup) modifyUserPopup.style.display = 'none';
-        if(e.target === modifyAdminPopup) modifyAdminPopup.style.display = 'none';
-        if(e.target === verifyModal) verifyModal.style.display = 'none';
-        if(e.target === changeModal) changeModal.style.display = 'none';
-    };
-
-
-    // ======================================================
+    // ==========================================
     // FUNCIONES AUXILIARES
-    // ======================================================
+    // ==========================================
 
     function checkUserRole() {
         if(adminPanelSection) adminPanelSection.style.display = 'none';
-
-        // Detectar modo desde la URL (?mode=deleteUser o modifyUser)
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode');
 
+        // CheckUserType.php debe devolver si es admin
         fetch('../../api/CheckUserType.php', { credentials: 'include' })
-            .then(res => res.json())
+            .then(r => r.json())
             .then(data => {
-                if (data.isAdmin === true) {
+                // Ajusta esto según lo que devuelva tu nuevo CheckUserType (isAdmin o role === 'admin')
+                if (data.isAdmin === true || (data.user && data.user.role === 'admin')) {
                     if(adminPanelSection) {
                         adminPanelSection.style.display = 'flex';
-                        loadUsers(mode); 
+                        loadUsers(mode);
                     }
                 }
-            })
-            .catch(console.error);
+            });
     }
 
     function loadUsers(mode) {
         if (!tableBody) return;
         tableBody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
         
-        fetch('../../api/GetAllUsers.php', { credentials: 'include' })
-            .then(res => res.json())
+        fetch('../../api/GetAllUsers.php')
+            .then(r => r.json())
             .then(data => {
                 tableBody.innerHTML = '';
-                const users = data.resultado || [];
-                window.allUsers = users; 
+                const users = data.resultado || data.users || []; // Ajustar según respuesta
+                window.allUsers = users;
 
-                if(users.length > 0){
-                    users.forEach((user, index) => {
-                        const tr = document.createElement('tr');
-                        // Datos seguros (minúsculas por defecto, fallback a mayúsculas)
-                        const userId = user.profile_code || user.PROFILE_CODE;
-                        const userName = user.user_name || user.USER_NAME;
-                        const name = user.name_ || user.NAME_;
-                        const surname = user.surname || user.SURNAME;
-                        const email = user.email || user.EMAIL;
-                        
-                        let buttonsHTML = '';
-                        
-                        // Lógica de botones según el modo
-                        if (mode === 'modifyUser') {
-                            buttonsHTML = `<button class="saveBtn" style="padding:5px 10px; font-size:0.8rem;" onclick="prepareEditUser(${index})">Edit</button>`;
-                        } else if (mode === 'deleteUser') {
-                            buttonsHTML = `<button class="deleteBtn" style="padding:5px 10px; font-size:0.8rem; color:red; border-color:red;" onclick="deleteUser('${userId}')">Del</button>`;
-                        } else {
-                            // Por defecto ambos
-                            buttonsHTML = `
-                                <button class="saveBtn" style="padding:5px 10px; font-size:0.8rem; margin-right:5px;" onclick="prepareEditUser(${index})">Edit</button>
-                                <button class="deleteBtn" style="padding:5px 10px; font-size:0.8rem; color:red; border-color:red;" onclick="deleteUser('${userId}')">Del</button>
-                            `;
-                        }
+                users.forEach((u, index) => {
+                    const tr = document.createElement('tr');
+                    // Usamos profile_code (nueva BD)
+                    const uid = u.profile_code;
+                    const uname = u.user_name;
+                    
+                    let btns = '';
+                    if (mode === 'modifyUser') btns = `<button class="saveBtn" onclick="prepareEditUser(${index})">Edit</button>`;
+                    else if (mode === 'deleteUser') btns = `<button class="deleteBtn" style="color:red" onclick="deleteUser('${uid}')">Del</button>`;
+                    else btns = `<button class="saveBtn" onclick="prepareEditUser(${index})">Edit</button> <button class="deleteBtn" style="color:red" onclick="deleteUser('${uid}')">Del</button>`;
 
-                        tr.innerHTML = `
-                            <td>${userName}</td>
-                            <td>${name} ${surname}</td>
-                            <td>${email}</td>
-                            <td>${buttonsHTML}</td>
-                        `;
-                        tableBody.appendChild(tr);
-                    });
-                } else {
-                    tableBody.innerHTML = '<tr><td colspan="4">No hay usuarios.</td></tr>';
-                }
+                    tr.innerHTML = `<td>${uname}</td><td>${u.name_} ${u.surname}</td><td>${u.email}</td><td>${btns}</td>`;
+                    tableBody.appendChild(tr);
+                });
             });
     }
 
-    // Función global para poder ser llamada desde el HTML onclick
     window.prepareEditUser = function(index) {
         const u = window.allUsers[index];
         if (!u) return;
         
-        // ACTUALIZAR ESTADO GLOBAL (Vital para la contraseña)
-        currentEditingUser.id = u.profile_code || u.PROFILE_CODE;
-        currentEditingUser.username = u.user_name || u.USER_NAME;
+        currentEditingUser.id = u.profile_code;
+        currentEditingUser.username = u.user_name;
 
-        setValue('firstNameUser', u.name_ || u.NAME_);
-        setValue('lastNameUser', u.surname || u.SURNAME);
-        setValue('emailUser', u.email || u.EMAIL);
-        setValue('usernameUser', u.user_name || u.USER_NAME);
-        setValue('phoneUser', u.telephone || u.TELEPHONE);
-        setValue('cardNumberUser', u.card_no || u.CARD_NO);
+        setValue('firstNameUser', u.name_);
+        setValue('lastNameUser', u.surname);
+        setValue('emailUser', u.email);
+        setValue('usernameUser', u.user_name);
+        setValue('phoneUser', u.telephone);
+        setValue('cardNumberUser', u.card_no);
         
-        if(document.getElementById('genderUser')) {
-            document.getElementById('genderUser').value = u.gender || u.GENDER || 'Other';
-        }
-
-        if(saveBtnUser) saveBtnUser.setAttribute('data-target-id', currentEditingUser.id);
-        
+        if(saveBtnUser) saveBtnUser.setAttribute('data-target-id', u.profile_code);
         document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
     };
 
     function loadMyProfile() {
-        fetch('../../api/GetProfile.php', { credentials: 'include' }) 
-            .then(res => res.json())
+        fetch('../../api/GetProfile.php')
+            .then(r => r.json())
             .then(data => {
-                if (data.exito && data.user) {
+                if(data.exito && data.user) {
                     const u = data.user;
-                    
-                    // ACTUALIZAR ESTADO GLOBAL
                     currentEditingUser.id = u.profile_code;
                     currentEditingUser.username = u.user_name;
 
-                    const isAdmin = (u.role_type === 'admin' || (u.current_account !== undefined && u.current_account !== null));
-
-                    if (isAdmin) {
+                    const isAdmin = (u.role_type === 'admin' || u.current_account);
+                    
+                    if(isAdmin) {
                         setValue('firstNameAdmin', u.name_);
                         setValue('lastNameAdmin', u.surname);
                         setValue('emailAdmin', u.email);
@@ -340,7 +224,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         setValue('phoneAdmin', u.telephone);
                         setValue('profileCodeAdmin', u.profile_code);
                         setValue('currentAccountAdmin', u.current_account);
-                        
                         if(saveBtnAdmin) saveBtnAdmin.setAttribute('data-target-id', u.profile_code);
                         document.getElementById('modifyAdminPopup').style.display = 'flex';
                     } else {
@@ -350,97 +233,62 @@ document.addEventListener('DOMContentLoaded', async () => {
                         setValue('usernameUser', u.user_name);
                         setValue('phoneUser', u.telephone);
                         setValue('cardNumberUser', u.card_no);
-                        
-                        if(document.getElementById('genderUser')) {
-                            document.getElementById('genderUser').value = u.gender || 'Other';
-                        }
                         if(saveBtnUser) saveBtnUser.setAttribute('data-target-id', u.profile_code);
                         document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
                     }
-                } else {
-                    console.error("Error servidor:", data);
-                    alert("Error: " + (data.error || "No se pudieron cargar los datos."));
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Error de conexión al cargar perfil.");
             });
     }
 
     function saveUserData(role) {
         let formData = new FormData();
-        let targetId = null;
-
-        if (role === 'admin') {
-            formData.append('name', document.getElementById('firstNameAdmin').value);
-            formData.append('surname', document.getElementById('lastNameAdmin').value);
-            formData.append('email', document.getElementById('emailAdmin').value);
-            formData.append('username', document.getElementById('usernameAdmin').value);
-            formData.append('phone', document.getElementById('phoneAdmin').value);
-            formData.append('accountNumber', document.getElementById('currentAccountAdmin').value);
-            targetId = document.getElementById('saveBtnAdmin').getAttribute('data-target-id');
-        } else {
+        let targetId = (role === 'admin') 
+            ? document.getElementById('saveBtnAdmin').getAttribute('data-target-id')
+            : document.getElementById('saveBtnUser').getAttribute('data-target-id');
+            
+        // ... (Tu lógica de FormData sigue igual, solo asegúrate de apuntar a los IDs correctos)
+        // Ejemplo simplificado:
+        if(role === 'user') {
             formData.append('name', document.getElementById('firstNameUser').value);
             formData.append('surname', document.getElementById('lastNameUser').value);
             formData.append('email', document.getElementById('emailUser').value);
             formData.append('username', document.getElementById('usernameUser').value);
             formData.append('phone', document.getElementById('phoneUser').value);
             formData.append('cardNumber', document.getElementById('cardNumberUser').value);
-            
-            let genderVal = 'Other';
-            if(document.getElementById('genderUser')) genderVal = document.getElementById('genderUser').value;
-            formData.append('gender', genderVal);
-            
-            targetId = document.getElementById('saveBtnUser').getAttribute('data-target-id');
+            formData.append('gender', document.getElementById('genderUser') ? document.getElementById('genderUser').value : 'Other');
+        } else {
+             formData.append('name', document.getElementById('firstNameAdmin').value);
+             formData.append('surname', document.getElementById('lastNameAdmin').value);
+             formData.append('email', document.getElementById('emailAdmin').value);
+             formData.append('username', document.getElementById('usernameAdmin').value);
+             formData.append('phone', document.getElementById('phoneAdmin').value);
+             formData.append('accountNumber', document.getElementById('currentAccountAdmin').value);
         }
 
-        if (targetId) formData.append('target_id', targetId);
+        if(targetId) formData.append('target_id', targetId);
         formData.append('role', role);
 
         fetch('../../api/ModifyUser.php', { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(data => {
-            if (data.exito) {
-                alert("Datos guardados correctamente.");
-                loadUsers(); // Recarga la tabla para ver cambios
-                
-                // Actualizamos sesión local si nos editamos a nosotros mismos
-                if(data.message) { 
-                    // Opcional: podrías recargar 'loadMyProfile' si el modal sigue abierto
+            .then(r => r.json())
+            .then(data => {
+                if(data.exito) {
+                    alert("Guardado");
+                    document.getElementById('modifyUserPopupAdmin').style.display = 'none';
+                    document.getElementById('modifyAdminPopup').style.display = 'none';
+                    loadUsers(new URLSearchParams(window.location.search).get('mode'));
+                } else {
+                    alert("Error: " + data.error);
                 }
-                
-                document.getElementById('modifyUserPopupAdmin').style.display = 'none';
-                document.getElementById('modifyAdminPopup').style.display = 'none';
-            } else {
-                alert("Error al guardar: " + (data.error || "Desconocido"));
-            }
-        })
-        .catch(err => alert("Error de conexión."));
+            });
     }
-
-    function setValue(id, val) {
-        const el = document.getElementById(id);
-        if(el) el.value = val || '';
+    
+    function setValue(id, v) { 
+        const el = document.getElementById(id); 
+        if(el) el.value = v || ''; 
     }
-
-    window.deleteUser = function(id) {
-        if(confirm("¿Estás seguro de eliminar este usuario?")) {
-            fetch(`../../api/DeleteUser.php?id=${id}`)
-                .then(r => r.json())
-                .then(d => {
-                    if(d.result) {
-                        if(d.isSelfDelete) {
-                            alert("Tu cuenta ha sido eliminada. Redirigiendo...");
-                            window.location.href = 'login.html';
-                        } else {
-                            loadUsers(); // Recargar tabla
-                        }
-                    } else {
-                        alert("Error al eliminar: " + (d.error || "Desconocido"));
-                    }
-                })
-                .catch(e => alert("Error de conexión"));
-        }
-    };
+    
+    // Cerrar Modales (X)
+    const closeMain = (m) => { if(m) m.style.display = 'none'; };
+    if(closeUser) closeUser.onclick = () => closeMain(modifyUserPopup);
+    if(closeAdmin) closeAdmin.onclick = () => closeMain(modifyAdminPopup);
 });

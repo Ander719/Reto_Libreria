@@ -1,7 +1,7 @@
 <?php
-require_once '../config/Database.php';
+// Usamos dirname para ir a la raíz del proyecto de forma segura
+require_once dirname(__DIR__, 2) . '/Config/Database.php'; 
 require_once dirname(__DIR__) . '/entities/Author.php';
-
 
 class AuthorDAO {
     private $conn;
@@ -13,7 +13,7 @@ class AuthorDAO {
     }
 
     public function getOrCreateAuthorId($name, $surname) {
-        // 1. Buscar si ya existe
+        // 1. Verificar si existe
         $query = "SELECT ID_AUTHOR FROM " . $this->table_name . " WHERE name_author = :name AND last_name = :surname LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":name", $name);
@@ -25,15 +25,14 @@ class AuthorDAO {
             return $row['ID_AUTHOR'];
         }
 
-        // 2. Si no existe, calcular MAX(ID) + 1
+        // 2. Si no existe, crear nuevo
+        // Obtenemos el ID máximo actual (si no usas AUTO_INCREMENT)
         $queryMax = "SELECT MAX(ID_AUTHOR) as max_id FROM " . $this->table_name;
         $stmtMax = $this->conn->prepare($queryMax);
         $stmtMax->execute();
         $row = $stmtMax->fetch(PDO::FETCH_ASSOC);
-        
         $newId = ($row['max_id'] !== null) ? $row['max_id'] + 1 : 1;
 
-        // 3. Insertar nuevo autor
         $queryInsert = "INSERT INTO " . $this->table_name . " (ID_AUTHOR, name_author, last_name) VALUES (:id, :name, :surname)";
         $stmtInsert = $this->conn->prepare($queryInsert);
         $stmtInsert->bindParam(":id", $newId);

@@ -2,21 +2,29 @@
 // api/ModifyUser.php
 session_start();
 header('Content-Type: application/json; charset=utf-8');
-require_once '../controller/controller.php';
+require_once '../controller/ProfileController.php';
 
-// 1. VALIDACIÓN DE SESIÓN
-if (!isset($_SESSION['user_data']) || !isset($_SESSION['user_data']['id'])) {
+// 1. VALIDACIÓN DE SESIÓN (Nueva estructura)
+if (!isset($_SESSION['user'])) {
     echo json_encode(['exito' => false, 'error' => 'No has iniciado sesión']);
     exit;
 }
 
-// Datos del usuario logueado
-$loggedUserId = $_SESSION['user_data']['id'];
-$loggedUserRole = $_SESSION['user_data']['rol'] ?? 'user';
+// Recuperamos datos de la sesión nueva (ProfileController guarda 'user')
+$userSession = $_SESSION['user'];
+$loggedUserId = $userSession['profile_code'] ?? null;
+
+// Detectar si es admin revisando si tiene cuenta corriente o el rol explícito
+$isAdmin = isset($userSession['current_account']) || ($userSession['role_type'] ?? '') === 'admin';
+
+if (!$loggedUserId) {
+    echo json_encode(['exito' => false, 'error' => 'Error de sesión: ID no encontrado']);
+    exit;
+}
 
 // 2. RECOGIDA DE DATOS
 $targetId = $_POST['target_id'] ?? $loggedUserId; // Si no hay target, es edición propia
-$roleForm = $_POST['role'] ?? 'user'; // 'admin' o 'user' (qué tipo de formulario se envió)
+$roleForm = $_POST['role'] ?? 'user';
 
 // Datos comunes
 $name = $_POST['name'] ?? '';
@@ -25,40 +33,36 @@ $email = $_POST['email'] ?? '';
 $username = $_POST['username'] ?? '';
 $telephone = $_POST['phone'] ?? '';
 
-// 3. VERIFICACIÓN DE PERMISOS (CRÍTICO)
+// 3. VERIFICACIÓN DE PERMISOS
 // Solo puedes editar si: Eres tú mismo O si eres Administrador
-if ($targetId != $loggedUserId && $loggedUserRole !== 'admin') {
+if ($targetId != $loggedUserId && !$isAdmin) {
     echo json_encode(['exito' => false, 'error' => 'No tienes permiso para modificar este usuario']);
     exit;
 }
 
-$controller = new controller();
+$controller = new ProfileController();
 $result = false;
 
-// 4. DERIVAR AL CONTROLADOR CORRECTO
+// 4. DERIVAR AL CONTROLADOR
 if ($roleForm === 'admin') {
-    // --- EDICIÓN DE ADMINISTRADOR ---
-    // Recogemos campo específico de Admin
     $currentAccount = $_POST['accountNumber'] ?? '';
-    
-    // Llamamos a modifyAdmin
+    // modifyAdmin: email, username, telephone, name, surname, account, profile_code
     $result = $controller->modifyAdmin($email, $username, $telephone, $name, $surname, $currentAccount, $targetId);
 
 } else {
-    // --- EDICIÓN DE USUARIO NORMAL ---
-    // Recogemos campos específicos de User
     $cardNumber = $_POST['cardNumber'] ?? '';
     $gender = $_POST['gender'] ?? 'Other';
-    
-    // Llamamos a modifyUser
+    // modifyUser: email, username, telephone, name, surname, gender, card_no, profile_code
     $result = $controller->modifyUser($email, $username, $telephone, $name, $surname, $gender, $cardNumber, $targetId);
 }
 
 // 5. RESPUESTA
 if ($result) {
-    // Si me modifiqué a mí mismo, actualizamos la sesión por si cambié el nombre
+    // Si te has editado a ti mismo, actualizamos la sesión para que se vea el cambio al instante
     if ($targetId == $loggedUserId) {
-        $_SESSION['user_data']['nombre'] = $username;
+        $_SESSION['user']['user_name'] = $username;
+        $_SESSION['user']['name_'] = $name;
+        // Actualiza otros campos si es necesario
     }
     echo json_encode(['exito' => true, 'message' => 'Datos actualizados correctamente']);
 } else {
