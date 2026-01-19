@@ -239,35 +239,7 @@ function handleCommentSection() {
     const loginPrompt = document.getElementById('loginPrompt');
     const formName = document.querySelector('#userActionContainer strong');
 
-<<<<<<< HEAD
     if (currentUser) {
-=======
-    if (userSession) {
-        actionContainer.innerHTML = `
-            <h3 id="formTitle">Write a Review</h3>
-            <p>Commenting as: <strong>${userSession.user_name}</strong></p>
-            
-            <form id="commentForm" class="actions review-form">
-                <label for="ratingScore">Rating:</label>
-                <select id="ratingScore" class="qty-input rating-select">
-                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-                    <option value="4">⭐⭐⭐⭐ - Very Good</option>
-                    <option value="3">⭐⭐⭐ - Average</option>
-                    <option value="2">⭐⭐ - Poor</option>
-                    <option value="1">⭐ - Terrible</option>
-                </select>
-                
-                <label for="commentBody">Your Review:</label>
-                <textarea id="commentBody" rows="4" class="review-textarea" placeholder="What did you think about this book?"></textarea>
-                
-                <div class="btn-container">
-                    <button type="submit" id="submitBtn" class="action-btn btn-auto">Submit Review</button>
-                    <button type="button" id="cancelEditBtn" class="action-btn btn-cancel btn-auto" style="display:none;">Cancel</button>
-                </div>
-                <span id="formMessage" class="success-message"></span>
-            </form>
-        `;
->>>>>>> 78ce24ffba9cc8af46d53bc2deaf65dab1084b1e
 
         actionContainer.hidden = false;
         loginPrompt.hidden = true;
@@ -373,7 +345,6 @@ async function loadComments(isbn) {
 
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
-<<<<<<< HEAD
         const rawText = await response.text();
 
         let comments;
@@ -382,18 +353,6 @@ async function loadComments(isbn) {
         } catch (error) {
             console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
             commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
-            return; // Salimos de la función
-        }
-=======
->>>>>>> 78ce24ffba9cc8af46d53bc2deaf65dab1084b1e
-
-        const rawText = await response.text();
-
-        let comments;
-        try {
-            comments = JSON.parse(rawText);
-        } catch (error) {
-            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
             return; // Salimos de la función
         }
 
