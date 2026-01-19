@@ -1,4 +1,5 @@
-import { checkSession, currentUser , logout } from './session.js';
+import { checkSession, currentUser, logout } from './session.js';
+import { loadHeader } from './header.js';
 
 init();
 
@@ -27,61 +28,11 @@ async function init() {
                 window.location.href = 'configProfile.html';
             }
         }
-        if (event.target && event.target.textContent === 'Historial de Compras') {
-            event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
-            if (!isLogged) return; // Si no está logueado, no hacer nada
-            window.location.href = 'ordersHistory.html';
-        }
     });
-    
 
-    actualizarHeader(isLogged);
+
+    loadHeader(currentUser);
     cargarLibrosDesdeBD();
-}
-
-/**
- * Función que maneja la lógica visual del Header
- */
-function actualizarHeader(isLogged) {
-    // Seleccionamos los elementos del DOM
-    const welcomeText = document.querySelector('.welcome-text');
-    const navItems = document.querySelectorAll('.nav-menu li');
-    // navItems[0] es "Iniciar Sesión"
-    // navItems[1] es "Opciones", navItems[2] es "Cerrar Sesión", etc.
-
-    if (isLogged && currentUser) {
-        // --- MODO USUARIO LOGUEADO ---
-        welcomeText.textContent = `${currentUser.user_name}`;
-
-        // Ocultamos "Iniciar Sesión"
-        navItems[0].hidden = true;
-
-        // Mostramos el resto de opciones (quitamos el atributo hidden)
-        navItems.forEach((item, index) => {
-            if (index > 0) item.hidden = false;
-            if (index === 4) {
-                item.hidden = true; // Ocultamos "Volver" en el main
-            }
-            /*
-            if (index === 4) {
-                // "Volver" apunta a la página anterior
-                item.querySelector('a').href = document.referrer || 'main.html';
-            }
-            */
-        });
-
-    } else {
-        // --- MODO VISITANTE ---
-        welcomeText.textContent = "Bienvenido";
-
-        // Mostramos "Iniciar Sesión"
-        navItems[0].hidden = false;
-
-        // Ocultamos las opciones privadas
-        navItems.forEach((item, index) => {
-            if (index > 0) item.hidden = true;
-        });
-    }
 }
 
 /**
@@ -151,7 +102,7 @@ function renderizarLibros(listaLibros) {
 
         // Imagen (si no tienes imagen real, usa un placeholder)
         const imgElement = clone.querySelector('.book-image-card');
-        imgElement.src = "../assets/img/covers/" + (libro.cover|| "mood-heart.png");
+        imgElement.src = "../assets/img/covers/" + (libro.cover || "mood-heart.png");
         imgElement.alt = `Portada de ${libro.titulo}`;
 
         // Inyectamos las estrellas
