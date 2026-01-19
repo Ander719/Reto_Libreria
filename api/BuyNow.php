@@ -3,13 +3,13 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
-require_once '../controller/controller.php';
+require_once '../controller/OrderController.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (!empty($input['profileCode']) && !empty($input['isbn']) && !empty($input['quantity'])) {
     
-    $controller = new controller();
+    $controller = new OrderController();
     // Esta función la añadiste antes al controller.php
     $result = $controller->createDirectOrder(
         $input['profileCode'],

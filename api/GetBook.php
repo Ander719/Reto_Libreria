@@ -12,9 +12,14 @@ if (!$isbn) {
     exit;
 }
 
+<<<<<<< HEAD
 try {
     $controller = new BookController();
     $book = $controller->getBook($isbn);
+=======
+$controller = new BookController();
+$book = $controller->getBook($isbn);
+>>>>>>> 78ce24ffba9cc8af46d53bc2deaf65dab1084b1e
 
     if ($book) {
         echo json_encode(["exito" => true, "libro" => $book]);

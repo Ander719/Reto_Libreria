@@ -100,7 +100,7 @@ async function loadBookDetails(isbn) {
             data = JSON.parse(rawText);
         } catch (error) {
             console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
-            return; // Salimos de la función
+            return; // Salimos de la función    
         }
 
         console.log("Datos recibidos del servidor:", data);
@@ -223,7 +223,8 @@ function rellenarVista(libro) {
         );
 
         if (aceptado) {
-            comprarAhora(libro.isbn, cantidad, currentUser.id);
+            const userId = currentUser.profile_code || currentUser.id;
+            comprarAhora(libro.isbn, cantidad, userId);
         }
     });
 }
@@ -238,7 +239,35 @@ function handleCommentSection() {
     const loginPrompt = document.getElementById('loginPrompt');
     const formName = document.querySelector('#userActionContainer strong');
 
+<<<<<<< HEAD
     if (currentUser) {
+=======
+    if (userSession) {
+        actionContainer.innerHTML = `
+            <h3 id="formTitle">Write a Review</h3>
+            <p>Commenting as: <strong>${userSession.user_name}</strong></p>
+            
+            <form id="commentForm" class="actions review-form">
+                <label for="ratingScore">Rating:</label>
+                <select id="ratingScore" class="qty-input rating-select">
+                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ - Very Good</option>
+                    <option value="3">⭐⭐⭐ - Average</option>
+                    <option value="2">⭐⭐ - Poor</option>
+                    <option value="1">⭐ - Terrible</option>
+                </select>
+                
+                <label for="commentBody">Your Review:</label>
+                <textarea id="commentBody" rows="4" class="review-textarea" placeholder="What did you think about this book?"></textarea>
+                
+                <div class="btn-container">
+                    <button type="submit" id="submitBtn" class="action-btn btn-auto">Submit Review</button>
+                    <button type="button" id="cancelEditBtn" class="action-btn btn-cancel btn-auto" style="display:none;">Cancel</button>
+                </div>
+                <span id="formMessage" class="success-message"></span>
+            </form>
+        `;
+>>>>>>> 78ce24ffba9cc8af46d53bc2deaf65dab1084b1e
 
         actionContainer.hidden = false;
         loginPrompt.hidden = true;
@@ -276,7 +305,15 @@ async function submitComment(e, user) {
         return;
     }
 
-    const profileCode = user.id;
+    console.log("🕵️ OBJETO USUARIO:", user);
+
+    const profileCode = getUserId(user);
+    // Comprobación de seguridad
+    if (!profileCode) {
+        console.error("❌ Error: No se encuentra el ID del usuario en:", user);
+        alert("Error de sesión. Por favor, recarga la página e inicia sesión de nuevo.");
+        return;
+    }
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
     const payload = {
@@ -332,10 +369,11 @@ async function submitComment(e, user) {
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
     // Usamos el ID del usuario actual si existe
-    const myProfileCode = currentUser ? currentUser.id : null;
+    const myProfileCode = getUserId(currentUser);
 
     try {
         const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
+<<<<<<< HEAD
         const rawText = await response.text();
 
         let comments;
@@ -346,7 +384,20 @@ async function loadComments(isbn) {
             commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
             return; // Salimos de la función
         }
+=======
+>>>>>>> 78ce24ffba9cc8af46d53bc2deaf65dab1084b1e
 
+        const rawText = await response.text();
+
+        let comments;
+        try {
+            comments = JSON.parse(rawText);
+        } catch (error) {
+            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
+            return; // Salimos de la función
+        }
+
+        console.log("Datos recibidos del servidor:", comments);
         commentsList.innerHTML = '';
         let myReview = null;
 
@@ -357,6 +408,7 @@ async function loadComments(isbn) {
 
                 // Comprobamos si este comentario es mío
                 const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
+                console.log("Comentario recibido:", c);
                 if (isMine) myReview = c;
 
                 // Generamos los botones (Lápiz y Basura) solo si es mío
@@ -414,7 +466,15 @@ window.deleteComment = async function (isbn) {
     );
 
     if (!aceptado) return;
-    const profileCode = currentUser.id;
+
+    // PROTECCIÓN: Si no hay usuario cargado, paramos
+    if (!currentUser) {
+        showModal("Error", "No se detecta la sesión. Recarga la página.");
+        return;
+    }
+
+    // Obtenemos el ID de forma segura
+    const profileCode = getUserId(currentUser);
     try {
         const response = await fetch('../../api/DeleteComment.php', {
             method: 'POST',
@@ -423,16 +483,18 @@ window.deleteComment = async function (isbn) {
         });
 
         if (response.ok) {
-            // Recargamos comentarios sin molestar al usuario o ponemos un modal de éxito
             showModal("Éxito", "Comentario eliminado correctamente.");
-            loadComments(isbn);
-            resetForm();
+            await loadComments(isbn);
+            if (document.getElementById('commentBody')) {
+                resetForm();
+            }
+
         } else {
             showModal("Error", "No se pudo eliminar el comentario.");
         }
     } catch (error) {
-        console.error(error);
-        showModal("Error de conexión", "Inténtalo de nuevo más tarde.");
+        console.error("Error en deleteComment:", error);
+        showModal("Error de conexión", "Mira la consola para más detalles.");
     }
 };
 
@@ -518,6 +580,13 @@ async function comprarAhora(isbn, quantity, userId) {
         console.error(error);
         showModal("Error de conexión", "No se pudo contactar con el servidor.");
     }
+}
+
+
+// Función auxiliar para obtener el ID, venga como venga
+export function getUserId(user) {
+    if (!user) return null;
+    return user.profile_code || user.id || user.PROFILE_CODE;
 }
 
 

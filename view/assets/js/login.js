@@ -6,7 +6,7 @@ async function init() {
     const isLogged = await checkSession();
 
     if (isLogged) {
-        if (currentUser.rol === 'admin') {
+        if (currentUser.role === 'admin') {
             window.location.replace("opcAdmin.html");
         } else {
             window.location.replace("main.html");
@@ -47,7 +47,7 @@ if (loginForm) {
 
 async function login(username, password) {
     try {
-        const response = await fetch(`../../api/LogIn.php`, {
+        const response = await fetch(`../../api/Login.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),

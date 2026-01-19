@@ -7,7 +7,7 @@ require_once '../controller/CommentController.php';
 $commentModel = new CommentController();
 $isbn = isset($_GET['isbn']) ? $_GET['isbn'] : "";
 if($isbn) {
-    $comments = $commentModel->getCommentsByISBN($isbn);
+    $comments = $commentDAO->getCommentsByISBN($isbn);
     echo json_encode($comments);
 } else {
     echo json_encode([]);

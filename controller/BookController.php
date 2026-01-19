@@ -1,4 +1,5 @@
 <?php
+require_once '../model/entities/Book.php';
 require_once '../model/dao/BookDAO.php';
 
 class BookController {
@@ -20,10 +21,15 @@ class BookController {
     }
 
     public function modifyBook($isbn, $title, $authorId, $pages, $stock, $synopsis, $price, $editorial, $cover) {
+<<<<<<< HEAD
         // --- CORRECCIÓN AQUÍ ---
         // Tu archivo Book.php está en 'model/entities/', no en 'model/'
         require_once '../model/entities/Book.php'; 
         
+=======
+        // Para modificar, usamos el ID directo si ya viene resuelto
+        // Si necesitas modificar autor por nombre, habría que adaptar esto similar al create
+>>>>>>> 78ce24ffba9cc8af46d53bc2deaf65dab1084b1e
         $book = new Book($title, $authorId, $isbn, $pages, $stock, $synopsis, $price, $editorial, $cover);
         return $this->BookDAO->updateBook($book);
     }
