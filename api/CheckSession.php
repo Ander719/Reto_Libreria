@@ -1,21 +1,30 @@
 <?php
+// api/CheckSession.php
 session_start();
 header("Content-Type: application/json; charset=utf-8");
 
-// Verificamos si existe la variable 'user' que creó el AuthController en el Login
+// 1. CORRECCIÓN: Verificar $_SESSION['user']
 if (isset($_SESSION['user'])) {
     
-    // CASO 1: Hay sesión activa
+    $user = $_SESSION['user'];
+    
+    // Si es admin, le añadimos el rol explícitamente para el JS
+    if (isset($user['current_account'])) {
+        $user['role_type'] = 'admin';
+    } else {
+        $user['role_type'] = 'user';
+    }
+
     echo json_encode([
-        "success" => true,
-        "user" => $_SESSION['user'] // Devolvemos el array de datos (id, nombre, rol...)
+        "is_logged" => true,
+        "user" => $user
     ]);
 
 } else {
-    
-    // CASO 2: No hay sesión (Visitante)
+    // No hay sesión
     echo json_encode([
-        "success" => false,
-        "error" => "No hay sesión activa"
-    ]);
+        "is_logged" => false,
+        "user" => null
+    ]); 
 }
+?>

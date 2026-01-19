@@ -1,7 +1,8 @@
 <?php
-require_once dirname(__DIR__, 2) . '/config/Database.php';
+require_once dirname(__DIR__, 2) . '/Config/Database.php';
 require_once dirname(__DIR__) . '/entities/Book.php';
-require_once __DIR__ . '/AuthorDAO.php'; // AuthorDAO está en la misma carpeta, usamos __DIR__ directo
+require_once dirname(__DIR__) . '/entities/Author.php';
+require_once __DIR__ . '/AuthorDAO.php'; // AuthorDAO está en la misma carpeta
 
 class BookDAO
 {
@@ -15,77 +16,40 @@ class BookDAO
         $this->AuthorDAO = new AuthorDAO();
     }
 
-    /**
-     * Función principal para crear un libro gestionando el autor automáticamente
-     */
+    // --- LEER POR ISBN ---
+    public function getBookByIsbn($isbn)
+    {
+        // Nota: Asegúrate que tu procedimiento almacenado devuelve 'name_author' y 'last_name'
+        // Si no usas procedimientos, cambia esto por un SELECT con JOIN normal.
+        $sql = "CALL GetBookByISBN(:isbn)";
+        
+        // Si no tienes el PROCEDURE, usa esta consulta alternativa:
+        // $sql = "SELECT b.*, a.name_author, a.last_name FROM book_ b JOIN author_ a ON b.id_author = a.ID_AUTHOR WHERE b.isbn = :isbn";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":isbn", $isbn);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        return null;
+    }
+
+    // --- CREAR ---
     public function createBookWithAuthor($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName)
     {
-
-        // 1. Obtener ID del autor (existente o nuevo)
         $authorId = $this->AuthorDAO->getOrCreateAuthorId($authorName, $authorSurname);
+        if (!$authorId) return false;
 
-        if (!$authorId) {
-            return false; // Fallo al gestionar el autor
-        }
-
-        // 2. Crear el objeto Book
-        // El constructor espera: $title, $author (id), $isbn, $pages, $stock, $synopsis, $price, $editorial, $cover
         $book = new Book($title, $authorId, $isbn, $pages, $stock, $synopsis, $price, $editorial, $coverName);
-
-        // 3. Insertar el libro usando la función de bajo nivel
         return $this->createBook($book);
     }
-    public function getAllBooks()
-    {
-        // Llamamos al procedimiento almacenado
-        $sql = "CALL GetAllBooks()";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        
-        $resultArray = [];
-        
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            
-            // PASO 1: Crear el objeto Autor con los datos del JOIN
-            $authorObj = new Author(
-                $row['id_author'],
-                $row['name_author'],
-                $row['last_name']
-            );
 
-            // PASO 2: Crear el objeto Libro pasándole el objeto Autor
-            $bookObj = new Book(
-                $row['title'],
-                $authorObj,
-                $row['isbn'],
-                $row['pages'],
-                $row['stock'],
-                $row['synopsis'],
-                $row['price'],
-                $row['editorial'],
-                $row['cover']
-            );
-            
-            // PASO 3: Convertir todo a array estructurado
-            // Gracias al cambio en Book.php, esto ya incluye al autor anidado
-            $bookArray = $bookObj->toArray();
-            
-            // Añadimos datos extra que no están en la clase (como rating)
-            $bookArray['rating'] = $row['rating'];
-
-            $resultArray[] = $bookArray;
-        }
-
-        return $resultArray;
-    }
-    /**
-     * Inserta un objeto Book en la base de datos
-     */
     public function createBook(Book $book)
     {
         $query = "INSERT INTO BOOK_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
                   VALUES (:isbn, :title, :author, :pages, :stock, :synopsis, :price, :editorial, :cover)";
-
         $stmt = $this->conn->prepare($query);
 
         $isbn = $book->getIsbn();
@@ -108,39 +72,15 @@ class BookDAO
         $stmt->bindParam(":editorial", $editorial);
         $stmt->bindParam(":cover", $cover);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
-    /**
-     * Obtener libro por ISBN
-     */
-    public function getBookByIsbn($isbn)
-    {
-        // Llamamos al procedimiento pasando el parámetro
-        $sql = "CALL GetBookByISBN(:isbn)";
-        
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":isbn", $isbn);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-            // Devolvemos el array asociativo directo para el JSON
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        }
-        return null;
-    }
-
-    /**
-     * Actualizar libro
-     */
+    // --- ACTUALIZAR ---
     public function updateBook(Book $book)
     {
+        // Solo actualizamos datos básicos. Si quieres cambiar el autor, necesitarías lógica extra.
         $query = "UPDATE BOOK_ SET 
                     title = :title, 
-                    id_author = :author, 
                     pages = :pages, 
                     stock = :stock, 
                     synopsis = :synopsis, 
@@ -153,7 +93,6 @@ class BookDAO
 
         $isbn = $book->getIsbn();
         $title = $book->getTitle();
-        $author = $book->getAuthor();
         $pages = $book->getPages();
         $stock = $book->getStock();
         $synopsis = $book->getSynopsis();
@@ -163,7 +102,6 @@ class BookDAO
 
         $stmt->bindParam(":isbn", $isbn);
         $stmt->bindParam(":title", $title);
-        $stmt->bindParam(":author", $author);
         $stmt->bindParam(":pages", $pages);
         $stmt->bindParam(":stock", $stock);
         $stmt->bindParam(":synopsis", $synopsis);
@@ -171,24 +109,15 @@ class BookDAO
         $stmt->bindParam(":editorial", $editorial);
         $stmt->bindParam(":cover", $cover);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
-
-    /**
-     * Eliminar libro
-     */
-    public function deleteBook($isbn)
-    {
-        $query = "DELETE FROM BOOK_ WHERE isbn = :isbn";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":isbn", $isbn);
-
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+    
+    // --- LISTAR TODOS ---
+    public function getAllBooks() {
+        $sql = "CALL GetAllBooks()";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
     }
 }
+?>

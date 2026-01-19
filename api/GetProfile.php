@@ -2,31 +2,38 @@
 // api/GetProfile.php
 session_start();
 header('Content-Type: application/json; charset=utf-8');
-require_once '../controller/controller.php';
 
-// 1. CORRECCIÓN: Verificar si existe el array 'user_data' y el 'id' dentro de él
-if (!isset($_SESSION['user_data']) || !isset($_SESSION['user_data']['id'])) {
-    // Si quieres depurar, podrías descomentar esto temporalmente:
-    // echo json_encode(['exito' => false, 'error' => 'Sesión vacía', 'debug' => $_SESSION]); exit;
-    
+// CAMBIO: Usamos el nuevo ProfileController
+require_once '../controller/ProfileController.php';
+
+// 1. VALIDACIÓN DE SESIÓN (Nueva estructura)
+if (!isset($_SESSION['user'])) {
     echo json_encode(['exito' => false, 'error' => 'No has iniciado sesión']);
     exit;
 }
 
-// 2. CORRECCIÓN: Obtener el ID desde la ruta correcta
-$id = $_SESSION['user_data']['id'];
+// La nueva sesión guarda todo el objeto usuario. El ID suele ser 'profile_code'.
+$userSession = $_SESSION['user'];
+$id = $userSession['profile_code'] ?? null;
 
-$controller = new controller();
+if (!$id) {
+    echo json_encode(['exito' => false, 'error' => 'Error de sesión: ID no encontrado']);
+    exit;
+}
+
+// 2. OBTENER DATOS ACTUALIZADOS
+$controller = new ProfileController();
 $user = $controller->getUserData($id); 
 
 if ($user) {
-    // Convertimos claves a minúsculas para evitar problemas de mayúsculas/minúsculas en JS
+    // Convertimos a minúsculas para asegurar compatibilidad con el JS
     $user = array_change_key_case($user, CASE_LOWER);
-
-    if(isset($user['pswd'])) unset($user['pswd']); // Por seguridad
+    
+    // Quitamos la contraseña por seguridad
+    if(isset($user['pswd'])) unset($user['pswd']); 
 
     echo json_encode(['exito' => true, 'user' => $user]);
 } else {
-    echo json_encode(['exito' => false, 'error' => 'No se encontraron datos para este usuario']);
+    echo json_encode(['exito' => false, 'error' => 'No se encontraron datos']);
 }
 ?>
