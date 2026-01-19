@@ -187,11 +187,19 @@ textarea:focus {
 }
 
 /* --- Logo --- */
+.logo-link {
+  display: flex;       /* Elimina el comportamiento de texto del enlace */
+  align-items: center; /* Centra la imagen perfectamente dentro del enlace */
+  text-decoration: none;
+  height: 50px;        /* Opcional: Para forzar que el enlace mida lo mismo que la imagen */
+}
+
 .logo {
-  height: 50px; /* Altura controlada */
+  height: 50px; 
   width: auto;
   object-fit: contain;
   cursor: pointer;
+  display: block; /* IMPORTANTE: Elimina el espacio fantasma inferior */
 }
 
 /* --- Texto de Bienvenida --- */
@@ -806,25 +814,6 @@ html {
   height: 100%;
   font-family: "Segoe UI", sans-serif;
   background-color: #f4f4f4;
-}
-
-/* HEADER */
-.headHome {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background: white;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.topPic {
-  width: 60px;
-}
-
-.logoutIcon {
-  width: 30px;
-  cursor: pointer;
 }
 
 /* MAIN LAYOUT */
