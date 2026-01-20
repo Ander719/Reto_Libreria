@@ -1,53 +1,68 @@
-document.addEventListener("DOMContentLoaded", () => {
-  document
-    .getElementById("signupForm")
-    .addEventListener("submit", async function (e) {
-      e.preventDefault();
+import { checkSession, currentUser } from './session.js';
 
-      const username = document.getElementById("username").value;
-      const pswd1 = document.getElementById("pswd1").value;
-      const pswd2 = document.getElementById("pswd2").value;
-      const parrafo = document.getElementById("mensaje");
+init();
 
-      if (pswd1 !== pswd2) {
-        parrafo.innerText = "Las contraseñas no coinciden.";
-        parrafo.style.color = "red";
-        return;
-      }
+async function init() {
+  const isLogged = await checkSession();
 
-      try {
-        const response = await fetch("../../api/AddUser.php", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-          body: JSON.stringify({ username, pswd1 }),
-        });
+  if (isLogged) {
+    if (currentUser.rol === 'admin') {
+      window.location.replace("opcAdmin.html");
+    } else {
+      window.location.replace("main.html");
+    }
+    return; // Detenemos la ejecución del script
+  }
+}
 
-        const rawText = await response.text();
+document.getElementById("signupForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-        let data;
-        try {
-          data = JSON.parse(response.ok ? rawText : "{}");
-        } catch (jsonError) {
-          throw new Error("Respuesta no es JSON válida: " + rawText);
-        }
+  const username = document.getElementById("username").value;
+  const pswd1 = document.getElementById("pswd1").value;
+  const pswd2 = document.getElementById("pswd2").value;
+  const parrafo = document.getElementById("mensaje");
 
-        if (data.resultado) {
-          parrafo.innerText = "Usuario creado con éxito.";
-          parrafo.style.color = "green";
-          localStorage.setItem("actualProfile", JSON.stringify(data.resultado));
-          window.location.href = "main.html";
-          console.log("Datos recibidos:", data.resultado);
-        } else {
-          parrafo.innerText =
-            "El Usuario ya existe, elija otro nombre de usuario";
-          parrafo.style.color = "red";
-          console.error("Respuesta del servidor:", data);
-        }
-      } catch (error) {
-        parrafo.innerText = "Error al crear el usuario.";
-        parrafo.style.color = "red";
-      }
+  if (pswd1 !== pswd2) {
+    parrafo.innerText = "Las contraseñas no coinciden.";
+    parrafo.style.color = "red";
+    return;
+  }
+
+  try {
+    const response = await fetch("../../api/AddUser.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({ username, pswd1 }),
+      credentials: "include",
     });
+
+    const rawText = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(response.ok ? rawText : "{}");
+    } catch (jsonError) {
+      throw new Error("Respuesta inválida del servidor: " + jsonError.message);
+    }
+
+    if (data.success) {
+      parrafo.innerText = "Usuario creado con éxito.";
+      parrafo.style.color = "green";
+
+      setTimeout(() => {
+        window.location.href = "main.html";
+      }, 1000);
+    } else {
+      // Mostramos el error que viene del controlador
+      parrafo.innerText = data.error || "Error al crear usuario";
+      parrafo.style.color = "red";
+    }
+  } catch (error) {
+    console.error(error);
+    parrafo.innerText = "Error de conexión o servidor.";
+    parrafo.style.color = "red";
+  }
 });

@@ -1,47 +1,74 @@
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+import { checkSession } from "./session.js";
+
+init();
+
+async function init() {
+    const isLogged = await checkSession();
+
+    if (isLogged) {
+        window.location.replace("main.html");
+        return; // Detenemos la ejecución del script
+    }
+}
+const dialog = document.getElementById("statusDialog");
+const dialogMessage = document.getElementById("dialogMessage");
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+    loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        // Llamada a la función
+        console.log("Intentando login con:", username); // Debug
+
         let data = await login(username, password);
+        console.log("Respuesta servidor:", data); // Debug
 
-        if (data) {
-            if (data.error) {
-                alert("Error: " + data.error);
-            } 
-            else if (data.resultado) {
-                // Guardamos los datos del usuario
-                localStorage.setItem("actualProfile", JSON.stringify(data.resultado));
+        if (data.success) {
+            dialogMessage.textContent = "Login exitoso. Redirigiendo...";
+            dialog.showModal();
 
-                console.log("Rol detectado:", data.rol); // Para depurar
-
-                // LÓGICA DE REDIRECCIÓN INFALIBLE
-                if (data.rol === "admin") {
-                    window.location.href = "opcAdmin.html";
-                } else {
-                    window.location.href = "main.html";
-                }
-            }
+            setTimeout(() => {
+                //volver a a la pagina anterior desde la que vino el usuario
+                const previousPage = document.referrer || 'main.html';
+                window.location.href = previousPage;
+            }, 500);
+        } else {
+            // Mostramos el error en el diálogo
+            dialogMessage.textContent = data.error || "Error desconocido durante el login.";
+            dialog.showModal();
         }
     });
+}
 
-    async function login(username, password) {
-        try {
-            // Asegúrate que esta ruta es correcta (../../api/Login.php si estás en view/html/)
-            const response = await fetch(`../../api/Login.php`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-            });
-
-            if (!response.ok) throw new Error("Error conexión");
-            return await response.json();
-        } catch (error) {
-            console.error(error);
-            return { error: "Error de conexión" };
+async function login(username, password) {
+    try {
+        const response = await fetch(`../../api/Login.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+            credentials: 'include', // Importante para enviar/recibir cookies
+        });
+        if (!response.ok) {
+            return {
+                success: false, error: data.error || `Error de conexión (${response.status})`
+            };
         }
+        const rawText = await response.text();
+
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            console.error("Error al parsear JSON:", rawText);
+            return;
+        }
+        return data; // Si todo fue bien (200), devolvemos los datos tal cual
+
+    } catch (error) {
+        console.error("Error en fetch:", error);
+        return { success: false, error: "Fallo de red o servidor caído." };
     }
-});
+}

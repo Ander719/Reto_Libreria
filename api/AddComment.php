@@ -1,46 +1,62 @@
 <?php
-// Cabeceras para permitir que JS lea la respuesta (IL8.2 Respuestas Dinámicas)
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
-include_once '../Config/db.php'; // Tu archivo de conexión
-include_once '../model/CommentModel.php';
+include_once '../Config/Database.php';
+include_once '../model/dao/CommentDAO.php';
 
-// 1. Instanciar base de datos y modelo
-$database = new Database(); // Ajusta esto según cómo te llames a tu clase de conexión
-$db = $database->getConnection();
-$commentModel = new CommentModel($db);
+// 1. CORRECCIÓN: Creamos la instancia del DAO (Importante: new CommentDAO)
+$commentDAO = new CommentDAO();
 
-// 2. Obtener los datos enviados por el JS (JSON)
-$data = json_decode(file_get_contents("php://input"));
+// 2. Leemos los datos enviados por Javascript
+$input_raw = file_get_contents("php://input");
+$data = json_decode($input_raw);
 
-// 3. Validar que los datos no vengan vacíos (Seguridad básica)
+// Comprobamos si el JSON ha llegado roto o vacío
+if ($data === null) {
+    http_response_code(400);
+    echo json_encode([
+        "message" => "Error: No se ha recibido ningún JSON válido.",
+        "debug_raw" => $input_raw // Te mostrará qué llegó realmente
+    ]);
+    exit();
+}
+
+// 3. Verificamos los 4 datos obligatorios
 if (
     !empty($data->profileCode) &&
     !empty($data->isbn) &&
     !empty($data->comment) &&
     !empty($data->valoration)
 ) {
-    // 4. Intentar guardar
-    if ($commentModel->createComment(
+    // 4. CORRECCIÓN: Usamos la variable $commentDAO que creamos arriba
+    $fecha = $data->date ?? date('Y-m-d'); // Si no viene fecha, usa hoy
+
+    if ($commentDAO->createComment(
         $data->profileCode,
         $data->isbn,
         $data->comment,
         $data->valoration,
-        $data->date
+        $fecha
     )) {
-        // Respuesta 201: Creado con éxito
         http_response_code(201);
         echo json_encode(array("message" => "Review posted successfully."));
     } else {
-        // Respuesta 503: Error del servidor
         http_response_code(503);
         echo json_encode(array("message" => "Unable to post review. SQL Error."));
     }
 } else {
-    // Respuesta 400: Datos incompletos
+    // 5. MODO DETECTIVE: Esto te dirá exactamente qué campo falta en la consola
     http_response_code(400);
-    echo json_encode(array("message" => "Incomplete data."));
+    echo json_encode(array(
+        "message" => "Incomplete data. Faltan datos obligatorios.",
+        "debug_missing" => [
+            "profileCode" => !empty($data->profileCode) ? "OK ({$data->profileCode})" : "FALTA",
+            "isbn"        => !empty($data->isbn) ? "OK" : "FALTA",
+            "comment"     => !empty($data->comment) ? "OK" : "FALTA",
+            "valoration"  => !empty($data->valoration) ? "OK" : "FALTA"
+        ]
+    ));
 }
 ?>

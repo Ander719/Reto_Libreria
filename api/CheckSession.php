@@ -1,17 +1,21 @@
 <?php
+// api/CheckSession.php
 session_start();
-header("Content-Type: application/json");
+header("Content-Type: application/json; charset=utf-8");
 
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    // Si la sesión existe, devolvemos los datos del usuario guardados en el login
+// Verificamos si existe la variable 'user' que creó el AuthController en el Login
+if (isset($_SESSION['user'])) {
+
+    // CASO 1: Hay sesión activa
     echo json_encode([
-        "is_logged" => true,
-        "user" => $_SESSION['user_data']
+        "success" => true,
+        "user" => $_SESSION['user'] // Devolvemos el array de datos (id, nombre, rol...)
     ]);
 } else {
-    // Si no hay sesión válida
+
+    // CASO 2: No hay sesión (Visitante)
     echo json_encode([
-        "is_logged" => false
+        "success" => false,
+        "error" => "No hay sesión activa"
     ]);
 }
-?>

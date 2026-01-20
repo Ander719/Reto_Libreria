@@ -6,7 +6,7 @@ class Order {
     private $dateBuy;
     private $buyed;
 
-    public function __construct($id_order, $userId, $orderDate) {
+    public function __construct($id_order, $userId, $dateBuy, $buyed) {
         $this->id_order = $id_order;
         $this->userId = $userId;
         $this->dateBuy = $dateBuy;

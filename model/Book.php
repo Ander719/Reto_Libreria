@@ -77,4 +77,17 @@ class Book {
     public function setCover($cover) {
         $this->cover = $cover;
     }
+    public function toArray() {
+        return [
+            'title' => $this->title,
+            'author' => $this->author->toArray(), // asumiendo que $author es un objeto con método toArray()
+            'isbn' => $this->isbn,
+            'pages' => $this->pages,
+            'stock' => $this->stock,
+            'synopsis' => $this->synopsis,
+            'price' => $this->price,
+            'editorial' => $this->editorial,
+            'cover' => $this->cover
+        ];
+    }
 }

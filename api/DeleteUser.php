@@ -1,22 +1,33 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// api/DeleteUser.php
+session_start();
+header('Content-Type: application/json');
 
-header('Content-Type: application/json; charset=utf-8');
+// --- CORRECCIÓN: Usamos ProfileController ---
+require_once '../controller/ProfileController.php';
 
-require_once '../controller/controller.php';
+if (!isset($_GET['id'])) {
+    echo json_encode(['result' => false, 'error' => 'No ID provided']);
+    exit;
+}
 
-$id = $_GET['id'] ?? '';
+$idToDelete = $_GET['id'];
+$controller = new ProfileController();
 
-$controller = new controller();
-$result = $controller->delete_user($id);
+$result = $controller->delete_user($idToDelete);
 
 if ($result) {
+    $isSelfDelete = (isset($_SESSION['user']['profile_code']) && $_SESSION['user']['profile_code'] == $idToDelete);
+    
+    if ($isSelfDelete) {
+        session_destroy();
+    }
+
     echo json_encode([
-        'result' => TRUE
-    ], JSON_UNESCAPED_UNICODE);
+        'result' => true, 
+        'isSelfDelete' => $isSelfDelete 
+    ]);
 } else {
-    echo json_encode(['error' => 'User not found']);
+    echo json_encode(['result' => false, 'error' => 'Error in DB']);
 }
 ?>

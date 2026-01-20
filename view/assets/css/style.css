@@ -1,35 +1,31 @@
-.logoutIcon {
-  width: 4%;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.headHome {
-  display: flex;
-  justify-content: space-between;
-  padding-right: 1%;
-}
-
+/* ======================================================
+   1. VARIABLES GLOBALES (Configura tu tema aquí)
+   ====================================================== */
 :root {
+  /* Colores */
+  --primary-color: #101416;
+  /* Negro corporativo */
+  --primary-hover: #333333;
+  /* Gris oscuro para hover */
+  --secondary-color: #ffffff;
+  /* Blanco */
+  --danger-color: #d9534f;
+  /* Rojo para acciones destructivas */
+  --danger-hover: #c9302c;
   --background-color: #f1f1f1;
+  /* Gris fondo */
+
+  /* Configuración UI */
+  --border-radius: 12px;
+  /* Redondeo unificado#*/
+  --input-padding: 12px;
+  /* Relleno inputs/botones */
+  --font-family: "Segoe UI", sans-serif;
 }
 
-/*Footer*/
-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/*Login / Signup*/
+/* ======================================================
+   2. RESET Y BASE
+   ====================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -42,6 +38,316 @@ html {
   font-family: "Segoe UI", sans-serif;
 }
 
+/* --- Estilos del Header Principal --- */
+.main-header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* Sombra suave */
+  position: sticky;
+  /* Se queda fijo al hacer scroll */
+  top: 0;
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+}
+
+/* Contenedor Flex para alinear todo horizontalmente */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: 0 auto;
+  /* Centrar el contenido en pantallas grandes */
+  gap: 20px;
+  /* Espacio entre los grupos de elementos */
+}
+
+/* --- Logo --- */
+.logo-link {
+  display: flex;
+  /* Elimina el comportamiento de texto del enlace */
+  align-items: center;
+  /* Centra la imagen perfectamente dentro del enlace */
+  text-decoration: none;
+  height: 50px;
+  /* Opcional: Para forzar que el enlace mida lo mismo que la imagen */
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  display: block;
+  /* IMPORTANTE: Elimina el espacio fantasma inferior */
+}
+
+/* --- Texto de Bienvenida --- */
+.welcome-text {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  white-space: nowrap;
+  /* Evita que el texto se parta en dos líneas */
+}
+
+/* --- Grupo de Búsqueda --- */
+.search-group {
+  position: relative;
+  /* Necesario para posicionar la 'x' */
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  /* Ocupa el espacio disponible */
+  max-width: 450px;
+  /* Pero no más de 500px */
+}
+#searchForm {
+  width: 100%;
+}
+
+#search-input {
+  width: 100%;
+  padding: 10px 35px 10px 15px;
+  /* Padding extra a la derecha para la 'x' */
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  /* Bordes redondeados modernos */
+  outline: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+#search-input:focus {
+  border-color: #000;
+  /* Borde oscuro al escribir, estilo Nike */
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.search-clear-btn:hover {
+  color: #333;
+}
+
+/* --- Menú de Navegación --- */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Efecto Hover: subrayado animado */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #000;
+  transition: width 0.3s;
+}
+
+.nav-link:hover {
+  color: #000;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* --- Diseño Responsivo (Móvil) --- */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 15px;
+    padding: 1rem;
+  }
+
+  .search-group {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .nav-menu {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* --- Footer Styles --- */
+footer {
+  background-color: #1a1b1f;
+  /* Gris muy oscuro, casi negro: elegante para libros */
+  color: #b3b3b3;
+  /* Texto gris suave para no cansar la vista */
+  padding: 4rem 2rem 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Sistema de Rejilla (Grid) para 4 columnas */
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+  gap: 30px;
+  margin: 0 auto;
+  /* Centrar footer si la pantalla es muy ancha */
+  width: 100%;
+}
+
+/* 1. Sección de Descripción (Columna 1) */
+/* Nota: Agruparemos logo y texto visualmente en la columna 1 */
+footer .desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-top: 1rem;
+  width: 100%;
+  grid-column: 1;
+  /* Forza a quedarse en la primera columna */
+}
+
+/* Logo placeholder styling (por si añades la imagen luego) */
+footer img {
+  max-width: 150px;;
+  grid-column: 1;
+}
+
+/* 2. Títulos de las Listas */
+.listTitle {
+  color: #ffffff;
+  /* Blanco puro para destacar */
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  list-style: none;
+  /* Quitar punto si es un LI */
+}
+
+/* 3. Listas Generales (Contacto y Enlaces) */
+footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+footer li {
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+/* Estilo específico para la lista de enlaces (la segunda ul) */
+/* Asumimos que estos textos eventualmente serán links <a> */
+footer ul:not(.footerList) li:hover {
+  color: #fff;
+  transform: translateX(5px);
+  /* Pequeño desplazamiento a la derecha */
+  cursor: pointer;
+}
+
+/* Estilo para los datos de contacto (Iconos visuales opcionales) */
+.footerList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 4. Mapa (Columna 4) */
+.map {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.map iframe {
+  width: 100%;
+  height: 180px;
+  /* Altura ajustada */
+  border-radius: 12px;
+  /* Bordes redondeados */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  /* Filtro opcional: Mapa en escala de grises para que no desentone */
+  filter: grayscale(80%);
+  transition: filter 0.3s;
+}
+
+.map iframe:hover {
+  filter: grayscale(0%);
+  /* Vuelve a color al pasar el mouse */
+}
+
+/* 5. Copyright (Barra inferior) */
+.copyright {
+  grid-column: 1 / -1;
+  /* Ocupa todo el ancho (las 4 columnas) */
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #333;
+  /* Línea separadora sutil */
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* --- Responsive Design (Móvil y Tablet) --- */
+@media (max-width: 900px) {
+  footer {
+    grid-template-columns: 1fr 1fr;
+    /* 2 columnas en tablets */
+  }
+
+  .copyright {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  footer {
+    display: flex;
+    flex-direction: column;
+    /* Todo en una columna vertical en móviles */
+    text-align: center;
+    gap: 40px;
+  }
+
+  /* Centrar elementos en móvil */
+  footer li,
+  footer .desc {
+    justify-content: center;
+  }
+
+  /* Resetear grid props en movil */
+  footer .desc,
+  footer img,
+  .copyright {
+    grid-column: auto;
+  }
+}
+
+
+/* --- LOGIN / SIGNUP --- */
 .container {
   display: flex;
   height: 100vh;
@@ -49,6 +355,7 @@ html {
 
 .leftPanel {
   width: 50%;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -63,977 +370,510 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-color);
+  padding: 20px;
 }
 
 .loginForm {
-  width: 80%;
+  width: 100%;
   max-width: 400px;
   padding: 40px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  /* Sombra suave */
 }
 
 .loginForm h2 {
-  margin-bottom: 20px;
   text-align: center;
-}
-
-.loginForm label {
-  display: block;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-.loginForm input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-}
-
-.loginForm button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background-color: #222020;
-  color: white;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-}
-
-.loginForm button:hover {
-  background-color: #005fa3;
+  margin-bottom: 30px;
 }
 
 .registerLink {
-  align-self: center;
+  text-align: center;
   margin-top: 15px;
-  text-align: center;
-  font-size: 14px;
-  color: #555;
+  font-size: 0.9rem;
 }
 
-.registerLink a {
-  color: #555;
-  text-decoration: underline;
-  font-weight: bold;
+/* --- main --- */
+/* Para que las estrellas sean doradas y estén en fila */
+.book-rating {
+  color: #FFD700;
+  margin: 10px 0;
+  font-size: 1.2rem;
 }
+/* =========================================
+   ZONA NUEVA: LIBROS RECIENTES (Horizontal)
+   ========================================= */
 
-.registerLink a:hover {
-  text-decoration: underline;
-}
+/* 1. El Contenedor Nuevo */
+.new-books, .rating-books {
+    /* Configuración */
+    --card-width: 380px;  /* Ancho de la tarjeta */
+    --card-height: 190px; /* Alto de la tarjeta */
+    --quantity: 4;        /* Número de libros */
+    --duration: 15s;      /* Velocidad de la animación */
 
-#mensaje {
-  text-align: center;
-}
-
-/* Pantallas pequeñas (móviles) */
-@media (max-width: 600px) {
-  .container {
-    flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-  }
-
-  .leftPanel {
     width: 100%;
-    height: 30vh;
-  }
-
-  .leftPanel img {
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .rightPanel {
-    width: 100%;
-    height: 70vh;
-    padding: 20px 0;
-  }
-
-  .loginForm {
-    width: 90%;
-    padding: 25px;
-    max-width: 350px;
-  }
-
-  .loginForm h2 {
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-  }
-
-  .loginForm input {
-    padding: 12px;
-  }
-
-  .loginForm button {
-    padding: 12px;
+    max-width: 1200px;    /* Ancho máximo del carrusel */
+    margin-inline: auto;
+    position: relative;
+    height: calc(var(--card-height) + 20px); /* Altura justa + sombra */
+    margin-top: 2rem;
+    overflow: hidden;     /* Oculta lo que se sale por los lados */
+    
+    /* Máscara de desvanecimiento a los lados (Fade Effect) */
+    mask-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 1) 10%,
+        rgba(0, 0, 0, 1) 90%,
+        rgba(0, 0, 0, 0)
+    );
+  &:hover .book-card{
+    animation-play-state: paused;
   }
 }
 
-/* Pantallas medianas (tablets) */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .container {
-    flex-direction: row;
-  }
 
-  .leftPanel {
-    width: 40%;
-  }
+#newbooksContainer .book-card, #ratingBooksContainer .book-card {
+    width: var(--card-width);
+    height: var(--card-height);
+    position: absolute;
+    /* Empieza fuera de la pantalla a la derecha */
+    left: max(calc(var(--card-width) * var(--quantity)), 100%); 
+    
+    /* Estilo Visual (Igual que antes) */
+    background-color: #A2D2FF; 
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 15px;
+    border: none;
+    
+    /* Layout interno de la tarjeta */
+    display: grid;
+    grid-template-columns: 120px 1fr; 
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 15px;
+    align-items: start;
+    overflow: hidden;
 
-  .rightPanel {
-    width: 60%;
-  }
+    /* ANIMACIÓN */
+    animation-name: autoScroll;
+    animation-duration: var(--duration);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    &:hover{
+      transform: scale(1.02); /* Efecto pop sutil */
+     box-shadow: 0 10px 20px rgba(162, 210, 255, 0.4);
+    }
+}
 
-  .loginForm {
-    padding: 30px;
-    width: 85%;
-  }
+@keyframes autoScroll {
+    to {
+        /* Se mueve hacia la izquierda hasta salir por el otro lado */
+        left: calc(var(--card-width) * -1); 
+    }
+}
+/* Fórmula: (Duración / Cantidad) * (Cantidad - Índice) * -1 */
+#newbooksContainer .book-card:nth-child(1), #ratingBooksContainer .book-card:nth-child(1) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 1) * -1);
+}
+#newbooksContainer .book-card:nth-child(2), #ratingBooksContainer .book-card:nth-child(2) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 2) * -1);
+}
+#newbooksContainer .book-card:nth-child(3), #ratingBooksContainer .book-card:nth-child(3) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 3) * -1);
+}
+#newbooksContainer .book-card:nth-child(4), #ratingBooksContainer .book-card:nth-child(4) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 4) * -1);
+}
 
-  .loginForm h2 {
+/* 3. La Imagen (A la izquierda, ocupando toda la altura) */
+#newbooksContainer .book-image-card, #ratingBooksContainer .book-image-card {
+    grid-column: 1;      /* Primera columna */
+    grid-row: 1 / -1;    /* Desde la primera línea hasta la última */
+    
+    height: 100%;        /* Forzamos que llene el alto de la tarjeta */
+    width: 100%;
+    margin: 0;           /* Quitamos el margin-bottom de tu CSS original */
+    border-radius: 8px;  /* Un poco menos redondeada para encajar */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+/* 4. El Título (Blanco, Grande y en Mayúsculas) */
+#newbooksContainer .book-title, #ratingBooksContainer .book-title {
+    grid-column: 2;
+    align-self: end; /* Pegado a la parte baja de su celda */
+    
+    color: white;
+    font-family: 'Arial Black', sans-serif; /* Fuente gruesa */
     font-size: 1.4rem;
-  }
+    text-transform: uppercase;
+    line-height: 1;
+    margin-top: 15px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-/* Pantallas grandes (escritorios) */
-@media (min-width: 1200px) {
-  .loginForm {
-    max-width: 450px;
-    padding: 50px;
-  }
-
-  .loginForm h2 {
-    font-size: 1.8rem;
-  }
-
-  .loginForm input,
-  .loginForm button {
-    padding: 12px;
-  }
+/* 5. El Autor (Blanco) */
+#newbooksContainer .book-author, #ratingBooksContainer .book-author {
+    grid-column: 2;
+    color: #f0f8ff;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+    font-size: 0.95rem;
 }
 
-/*Home Page*/
-.topPic {
-  width: 10%;
+/* 6. Las Estrellas */
+#newbooksContainer .book-rating, #ratingBooksContainer .book-rating {
+    grid-column: 2;
+    margin: 8px 0 0 0;
+    font-size: 1rem;
 }
 
-.map {
-  padding-right: 2%;
+/* 7. Ocultar Precio y Stock (Opcional, según tu referencia visual) */
+/* Como es un mismo template, los elementos existen, pero los ocultamos aquí */
+#newbooksContainer .book-price,
+#newbooksContainer .book-stock,
+#ratingBooksContainer .book-price,
+#ratingBooksContainer .book-stock {
+    display: none; 
+}
+/* Para que los productos se vean en rejilla (Grid) */
+.rng-books{
+  display: grid;
+  /* Esto crea columnas automáticas que se ajustan al tamaño (responsive) */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 2rem 5%;
 }
 
-.mainPic {
-  float: left;
-  width: 40%;
-  padding: 7px 6px;
+/* --- La Tarjeta (Book Card) --- */
+.book-card {
+    background-color: #fff;
+    border-radius: 12px; /* Bordes redondeados modernos */
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    /* MAGIA PARA LA UNIFORMIDAD: */
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-row: span 6;
+    gap: 0;
+    height: 100%; /* Fuerza a que ocupe toda la altura de la fila del grid */
+    overflow: hidden;
+    cursor: pointer;
 }
 
-.saveDataBox {
-  position: absolute;
-  left: 50%;
-  top: 20%;
+.book-card:hover {
+    transform: translateY(-5px); /* Se levanta un poco al pasar el ratón */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.saveDataBox h1 {
-  font-size: 50px;
-  width: 500px;
+/* --- La Imagen --- */
+.book-image-card {
+    width: 100%;
+    height: 300px; /* ALTURA FIJA: Crucial para la uniformidad */
+    object-fit: cover; /* Evita que la imagen se estire o deforme, la recorta si es necesario */
+    object-position: top center; /* Centra la imagen priorizando la parte superior */
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* --- Título del Libro --- */
+.book-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 5px 0;
+    
+    overflow: hidden;
+    line-height: 1.3;
+}
+
+/* --- Autor --- */
+.book-author {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0 0 10px 0;
+    font-style: italic;
+}
+
+/* --- Estrellas / Rating --- */
+.book-rating {
+    margin-bottom: 10px;
+    color: #ffc107; /* Color dorado */
+    font-size: 0.9rem;
+}
+
+/* --- Precio --- */
+.book-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #000;
+    /* EMPUJAR AL FONDO: Esto hace que el precio siempre esté alineado abajo */
+    margin-top: auto; 
+    padding-top: 10px;
+}
+
+/* --- Stock --- */
+.book-stock {
+    font-size: 0.85rem;
+    color: #28a745; /* Verde si hay stock */
+    font-weight: 500;
+    margin-top: 5px;
 }
 
 .buttons {
   display: flex;
-  justify-content: space-between;
-  padding-top: 20px;
-}
-
-.adjustData {
-  width: 200px;
-  height: 50px;
-  background-color: #ffffff;
-  border-style: solid;
-  border-color: #000;
-  cursor: pointer;
-}
-
-.adjustData:hover {
-  background-color: #d3d3d3;
-  transition-duration: 0.5s;
-}
-
-.checkUsOut {
-  width: 200px;
-  height: 50px;
-  background-color: #101416;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.checkUsOut:hover {
-  background-color: #4d4a4a;
-  transition-duration: 0.5s;
-}
-
-.desc {
-  width: 25%;
-  padding-left: 1%;
-}
-
-p.copyright {
-  position: absolute;
-  width: 100%;
-  color: #fff;
-  line-height: 40px;
-  font-size: 0.7em;
-  text-align: center;
-  bottom: 0;
-}
-
-ul {
-  list-style-type: none;
-}
-
-li {
-  text-align: left;
-  padding: 3px 0px;
-}
-
-.listTitle {
-  font-weight: bold;
-  font-size: 20px;
-  text-align: left;
-}
-
-/*-----Admin Page CSS-----*/
-/*Modal*/
-.adminTableModal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modifyUserPopupAdmin {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 999;
-}
-
-.modifyAdminPopup {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 999;
-}
-
-/* Modal Content */
-.adminTableModalContent {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 3px solid black;
-  border-radius: 10px;
-  width: 80%;
-  height: 80%;
-}
-
-/* The Close Button */
-.close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.adminTable {
-  width: 100%;
-  display: block;
-  max-height: 90%;
-  overflow-y: auto;
-}
-
-.adminTableHead {
-  position: sticky;
-  top: 0;
-}
-
-.adminTable th {
-  background-color: #101416;
-  color: #ffffff;
-  width: 33%;
-  height: 10%;
-  padding: 5px;
-  outline: 3px solid #101416;
-}
-
-.adminTable tr {
-  text-align: center;
-}
-
-.adminTableData td {
-  outline: 3px solid #101416;
-}
-
-.center-flex-div {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-}
-
-.center-flex-div>* {
-  margin-left: 5px;
-  margin-right: 5px;
-  cursor: pointer;
-}
-
-.size-small {
-  width: 10%;
-}
-
-.flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px;
-}
-
-.modifySelfButton {
-  width: 30%;
-  background-color: #101416;
-  font-weight: bold;
-  color: white;
-  border: 0px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* Profile Popup */
-/* to blurr the background */
-.popupOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 999;
-}
-
-.popupCard {
-  width: 100%;
-  max-width: 980px;
-  background: var(--background-color, #f1f1f1);
-  border-radius: 18px;
-  border: 4px black solid;
-  padding: 24px;
-}
-
-.profileForm {
-  width: 100%;
-  max-width: 100%;
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-}
-
-.profileHeader {
-  display: flex;
   gap: 20px;
-  align-items: center;
+  justify-content: center;
 }
 
-.avatar {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #e6e6e6;
+/* --- ESTILOS DROP ZONE (CORREGIDOS) --- */
+.drop-zone {
+  width: 100%;
+  height: 200px;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 140px;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.infoArea {
-  flex: 1 1 auto;
-}
-
-.fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px 22px;
-  margin-top: 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-}
-
-.field label {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.field.half {
-  width: calc(50% - 11px);
-}
-
-.field.full {
-  width: 100%;
-}
-
-.inline {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.passwordWrap {
-  position: relative;
-  flex: 1;
-}
-
-.passwordWrap input {
-  width: 100%;
-}
-
-.togglePwd {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 1px solid #d0d0d0;
-  background: #f7f7f7;
-  border-radius: 18px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.changePwdBtn {
-  white-space: nowrap;
-}
-
-.actions {
-  display: flex;
-  margin-top: 22px;
-}
-
-.saveBtn {
-  width: 100%;
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.deleteBtn {
-  width: 50%;
-  border-radius: 18px;
-  padding: 14px;
-  background-color: #f0f0f0;
-  border-color: 1px #000;
-}
-
-.gender {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  background-color: white;
-  font-family: "Segoe UI", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/*Change Password pop up*/
-.changePasswordModal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.changePasswordModalContent {
-  background-color: var(--background-color, #f1f1f1);
-  margin: 5% auto;
-  padding: 24px;
-  border: 4px black solid;
-  border-radius: 18px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-}
-
-.changePasswordModal h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-}
-
-.changePasswordModal label {
-  display: block;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-.changePasswordModal input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-}
-
-.changePasswordModal button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background-color: #101416;
-  color: white;
-  border: none;
-  border-radius: 15px;
   cursor: pointer;
-  font-weight: bold;
+  color: #888;
+  border: 3px dashed #101416;
+  /* Color primario */
+  border-radius: 12px;
+  background-color: #fafafa;
+  position: relative;
+  /* Vital para que el hijo absoluto se posicione bien */
+  overflow: hidden;
+  /* Para que la imagen no se salga de las esquinas */
+  transition: all 0.2s ease;
 }
 
-.changePasswordModal button:hover {
-  background-color: #4d4a4a;
-  transition-duration: 0.5s;
+/* Efecto al pasar por encima con un archivo */
+.drop-zone--over {
+  border-style: solid;
+  background-color: #e6f7ff;
+  /* Un azulito claro para indicar "suelta aquí" */
+  color: #333;
+  transform: scale(1.02);
 }
 
-.closePasswordSpan {
-  color: #aaaaaa;
-  cursor: pointer;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+.drop-zone__input {
+  display: none;
+# /* El input real siempre oculto */
+}
+
+/* La miniatura de la imagen (Thumb) */
+.drop-zone__thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background-color: #eee;
+  background-size: cover;
+  /* 'cover' rellena todo, 'contain' muestra la imagen entera */
+  background-position: center;
   position: absolute;
-  right: 15px;
-  top: 10px;
+  /* Se coloca encima de todo */
+  top: 0;
+  left: 0;
+  z-index: 10;
+  /* Asegura que esté por encima del texto */
 }
 
-.closePasswordModal:hover,
-.closePasswordModal:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
+/* El texto de ayuda ("Arrastra aquí...") */
+.drop-zone__prompt {
+  z-index: 1;
+  /* Por debajo de la imagen */
+  pointer-events: none;
+  /* Para que el arrastre no parpadee al pasar por el texto */
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
-@media (max-width: 780px) {
-  .profileHeader {
+
+/* ======================================================
+   5. MEDIA QUERIES (RESPONSIVE)
+   ====================================================== */
+@media (max-width: 768px) {
+  .container {
     flex-direction: column;
-    align-items: flex-start;
+  }
+
+  .leftPanel {
+    width: 100%;
+    height: 250px;
+  }
+
+  .rightPanel {
+    width: 100%;
+    height: auto;
   }
 
   .field.half {
     width: 100%;
   }
 
-}
+  .saveDataBox {
+    width: 90%;
+  }
 
+  .saveDataBox h1 {
+    font-size: 2rem;
+    width: auto;
+  }
 
-/* ==========================================================================
-   ==========================================================================
-   PARTE 2: ESTILOS NUEVOS - TIENDA TIPO AMAZON (STYLE 2)
-   (Pega esto al final de tu archivo style.css original)
-   ==========================================================================
-   ========================================================================== */
-
-/* 1. VARIABLES & CONFIGURACIÓN GLOBAL */
-:root {
-  /* Paleta de Colores estilo E-commerce Pro */
-  --bg-body: #ffffff;
-  --text-main: #333333;
-  /* Gris muy oscuro para lectura cómoda */
-  --text-muted: #565959;
-  /* Gris Amazon para autores/meta info */
-  --price-color: #b12704;
-  /* Rojo oscuro para precios */
-  --link-color: #007185;
-  /* Azul "Amazon" para enlaces */
-  --link-hover: #c7511f;
-  /* Naranja al pasar el ratón */
-
-  /* Botones y Acciones */
-  --btn-primary: #ffd814;
-  /* Amarillo "Buy Box" */
-  --btn-hover: #f7ca00;
-  --btn-border: #fcd200;
-
-  /* Bordes y Fondos */
-  --border-light: #e7e7e7;
-  --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-/* Ajuste de fuente para la tienda (Cascada sobre el body original) */
-body {
-  font-family: "Amazon Ember", Arial, sans-serif, "Segoe UI";
-  line-height: 1.6;
-}
-
-/* 2. HEADER MODIFICADO (Sobrescribe para dar look oscuro Amazon) */
-.headHome {
-  background-color: #131921;
-  /* Negro Amazon */
-  align-items: center;
-  color: white;
-  padding: 10px 20px;
-}
-
-.topPic {
-  height: 40px;
-  width: auto;
-  /* Reseteamos el ancho para que no se deforme el logo */
-  object-fit: contain;
-}
-/* -------------------------------------------------------------------------- */
-/* CENTRADO DE PANTALLA (ADMIN)                                               */
-/* -------------------------------------------------------------------------- */
-
-body {
-    display: flex;
+  .buttons {
     flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-}
-
-header {
-    text-align: center;
-    width: 100%;
-    padding-top: 20px;
-    flex-shrink: 0;
-}
-
-main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Centrado Vertical */
-    align-items: center;     /* Centrado Horizontal */
-    width: 100%;
-    padding-bottom: 50px;
-}
-
-/* -------------------------------------------------------------------------- */
-/* ESTILOS PANEL ADMINISTRADOR                         */
-/* -------------------------------------------------------------------------- */
-
-/* BARRA SUPERIOR */
-.topbar-admin {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  padding: 15px 30px;
-  margin-bottom: 20px; /* Espacio entre barra y botones */
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e0e0;
-
-  /* ANCHURA DEFINIDA - LA REFERENCIA */
-  width: 90%;
-  max-width: 1000px;
-}
-
-.user-info, 
-.home-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  color: #101416;
-  text-decoration: none;
-  font-size: 1rem;
-}
-
-.btn-logout {
-  background-color: #101416;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.btn-logout:hover {
-  background-color: #333;
-}
-
-/* CONTENEDOR DE BOTONES */
-.admin-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%; /* El contenedor ocupa todo para poder centrar los hijos */
-}
-
-/* BOTONES DE ACCIÓN */
-.admin-btn {
-  /* AQUÍ ESTÁ EL CAMBIO: Mismas medidas que .topbar-admin */
-  width: 90%;
-  max-width: 1000px;
-  
-  padding: 20px; /* Un poco más altos para que se vean bien al ser tan anchos */
-  font-size: 1.1rem;
-  font-weight: bold;
-  border-radius: 12px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.admin-btn.filled {
-  background-color: #101416;
-  color: white;
-  border: 2px solid #101416;
-}
-
-.admin-btn.filled:hover {
-  background-color: #333;
-  border-color: #333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.admin-btn.outlined {
-  background-color: transparent;
-  color: #101416;
-  border: 2px solid #101416;
-}
-
-.admin-btn.outlined:hover {
-  background-color: #101416;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-@media (max-width: 600px) {
-  .topbar-admin {
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
   }
 }
-/*zona dropdown admin*/
-/* --- ZONA DE ARRASTRAR Y SOLTAR (DRAG & DROP) --- */
-.drop-zone {
-    max-width: 100%;
-    height: 200px;
-    padding: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-    cursor: pointer;
-    color: #cccccc;
-    border: 4px dashed #101416; /* Borde discontinuo estilo admin */
-    border-radius: 10px;
-    background-color: white;
-    transition: background-color 0.2s, border-color 0.2s;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    overflow: hidden;
+
+/* --- RESET & BASICS --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Estado cuando pasas el archivo por encima */
-.drop-zone--over {
-    border-style: solid;
-    background-color: #e1e1e1; /* Se oscurece un poco */
-    color: #101416;
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 
-.drop-zone__input {
-    display: none; /* Ocultamos el input feo por defecto */
+/* --- Estilos para la sección de reseñas --- */
+.login-prompt {
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
-.drop-zone__thumb {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #cccccc;
-    background-size: cover;
-    background-position: center;
-    position: absolute; /* Para cubrir el texto */
-    top: 0;
-    left: 0;
+.success-message {
+  color: green;
+  display: none;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-/* Texto de la etiqueta del prompt */
-.drop-zone__thumb::after {
-    content: attr(data-label); /* Muestra el nombre del archivo */
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 5px 0;
-    color: #ffffff;
-    background: rgba(0, 0, 0, 0.75);
-    font-size: 14px;
-    text-align: center;
-}
-.books-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    padding: 15px 30px;
-    margin-bottom: 40px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e0e0e0;
-    
-    /* Manteniendo la coherencia de anchura */
-    width: 90%;
-    max-width: 1000px;
+.error-msg {
+  color: red;
+  font-weight: bold;
 }
 
-/* LOGO (Estilo diamante simple) */
-.logo-diamond {
-    font-weight: 800;
-    color: #101416;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    border: 2px solid #101416;
-    padding: 5px 15px;
-    transform: skew(-10deg); /* Un pequeño toque de estilo */
+/* Clases para mensajes de estado */
+.msg-success {
+  color: green;
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-/* BOTÓN VOLVER */
-.btn-back {
-    text-decoration: none;
-    color: #101416;
-    font-weight: 600;
-    border: 2px solid #101416;
-    padding: 8px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+.msg-error {
+  color: #dc3545;
+  /* Rojo */
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-.btn-back:hover {
-    background-color: #101416;
-    color: white;
+/* Estilo para el Modal Nativo (<dialog>) */
+dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  /* Aseguramos que se vea encima de todo */
+  z-index: 1000;
 }
 
-/* CONTENEDOR DE ACCIONES */
-.books-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px; /* Separación entre botones */
-    width: 100%;
+/* Fondo oscuro detrás del modal */
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* ESTILO BASE DE LOS BOTONES DE LIBRO */
-.book-btn {
-    width: 90%;
-    max-width: 1000px;
-    padding: 25px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* SOBREESCRIBIR ESTILOS PARA QUE EL FORMULARIO OCUPE TODO EL MODAL */
+.profileForm {
+  width: 100% !important;
+  max-width: 100% !important;
+  /* Anula el límite de 400px de .loginForm */
+  padding: 0 !important;
+  /* Elimina el relleno extra (la tarjeta ya tiene relleno) */
+  box-shadow: none !important;
+  /* Elimina la sombra doble */
+  background-color: transparent !important;
 }
 
-/* 1. AÑADIR (Estilo Principal - Negro Sólido) */
-.book-btn.add {
-    background-color: #101416;
-    color: white;
-    border: 2px solid #101416;
+
+/* ======================================================
+   MODAL NATIVO MEJORADO (<dialog>)
+   ====================================================== */
+
+dialog {
+  /* 1. CENTRADO: Esto es lo crucial que faltaba */
+  margin: auto;
+  inset: 0;
+
+  /* 2. ESTÉTICA */
+  border: none;
+  border-radius: 12px;
+  padding: 30px;
+  width: 90%;
+  max-width: 450px;
+  background: white;
+  color: #333;
+  text-align: center;
+
+  /* 3. SOMBRA Y CAPAS */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+
+  /* 4. ANIMACIÓN DE ENTRADA */
+  animation: modalFadeIn 0.3s ease-out forwards;
 }
 
-.book-btn.add:hover {
-    background-color: #333;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+/* Título del modal */
+dialog h3 {
+  margin-bottom: 15px;
+  color: var(--primary-color, #101416);
+  font-size: 1.5rem;
 }
 
-/* 2. MODIFICAR (Estilo Secundario - Borde Negro) */
-.book-btn.edit {
-    background-color: transparent;
-    color: #101416;
-    border: 2px solid #101416;
+/* Texto del modal */
+dialog p {
+  margin-bottom: 25px;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-.book-btn.edit:hover {
-    background-color: #101416;
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+/* Botones dentro del modal */
+dialog .modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
-/* 3. BORRAR (Estilo Alerta - Rojo o Borde Rojo) */
-.book-btn.delete {
-    background-color: white;
-    color: #d9534f; /* Rojo suave elegante */
-    border: 2px solid #d9534f;
+/* FONDO OSCURO (BACKDROP) */
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
 }
 
-.book-btn.delete:hover {
-    background-color: #d9534f;
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(217, 83, 79, 0.3);
-}
+/* DEFINICIÓN DE LA ANIMACIÓN */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
 
-/* Responsive para móviles */
-@media (max-width: 600px) {
-    .books-topbar {
-        padding: 15px;
-    }
-    .book-btn {
-        font-size: 1rem;
-        padding: 20px;
-    }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MyWebsite SignUp</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
-    <script src="../assets/js/signUp.js"></script>
+    <script type="module" src="../assets/js/signUp.js"></script>
   </head>
   <body>
     <main class="container">
@@ -14,8 +14,8 @@
       </section>
       <section class="rightPanel">
         <form class="loginForm" id="signupForm">
-          <h2>Welcome back!</h2>
-          <label for="username"></label>
+          <h2>Create Account</h2>
+          <label for="username">Username</label>
           <input
             type="text"
             id="username"
@@ -23,7 +23,7 @@
             placeholder="Username"
             required
           />
-          <label for="password"></label>
+          <label for="pswd1">Password</label>
           <input
             type="password"
             id="pswd1"
@@ -31,7 +31,7 @@
             placeholder="Password"
             required
           />
-          <label for="password2"></label>
+          <label for="pswd2">Repeat Password</label>
           <input
             type="password"
             id="pswd2"
@@ -39,7 +39,8 @@
             placeholder="Repeat password"
             required
           />
-          <button type="submit" class="SignUpbutton">SignUp</button>
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+          
           <p class="registerLink">
             Already have an account? <a href="login.html">Log In</a>
           </p>

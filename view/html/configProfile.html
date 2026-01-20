@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head class="headHome">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Page</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script type="module" src="../assets/js/configProfile.js"></script>
+</head>
+
+<body>
+  <header class="main-header">
+    <nav class="nav-container">
+      <a href="main.html" class="logo-link">
+        <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+      </a>
+
+      <div class="welcome-text">Bienvenido</div>
+
+      <div class="search-group">
+        <form id="searchForm">
+          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN">
+        </form>
+        <button class="search-clear-btn">x</button>
+      </div>
+
+      <ul class="nav-menu">
+        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
+        <li><a href="#" class="nav-link" id="opcionesLink">Opciones</a></li>
+        <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
+        <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="mainHome">
+    <section class="hero-section">
+      <img src="../assets/img/mountainHorizontal.jpg" alt="Photo of mountains" class="mainPic" />
+      
+      <aside class="saveDataBox">
+        <h1>Save your data for the next trip now</h1>
+        <div class="buttons">
+          <button id="adjustData" class="adjustData">Adjust data</button>
+        </div>
+      </aside>
+    </section>
+
+    <div id="adminPanelSection" class="adminPanelSection" style="display:none;">
+      <div class="adminPanelContainer">
+        <div class="panelHeader">
+            <h2>User Management</h2>
+            
+        </div>
+
+        <table class="adminTable" id="adminTable">
+          <thead>
+            <tr class="adminTableHead">
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="modifyUserPopupAdmin" class="modifyUserPopupAdmin">
+      <div class="popupCard">
+        <span class="close-card" id="closeUserModal">×</span>
+        <form class="loginForm profileForm" id="profileFormUser">
+          <div class="profileHeader">
+            <div class="infoArea">
+              <div class="fields" style="margin-top:0;">
+                <div class="field half"><label>Name</label><input id="firstNameUser" name="firstName" type="text" /></div>
+                <div class="field half"><label>Surname</label><input id="lastNameUser" name="lastName" type="text" /></div>
+                <div class="field full"><label>Email</label><input id="emailUser" name="email" type="email" /></div>
+              </div>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field half"><label>Username</label><input id="usernameUser" name="username" type="text" disabled /></div>
+            <div class="field half"><label>Password</label><button type="button" id="changePwdBtn" class="changePwdBtn">Change Password</button></div>
+            <div class="field half"><label>Phone</label><input id="phoneUser" name="phone" type="number" /></div>
+            <div class="field half"><label>Gender</label>
+              <select name="gender" id="genderUser" class="gender">
+                <option value="Man">Man</option><option value="Female">Woman</option><option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field full"><label>Card Number</label><input id="cardNumberUser" name="cardNumber" type="text" /></div>
+          </div>
+          <span style="color: green; display:block; text-align:center;" id="message"></span>
+          <div class="actions">
+            <button id="deleteBtn" class="deleteBtn" type="button">Delete Account</button>
+            <button class="saveBtn" type="button" id="saveBtnUser">Save Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modifyAdminPopup" class="modifyAdminPopup">
+      <div class="popupCard">
+        <span class="close-card" id="closeAdminModal">×</span>
+        <form class="loginForm profileForm" id="profileFormAdmin">
+          <div class="profileHeader">
+            <div class="infoArea">
+              <div class="fields" style="margin-top:0;">
+                <div class="field half"><label>Name</label><input id="firstNameAdmin" name="firstName" type="text" /></div>
+                <div class="field half"><label>Surname</label><input id="lastNameAdmin" name="lastName" type="text" /></div>
+                <div class="field full"><label>Email</label><input id="emailAdmin" name="email" type="email" /></div>
+              </div>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field half"><label>Username</label><input id="usernameAdmin" name="username" type="text" disabled /></div>
+            <div class="field half"><label>Password</label><button type="button" id="changePwdBtnAdmin" class="changePwdBtn">Change Password Admin</button></div>
+            <div class="field half"><label>Phone</label><input id="phoneAdmin" name="phone" type="number" /></div>
+            <div class="field half"><label>Profile Code</label><input id="profileCodeAdmin" name="profileCode" type="tel" disabled /></div>
+            <div class="field full"><label>Bank Account</label><input id="currentAccountAdmin" name="accountNumber" type="text" /></div>
+          </div>
+          <span style="color: green; display:block; text-align:center;" id="messageAdmin"></span>
+          <div class="actions">
+            <button id="saveBtnAdmin" class="saveBtn" type="button">Save Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="verifyPasswordModal" class="changePasswordModal">
+      <div class="changePasswordModalContent" style="max-width: 400px; text-align:center;">
+        <span class="closePasswordSpan" id="closeVerifyModal">×</span>
+        <h2>Security Check</h2>
+        <p style="margin-bottom:15px; color:#666;">Por seguridad, introduce tu contraseña actual para continuar.</p>
+        
+        <form id="verifyPasswordForm">
+             <label style="text-align:left; display:block; font-weight:bold;">Contraseña Actual</label>
+             <input type="password" id="verifyCurrentPassword" required placeholder="Tu contraseña actual">
+             
+             <div class="actions" style="margin-top:20px; display:flex; gap:10px; justify-content: space-between;">
+                 <button type="button" id="btnCancelVerify" class="deleteBtn" style="border:1px solid #ccc; flex:1;">Cancelar</button>
+                 <button type="submit" class="saveBtn" style="flex:1;">Siguiente</button>
+             </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="changePasswordModal" class="changePasswordModal">
+      <div class="changePasswordModalContent" style="max-width: 400px;">
+        <span class="closePasswordSpan" id="closeChangeModal">×</span>
+        <h2>Cambiar Contraseña</h2>
+        <form id="changePasswordForm">
+             <label>Nueva Contraseña</label>
+             <input type="password" id="newPassword" required placeholder="Mínimo 4 caracteres">
+             
+             <label>Confirmar Contraseña</label>
+             <input type="password" id="confirmNewPassword" required placeholder="Repite la contraseña">
+             
+             <div class="actions" style="margin-top:20px;">
+                 <button type="submit" class="saveBtn" style="width:100%;">Confirmar Cambio</button>
+             </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="brand-col">
+      <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
+      <p class="desc">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
+      </p>
+    </div>
+    <ul class="footerList">
+      <li class="listTitle">Contacto</li>
+      <li>Dirección: xxxxxxx, xxx, xxx</li>
+      <li>Teléfono: +34 678 439 478</li>
+      <li>Email: ejemplo@gmail.com</li>
+      <li>Horario: L-V 8:00-14:25</li>
+    </ul>
+    <ul>
+      <li class="listTitle">Enlaces útiles</li>
+      <li>Inicio</li>
+      <li>Servicios</li>
+      <li>Acerca de nosotros</li>
+    </ul>
+    <div class="map">
+      <p class="listTitle">Ubicacion</p>
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
+        width="300" height="200" style="border: 0" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
+  </footer>
+</body>
+</html>
