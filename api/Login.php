@@ -1,7 +1,7 @@
 <?php
-// api/Login.php
 header("Content-Type: application/json; charset=utf-8");
 require_once '../controller/ProfileController.php';
+require_once '../config/Session.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 $username = $data['username'] ?? '';

@@ -117,7 +117,26 @@ class BookDAO
         $sql = "CALL GetAllBooks()";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $list = [];
+        foreach ($rows as $row) {
+            $bookObj = new Book(
+                $row['title'],
+                new Author($row['id_author'], $row['name_author'], $row['last_name']),
+                $row['isbn'],
+                $row['pages'],
+                $row['stock'],
+                $row['synopsis'],
+                $row['price'],
+                $row['editorial'],
+                $row['cover']
+            );
+            $bookArray = $bookObj->toArray();
+            $bookArray['rating'] = $row['rating'];
+            $list[] = $bookArray;
+        }
+        return $list;
     }
 }
 ?>

@@ -1,4 +1,4 @@
-import { checkSession, currentUser } from "./session.js";
+import { checkSession } from "./session.js";
 
 init();
 
@@ -6,11 +6,7 @@ async function init() {
     const isLogged = await checkSession();
 
     if (isLogged) {
-        if (currentUser.role === 'admin') {
-            window.location.replace("opcAdmin.html");
-        } else {
-            window.location.replace("main.html");
-        }
+        window.location.replace("main.html");
         return; // Detenemos la ejecución del script
     }
 }
@@ -35,7 +31,9 @@ if (loginForm) {
             dialog.showModal();
 
             setTimeout(() => {
-                window.location.href = "main.html";
+                //volver a a la pagina anterior desde la que vino el usuario
+                const previousPage = document.referrer || 'main.html';
+                window.location.href = previousPage;
             }, 500);
         } else {
             // Mostramos el error en el diálogo

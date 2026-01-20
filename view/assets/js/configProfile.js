@@ -1,4 +1,5 @@
-import { checkSession, currentUser } from './session.js'; // Ojo: session.js o sesion.js (verifica el nombre)
+import { checkSession, currentUser } from './session.js';
+import { loadHeader } from './header.js';
 
 let currentEditingUser = {
     id: null,
@@ -10,9 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. Verificar sesión
     const isLogged = await checkSession();
     if (!isLogged) {
-        console.log("No hay sesión activa");
-        // Opcional: window.location.href = 'login.html';
+        window.location.href = 'login.html';
     }
+    loadHeader('configProfile');
 
     // --- REFERENCIAS ---
     const adjustDataBtn = document.getElementById('adjustData');

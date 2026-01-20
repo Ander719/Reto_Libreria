@@ -17,7 +17,7 @@
 
   /* Configuración UI */
   --border-radius: 12px;
-  /* Redondeo unificado */
+  /* Redondeo unificado#*/
   --input-padding: 12px;
   /* Relleno inputs/botones */
   --font-family: "Segoe UI", sans-serif;
@@ -38,139 +38,13 @@ html {
   font-family: "Segoe UI", sans-serif;
 }
 
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-.leftPanel {
-  width: 50%;
-  overflow: hidden;
-}
-
-.leftPanel img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.rightPanel {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--background-color);
-  color: #333;
-}
-
-/* ======================================================
-   3. COMPONENTES GLOBALES (LO MÁS IMPORTANTE)
-   ====================================================== */
-
-/* --- A) INPUTS UNIFICADOS --- */
-/* Aplica automáticamente a todos los formularios */
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="number"],
-input[type="tel"],
-select,
-textarea {
-  width: 100%;
-  padding: var(--input-padding);
-  margin-bottom: 15px;
-  border: 2px solid #ccc;
-  border-radius: var(--border-radius);
-  font-family: var(--font-family);
-  font-size: 1rem;
-  background-color: white;
-  transition: border-color 0.3s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-/* --- B) BOTONES UNIFICADOS (.btn) --- */
-/* Usa estas clases en tu HTML: btn btn-primary, btn btn-secondary, btn btn-danger */
-
-.btn {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 24px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  text-transform: uppercase;
-  text-decoration: none;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  width: 100%;
-  /* Por defecto ocupan todo el ancho disponible */
-  max-width: 400px;
-  /* Pero no se hacen infinitos en pantallas grandes */
-  margin: 5px 0;
-}
-
-/* Estilo 1: Sólido (Login, Guardar, Crear) */
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Estilo 2: Borde (Volver, Editar) */
-.btn-secondary {
-  background-color: transparent;
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.btn-secondary:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-/* Estilo 3: Peligro (Borrar) */
-.btn-danger {
-  background-color: white;
-  color: var(--danger-color);
-  border-color: var(--danger-color);
-}
-
-.btn-danger:hover {
-  background-color: var(--danger-color);
-  color: white;
-}
-
-/* Estilo 4: Pequeño (Para Logout o acciones secundarias) */
-.btn-sm {
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  width: auto;
-}
-
-/* ======================================================
-   4. LAYOUTS ESPECÍFICOS
-   ====================================================== */
-
 /* --- Estilos del Header Principal --- */
 .main-header {
   background-color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  position: sticky; /* Se queda fijo al hacer scroll */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* Sombra suave */
+  position: sticky;
+  /* Se queda fijo al hacer scroll */
   top: 0;
   z-index: 1000;
   padding: 0.5rem 1rem;
@@ -182,24 +56,30 @@ textarea:focus {
   justify-content: space-between;
   align-items: center;
   width: 90%;
-  margin: 0 auto; /* Centrar el contenido en pantallas grandes */
-  gap: 20px; /* Espacio entre los grupos de elementos */
+  margin: 0 auto;
+  /* Centrar el contenido en pantallas grandes */
+  gap: 20px;
+  /* Espacio entre los grupos de elementos */
 }
 
 /* --- Logo --- */
 .logo-link {
-  display: flex;       /* Elimina el comportamiento de texto del enlace */
-  align-items: center; /* Centra la imagen perfectamente dentro del enlace */
+  display: flex;
+  /* Elimina el comportamiento de texto del enlace */
+  align-items: center;
+  /* Centra la imagen perfectamente dentro del enlace */
   text-decoration: none;
-  height: 50px;        /* Opcional: Para forzar que el enlace mida lo mismo que la imagen */
+  height: 50px;
+  /* Opcional: Para forzar que el enlace mida lo mismo que la imagen */
 }
 
 .logo {
-  height: 50px; 
+  height: 50px;
   width: auto;
   object-fit: contain;
   cursor: pointer;
-  display: block; /* IMPORTANTE: Elimina el espacio fantasma inferior */
+  display: block;
+  /* IMPORTANTE: Elimina el espacio fantasma inferior */
 }
 
 /* --- Texto de Bienvenida --- */
@@ -207,33 +87,43 @@ textarea:focus {
   font-weight: 600;
   color: #333;
   font-size: 1rem;
-  white-space: nowrap; /* Evita que el texto se parta en dos líneas */
+  white-space: nowrap;
+  /* Evita que el texto se parta en dos líneas */
 }
 
 /* --- Grupo de Búsqueda --- */
 .search-group {
-  position: relative; /* Necesario para posicionar la 'x' */
+  position: relative;
+  /* Necesario para posicionar la 'x' */
   display: flex;
   align-items: center;
-  flex-grow: 1; /* Ocupa el espacio disponible */
-  max-width: 450px; /* Pero no más de 500px */
+  flex-grow: 1;
+  /* Ocupa el espacio disponible */
+  max-width: 450px;
+  /* Pero no más de 500px */
+}
+#searchForm {
+  width: 100%;
 }
 
-.search-input {
+#search-input {
   width: 100%;
-  padding: 10px 35px 10px 15px; /* Padding extra a la derecha para la 'x' */
+  padding: 10px 35px 10px 15px;
+  /* Padding extra a la derecha para la 'x' */
   border: 1px solid #ddd;
-  border-radius: 25px; /* Bordes redondeados modernos */
+  border-radius: 25px;
+  /* Bordes redondeados modernos */
   outline: none;
   font-size: 0.9rem;
   transition: all 0.3s ease;
   background-color: #f9f9f9;
 }
 
-.search-input:focus {
-  border-color: #000; /* Borde oscuro al escribir, estilo Nike */
+#search-input:focus {
+  border-color: #000;
+  /* Borde oscuro al escribir, estilo Nike */
   background-color: #fff;
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
 .search-clear-btn {
@@ -296,7 +186,7 @@ textarea:focus {
     gap: 15px;
     padding: 1rem;
   }
-  
+
   .search-group {
     width: 100%;
     max-width: 100%;
@@ -307,18 +197,22 @@ textarea:focus {
     justify-content: center;
   }
 }
+
 /* --- Footer Styles --- */
 footer {
-  background-color: #1a1b1f; /* Gris muy oscuro, casi negro: elegante para libros */
-  color: #b3b3b3; /* Texto gris suave para no cansar la vista */
+  background-color: #1a1b1f;
+  /* Gris muy oscuro, casi negro: elegante para libros */
+  color: #b3b3b3;
+  /* Texto gris suave para no cansar la vista */
   padding: 4rem 2rem 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  
+
   /* Sistema de Rejilla (Grid) para 4 columnas */
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
   gap: 30px;
-  margin: 0 auto; /* Centrar footer si la pantalla es muy ancha */
+  margin: 0 auto;
+  /* Centrar footer si la pantalla es muy ancha */
   width: 100%;
 }
 
@@ -329,25 +223,27 @@ footer .desc {
   line-height: 1.6;
   margin-top: 1rem;
   width: 100%;
-  grid-column: 1; /* Forza a quedarse en la primera columna */
+  grid-column: 1;
+  /* Forza a quedarse en la primera columna */
 }
 
 /* Logo placeholder styling (por si añades la imagen luego) */
 footer img {
-  max-width: 150px;
-  filter: brightness(0) invert(1); /* Vuelve el logo blanco si es negro */
+  max-width: 150px;;
   grid-column: 1;
 }
 
 /* 2. Títulos de las Listas */
 .listTitle {
-  color: #ffffff; /* Blanco puro para destacar */
+  color: #ffffff;
+  /* Blanco puro para destacar */
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  list-style: none; /* Quitar punto si es un LI */
+  list-style: none;
+  /* Quitar punto si es un LI */
 }
 
 /* 3. Listas Generales (Contacto y Enlaces) */
@@ -366,7 +262,8 @@ footer li {
 /* Asumimos que estos textos eventualmente serán links <a> */
 footer ul:not(.footerList) li:hover {
   color: #fff;
-  transform: translateX(5px); /* Pequeño desplazamiento a la derecha */
+  transform: translateX(5px);
+  /* Pequeño desplazamiento a la derecha */
   cursor: pointer;
 }
 
@@ -386,25 +283,30 @@ footer ul:not(.footerList) li:hover {
 
 .map iframe {
   width: 100%;
-  height: 180px; /* Altura ajustada */
-  border-radius: 12px; /* Bordes redondeados */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  height: 180px;
+  /* Altura ajustada */
+  border-radius: 12px;
+  /* Bordes redondeados */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   /* Filtro opcional: Mapa en escala de grises para que no desentone */
-  filter: grayscale(80%); 
+  filter: grayscale(80%);
   transition: filter 0.3s;
 }
 
 .map iframe:hover {
-  filter: grayscale(0%); /* Vuelve a color al pasar el mouse */
+  filter: grayscale(0%);
+  /* Vuelve a color al pasar el mouse */
 }
 
 /* 5. Copyright (Barra inferior) */
 .copyright {
-  grid-column: 1 / -1; /* Ocupa todo el ancho (las 4 columnas) */
+  grid-column: 1 / -1;
+  /* Ocupa todo el ancho (las 4 columnas) */
   text-align: center;
   margin-top: 3rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #333; /* Línea separadora sutil */
+  border-top: 1px solid #333;
+  /* Línea separadora sutil */
   font-size: 0.8rem;
   color: #666;
 }
@@ -412,9 +314,10 @@ footer ul:not(.footerList) li:hover {
 /* --- Responsive Design (Móvil y Tablet) --- */
 @media (max-width: 900px) {
   footer {
-    grid-template-columns: 1fr 1fr; /* 2 columnas en tablets */
+    grid-template-columns: 1fr 1fr;
+    /* 2 columnas en tablets */
   }
-  
+
   .copyright {
     margin-top: 2rem;
   }
@@ -423,18 +326,22 @@ footer ul:not(.footerList) li:hover {
 @media (max-width: 600px) {
   footer {
     display: flex;
-    flex-direction: column; /* Todo en una columna vertical en móviles */
+    flex-direction: column;
+    /* Todo en una columna vertical en móviles */
     text-align: center;
     gap: 40px;
   }
 
   /* Centrar elementos en móvil */
-  footer li, footer .desc {
+  footer li,
+  footer .desc {
     justify-content: center;
   }
-  
+
   /* Resetear grid props en movil */
-  footer .desc, footer img, .copyright {
+  footer .desc,
+  footer img,
+  .copyright {
     grid-column: auto;
   }
 }
@@ -490,49 +397,231 @@ footer ul:not(.footerList) li:hover {
 /* --- main --- */
 /* Para que las estrellas sean doradas y estén en fila */
 .book-rating {
-    color: #FFD700;
-    margin: 10px 0;
-    font-size: 1.2rem;
+  color: #FFD700;
+  margin: 10px 0;
+  font-size: 1.2rem;
+}
+/* =========================================
+   ZONA NUEVA: LIBROS RECIENTES (Horizontal)
+   ========================================= */
+
+/* 1. El Contenedor Nuevo */
+.new-books, .rating-books {
+    /* Configuración */
+    --card-width: 380px;  /* Ancho de la tarjeta */
+    --card-height: 190px; /* Alto de la tarjeta */
+    --quantity: 4;        /* Número de libros */
+    --duration: 15s;      /* Velocidad de la animación */
+
+    width: 100%;
+    max-width: 1200px;    /* Ancho máximo del carrusel */
+    margin-inline: auto;
+    position: relative;
+    height: calc(var(--card-height) + 20px); /* Altura justa + sombra */
+    margin-top: 2rem;
+    overflow: hidden;     /* Oculta lo que se sale por los lados */
+    
+    /* Máscara de desvanecimiento a los lados (Fade Effect) */
+    mask-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 1) 10%,
+        rgba(0, 0, 0, 1) 90%,
+        rgba(0, 0, 0, 0)
+    );
+  &:hover .book-card{
+    animation-play-state: paused;
+  }
 }
 
-/* Para que los productos se vean en rejilla (Grid) */
-.product-grid {
-    display: grid;
-    /* Esto crea columnas automáticas que se ajustan al tamaño (responsive) */
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-    gap: 20px;
-    padding: 20px;
-}
 
-.book-card {
-  cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
-    border: 1px solid #ddd;
+#newbooksContainer .book-card, #ratingBooksContainer .book-card {
+    width: var(--card-width);
+    height: var(--card-height);
+    position: absolute;
+    /* Empieza fuera de la pantalla a la derecha */
+    left: max(calc(var(--card-width) * var(--quantity)), 100%); 
+    
+    /* Estilo Visual (Igual que antes) */
+    background-color: #A2D2FF; 
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: none;
+    
+    /* Layout interno de la tarjeta */
+    display: grid;
+    grid-template-columns: 120px 1fr; 
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 15px;
+    align-items: start;
+    overflow: hidden;
+
+    /* ANIMACIÓN */
+    animation-name: autoScroll;
+    animation-duration: var(--duration);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    &:hover{
+      transform: scale(1.02); /* Efecto pop sutil */
+     box-shadow: 0 10px 20px rgba(162, 210, 255, 0.4);
+    }
 }
 
+@keyframes autoScroll {
+    to {
+        /* Se mueve hacia la izquierda hasta salir por el otro lado */
+        left: calc(var(--card-width) * -1); 
+    }
+}
+/* Fórmula: (Duración / Cantidad) * (Cantidad - Índice) * -1 */
+#newbooksContainer .book-card:nth-child(1), #ratingBooksContainer .book-card:nth-child(1) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 1) * -1);
+}
+#newbooksContainer .book-card:nth-child(2), #ratingBooksContainer .book-card:nth-child(2) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 2) * -1);
+}
+#newbooksContainer .book-card:nth-child(3), #ratingBooksContainer .book-card:nth-child(3) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 3) * -1);
+}
+#newbooksContainer .book-card:nth-child(4), #ratingBooksContainer .book-card:nth-child(4) {
+    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 4) * -1);
+}
+
+/* 3. La Imagen (A la izquierda, ocupando toda la altura) */
+#newbooksContainer .book-image-card, #ratingBooksContainer .book-image-card {
+    grid-column: 1;      /* Primera columna */
+    grid-row: 1 / -1;    /* Desde la primera línea hasta la última */
+    
+    height: 100%;        /* Forzamos que llene el alto de la tarjeta */
+    width: 100%;
+    margin: 0;           /* Quitamos el margin-bottom de tu CSS original */
+    border-radius: 8px;  /* Un poco menos redondeada para encajar */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+/* 4. El Título (Blanco, Grande y en Mayúsculas) */
+#newbooksContainer .book-title, #ratingBooksContainer .book-title {
+    grid-column: 2;
+    align-self: end; /* Pegado a la parte baja de su celda */
+    
+    color: white;
+    font-family: 'Arial Black', sans-serif; /* Fuente gruesa */
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-top: 15px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 5. El Autor (Blanco) */
+#newbooksContainer .book-author, #ratingBooksContainer .book-author {
+    grid-column: 2;
+    color: #f0f8ff;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+    font-size: 0.95rem;
+}
+
+/* 6. Las Estrellas */
+#newbooksContainer .book-rating, #ratingBooksContainer .book-rating {
+    grid-column: 2;
+    margin: 8px 0 0 0;
+    font-size: 1rem;
+}
+
+/* 7. Ocultar Precio y Stock (Opcional, según tu referencia visual) */
+/* Como es un mismo template, los elementos existen, pero los ocultamos aquí */
+#newbooksContainer .book-price,
+#newbooksContainer .book-stock,
+#ratingBooksContainer .book-price,
+#ratingBooksContainer .book-stock {
+    display: none; 
+}
+/* Para que los productos se vean en rejilla (Grid) */
+.rng-books{
+  display: grid;
+  /* Esto crea columnas automáticas que se ajustan al tamaño (responsive) */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 2rem 5%;
+}
+
+/* --- La Tarjeta (Book Card) --- */
+.book-card {
+    background-color: #fff;
+    border-radius: 12px; /* Bordes redondeados modernos */
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    /* MAGIA PARA LA UNIFORMIDAD: */
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-row: span 6;
+    gap: 0;
+    height: 100%; /* Fuerza a que ocupe toda la altura de la fila del grid */
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px); /* Se levanta un poco al pasar el ratón */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* --- La Imagen --- */
 .book-image-card {
-    max-width: 100%;
-    height: auto;
-    object-fit: cover;
+    width: 100%;
+    height: 300px; /* ALTURA FIJA: Crucial para la uniformidad */
+    object-fit: cover; /* Evita que la imagen se estire o deforme, la recorta si es necesario */
+    object-position: top center; /* Centra la imagen priorizando la parte superior */
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
-.saveDataBox {
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 40px;
-  border-radius: var(--border-radius);
+/* --- Título del Libro --- */
+.book-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 5px 0;
+    
+    overflow: hidden;
+    line-height: 1.3;
 }
 
-.saveDataBox h1 {
-  margin-bottom: 20px;
-  font-size: 2.5rem;
+/* --- Autor --- */
+.book-author {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0 0 10px 0;
+    font-style: italic;
+}
+
+/* --- Estrellas / Rating --- */
+.book-rating {
+    margin-bottom: 10px;
+    color: #ffc107; /* Color dorado */
+    font-size: 0.9rem;
+}
+
+/* --- Precio --- */
+.book-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #000;
+    /* EMPUJAR AL FONDO: Esto hace que el precio siempre esté alineado abajo */
+    margin-top: auto; 
+    padding-top: 10px;
+}
+
+/* --- Stock --- */
+.book-stock {
+    font-size: 0.85rem;
+    color: #28a745; /* Verde si hay stock */
+    font-weight: 500;
+    margin-top: 5px;
 }
 
 .buttons {
@@ -541,228 +630,67 @@ footer ul:not(.footerList) li:hover {
   justify-content: center;
 }
 
-
-/* --- ADMIN & BOOK OPTIONS --- */
-/* Barras superiores unificadas */
-.topbar-admin,
-.books-topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  padding: 15px 30px;
-  margin: 20px auto;
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  width: 90%;
-  max-width: 1000px;
-}
-
-.user-info,
-.home-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  text-decoration: none;
-  color: var(--primary-color);
-}
-
-.logo-diamond {
-  font-weight: 800;
-  border: 2px solid var(--primary-color);
-  padding: 5px 15px;
-  transform: skew(-10deg);
-}
-
-/* Contenedores de botones de acción central */
-.admin-actions,
-.books-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  width: 100%;
-  margin-top: 40px;
-  padding-bottom: 100px;
-}
-
-
-/* --- MODALES & POPUPS --- */
-.adminTableModal,
-.changePasswordModal,
-.modifyUserPopupAdmin,
-.modifyAdminPopup {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-}
-
-.popupCard,
-.adminTableModalContent,
-.changePasswordModalContent {
-  background-color: #fff;
-  margin: auto;
-  padding: 30px;
-  border: 2px solid var(--primary-color);
-  border-radius: var(--border-radius);
-  width: 90%;
-  max-width: 900px;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.changePasswordModalContent {
-  max-width: 500px;
-}
-
-/* Perfil Forms */
-.profileHeader {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #ddd;
-  overflow: hidden;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-}
-
-.field.half {
-  width: calc(50% - 10px);
-}
-
-.field.full {
-  width: 100%;
-}
-
-/* Tablas Admin */
-.adminTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.adminTable th {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 12px;
-}
-
-.adminTable td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-}
-
-.center-flex-div {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.size-small {
-  width: 24px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.size-small:hover {
-  transform: scale(1.1);
-}
-
-.close,
-.closePasswordSpan {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 28px;
-  cursor: pointer;
-  color: #aaa;
-}
-
-
 /* --- ESTILOS DROP ZONE (CORREGIDOS) --- */
 .drop-zone {
-    width: 100%;
-    height: 200px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
-    color: #888;
-    border: 3px dashed #101416; /* Color primario */
-    border-radius: 12px;
-    background-color: #fafafa;
-    position: relative; /* Vital para que el hijo absoluto se posicione bien */
-    overflow: hidden;   /* Para que la imagen no se salga de las esquinas */
-    transition: all 0.2s ease;
+  width: 100%;
+  height: 200px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  color: #888;
+  border: 3px dashed #101416;
+  /* Color primario */
+  border-radius: 12px;
+  background-color: #fafafa;
+  position: relative;
+  /* Vital para que el hijo absoluto se posicione bien */
+  overflow: hidden;
+  /* Para que la imagen no se salga de las esquinas */
+  transition: all 0.2s ease;
 }
 
 /* Efecto al pasar por encima con un archivo */
 .drop-zone--over {
-    border-style: solid;
-    background-color: #e6f7ff; /* Un azulito claro para indicar "suelta aquí" */
-    color: #333;
-    transform: scale(1.02);
+  border-style: solid;
+  background-color: #e6f7ff;
+  /* Un azulito claro para indicar "suelta aquí" */
+  color: #333;
+  transform: scale(1.02);
 }
 
 .drop-zone__input {
-    display: none; /* El input real siempre oculto */
+  display: none;
+# /* El input real siempre oculto */
 }
 
 /* La miniatura de la imagen (Thumb) */
 .drop-zone__thumb {
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    background-color: #eee;
-    background-size: cover; /* 'cover' rellena todo, 'contain' muestra la imagen entera */
-    background-position: center;
-    position: absolute; /* Se coloca encima de todo */
-    top: 0;
-    left: 0;
-    z-index: 10; /* Asegura que esté por encima del texto */
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background-color: #eee;
+  background-size: cover;
+  /* 'cover' rellena todo, 'contain' muestra la imagen entera */
+  background-position: center;
+  position: absolute;
+  /* Se coloca encima de todo */
+  top: 0;
+  left: 0;
+  z-index: 10;
+  /* Asegura que esté por encima del texto */
 }
 
 /* El texto de ayuda ("Arrastra aquí...") */
 .drop-zone__prompt {
-    z-index: 1; /* Por debajo de la imagen */
-    pointer-events: none; /* Para que el arrastre no parpadee al pasar por el texto */
-    font-size: 1.1rem;
-    font-weight: 500;
+  z-index: 1;
+  /* Por debajo de la imagen */
+  pointer-events: none;
+  /* Para que el arrastre no parpadee al pasar por el texto */
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 
@@ -809,452 +737,13 @@ footer ul:not(.footerList) li:hover {
   box-sizing: border-box;
 }
 
-body,
-html {
-  height: 100%;
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f4f4f4;
-}
-
-/* MAIN LAYOUT */
-.mainHome {
-  position: relative;
-  min-height: 100vh;
-  padding-bottom: 60px;
-}
-
-/* HERO SECTION (Imagen + Caja Flotante) */
-.hero-section {
-  position: relative;
-  height: 500px;
-  width: 100%;
-}
-
-.mainPic {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* CAJA CENTRAL FLOTANTE */
-.saveDataBox {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /* Centrado perfecto sobre la imagen */
-  background: rgba(255, 255, 255, 0.95);
-  padding: 40px;
-  text-align: center;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.saveDataBox h1 {
-  margin-bottom: 20px;
-  font-size: 2rem;
-  color: #333;
-}
-
 .buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
-/* Botones Principales */
-.adjustData {
-  padding: 12px 25px;
-  background: white;
-  border: 2px solid #111;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.adjustData:hover {
-  background: #eee;
-}
-
-.checkUsOut {
-  padding: 12px 25px;
-  background: #111;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.checkUsOut:hover {
-  background: #444;
-}
-
-
-/* ============================================================
-   SECCIÓN TABLA ADMIN (INCRUSTADA EN LA PÁGINA)
-   ============================================================ */
-.adminPanelSection {
-  width: 100%;
-  padding: 40px 20px;
-  background-color: #f4f4f4;
-  /* Fondo gris claro para diferenciar */
-  display: flex;
-  justify-content: center;
-}
-
-.adminPanelContainer {
-  width: 100%;
-  max-width: 1000px;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.panelHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
-}
-
-.panelHeader h2 {
-  color: #333;
-}
-
-.modifySelfButton {
-  padding: 8px 15px;
-  background: transparent;
-  border: 1px solid #333;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.modifySelfButton:hover {
-  background: #333;
-  color: white;
-}
-
-/* TABLA */
-.adminTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.adminTable th {
-  text-align: left;
-  padding: 15px;
-  background: #fafafa;
-  color: #555;
-  font-weight: 600;
-  border-bottom: 2px solid #eee;
-}
-
-.adminTable td {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
-  color: #333;
-}
-
-.adminTable tr:hover {
-  background-color: #fcfcfc;
-}
-
-/* Botón Borrar en Tabla */
-.btn-danger {
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.btn-danger:hover {
-  background: #cc0000;
-}
-
-
-/* ============================================================
-   MODALES DE PERFIL (ESTILO TARJETA / POPUP)
-   ============================================================ */
-.modifyUserPopupAdmin,
-.modifyAdminPopup {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(2px);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-}
-
-.popupCard {
-  width: 90%;
-  max-width: 700px;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  padding: 40px;
-  position: relative;
-  max-height: 90vh;
-  overflow-y: auto;
-  /* Por si la pantalla es pequeña */
-}
-
-.close-card {
-  position: absolute;
-  top: 20px;
-  right: 25px;
-  font-size: 28px;
-  color: #aaa;
-  cursor: pointer;
-}
-
-.close-card:hover {
-  color: #333;
-}
-
-/* Estructura Formulario Perfil */
-.profileHeader {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  margin-bottom: 25px;
-}
-
-.avatar img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: #eee;
-  object-fit: cover;
-}
-
-.infoArea {
-  flex-grow: 1;
-}
-
-.fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-}
-
-.field.half {
-  width: calc(50% - 10px);
-}
-
-.field.full {
-  width: 100%;
-}
-
-.profileForm input,
-.profileForm select,
-.changePwdBtn {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 1rem;
-  margin-top: 5px;
-  outline: none;
-  background: #fff;
-}
-
-.profileForm input:disabled {
-  background: #f9f9f9;
-  color: #888;
-}
-
-.changePwdBtn {
-  background: #f5f5f5;
-  text-align: left;
-  color: #444;
-  cursor: pointer;
-}
-
-.changePwdBtn:hover {
-  background: #e0e0e0;
-}
-
-.profileForm label {
-  font-size: 0.9rem;
-  color: #555;
-  font-weight: 600;
-  margin-left: 2px;
-}
-
-.actions {
-  margin-top: 30px;
-  display: flex;
-  gap: 15px;
-}
-
-.saveBtn {
-  padding: 12px 25px;
-  background: #222;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.saveBtn:hover {
-  background: #000;
-}
-
-.deleteBtn {
-  padding: 12px 25px;
-  background: white;
-  border: 1px solid #ccc;
-  color: #555;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.deleteBtn:hover {
-  border-color: red;
-  color: red;
-}
-
-/* Responsive Mobile */
-@media (max-width: 650px) {
-  .profileHeader {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .field.half {
-    width: 100%;
-  }
-
-  .hero-section {
-    height: auto;
-    padding-bottom: 50px;
-  }
-
-  .saveDataBox {
-    position: relative;
-    transform: none;
-    top: 0;
-    left: 0;
-    margin: -50px auto 0 auto;
-  }
-}
-
-/* Modal Password */
-.changePasswordModal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 2001;
-  justify-content: center;
-  align-items: center;
-}
-
-.changePasswordModalContent {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  position: relative;
-  width: 320px;
-}
-
-.closePasswordSpan {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 1.5rem;
-}
-
-.comments-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-}
-
-#commentsList {
-  background: #fff;
-}
-
-/* 7. RESPONSIVE DESIGN TIENDA */
-@media (max-width: 768px) {
-  .details-container {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .details-image,
-  .details-info {
-    flex: none;
-    width: 100%;
-  }
-
-  .actions {
-    width: 100%;
-  }
-
-  .details-image img {
-    max-height: 350px;
-  }
-}
-
-
 /* --- Estilos para la sección de reseñas --- */
-.review-form {
-  background: white;
-  border: none;
-  padding: 0;
-  box-shadow: none;
-}
-
-.rating-select {
-  width: 150px;
-  margin-bottom: 10px;
-  padding: 5px;
-  /* Un poco de aire queda mejor */
-}
-
-.review-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-  /* Permite estirar solo hacia abajo */
-  font-family: inherit;
-}
-
-.btn-container {
-  margin-top: 10px;
-}
-
-.btn-cancel {
-  background-color: #999;
-  display: none;
-  /* Oculto por defecto */
-  margin-left: 5px;
-}
-
 .login-prompt {
   text-align: center;
   padding: 20px;
@@ -1269,96 +758,10 @@ html {
   font-weight: bold;
 }
 
-
-
-/* ==========================================================================
-   ESTILOS PARA LA LISTA DE COMENTARIOS (Generados por JS)
-   ========================================================================== */
-
-.comment-item {
-  border-bottom: 1px solid #eee;
-  padding: 15px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-/* Contenedor de los botones editar/borrar */
-.comment-actions {
-  float: right;
-  /* Mantenemos float para que se vaya a la derecha del todo */
-}
-
-/* Botones de iconos (lápiz y basura) */
-.btn-icon {
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 1.1em;
-  padding: 5px;
-  transition: transform 0.2s;
-}
-
-.btn-icon:hover {
-  transform: scale(1.1);
-}
-
-.btn-delete {
-  color: #dc3545;
-  /* Rojo estándar */
-  margin-left: 8px;
-}
-
-/* Cabecera del comentario (Nombre y Fecha) */
-.comment-header {
-  margin: 0;
-  font-weight: 700;
-  color: #333;
-  font-size: 1rem;
-}
-
-.comment-date {
-  font-weight: 400;
-  font-size: 0.85em;
-  margin-left: 10px;
-  color: #767676;
-  /* Gris suave */
-}
-
-/* Estrellas */
-.star-rating {
-  color: #ffa41c;
-  /* Naranja/Dorado tipo Amazon */
-  margin-bottom: 5px;
-  font-size: 0.9rem;
-}
-
-/* Texto del comentario */
-.comment-text {
-  margin: 0;
-  color: #333;
-  line-height: 1.5;
-  font-size: 0.95rem;
-}
-
-/* Utilidad para limpiar floats si fuera necesario */
-.clear-fix {
-  clear: both;
-}
-
-/* Mensajes de estado */
-.no-reviews {
-  color: #565959;
-  font-style: italic;
-  margin-top: 10px;
-}
-
 .error-msg {
   color: red;
   font-weight: bold;
 }
-
-
 
 /* Clases para mensajes de estado */
 .msg-success {
@@ -1375,22 +778,6 @@ html {
   margin-top: 10px;
   font-weight: bold;
 }
-
-
-/* --- Utilidades para botones y enlaces --- */
-
-/* Hace que el botón se ajuste al texto en lugar de ocupar todo el ancho */
-.btn-auto {
-  width: auto !important;
-  display: inline-block;
-}
-
-/* Estilos específicos para el enlace de Login */
-.login-link-btn {
-  text-decoration: none;
-  margin-top: 10px;
-}
-
 
 /* Estilo para el Modal Nativo (<dialog>) */
 dialog {

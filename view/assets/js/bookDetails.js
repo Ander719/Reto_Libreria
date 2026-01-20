@@ -1,4 +1,5 @@
 import { currentUser, checkSession } from './session.js';
+import { loadHeader } from './header.js';
 let isEditing = false;
 
 // --- CONFIGURACIÓN DEL MODAL ---
@@ -9,6 +10,43 @@ const closeBtn = document.getElementById('closeDialogBtn');
 const confirmBtn = document.getElementById('confirmDialogBtn');
 
 let confirmResolver = null;
+
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("Verificando sesión con el servidor...");
+
+    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
+    const isLogged = await checkSession();
+
+    if (isLogged) {
+        console.log("Usuario logueado:", currentUser);
+    } else {
+        console.log("No hay sesión activa");
+    }
+    // 1. Obtener el ISBN de la URL
+    // Esto lee lo que hay después del signo ? (ej: ?isbn=1234)
+    const params = new URLSearchParams(window.location.search);
+    const isbn = params.get('isbn');
+
+    if (!isbn) {
+        // CAMBIO AQUÍ
+        showModal("Error", "No se ha especificado un libro.");
+
+        // Damos un pequeño tiempo antes de redirigir para que se lea (opcional)
+        setTimeout(() => window.location.href = "main.html", 2000);
+        return;
+    }
+    // Cargar el header
+    await loadHeader(currentUser);
+
+    // 1. Cargar detalles del libro (Tu lógica actual)...
+    loadBookDetails(isbn);
+    await checkSession();
+    // 2. Gestionar la zona de comentarios
+    handleCommentSection();
+
+    // 3. Cargar comentarios existentes
+    loadComments(isbn);
+});
 
 // 1. Configurar botón de CERRAR (Cancelar)
 if (closeBtn) {
@@ -64,31 +102,6 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
         confirmResolver = resolve;
     });
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Obtener el ISBN de la URL
-    // Esto lee lo que hay después del signo ? (ej: ?isbn=1234)
-    const params = new URLSearchParams(window.location.search);
-    const isbn = params.get('isbn');
-
-    if (!isbn) {
-        // CAMBIO AQUÍ
-        showModal("Error", "No se ha especificado un libro.");
-
-        // Damos un pequeño tiempo antes de redirigir para que se lea (opcional)
-        setTimeout(() => window.location.href = "main.html", 2000);
-        return;
-    }
-
-    // 1. Cargar detalles del libro (Tu lógica actual)...
-    loadBookDetails(isbn);
-    await checkSession();
-    // 2. Gestionar la zona de comentarios
-    handleCommentSection();
-
-    // 3. Cargar comentarios existentes
-    loadComments(isbn);
-});
 
 async function loadBookDetails(isbn) {
     try {

@@ -9,47 +9,97 @@
 </head>
 
 <body>
-    <header>
-        <h1>Panel de administración</h1>
-        <p>Bienvenido/a, administrador</p>
+    <header class="main-header">
+        <nav class="nav-container">
+            <a href="main.html" class="logo-link">
+                <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+            </a>
+
+            <div class="welcome-text">Bienvenido</div>
+
+            <div class="search-group">
+                <input type="text" class="search-input" placeholder="Buscar Titulo, Autor o ISBN">
+                <button class="search-clear-btn">x</button>
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
+                <li><a href="" class="nav-link">Opciones</a></li>
+                <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
+                <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <div class="topbar-admin" role="navigation" aria-label="Barra de navegación">
-            <div class="user-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" />
-                    <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6" stroke="currentColor" stroke-width="1.2" />
-                </svg>
-                <span>Username</span>
-            </div>
-
-            <a href="main.html" class="home-link">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" stroke="currentColor"
-                        stroke-width="1.2" />
-                </svg>
-                <span>Home</span>
-            </a>
-
-            <form action="/logout" method="post" style="margin:0;">
-                <button type="submit" class="btn btn-primary btn-sm">Log Out</button>
-            </form>
-        </div>
-
         <div class="admin-actions">
-            <button class="btn btn-primary" onclick="window.location.href='configProfile.html?mode=deleteUser'">Delete User</button>
+            <button class="btn btn-primary" onclick="window.location.href='configProfile.html?mode=deleteUser'">Delete
+                User</button>
 
-            <button class="btn btn-secondary" onclick="window.location.href='deleteComment.html'">Eliminar comentario</button>
+            <button class="btn btn-secondary" onclick="window.location.href='deleteComment.html'">Eliminar
+                comentario</button>
 
-            <button class="btn btn-primary" onclick="window.location.href='configProfile.html?mode=modifyUser'">Modify User</button>
+            <button class="btn btn-primary" onclick="window.location.href='configProfile.html?mode=modifyUser'">Modify
+                User</button>
             <button class="btn btn-secondary" onclick="window.location.href='bookOptions.html'">Libro</button>
 
             <button class="btn btn-primary" onclick="window.location.href='main.html'">Tienda</button>
         </div>
     </main>
 
-    <footer></footer>
+    <footer>
+        <div class="brand-col">
+            <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
+            <p class="desc">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
+            </p>
+        </div>
+        <ul class="footerList">
+            <li class="listTitle">Contacto</li>
+            <li>Dirección: xxxxxxx, xxx, xxx</li>
+            <li>Teléfono: +34 678 439 478</li>
+            <li>Email: ejemplo@gmail.com</li>
+            <li>Horario: L-V 8:00-14:25</li>
+        </ul>
+        <ul>
+            <li class="listTitle">Enlaces útiles</li>
+            <li>Inicio</li>
+            <li>Servicios</li>
+            <li>Acerca de nosotros</li>
+        </ul>
+        <div class="map">
+            <p class="listTitle">Ubicacion</p>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
+                width="300" height="200" style="border: 0" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
+    </footer>
+    <script type="module">
+        import { loadHeader } from "../assets/js/header.js";
+        import { checkSession, currentUser } from '../assets/js/session.js';
+
+        (async () => {
+            // 2. Esperamos a que el servidor nos diga si hay sesión
+            await checkSession();
+
+            // 3. Verificamos si NO hay usuario (currentUser será null si falla)
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return; // Importante: detener ejecución
+            }
+
+            // 4. Verificamos el ROL (sin paréntesis, es una propiedad)
+            if (currentUser.role !== 'admin') {
+                alert("Acceso denegado. Zona exclusiva para administradores.");
+                window.location.href = 'main.html';
+                return;
+            }
+            // 5. Si pasa los filtros, cargamos el header
+            loadHeader();
+        })();
+    </script>
 </body>
 
 </html>
