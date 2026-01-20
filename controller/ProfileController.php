@@ -23,7 +23,6 @@ class ProfileController {
 
         // Si encontramos un admin, verificamos SU contraseña
         if ($admin && password_verify($password, $admin->getPswd())) {
-            session_start();
             // Usamos toArray() que incluye el rol 'admin'
             $_SESSION['user'] = $admin->toArray(); 
             
@@ -42,7 +41,6 @@ class ProfileController {
         $user = $this->ProfileDAO->findUserByUsername($username); // O findByUsername si lo dejaste así
 
         if ($user && password_verify($password, $user->getPswd())) {
-            session_start();
             $_SESSION['user'] = $user->toArray();
             
             return [
