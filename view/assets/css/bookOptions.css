@@ -1,0 +1,120 @@
+/* ======================================================
+   1. VARIABLES Y RESET
+   ====================================================== */
+:root {
+  --primary-color: #101416;
+  --primary-hover: #333333;
+  --secondary-color: #ffffff;
+  --background-color: #f4f4f4;
+  
+  /* Colores de Acción */
+  --btn-add-color: #28a745;    /* Verde */
+  --btn-edit-color: #ffc107;   /* Amarillo/Dorado */
+  
+  --border-radius: 12px;
+  --font-family: "Segoe UI", sans-serif;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+}
+
+/* ======================================================
+   2. LAYOUT PRINCIPAL
+   ====================================================== */
+.books-page {
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Barra Superior */
+.books-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 15px 30px;
+  margin-bottom: 50px; /* Espacio antes de los botones */
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  width: 90%;
+  max-width: 1000px;
+}
+
+.logo-diamond {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 5px 15px;
+  transform: skew(-10deg); /* Efecto inclinado */
+  text-transform: uppercase;
+}
+
+/* Botón de Volver (Estilo simple) */
+.btn-back {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 600;
+  border: 2px solid var(--primary-color);
+  padding: 8px 20px;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* ======================================================
+   3. BOTONES DE ACCIÓN (Añadir, Modificar, Borrar)
+   ====================================================== */
+.books-actions {
+  display: flex;
+  flex-direction: column; /* Botones uno debajo del otro */
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.book-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  background-color: white;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  color: #555; /* Color texto por defecto */
+}
+
+/* Efecto Hover General */
+.book-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  color: rgb(0, 0, 0); /* Texto blanco al pasar el ratón */
+}

@@ -1,0 +1,113 @@
+/* ======================================================
+   1. VARIABLES Y RESET
+   ====================================================== */
+:root {
+  --primary-color: #101416;
+  --secondary-color: #ffffff;
+  --background-color: #f4f4f4;
+  --text-color: #333;
+  --text-light: #666;
+  
+  --border-radius: 12px;
+  --font-family: "Segoe UI", sans-serif;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body, html { height: 100%; font-family: var(--font-family); background-color: var(--background-color); }
+
+/* BARRA SUPERIOR */
+.topbar-admin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 15px 30px;
+  margin: 20px auto;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  width: 90%;
+  max-width: 1000px;
+}
+
+.user-info { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--primary-color); }
+.home-link { text-decoration: none; color: var(--text-light); font-weight: 500; display: flex; align-items: center; }
+.home-link:hover { color: var(--primary-color); }
+
+/* GRID PRINCIPAL */
+.admin-main { display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
+
+/* CONTENEDOR DE ACCIONES (5 en línea) */
+.admin-actions {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas fijas */
+  gap: 15px;
+  width: 98%;
+  max-width: 1500px; /* Un poco más ancho para que quepan bien los iconos grandes */
+  margin-top: 30px;
+}
+
+/* TARJETAS */
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: white;
+  padding: 20px 5px; /* Menos padding lateral para dar espacio al icono */
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 2px solid transparent;
+  color: var(--text-color);
+  text-align: center;
+  height: 100%;
+  min-width: 0;
+}
+
+.admin-card:hover {
+  transform: translateY(-7px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* --- ICONOS EXTRA GRANDES --- */
+.card-icon {
+  width: 90px;   /* Subido a 90px */
+  height: 90px;  /* Subido a 90px */
+  object-fit: contain;
+  margin-bottom: 15px;
+  display: block;
+  transition: transform 0.3s;
+}
+
+.admin-card:hover .card-icon {
+  transform: scale(1.15); /* Zoom un poco más agresivo */
+}
+
+.card-title { 
+  font-size: 1rem; 
+  font-weight: 700; 
+  margin-bottom: 5px; 
+  color: var(--primary-color); 
+}
+
+.card-desc { 
+  font-size: 0.8rem; 
+  color: var(--text-light); 
+  line-height: 1.3; 
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  /* Si la pantalla baja de 1100px, pasamos a 3 columnas para evitar que se rompa */
+  .admin-actions {
+    grid-template-columns: repeat(3, 1fr); 
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar-admin { flex-direction: column; gap: 15px; text-align: center; }
+  .admin-actions { grid-template-columns: 1fr; } /* 1 columna en móvil */
+}
