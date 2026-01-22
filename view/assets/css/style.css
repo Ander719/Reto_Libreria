@@ -125,8 +125,12 @@ html {
   background-color: #fff;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
+.search-group:has(input:not(:placeholder-shown)) .search-clear-btn {
+  display: block;
+}
 
 .search-clear-btn {
+  display: none;
   position: absolute;
   right: 10px;
   background: none;
@@ -539,7 +543,7 @@ footer ul:not(.footerList) li:hover {
     display: none; 
 }
 /* Para que los productos se vean en rejilla (Grid) */
-.rng-books{
+.rng-books, .search-books{
   display: grid;
   /* Esto crea columnas automáticas que se ajustan al tamaño (responsive) */
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

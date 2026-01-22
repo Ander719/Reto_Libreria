@@ -1,6 +1,6 @@
 import { currentUser, logout } from './session.js';
 
-export function loadHeader(filter) {
+export async function loadHeader(filter) {
     console.log("Cargando header con filtro:", filter);
     console.log("Usuario actual en header:", currentUser);
     if (currentUser) {
@@ -33,7 +33,7 @@ export function loadHeader(filter) {
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
-            if (filter === "main" && index === 3) item.hidden = true;
+            if ((filter === "main" || filter === "admin") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
         });
 

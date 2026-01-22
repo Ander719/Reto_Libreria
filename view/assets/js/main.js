@@ -1,4 +1,4 @@
-import { checkSession, currentUser} from './session.js';
+import { checkSession, currentUser } from './session.js';
 import { loadHeader } from './header.js';
 
 init();
@@ -16,8 +16,105 @@ async function init() {
     } else {
         console.log("No hay sesión activa");
     }
-    loadHeader("main");
-    cargarLibrosDesdeBD();
+    await loadHeader("main");
+    await cargarLibrosDesdeBD();
+
+    initSearchLogic();
+}
+// --- LÓGICA DEL BUSCADOR (ESTILO JAVAFX / REACTIVO) ---
+function initSearchLogic() {
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clearBtn');
+    const suggestionsList = document.getElementById('suggestionsList');
+
+    let debounceTimer; // El temporizador para el retraso
+
+    // A. Evento al escribir (KEYUP)
+    searchInput.addEventListener('input', (e) => {
+        const query = searchInput.value.trim();
+
+        // 2. Limpiar el temporizador anterior (reiniciar la cuenta atrás)
+        clearTimeout(debounceTimer);
+
+        // 3. Si borró todo, volver a vista normal inmediatamente
+        if (query === '') {
+            toggleSearchView(false);
+            return;
+        }
+
+        // 4. Configurar nuevo temporizador (500ms de espera)
+        debounceTimer = setTimeout(() => {
+            performSearch(query);
+        }, 500);
+    });
+    searchInput.addEventListener('keypress', (e)=>{
+        if(e.key == "Enter") e.preventDefault();
+    });
+
+    // D. Evento botón X (Limpiar)
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        toggleSearchView(false); // Volver al inicio
+        searchInput.focus(); // Mantener foco
+    });
+}
+function performSearch(term) {
+    if (!term) return;
+    term = term.toLowerCase();
+
+    console.log("Buscando:", term);
+
+    // 1. Filtramos el array global
+    const results = globalBooks.filter(book => {
+        // Datos a buscar
+        const title = book.title.toLowerCase();
+        const isbn = book.isbn.toLowerCase();
+        // Cuidado con author, verifica si es objeto o string en tu JSON final
+        // Si tu JSON devuelve author: {name: '...', lastname: '...'}
+        const authorName = (book.author.name + " " + book.author.lastname).toLowerCase();
+
+        return title.includes(term) || isbn.includes(term) || authorName.includes(term);
+    });
+
+    // 2. RENDERIZADO EXCLUSIVO PARA BÚSQUEDA (Aquí estaba el fallo)
+    // No llamamos a renderizarLibros(), lo hacemos manualmente en el contenedor de búsqueda
+    const container = document.getElementById('searchResultsContainer'); // Asegúrate de tener este ID en tu HTML (div oculto searchSection)
+    const template = document.getElementById('book-card-template');
+    
+    // Limpiamos resultados anteriores
+    container.innerHTML = '';
+
+    // Reutilizamos tu función 'renderCard' que funciona bien
+    results.forEach(libro => {
+        renderCard(libro, container, template);
+    });
+
+    // 3. Manejo de "Sin resultados"
+    const noResults = document.getElementById('noResultsMessage');
+    if (results.length === 0) {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+
+    // 4. Cambiamos la vista
+    toggleSearchView(true);
+}
+
+function toggleSearchView(isSearching) {
+    const searchSection = document.getElementById('searchSection');
+    const defaultSections = document.getElementById('defaultContent');
+    const clearBtn = document.getElementById('clearBtn');
+
+    if (isSearching) {
+        searchSection.style.display = 'block';
+        defaultSections.style.display = 'none';
+        clearBtn.style.display = 'block'; // Mostrar la X
+    } else {
+        searchSection.style.display = 'none';
+        defaultSections.style.display = 'block';
+        clearBtn.style.display = 'none'; // Ocultar la X si quieres
+    }
 }
 
 /**
@@ -56,9 +153,9 @@ async function cargarLibrosDesdeBD() {
 
         console.log("Datos recibidos:", data);
 
-        if (data.exito) {
-            globalBooks = data.libros; // Guardamos los libros globalmente si es necesario
-            renderizarLibros(data.libros);
+        if (data.success) {
+            globalBooks = data.books; // Guardamos los libros globalmente si es necesario
+            renderizarLibros(data.books);
         } else {
             console.error("Error al cargar libros");
         }

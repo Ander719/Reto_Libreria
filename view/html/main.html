@@ -22,9 +22,10 @@
 
       <div class="search-group">
         <form id="searchForm">
-          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN">
+          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN" autocomplete="off">
+          <div id="suggestionsList" class="suggestions-list"></div>
         </form>
-        <button class="search-clear-btn">x</button>
+        <button class="search-clear-btn" id="clearBtn">x</button>
       </div>
 
       <ul class="nav-menu">
@@ -38,7 +39,7 @@
   <main>
     <div id="searchSection" hidden>
       <h2 class="main-title">Resultados de la búsqueda</h2>
-      <div class="product-grid" id="searchResultsContainer"></div>
+      <div class="search-books" id="searchResultsContainer"></div>
       <div id="noResultsMessage">
         <p>No se encontraron resultados.</p>
       </div>
