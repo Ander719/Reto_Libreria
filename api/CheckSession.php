@@ -1,6 +1,6 @@
 <?php
 // api/CheckSession.php
-session_start();
+require_once "../config/Session.php";
 header("Content-Type: application/json; charset=utf-8");
 
 // Verificamos si existe la variable 'user' que creó el AuthController en el Login

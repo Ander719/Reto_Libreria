@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     // Cargar el header
-    await loadHeader(currentUser);
+    await loadHeader("book_view");
 
     // 1. Cargar detalles del libro (Tu lógica actual)...
     loadBookDetails(isbn);
