@@ -35,6 +35,7 @@ export async function loadHeader(filter) {
             if (index === 1) item.hidden = false;
             if ((filter === "main" || filter === "admin") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
+            
         });
 
     } else {

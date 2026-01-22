@@ -42,7 +42,29 @@
     </div>
 
   </main>
+<script type="module">
+        import { checkSession, currentUser, logout } from '../assets/js/session.js';
+        import { loadHeader } from '../assets/js/header.js';
 
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verificar que sea admin
+            await checkSession();
+            if (!currentUser || currentUser.role !== 'admin') {
+                window.location.href = 'main.html';
+                return;
+            }
+
+            // Configurar botón de cerrar sesión del header
+            const btnLogoutNav = document.getElementById('btnLogoutNav');
+            if(btnLogoutNav) {
+                btnLogoutNav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            loadHeader("bookOptions");
+        });
+    </script>
 </body>
 
 </html>
