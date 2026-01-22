@@ -27,28 +27,54 @@ function initSearchLogic() {
     const clearBtn = document.getElementById('clearBtn');
     const suggestionsList = document.getElementById('suggestionsList');
 
-    let debounceTimer; // El temporizador para el retraso
-
     // A. Evento al escribir (KEYUP)
     searchInput.addEventListener('input', (e) => {
         const query = searchInput.value.trim();
 
-        // 2. Limpiar el temporizador anterior (reiniciar la cuenta atrás)
-        clearTimeout(debounceTimer);
-
-        // 3. Si borró todo, volver a vista normal inmediatamente
-        if (query === '') {
-            toggleSearchView(false);
-            return;
+        if (query.length > 0) {
+            updateSuggestions(query);
+        } else {
+            suggestionsList.classList.remove('active'); // Ocultar si está vacío
+            toggleSearchView(false); // Volver a home si borras todo
         }
 
-        // 4. Configurar nuevo temporizador (500ms de espera)
-        debounceTimer = setTimeout(() => {
-            performSearch(query);
-        }, 500);
     });
-    searchInput.addEventListener('keypress', (e)=>{
-        if(e.key == "Enter") e.preventDefault();
+    suggestionsList.addEventListener('click', (e) => {
+        // Buscamos el elemento .suggestion-item más cercano al click
+        const item = e.target.closest('.suggestion-item');
+        if (item) {
+            const title = item.getAttribute('data-title'); // Cogemos el título guardado
+
+            searchInput.value = title; // Ponemos el título en el input
+            suggestionsList.classList.remove('active'); // Ocultamos lista
+
+            performSearch(title); // Ejecutamos búsqueda oficial
+        }
+    });
+    document.addEventListener('click', (e) => {
+        const clickedInput = searchInput.contains(e.target);
+        const clickedSuggestions = suggestionsList.contains(e.target);
+
+        if (!clickedInput && !clickedSuggestions) {
+            suggestionsList.classList.remove('active');
+        } else if (clickedInput) {
+            if (searchInput.value.trim().length > 0) {
+                updateSuggestions(searchInput.value.trim());
+            }
+        }
+    });
+    // EXTRA: Si el usuario hace TAB hasta el input, también mostrar
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim().length > 0) {
+            updateSuggestions(searchInput.value.trim());
+        }
+    });
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            suggestionsList.classList.remove('active');
+            performSearch(searchInput.value);
+        }
     });
 
     // D. Evento botón X (Limpiar)
@@ -57,6 +83,48 @@ function initSearchLogic() {
         toggleSearchView(false); // Volver al inicio
         searchInput.focus(); // Mantener foco
     });
+}
+// --- FUNCIÓN PARA GENERAR SUGERENCIAS ---
+function updateSuggestions(term) {
+    const suggestionsList = document.getElementById('suggestionsList');
+    term = term.toLowerCase();
+
+    // 1. Filtrar libros (Igual que en performSearch)
+    const matches = globalBooks.filter(book => {
+        const title = book.title.toLowerCase();
+        const isbn = book.isbn.toLowerCase();
+        const authorName = book.author ? (book.author.name + " " + book.author.lastname).toLowerCase() : "";
+
+        // Coincide con cualquiera de los 3
+        return title.includes(term) || isbn.includes(term) || authorName.includes(term);
+    });
+
+    // 2. Extraer SOLO TÍTULOS ÚNICOS
+    // Usamos Set para eliminar duplicados si hubiera libros con mismo nombre
+    const uniqueTitles = [...new Set(matches.map(book => book.title))];
+
+    // 3. Limitar a 5 o 6 sugerencias (para no llenar la pantalla)
+    const topSuggestions = uniqueTitles.slice(0, 6);
+
+    // 4. Renderizar HTML
+    if (topSuggestions.length > 0) {
+        suggestionsList.innerHTML = topSuggestions.map(title => `
+            <div class="suggestion-item" data-title="${title}">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>${highlightMatch(title, term)}</span>
+            </div>
+        `).join('');
+
+        suggestionsList.classList.add('active'); // Mostrar lista
+    } else {
+        suggestionsList.classList.remove('active'); // Ocultar si no hay nada
+    }
+}
+
+// (Opcional) Función para poner en negrita la parte que coincide
+function highlightMatch(text, term) {
+    const regex = new RegExp(`(${term})`, 'gi');
+    return text.replace(regex, '<b>$1</b>');
 }
 function performSearch(term) {
     if (!term) return;
@@ -80,7 +148,7 @@ function performSearch(term) {
     // No llamamos a renderizarLibros(), lo hacemos manualmente en el contenedor de búsqueda
     const container = document.getElementById('searchResultsContainer'); // Asegúrate de tener este ID en tu HTML (div oculto searchSection)
     const template = document.getElementById('book-card-template');
-    
+
     // Limpiamos resultados anteriores
     container.innerHTML = '';
 

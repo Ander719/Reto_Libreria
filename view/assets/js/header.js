@@ -16,11 +16,16 @@ export async function loadHeader(filter) {
             event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
             logout(); // Llamar a la función de logout
         }
+        if (event.target && event.target.textContent === 'volver') {
+            event.preventDefault();
+            window.location.href = document.referrer;
+        }
     });
 
     // Seleccionamos los elementos del DOM
     const welcomeText = document.querySelector('.welcome-text');
     const navItems = document.querySelectorAll('.nav-menu li');
+    console.log(navItems)
     // navItems[0] es "Iniciar Sesión"
     // navItems[1] es "Opciones", navItems[2] es "Cerrar Sesión", etc.
     if (currentUser) {
@@ -35,6 +40,7 @@ export async function loadHeader(filter) {
             if (index === 1) item.hidden = false;
             if ((filter === "main" || filter === "admin") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
+            if (filter === "main" && index === 4) item.hidden = true;
         });
 
     } else {

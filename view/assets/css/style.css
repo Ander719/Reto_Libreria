@@ -102,6 +102,45 @@ html {
   max-width: 450px;
   /* Pero no más de 500px */
 }
+.suggestions-list {
+    position: absolute;
+    top: 100%; /* Justo debajo del input */
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 15px 15px; /* Redondeado solo abajo */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000; /* Encima de todo */
+    display: none; /* Oculto por defecto */
+    max-height: 300px;
+    overflow-y: auto; /* Scroll si hay muchas */
+}
+
+.suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.suggestion-item i {
+    color: #888; /* Icono de lupa gris */
+    font-size: 0.9rem;
+}
+
+.suggestion-item:hover {
+    background-color: #eee; /* Gris clarito al pasar el ratón */
+}
+
+/* Mostrar la lista cuando tenga contenido activo */
+.suggestions-list.active {
+    display: block;
+}
 #searchForm {
   width: 100%;
 }
