@@ -1,0 +1,207 @@
+/* ======================================================
+   1. VARIABLES Y RESET
+   ====================================================== */
+:root {
+  --primary-color: #101416;
+  --primary-hover: #333333;
+  --secondary-color: #ffffff;
+  --danger-color: #d9534f;
+  --background-color: #f1f1f1;
+  --border-radius: 12px;
+  --input-padding: 12px;
+  --font-family: "Segoe UI", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: var(--font-family);
+  background-color: #f4f4f4;
+}
+
+/* ======================================================
+   2. ESTILOS COMPARTIDOS (Inputs y Botones)
+   ====================================================== */
+input[type="text"], input[type="number"], textarea {
+  width: 100%;
+  padding: var(--input-padding);
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: var(--border-radius);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  width: auto;
+  margin: 5px 0;
+}
+
+.btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+.btn-secondary { background-color: transparent; color: var(--primary-color); border-color: var(--primary-color); }
+.btn-secondary:hover { background-color: var(--primary-color); color: white; }
+
+.btn-sm { padding: 8px 16px; font-size: 0.9rem; }
+
+/* ======================================================
+   3. LAYOUT DE GESTIÓN DE LIBROS
+   ====================================================== */
+.books-page {
+    padding: 20px;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+}
+
+/* Barra Superior Específica de Libros */
+.books-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    margin: 20px auto;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    width: 90%;
+    max-width: 1000px;
+}
+
+.books-topbar h2 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+/* Contenedor del Formulario */
+.crud-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* ======================================================
+   4. FORMULARIO GRID
+   ====================================================== */
+.fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.field label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.field.half {
+    width: calc(50% - 10px); /* Dos columnas con gap de 20px */
+}
+
+.field.full {
+    width: 100%;
+}
+
+/* ======================================================
+   5. DROP ZONE (Estilos Completos)
+   ====================================================== */
+.drop-zone {
+    width: 100%;
+    height: 250px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    color: #888;
+    border: 3px dashed var(--primary-color);
+    border-radius: 12px;
+    background-color: #fafafa;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+/* Estado Activo (DragOver) */
+.drop-zone--over {
+    border-style: solid;
+    background-color: #e6f7ff;
+    color: #333;
+    transform: scale(1.01);
+}
+
+.drop-zone__input {
+    display: none;
+}
+
+/* Miniatura de la imagen */
+.drop-zone__thumb {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    background-color: #eee;
+    background-size: cover; 
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.drop-zone__prompt {
+    z-index: 1;
+    pointer-events: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* ======================================================
+   6. RESPONSIVE
+   ====================================================== */
+@media (max-width: 768px) {
+    .field.half {
+        width: 100%; /* Una columna en móvil */
+    }
+    
+    .books-topbar {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
