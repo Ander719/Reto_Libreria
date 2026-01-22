@@ -102,45 +102,54 @@ html {
   max-width: 450px;
   /* Pero no más de 500px */
 }
+
 .suggestions-list {
-    position: absolute;
-    top: 100%; /* Justo debajo del input */
-    left: 0;
-    width: 100%;
-    background: white;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 15px 15px; /* Redondeado solo abajo */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    z-index: 1000; /* Encima de todo */
-    display: none; /* Oculto por defecto */
-    max-height: 300px;
-    overflow-y: auto; /* Scroll si hay muchas */
+  position: absolute;
+  top: 100%;
+  /* Justo debajo del input */
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 15px 15px;
+  /* Redondeado solo abajo */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  /* Encima de todo */
+  display: none;
+  /* Oculto por defecto */
+  max-height: 300px;
+  overflow-y: auto;
+  /* Scroll si hay muchas */
 }
 
 .suggestion-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .suggestion-item i {
-    color: #888; /* Icono de lupa gris */
-    font-size: 0.9rem;
+  color: #888;
+  /* Icono de lupa gris */
+  font-size: 0.9rem;
 }
 
 .suggestion-item:hover {
-    background-color: #eee; /* Gris clarito al pasar el ratón */
+  background-color: #eee;
+  /* Gris clarito al pasar el ratón */
 }
 
 /* Mostrar la lista cuando tenga contenido activo */
 .suggestions-list.active {
-    display: block;
+  display: block;
 }
+
 #searchForm {
   width: 100%;
 }
@@ -164,6 +173,7 @@ html {
   background-color: #fff;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
+
 .search-group:has(input:not(:placeholder-shown)) .search-clear-btn {
   display: block;
 }
@@ -272,7 +282,8 @@ footer .desc {
 
 /* Logo placeholder styling (por si añades la imagen luego) */
 footer img {
-  max-width: 150px;;
+  max-width: 150px;
+  ;
   grid-column: 1;
 }
 
@@ -437,306 +448,6 @@ footer ul:not(.footerList) li:hover {
   font-size: 0.9rem;
 }
 
-/* --- main --- */
-/* Para que las estrellas sean doradas y estén en fila */
-.book-rating {
-  color: #FFD700;
-  margin: 10px 0;
-  font-size: 1.2rem;
-}
-/* =========================================
-   ZONA NUEVA: LIBROS RECIENTES (Horizontal)
-   ========================================= */
-
-/* 1. El Contenedor Nuevo */
-.new-books, .rating-books {
-    /* Configuración */
-    --card-width: 380px;  /* Ancho de la tarjeta */
-    --card-height: 190px; /* Alto de la tarjeta */
-    --quantity: 4;        /* Número de libros */
-    --duration: 15s;      /* Velocidad de la animación */
-
-    width: 100%;
-    max-width: 1200px;    /* Ancho máximo del carrusel */
-    margin-inline: auto;
-    position: relative;
-    height: calc(var(--card-height) + 20px); /* Altura justa + sombra */
-    margin-top: 2rem;
-    overflow: hidden;     /* Oculta lo que se sale por los lados */
-    
-    /* Máscara de desvanecimiento a los lados (Fade Effect) */
-    mask-image: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0),
-        rgba(0, 0, 0, 1) 10%,
-        rgba(0, 0, 0, 1) 90%,
-        rgba(0, 0, 0, 0)
-    );
-  &:hover .book-card{
-    animation-play-state: paused;
-  }
-}
-
-
-#newbooksContainer .book-card, #ratingBooksContainer .book-card {
-    width: var(--card-width);
-    height: var(--card-height);
-    position: absolute;
-    /* Empieza fuera de la pantalla a la derecha */
-    left: max(calc(var(--card-width) * var(--quantity)), 100%); 
-    
-    /* Estilo Visual (Igual que antes) */
-    background-color: #A2D2FF; 
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    padding: 15px;
-    border: none;
-    
-    /* Layout interno de la tarjeta */
-    display: grid;
-    grid-template-columns: 120px 1fr; 
-    grid-template-rows: auto auto auto 1fr;
-    column-gap: 15px;
-    align-items: start;
-    overflow: hidden;
-
-    /* ANIMACIÓN */
-    animation-name: autoScroll;
-    animation-duration: var(--duration);
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    &:hover{
-      transform: scale(1.02); /* Efecto pop sutil */
-     box-shadow: 0 10px 20px rgba(162, 210, 255, 0.4);
-    }
-}
-
-@keyframes autoScroll {
-    to {
-        /* Se mueve hacia la izquierda hasta salir por el otro lado */
-        left: calc(var(--card-width) * -1); 
-    }
-}
-/* Fórmula: (Duración / Cantidad) * (Cantidad - Índice) * -1 */
-#newbooksContainer .book-card:nth-child(1), #ratingBooksContainer .book-card:nth-child(1) {
-    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 1) * -1);
-}
-#newbooksContainer .book-card:nth-child(2), #ratingBooksContainer .book-card:nth-child(2) {
-    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 2) * -1);
-}
-#newbooksContainer .book-card:nth-child(3), #ratingBooksContainer .book-card:nth-child(3) {
-    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 3) * -1);
-}
-#newbooksContainer .book-card:nth-child(4), #ratingBooksContainer .book-card:nth-child(4) {
-    animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 4) * -1);
-}
-
-/* 3. La Imagen (A la izquierda, ocupando toda la altura) */
-#newbooksContainer .book-image-card, #ratingBooksContainer .book-image-card {
-    grid-column: 1;      /* Primera columna */
-    grid-row: 1 / -1;    /* Desde la primera línea hasta la última */
-    
-    height: 100%;        /* Forzamos que llene el alto de la tarjeta */
-    width: 100%;
-    margin: 0;           /* Quitamos el margin-bottom de tu CSS original */
-    border-radius: 8px;  /* Un poco menos redondeada para encajar */
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-}
-
-/* 4. El Título (Blanco, Grande y en Mayúsculas) */
-#newbooksContainer .book-title, #ratingBooksContainer .book-title {
-    grid-column: 2;
-    align-self: end; /* Pegado a la parte baja de su celda */
-    
-    color: white;
-    font-family: 'Arial Black', sans-serif; /* Fuente gruesa */
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    line-height: 1;
-    margin-top: 15px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
-
-/* 5. El Autor (Blanco) */
-#newbooksContainer .book-author, #ratingBooksContainer .book-author {
-    grid-column: 2;
-    color: #f0f8ff;
-    font-weight: 600;
-    margin: 5px 0 0 0;
-    font-size: 0.95rem;
-}
-
-/* 6. Las Estrellas */
-#newbooksContainer .book-rating, #ratingBooksContainer .book-rating {
-    grid-column: 2;
-    margin: 8px 0 0 0;
-    font-size: 1rem;
-}
-
-/* 7. Ocultar Precio y Stock (Opcional, según tu referencia visual) */
-/* Como es un mismo template, los elementos existen, pero los ocultamos aquí */
-#newbooksContainer .book-price,
-#newbooksContainer .book-stock,
-#ratingBooksContainer .book-price,
-#ratingBooksContainer .book-stock {
-    display: none; 
-}
-/* Para que los productos se vean en rejilla (Grid) */
-.rng-books, .search-books{
-  display: grid;
-  /* Esto crea columnas automáticas que se ajustan al tamaño (responsive) */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 30px;
-  padding: 2rem 5%;
-}
-
-/* --- La Tarjeta (Book Card) --- */
-.book-card {
-    background-color: #fff;
-    border-radius: 12px; /* Bordes redondeados modernos */
-    padding: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Sombra suave */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    
-    /* MAGIA PARA LA UNIFORMIDAD: */
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-row: span 6;
-    gap: 0;
-    height: 100%; /* Fuerza a que ocupe toda la altura de la fila del grid */
-    overflow: hidden;
-    cursor: pointer;
-}
-
-.book-card:hover {
-    transform: translateY(-5px); /* Se levanta un poco al pasar el ratón */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* --- La Imagen --- */
-.book-image-card {
-    width: 100%;
-    height: 300px; /* ALTURA FIJA: Crucial para la uniformidad */
-    object-fit: cover; /* Evita que la imagen se estire o deforme, la recorta si es necesario */
-    object-position: top center; /* Centra la imagen priorizando la parte superior */
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-/* --- Título del Libro --- */
-.book-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #333;
-    margin: 0 0 5px 0;
-    
-    overflow: hidden;
-    line-height: 1.3;
-}
-
-/* --- Autor --- */
-.book-author {
-    font-size: 0.9rem;
-    color: #777;
-    margin: 0 0 10px 0;
-    font-style: italic;
-}
-
-/* --- Estrellas / Rating --- */
-.book-rating {
-    margin-bottom: 10px;
-    color: #ffc107; /* Color dorado */
-    font-size: 0.9rem;
-}
-
-/* --- Precio --- */
-.book-price {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: #000;
-    /* EMPUJAR AL FONDO: Esto hace que el precio siempre esté alineado abajo */
-    margin-top: auto; 
-    padding-top: 10px;
-}
-
-/* --- Stock --- */
-.book-stock {
-    font-size: 0.85rem;
-    color: #28a745; /* Verde si hay stock */
-    font-weight: 500;
-    margin-top: 5px;
-}
-
-.buttons {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-}
-
-/* --- ESTILOS DROP ZONE (CORREGIDOS) --- */
-.drop-zone {
-  width: 100%;
-  height: 200px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  color: #888;
-  border: 3px dashed #101416;
-  /* Color primario */
-  border-radius: 12px;
-  background-color: #fafafa;
-  position: relative;
-  /* Vital para que el hijo absoluto se posicione bien */
-  overflow: hidden;
-  /* Para que la imagen no se salga de las esquinas */
-  transition: all 0.2s ease;
-}
-
-/* Efecto al pasar por encima con un archivo */
-.drop-zone--over {
-  border-style: solid;
-  background-color: #e6f7ff;
-  /* Un azulito claro para indicar "suelta aquí" */
-  color: #333;
-  transform: scale(1.02);
-}
-
-.drop-zone__input {
-  display: none;
-# /* El input real siempre oculto */
-}
-
-/* La miniatura de la imagen (Thumb) */
-.drop-zone__thumb {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  background-color: #eee;
-  background-size: cover;
-  /* 'cover' rellena todo, 'contain' muestra la imagen entera */
-  background-position: center;
-  position: absolute;
-  /* Se coloca encima de todo */
-  top: 0;
-  left: 0;
-  z-index: 10;
-  /* Asegura que esté por encima del texto */
-}
-
-/* El texto de ayuda ("Arrastra aquí...") */
-.drop-zone__prompt {
-  z-index: 1;
-  /* Por debajo de la imagen */
-  pointer-events: none;
-  /* Para que el arrastre no parpadee al pasar por el texto */
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-
 /* ======================================================
    5. MEDIA QUERIES (RESPONSIVE)
    ====================================================== */
@@ -771,19 +482,6 @@ footer ul:not(.footerList) li:hover {
   .buttons {
     flex-direction: column;
   }
-}
-
-/* --- RESET & BASICS --- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
 }
 
 /* --- Estilos para la sección de reseñas --- */

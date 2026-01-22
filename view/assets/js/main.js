@@ -237,7 +237,6 @@ async function cargarLibrosDesdeBD() {
 function renderizarLibros(listaLibros) {
     rngBooksRender(listaLibros);
     ratingBooksRender(listaLibros);
-    newBooksRender(listaLibros);
 }
 // Función para renderizar los libros aleatorios
 function rngBooksRender(listaLibros) {
@@ -266,20 +265,6 @@ function ratingBooksRender(listaLibros) {
     //tomamos solo los 4 primeros
     const mejorValorados = listaLibros.slice(0, 4);
     mejorValorados.forEach(libro => {
-        renderCard(libro, contenedor, template);
-    });
-}
-// Función para renderizar los libros recientes
-function newBooksRender(listaLibros) {
-    const contenedor = document.getElementById('newbooksContainer');
-    const template = document.getElementById('book-card-template');
-    // Limpiamos el contenedor por si acaso
-    contenedor.innerHTML = '';
-    //ordenamos 4 libros por fecha de publicación (los más recientes primero)
-    listaLibros.sort((a, b) => new Date(b.publish_date) - new Date(a.publish_date));
-    //tomamos solo los 4 primeros
-    const recientes = listaLibros.slice(0, 4);
-    recientes.forEach(libro => {
         renderCard(libro, contenedor, template);
     });
 }
