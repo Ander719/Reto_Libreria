@@ -127,96 +127,46 @@ async function loadBookDetails(isbn) {
         console.error("Error:", error);
     }
 }
-/*
-async function loadBookDetails(isbn) {
-    try {
-        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
-        if (!response.ok) throw new Error('Book not found');
 
-        const book = await response.json();
-
-        document.getElementById('bookTitle').innerText = book.title || "Untitled";
-
-        let authorName = "Unknown Author";
-        if (book.NameAuthor || book.LastName) {
-            authorName = `${book.NameAuthor || ''} ${book.LastName || ''}`.trim();
-        }
-        document.getElementById('bookAuthor').innerText = authorName;
-
-        document.getElementById('bookPrice').innerText = (book.price || 0) + "€";
-        document.getElementById('bookSynopsis').innerText = book.sipnosis || "No description available.";
-
-        document.getElementById('bookISBN').innerText = book.Isbn || isbn;
-        document.getElementById('bookPages').innerText = book.pages || "N/A";
-        document.getElementById('bookEditorial').innerText = book.editorial || "N/A";
-
-        const stockBadge = document.getElementById('stockBadge');
-        if (stockBadge) {
-            stockBadge.innerText = (book.stock > 0) ? "In Stock" : "Out of Stock";
-            stockBadge.className = (book.stock > 0) ? "stock-badge" : "stock-badge out-of-stock";
-        }
-
-        if (book.cover) {
-            if (book.cover.startsWith('http')) {
-                document.getElementById('bookCover').src = book.cover;
-            } else {
-                document.getElementById('bookCover').src = `../assets/img/${book.cover}`;
-            }
-        }
-
-    } catch (error) {
-        console.error("Error loading book details:", error);
-        document.getElementById('bookTitle').innerText = "Book not found";
-    }
-}
-*/
 function rellenarVista(libro) {
-    // A. Textos Básicos
     document.getElementById('bookTitle').textContent = libro.title || "Título Desconocido";
     document.getElementById('bookAuthor').textContent = (libro.name_author || "Autor Desconocido") + " " + (libro.last_name || "");
     document.getElementById('bookPrice').textContent = parseFloat(libro.price).toFixed(2) + "€";
     document.getElementById('bookSynopsis').textContent = libro.synopsis || "Sin descripción disponible.";
 
-    // B. Metadatos
     document.getElementById('bookISBN').textContent = libro.isbn;
     document.getElementById('bookPages').textContent = libro.pages;
     document.getElementById('bookEditorial').textContent = libro.editorial;
 
-    // C. Imagen (con fallback si falla)
     const img = document.getElementById('bookCover');
     img.src = libro.cover ? `../assets/img/covers/${libro.cover}` : "../assets/img/mood-heart.png"; console.log("Cargando imagen de portada:", img.src);
     img.alt = `Portada de ${libro.title}`;
 
-    // D. Lógica de Stock
     const badge = document.getElementById('stockBadge');
     const btnCart = document.getElementById('addToCartBtn');
     const qtyInput = document.getElementById('qtyInput');
 
     if (libro.stock > 0) {
         badge.textContent = "In Stock";
-        badge.className = "stock-badge success"; // Asegúrate de tener estilo verde en CSS
+        badge.className = "stock-badge success";
         badge.style.color = "green";
 
-        // Configurar máximo del input según stock real
         qtyInput.max = libro.stock;
     } else {
         badge.textContent = "Out of Stock";
         badge.className = "stock-badge error";
         badge.style.color = "red";
 
-        // Desactivar compra
         btnCart.disabled = true;
         btnCart.textContent = "Agotado";
         btnCart.style.backgroundColor = "#ccc";
         qtyInput.disabled = true;
     }
 
-    // E. Evento del Botón Añadir al Carrito
-    // CAMBIO: Cambiar texto del botón
+
     btnCart.textContent = "Comprar Ahora";
 
-    // E. NUEVO Evento de Compra Directa
-    // Clonamos el botón para borrar cualquier evento anterior (limpieza)
+
     const newBtn = btnCart.cloneNode(true);
     btnCart.parentNode.replaceChild(newBtn, btnCart);
 
@@ -226,17 +176,36 @@ function rellenarVista(libro) {
             return;
         }
 
+        const userCard = currentUser.card_no || currentUser.CardNo;
+
+        if (!userCard || userCard.trim() === "") {
+            const quiereAnadir = await showConfirm(
+                "Método de pago no encontrado",
+                "No tienes una tarjeta vinculada para realizar compras. ¿Quieres ir a tu perfil para añadir una ahora?",
+                "Sí, ir al perfil",
+                "No, volver a la tienda"
+            );
+
+            if (quiereAnadir) {
+                window.location.href = "configProfile.html";
+            } else {
+                window.location.href = "store.html";
+            }
+
+            return;
+        }
+
         const cantidad = parseInt(qtyInput.value);
 
         const aceptado = await showConfirm(
             "Confirmar Compra",
             "¿Estás seguro de que quieres comprar este libro?",
-            "Si, comprar",
+            "Sí, comprar",
             "Cancelar"
         );
 
         if (aceptado) {
-            const userId = currentUser.profile_code;
+            const userId = getUserId(currentUser);
             comprarAhora(libro.isbn, cantidad, userId);
         }
     });
@@ -376,23 +345,14 @@ async function loadComments(isbn) {
             comments.forEach((c, index) => {
                 const item = document.createElement('div');
                 item.classList.add('comment-item');
-
-                // --- 🔴 LA CORRECCIÓN CLAVE ESTÁ AQUÍ 🔴 ---
-                // Buscamos el ID del autor con TODOS los nombres posibles que pueda devolver tu BD
                 const authorId = c.profile_code;
 
-                // Convertimos a entero para comparar números (5 === "5" daría falso sin esto)
                 const isMine = myProfileCode && authorId && (parseInt(authorId) === parseInt(myProfileCode));
-
-                // Debug para que veas en la consola qué está comparando
-                console.log(`🔎 Comentario ${index}: AutorID=${authorId} vs MiID=${myProfileCode} -> Es mío? ${isMine}`);
 
                 if (isMine) myReview = c;
 
-                // Generamos botones (SOLO SI ES MÍO)
                 let buttonsHtml = '';
                 if (isMine) {
-                    // Usamos comillas simples escapadas o mejor, atributos data (más seguro)
                     const safeText = c.comment_text ? c.comment_text.replace(/'/g, "\\'") : "";
                     buttonsHtml = `
                         <div class="comment-actions">
@@ -402,7 +362,6 @@ async function loadComments(isbn) {
                     `;
                 }
 
-                // Asegurar que leemos el nombre y texto bien, vengan como vengan
                 const userName = c.user_name || c.USER_NAME || "Usuario";
                 const commentText = c.comment_text || c.COMMENT_TEXT || c.text || "";
                 const date = c.dateComent || c.DATE_COMENT || c.date || "";
