@@ -236,7 +236,7 @@ function rellenarVista(libro) {
         );
 
         if (aceptado) {
-            const userId = currentUser.profile_code || currentUser.id;
+            const userId = currentUser.profile_code;
             comprarAhora(libro.isbn, cantidad, userId);
         }
     });
@@ -353,7 +353,6 @@ async function submitComment(e, user) {
 
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
-    // Usamos el ID del usuario actual si existe
     const myProfileCode = getUserId(currentUser);
 
     try {
@@ -364,68 +363,78 @@ async function loadComments(isbn) {
         try {
             comments = JSON.parse(rawText);
         } catch (error) {
-            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
-            commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
-            return; // Salimos de la función
+            console.error("❌ Error JSON del servidor:", rawText);
+            commentsList.innerHTML = '<p class="error-msg">Error cargando comentarios.</p>';
+            return;
         }
 
-        console.log("Datos recibidos del servidor:", comments);
+        console.log("📚 Comentarios recibidos:", comments);
         commentsList.innerHTML = '';
         let myReview = null;
 
         if (comments.length > 0) {
-            comments.forEach(c => {
+            comments.forEach((c, index) => {
                 const item = document.createElement('div');
                 item.classList.add('comment-item');
 
-                // Comprobamos si este comentario es mío
-                const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
-                console.log("Comentario recibido:", c);
+                // --- 🔴 LA CORRECCIÓN CLAVE ESTÁ AQUÍ 🔴 ---
+                // Buscamos el ID del autor con TODOS los nombres posibles que pueda devolver tu BD
+                const authorId = c.profile_code;
+
+                // Convertimos a entero para comparar números (5 === "5" daría falso sin esto)
+                const isMine = myProfileCode && authorId && (parseInt(authorId) === parseInt(myProfileCode));
+
+                // Debug para que veas en la consola qué está comparando
+                console.log(`🔎 Comentario ${index}: AutorID=${authorId} vs MiID=${myProfileCode} -> Es mío? ${isMine}`);
+
                 if (isMine) myReview = c;
 
-                // Generamos los botones (Lápiz y Basura) solo si es mío
+                // Generamos botones (SOLO SI ES MÍO)
                 let buttonsHtml = '';
                 if (isMine) {
-                    // Escapamos las comillas simples para que no rompan el HTML del onclick
-                    const safeText = c.comment_text.replace(/'/g, "\\'");
+                    // Usamos comillas simples escapadas o mejor, atributos data (más seguro)
+                    const safeText = c.comment_text ? c.comment_text.replace(/'/g, "\\'") : "";
                     buttonsHtml = `
                         <div class="comment-actions">
-                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Edit">✏️</button>
-                            <button onclick="deleteComment('${isbn}')" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Editar">✏️</button>
+                            <button onclick="deleteComment('${isbn}')" class="btn-icon btn-delete" title="Borrar">🗑️</button>
                         </div>
                     `;
                 }
 
+                // Asegurar que leemos el nombre y texto bien, vengan como vengan
+                const userName = c.user_name || c.USER_NAME || "Usuario";
+                const commentText = c.comment_text || c.COMMENT_TEXT || c.text || "";
+                const date = c.dateComent || c.DATE_COMENT || c.date || "";
+
                 item.innerHTML = `
                     ${buttonsHtml}
                     <p class="comment-header">
-                        ${c.USER_NAME} 
-                        <span class="comment-date">${c.dateComent}</span>
+                        ${userName} 
+                        <span class="comment-date">${date}</span>
                     </p>
-                    <div class="star-rating">${'⭐'.repeat(c.valoration)}</div>
-                    <p class="comment-text">${c.comment_text}</p> <div class="clear-fix"></div>
+                    <div class="star-rating">${'⭐'.repeat(c.valoration || 0)}</div>
+                    <p class="comment-text">${commentText}</p> 
+                    <div class="clear-fix"></div>
                 `;
                 commentsList.appendChild(item);
             });
         } else {
-            commentsList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to write one!</p>';
+            commentsList.innerHTML = '<p class="no-reviews">No hay reseñas todavía. ¡Sé el primero!</p>';
         }
 
-        // --- AQUÍ ESTÁ LA LÓGICA QUE PIDES ---
+        // Lógica del formulario (Ocultar si ya he comentado)
         const actionContainer = document.getElementById('userActionContainer');
-
         if (myReview) {
-            // SI YA COMENTÉ: Borro todo lo de abajo. Limpio total.
-            actionContainer.innerHTML = '';
+            actionContainer.innerHTML = '<p class="info-msg" style="text-align:center; padding:10px;">Ya has publicado una reseña para este libro.</p>';
         } else {
-            // SI NO HE COMENTADO: Muestro el formulario (si no está ya pintado)
             if (!document.getElementById('commentForm')) {
                 handleCommentSection();
             }
         }
 
     } catch (error) {
-        console.error(error);
+        console.error("Error fatal en loadComments:", error);
     }
 }
 
@@ -558,7 +567,7 @@ async function comprarAhora(isbn, quantity, userId) {
 // Función auxiliar para obtener el ID, venga como venga
 export function getUserId(user) {
     if (!user) return null;
-    return user.profile_code || user.id || user.PROFILE_CODE;
+    return user.profile_code;
 }
 
 
