@@ -1,0 +1,464 @@
+/* ======================================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL
+   ====================================================== */
+:root {
+    --primary-color: #101416;
+    --primary-hover: #333333;
+    --accent-color: #28a745;
+    /* Verde estándar para acciones positivas */
+    --accent-hover: #218838;
+    --danger-color: #dc3545;
+    --bg-color: #f8f9fa;
+    /* Gris muy suave de fondo */
+    --border-radius: 8px;
+    /* Radio estándar, no muy redondo */
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Para que el footer se vaya abajo */
+}
+
+/* ======================================================
+   2. HEADER (Barra de navegación)
+   ====================================================== */
+.main-header {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0.8rem 1rem;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.logo {
+    height: 45px;
+    width: auto;
+    display: block;
+}
+
+.search-group {
+    flex-grow: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.search-group input {
+    width: 100%;
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.search-group input:focus {
+    border-color: var(--primary-color);
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+/* ======================================================
+   3. MAIN & LAYOUT GENERAL
+   ====================================================== */
+main {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Botones Genéricos (Reutilizables) */
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #e2e6ea;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    background-color: #dbe0e5;
+}
+
+/* ======================================================
+   4. VISTA DETALLE LIBRO (bookDetails.html)
+   ====================================================== */
+.details-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    background: #fff;
+    padding: 30px;
+    border: 1px solid #ddd;
+    /* Borde simple y limpio */
+    border-radius: var(--border-radius);
+    margin-bottom: 40px;
+}
+
+/* Imagen */
+.image-section {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    justify-content: center;
+}
+
+.book-cover {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra suave estándar */
+}
+
+/* Info */
+.details-info {
+    flex: 1.5;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.details-info h1 {
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.author {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.price {
+    font-size: 2rem;
+    color: var(--primary-color);
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.book-meta {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.synopsis {
+    text-align: justify;
+    margin-bottom: 20px;
+}
+
+/* Stock Badge */
+.stock-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+.stock-badge.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.stock-badge.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Acciones de compra */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.qty-input {
+    width: 70px;
+    padding: 10px;
+    font-size: 1rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+}
+
+#addToCartBtn {
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+/* ======================================================
+   5. SECCIÓN DE COMENTARIOS (Simplificada y Funcional)
+   ====================================================== */
+.comments-section {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.comments-section h3 {
+    font-size: 1.5rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+/* Tarjeta del Formulario (Limpia) */
+.comment-form {
+    background: #fff;
+    padding: 25px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    margin-bottom: 40px;
+}
+
+.comment-form h4 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.comment-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Corrección: Select ancho completo para que se vea el texto */
+.comment-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    background: #fff;
+    font-size: 1rem;
+}
+
+/* Corrección: Textarea no redimensionable */
+.comment-form textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    font-family: inherit;
+    margin-bottom: 15px;
+    resize: none;
+    /* BLOQUEA EL REDIMENSIONADO */
+}
+
+/* Botón de enviar vistoso (Grande y Verde) */
+#submitBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    background-color: var(--accent-color);
+    margin-top: 10px;
+}
+
+#submitBtn:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Lista de Comentarios */
+.comment-item {
+    background: #fff;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+/* Cabecera del comentario: Nombre y Fecha juntos */
+.comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    /* Separación justa */
+    margin-bottom: 5px;
+}
+
+.comment-header strong {
+    font-size: 1.1rem;
+    color: #000;
+}
+
+.comment-date {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.star-rating {
+    color: #f1c40f;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.comment-text {
+    color: #444;
+}
+
+/* Botones de acción (Editar/Borrar) */
+.comment-actions {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    display: flex;
+    gap: 5px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.btn-icon:hover {
+    opacity: 1;
+}
+
+/* ======================================================
+   6. FOOTER
+   ====================================================== */
+footer {
+    background-color: var(--primary-color);
+    color: #ccc;
+    padding: 40px 20px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.copyright {
+    margin-top: 20px;
+    border-top: 1px solid #444;
+    padding-top: 20px;
+    font-size: 0.9rem;
+}
+
+/* ======================================================
+   7. MODAL Y RESPONSIVE
+   ====================================================== */
+dialog {
+    margin: auto;
+    border: none;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .details-container {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    #addToCartBtn {
+        max-width: none;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
