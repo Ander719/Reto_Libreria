@@ -1,39 +1,60 @@
 <?php
 // api/CheckSession.php
-require_once "../config/Session.php";
+require_once "../Config/Session.php";
+require_once "../Config/Database.php"; 
+
 header("Content-Type: application/json; charset=utf-8");
 
-// --- ¡ESTAS SON LAS LÍNEAS QUE FALTAN! ---
-// Sin esto, PHP no entiende el objeto de la sesión y toArray() falla.
+// Modelos necesarios
 require_once '../model/entities/Profile.php';
 require_once '../model/entities/User.php';
-require_once '../model/entities/Admin.php'; // Si tienes admins
-// ------------------------------------------
+require_once '../model/entities/Admin.php';
 
-// Verificamos si existe la variable 'user' en la sesión
 if (isset($_SESSION['user'])) {
     $user = $_SESSION['user'];
-
     $userData = $user;
 
-    if (is_object($user) && method_exists($user, 'toArray')) {
-        $userData = $user->toArray();
-    } elseif (is_object($user)) {
-        session_destroy();
-        echo json_encode(["success" => false, "error" => "Sesión antigua incompatible. Recarga."]);
-        exit();
+    // Convertir objeto a array de forma segura
+    if (is_object($user)) {
+        if (method_exists($user, 'toArray')) {
+            $userData = $user->toArray();
+        } else {
+            $userData = (array)$user;
+        }
     }
 
-    echo json_encode([
-        "success" => true,
-        "user" => $userData
-    ]);
+    // --- DETECCIÓN ADMIN (VERSIÓN PDO) ---
+    $isAdmin = false;
+    $id = is_object($user) ? ($user->profile_code ?? null) : ($user['profile_code'] ?? null);
+
+    if ($id) {
+        $db = new Database();
+        $conn = $db->getConnection(); // Esto devuelve un objeto PDO
+        
+        // Consulta SQL con PDO
+        $sql = "SELECT profile_code FROM admin_ WHERE profile_code = :id";
+        $stmt = $conn->prepare($sql);
+        
+        // Ejecutamos pasando el parámetro (más fácil que bind_param)
+        $stmt->execute([':id' => $id]);
+        
+        // fetchColumn() devuelve true si encuentra algo, false si no
+        if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+            $isAdmin = true;
+        }
+    }
+
+    // Añadir isAdmin a la respuesta
+    if (is_array($userData)) {
+        $userData['isAdmin'] = $isAdmin;
+    } elseif (is_object($userData)) {
+        $userData->isAdmin = $isAdmin;
+    }
+    // -------------------------------------
+
+    echo json_encode(["success" => true, "user" => $userData]);
 
 } else {
-    // No hay sesión
-    echo json_encode([
-        "success" => false,
-        "error" => "No hay sesión activa"
-    ]);
+    echo json_encode(["success" => false, "error" => "No hay sesión activa"]);
 }
 ?>
