@@ -462,3 +462,32 @@ dialog::backdrop {
         gap: 10px;
     }
 }
+
+/* Esto es lo que coloca los botones arriba a la derecha */
+.comment-item {
+    position: relative;
+    /* Necesario para que el absolute de abajo funcione */
+    /* ... otros estilos ... */
+}
+
+.comment-actions {
+    position: absolute;
+    /* Flota sobre el comentario */
+    top: 20px;
+    /* Distancia desde arriba */
+    right: 0;
+    /* Pegado a la derecha */
+    display: flex;
+    gap: 5px;
+}
+
+.comments-section {
+    max-width: 1200px;
+    /* Usa el mismo ancho que .details-container */
+    margin: 0 auto;
+    /* Esto centra la sección horizontalmente */
+    padding: 40px 20px;
+    /* Espacio arriba/abajo y a los lados en móviles */
+    box-sizing: border-box;
+    /* Para que el padding no rompa el ancho */
+}
