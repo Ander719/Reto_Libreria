@@ -64,8 +64,7 @@ class ProfileDAO
         $stmt->bindParam(":username", $username);
         $stmt->execute();
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new User(
                 $row['profile_code'],
                 $row['email'],
@@ -92,9 +91,7 @@ class ProfileDAO
         $stmt->bindParam(":username", $username);
         $stmt->execute();
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             // Retornamos una instancia de la clase Admin
             // El constructor depende de tu clase Admin.php: 
             // ($code, $email, $user, $pass, $tel, $name, $surname, $account)
@@ -118,7 +115,31 @@ class ProfileDAO
 
     public function getUserById($id)
     {
-        // 1. Intentar Admin
+        $sql = "SELECT P.*, U.gender , U.card_no
+                   FROM profile_ P 
+                   JOIN user_ U ON P.profile_code = U.profile_code 
+                   WHERE P.profile_code = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new User(
+                $row['profile_code'],
+                $row['email'],
+                $row['user_name'],
+                $row['pswd'],
+                $row['telephone'],
+                $row['name_'],
+                $row['surname'],
+                $row['gender'],
+                $row['card_no']
+            );
+        }
+        return null;
+    }
+    public function getAdminById($id)
+    {
         $qAdmin = "SELECT P.*, A.current_account 
                    FROM profile_ P 
                    JOIN admin_ A ON P.profile_code = A.profile_code 
@@ -132,18 +153,17 @@ class ProfileDAO
             return $row;
         }
 
-        // 2. Intentar Usuario
-        $qUser = "SELECT P.*, U.card_no, U.gender 
-                  FROM profile_ P 
-                  JOIN user_ U ON P.profile_code = U.profile_code 
-                  WHERE P.profile_code = :id";
-        $stmt = $this->conn->prepare($qUser);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $row['role_type'] = 'user';
-            return $row;
+            return new Admin(
+                $row['profile_code'],
+                $row['email'],
+                $row['user_name'],
+                $row['pswd'], // El hash
+                $row['telephone'],
+                $row['name_'],
+                $row['surname'],
+                $row['current_account']
+            );
         }
         return null;
     }

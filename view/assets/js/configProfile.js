@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadMyProfile() {
         const response = await fetch('../../api/GetProfile.php');
-        const rawText = await response.text();
+        const rawText = await response.json();
         console.log(rawText);
         fetch('../../api/GetProfile.php')
             .then(r => r.json())
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     currentEditingUser.id = u.profile_code;
                     currentEditingUser.username = u.user_name;
 
-                    const isAdmin = (u.role_type === 'admin' || u.current_account);
+                    const isAdmin = (u.role === 'admin' || u.current_account);
                     
                     if(isAdmin) {
                         setValue('firstNameAdmin', u.name_);

@@ -125,11 +125,14 @@ class ProfileController
         return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
     }
 
-    public function getFullProfileData($id, $role) {
+    public function getProfile($id, $role) {
+    
     if ($role === 'admin') {
-        return $this->ProfileDAO->getAdminById($id); 
+        $data =$this->ProfileDAO->getAdminById($id);
+        return $data ? $data->toArray() : null;
     } else {
-        return $this->ProfileDAO->getUserById($id);
+        $data =$this->ProfileDAO->getUserById($id);
+        return $data ? $data->toArray() : null;
     }
 }
 }
