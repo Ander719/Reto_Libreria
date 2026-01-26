@@ -21,11 +21,15 @@ export async function loadHeader(filter) {
             window.location.href = document.referrer;
         }
     });
+    if (filter !== "main") {
+        searchGroup.style.display = "none";
+    }
 
     // Seleccionamos los elementos del DOM
     const welcomeText = document.querySelector('.welcome-text');
     const navItems = document.querySelectorAll('.nav-menu li');
-    console.log(navItems)
+    const searchGroup = document.querySelector('.search-group')
+    console.log(searchGroup);
     // navItems[0] es "Iniciar Sesión"
     // navItems[1] es "Opciones", navItems[2] es "Cerrar Sesión", etc.
     if (currentUser) {
@@ -55,4 +59,66 @@ export async function loadHeader(filter) {
             if (index > 0) item.hidden = true;
         });
     }
+}
+export function initSearchLogic() {
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clearBtn');
+    const suggestionsList = document.getElementById('suggestionsList');
+
+    // A. Evento al escribir (KEYUP)
+    searchInput.addEventListener('input', (e) => {
+        const query = searchInput.value.trim();
+
+        if (query.length > 0) {
+            updateSuggestions(query);
+        } else {
+            suggestionsList.classList.remove('active'); // Ocultar si está vacío
+            toggleSearchView(false); // Volver a home si borras todo
+        }
+
+    });
+    suggestionsList.addEventListener('click', (e) => {
+        // Buscamos el elemento .suggestion-item más cercano al click
+        const item = e.target.closest('.suggestion-item');
+        if (item) {
+            const title = item.getAttribute('data-title'); // Cogemos el título guardado
+
+            searchInput.value = title; // Ponemos el título en el input
+            suggestionsList.classList.remove('active'); // Ocultamos lista
+
+            performSearch(title); // Ejecutamos búsqueda oficial
+        }
+    });
+    document.addEventListener('click', (e) => {
+        const clickedInput = searchInput.contains(e.target);
+        const clickedSuggestions = suggestionsList.contains(e.target);
+
+        if (!clickedInput && !clickedSuggestions) {
+            suggestionsList.classList.remove('active');
+        } else if (clickedInput) {
+            if (searchInput.value.trim().length > 0) {
+                updateSuggestions(searchInput.value.trim());
+            }
+        }
+    });
+    // EXTRA: Si el usuario hace TAB hasta el input, también mostrar
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim().length > 0) {
+            updateSuggestions(searchInput.value.trim());
+        }
+    });
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            suggestionsList.classList.remove('active');
+            performSearch(searchInput.value);
+        }
+    });
+
+    // D. Evento botón X (Limpiar)
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        toggleSearchView(false); // Volver al inicio
+        searchInput.focus(); // Mantener foco
+    });
 }

@@ -1,5 +1,5 @@
 import { checkSession, currentUser } from './session.js';
-import { loadHeader } from './header.js';
+import { loadHeader, initSearchLogic} from './header.js';
 
 init();
 
@@ -21,69 +21,7 @@ async function init() {
 
     initSearchLogic();
 }
-// --- LÓGICA DEL BUSCADOR (ESTILO JAVAFX / REACTIVO) ---
-function initSearchLogic() {
-    const searchInput = document.getElementById('search-input');
-    const clearBtn = document.getElementById('clearBtn');
-    const suggestionsList = document.getElementById('suggestionsList');
 
-    // A. Evento al escribir (KEYUP)
-    searchInput.addEventListener('input', (e) => {
-        const query = searchInput.value.trim();
-
-        if (query.length > 0) {
-            updateSuggestions(query);
-        } else {
-            suggestionsList.classList.remove('active'); // Ocultar si está vacío
-            toggleSearchView(false); // Volver a home si borras todo
-        }
-
-    });
-    suggestionsList.addEventListener('click', (e) => {
-        // Buscamos el elemento .suggestion-item más cercano al click
-        const item = e.target.closest('.suggestion-item');
-        if (item) {
-            const title = item.getAttribute('data-title'); // Cogemos el título guardado
-
-            searchInput.value = title; // Ponemos el título en el input
-            suggestionsList.classList.remove('active'); // Ocultamos lista
-
-            performSearch(title); // Ejecutamos búsqueda oficial
-        }
-    });
-    document.addEventListener('click', (e) => {
-        const clickedInput = searchInput.contains(e.target);
-        const clickedSuggestions = suggestionsList.contains(e.target);
-
-        if (!clickedInput && !clickedSuggestions) {
-            suggestionsList.classList.remove('active');
-        } else if (clickedInput) {
-            if (searchInput.value.trim().length > 0) {
-                updateSuggestions(searchInput.value.trim());
-            }
-        }
-    });
-    // EXTRA: Si el usuario hace TAB hasta el input, también mostrar
-    searchInput.addEventListener('focus', () => {
-        if (searchInput.value.trim().length > 0) {
-            updateSuggestions(searchInput.value.trim());
-        }
-    });
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            suggestionsList.classList.remove('active');
-            performSearch(searchInput.value);
-        }
-    });
-
-    // D. Evento botón X (Limpiar)
-    clearBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        toggleSearchView(false); // Volver al inicio
-        searchInput.focus(); // Mantener foco
-    });
-}
 // --- FUNCIÓN PARA GENERAR SUGERENCIAS ---
 function updateSuggestions(term) {
     const suggestionsList = document.getElementById('suggestionsList');
@@ -204,8 +142,6 @@ async function cargarLibrosDesdeBD() {
 
     try {
         const response = await fetch('../../api/GetAllBooks.php'); // Tu nueva API
-        console.log(response);
-
         const rawText = await response.text();
 
         let data;
