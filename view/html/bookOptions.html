@@ -1,26 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Gestión de Libros</title>
+  <link rel="stylesheet" href="../assets/css/bookOptions.css">
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
 
+<body>
+  <header class="main-header">
+    <nav class="nav-container">
+      <a href="main.html" class="logo-link">
+        <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+      </a>
+
+      <div class="welcome-text">Bienvenido</div>
+
+      <div class="search-group">
+        <form id="searchForm">
+          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN">
+        </form>
+        <button class="search-clear-btn">x</button>
+      </div>
+
+      <ul class="nav-menu">
+        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
+        <li><a href="#" class="nav-link" id="opcionesLink">Opciones</a></li>
+        <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
+        <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
+      </ul>
+    </nav>
+  </header>
   <main class="books-page">
-    
-    <div class="books-topbar">
-      <div class="logo-diamond">logo</div>
-      <a href="opcAdmin.html" class="btn btn-secondary btn-sm">Return</a>
-    </div>
+
 
     <div class="books-actions">
-      <button class="btn btn-primary" onclick="window.location.href='crudBook.html?mode=create'">Añadir Libro</button>
-      
-      <button class="btn btn-secondary" onclick="window.location.href='crudBook.html?mode=edit'">Modificar Libro</button>
+      <a href="crudBook.html?mode=create" class="book-btn add">Añadir Libro</a>
+      <a href="crudBook.html?mode=edit" class="book-btn edit">Modificar Libro</a>
+
     </div>
 
   </main>
+<script type="module">
+        import { checkSession, currentUser, logout } from '../assets/js/session.js';
+        import { loadHeader } from '../assets/js/header.js';
 
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verificar que sea admin
+            await checkSession();
+            if (!currentUser || currentUser.role !== 'admin') {
+                window.location.href = 'main.html';
+                return;
+            }
+
+            // Configurar botón de cerrar sesión del header
+            const btnLogoutNav = document.getElementById('btnLogoutNav');
+            if(btnLogoutNav) {
+                btnLogoutNav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            loadHeader("bookOptions");
+        });
+    </script>
 </body>
+
 </html>

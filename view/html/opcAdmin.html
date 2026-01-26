@@ -5,103 +5,110 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style.css" />
-    <title>Panel de administración</title>
+    <link rel="stylesheet" href="../assets/css/opcAdmin.css" />
+    <title>Panel de Administración</title>
 </head>
 
 <body>
     <header class="main-header">
-    <nav class="nav-container">
-      <a href="main.html" class="logo-link">
-        <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
-      </a>
+        <nav class="nav-container">
+            <a href="main.html" class="logo-link">
+                <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+            </a>
+            <div class="welcome-text">Panel de Control</div>
+            <ul class="nav-menu">
+                <li><a href="main.html" class="nav-link">Ir a Tienda</a></li>
+                <li><a href="#" class="nav-link" id="btnLogoutNav">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
 
-      <div class="welcome-text">Bienvenido</div>
-
-      <div class="search-group">
-        <form id="searchForm">
-          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN">
-        </form>
-        <button class="search-clear-btn">x</button>
-      </div>
-
-      <ul class="nav-menu">
-        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
-        <li><a href="#" class="nav-link" id="opcionesLink">Opciones</a></li>
-        <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
-        <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
-      </ul>
-    </nav>
-  </header>
-
-    <main>
+    <main class="admin-main">
         <div class="admin-actions">
-            <button class="btn btn-primary" onclick="window.location.href='configProfile.html?mode=deleteUser'">Delete
-                User</button>
+            
+            <a href="bookOptions.html" class="admin-card">
+                <img src="../assets/img/book.svg" alt="Libros" class="card-icon">
+                <span class="card-title">Gestión de Libros</span>
+                <span class="card-desc">Añadir o editar libros de la tienda</span>
+            </a>
 
-            <button class="btn btn-secondary" onclick="window.location.href='deleteComment.html'">Eliminar
-                comentario</button>
+            <a href="configProfile.html?mode=modifyUser" class="admin-card">
+                <img src="../assets/img/edit.svg" alt="Editar Usuario" class="card-icon">
+                <span class="card-title">Modificar Usuarios</span>
+                <span class="card-desc">Editar datos de perfiles de clientes</span>
+            </a>
 
-            <button class="btn btn-primary" onclick="window.location.href='configProfile.html?mode=modifyUser'">Modify
-                User</button>
-            <button class="btn btn-secondary" onclick="window.location.href='bookOptions.html'">Libro</button>
+            <a href="configProfile.html?mode=deleteUser" class="admin-card">
+                <img src="../assets/img/trash.svg" alt="Borrar Usuario" class="card-icon">
+                <span class="card-title">Eliminar Usuarios</span>
+                <span class="card-desc">Borrar cuentas de forma permanente</span>
+            </a>
 
-            <button class="btn btn-primary" onclick="window.location.href='main.html'">Tienda</button>
-        </div>
+            <a href="deleteComment.html" class="admin-card">
+                <img src="../assets/img/deleteComments.svg" alt="Comentarios" class="card-icon">
+                <span class="card-title">Eliminar Comentarios</span>
+                <span class="card-desc">Elimina valoraciones de usuarios</span>
+            </a>
+
+            <a href="main.html" class="admin-card">
+                <img src="../assets/img/store.svg" alt="Tienda" class="card-icon">
+                <span class="card-title">Vista de Tienda</span>
+                <span class="card-desc">Volver a la página principal de la tienda</span>
+            </a>
+             
+            </div>
     </main>
 
     <footer>
-        <div class="brand-col">
-            <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
-            <p class="desc">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
-            </p>
-        </div>
-        <ul class="footerList">
-            <li class="listTitle">Contacto</li>
-            <li>Dirección: xxxxxxx, xxx, xxx</li>
-            <li>Teléfono: +34 678 439 478</li>
-            <li>Email: ejemplo@gmail.com</li>
-            <li>Horario: L-V 8:00-14:25</li>
-        </ul>
-        <ul>
-            <li class="listTitle">Enlaces útiles</li>
-            <li>Inicio</li>
-            <li>Servicios</li>
-            <li>Acerca de nosotros</li>
-        </ul>
-        <div class="map">
-            <p class="listTitle">Ubicacion</p>
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
-                width="300" height="200" style="border: 0" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
+    <div class="brand-col">
+      <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
+      <p class="desc">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
+      </p>
+    </div>
+    <ul class="footerList">
+      <li class="listTitle">Contacto</li>
+      <li>Dirección: xxxxxxx, xxx, xxx</li>
+      <li>Teléfono: +34 678 439 478</li>
+      <li>Email: ejemplo@gmail.com</li>
+      <li>Horario: L-V 8:00-14:25</li>
+    </ul>
+    <ul>
+      <li class="listTitle">Enlaces útiles</li>
+      <li>Inicio</li>
+      <li>Servicios</li>
+      <li>Acerca de nosotros</li>
+    </ul>
+    <div class="map">
+      <p class="listTitle">Ubicacion</p>
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
+        width="300" height="200" style="border: 0" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
         <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
-    </footer>
+    </div>
+  </footer>
+
     <script type="module">
-        import { loadHeader } from "../assets/js/header.js";
-        import { checkSession, currentUser } from '../assets/js/session.js';
+        import { checkSession, currentUser, logout } from '../assets/js/session.js';
 
-        (async () => {
-            // 2. Esperamos a que el servidor nos diga si hay sesión
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verificar que sea admin
             await checkSession();
-
-            // 3. Verificamos si NO hay usuario (currentUser será null si falla)
-            if (!currentUser) {
-                window.location.href = 'login.html';
-                return; // Importante: detener ejecución
-            }
-
-            // 4. Verificamos el ROL (sin paréntesis, es una propiedad)
-            if (currentUser.role !== 'admin') {
-                alert("Acceso denegado. Zona exclusiva para administradores.");
+            if (!currentUser || currentUser.role !== 'admin') {
                 window.location.href = 'main.html';
                 return;
             }
-            // 5. Si pasa los filtros, cargamos el header
-            loadHeader("admin");
-        })();
+
+            // Configurar botón de cerrar sesión del header
+            const btnLogoutNav = document.getElementById('btnLogoutNav');
+            if(btnLogoutNav) {
+                btnLogoutNav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        });
     </script>
 </body>
-
 </html>

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     // Cargar el header
-    await loadHeader(currentUser);
+    await loadHeader("bookDetails");
 
     // 1. Cargar detalles del libro (Tu lógica actual)...
     loadBookDetails(isbn);
@@ -127,96 +127,46 @@ async function loadBookDetails(isbn) {
         console.error("Error:", error);
     }
 }
-/*
-async function loadBookDetails(isbn) {
-    try {
-        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
-        if (!response.ok) throw new Error('Book not found');
 
-        const book = await response.json();
-
-        document.getElementById('bookTitle').innerText = book.title || "Untitled";
-
-        let authorName = "Unknown Author";
-        if (book.NameAuthor || book.LastName) {
-            authorName = `${book.NameAuthor || ''} ${book.LastName || ''}`.trim();
-        }
-        document.getElementById('bookAuthor').innerText = authorName;
-
-        document.getElementById('bookPrice').innerText = (book.price || 0) + "€";
-        document.getElementById('bookSynopsis').innerText = book.sipnosis || "No description available.";
-
-        document.getElementById('bookISBN').innerText = book.Isbn || isbn;
-        document.getElementById('bookPages').innerText = book.pages || "N/A";
-        document.getElementById('bookEditorial').innerText = book.editorial || "N/A";
-
-        const stockBadge = document.getElementById('stockBadge');
-        if (stockBadge) {
-            stockBadge.innerText = (book.stock > 0) ? "In Stock" : "Out of Stock";
-            stockBadge.className = (book.stock > 0) ? "stock-badge" : "stock-badge out-of-stock";
-        }
-
-        if (book.cover) {
-            if (book.cover.startsWith('http')) {
-                document.getElementById('bookCover').src = book.cover;
-            } else {
-                document.getElementById('bookCover').src = `../assets/img/${book.cover}`;
-            }
-        }
-
-    } catch (error) {
-        console.error("Error loading book details:", error);
-        document.getElementById('bookTitle').innerText = "Book not found";
-    }
-}
-*/
 function rellenarVista(libro) {
-    // A. Textos Básicos
     document.getElementById('bookTitle').textContent = libro.title || "Título Desconocido";
     document.getElementById('bookAuthor').textContent = (libro.name_author || "Autor Desconocido") + " " + (libro.last_name || "");
     document.getElementById('bookPrice').textContent = parseFloat(libro.price).toFixed(2) + "€";
     document.getElementById('bookSynopsis').textContent = libro.synopsis || "Sin descripción disponible.";
 
-    // B. Metadatos
     document.getElementById('bookISBN').textContent = libro.isbn;
     document.getElementById('bookPages').textContent = libro.pages;
     document.getElementById('bookEditorial').textContent = libro.editorial;
 
-    // C. Imagen (con fallback si falla)
     const img = document.getElementById('bookCover');
     img.src = libro.cover ? `../assets/img/covers/${libro.cover}` : "../assets/img/mood-heart.png"; console.log("Cargando imagen de portada:", img.src);
     img.alt = `Portada de ${libro.title}`;
 
-    // D. Lógica de Stock
     const badge = document.getElementById('stockBadge');
     const btnCart = document.getElementById('addToCartBtn');
     const qtyInput = document.getElementById('qtyInput');
 
     if (libro.stock > 0) {
         badge.textContent = "In Stock";
-        badge.className = "stock-badge success"; // Asegúrate de tener estilo verde en CSS
+        badge.className = "stock-badge success";
         badge.style.color = "green";
 
-        // Configurar máximo del input según stock real
         qtyInput.max = libro.stock;
     } else {
         badge.textContent = "Out of Stock";
         badge.className = "stock-badge error";
         badge.style.color = "red";
 
-        // Desactivar compra
         btnCart.disabled = true;
         btnCart.textContent = "Agotado";
         btnCart.style.backgroundColor = "#ccc";
         qtyInput.disabled = true;
     }
 
-    // E. Evento del Botón Añadir al Carrito
-    // CAMBIO: Cambiar texto del botón
+
     btnCart.textContent = "Comprar Ahora";
 
-    // E. NUEVO Evento de Compra Directa
-    // Clonamos el botón para borrar cualquier evento anterior (limpieza)
+
     const newBtn = btnCart.cloneNode(true);
     btnCart.parentNode.replaceChild(newBtn, btnCart);
 
@@ -226,17 +176,36 @@ function rellenarVista(libro) {
             return;
         }
 
+        const userCard = currentUser.card_no || currentUser.CardNo;
+
+        if (!userCard || userCard.trim() === "") {
+            const quiereAnadir = await showConfirm(
+                "Método de pago no encontrado",
+                "No tienes una tarjeta vinculada para realizar compras. ¿Quieres ir a tu perfil para añadir una ahora?",
+                "Sí, ir al perfil",
+                "No, volver a la tienda"
+            );
+
+            if (quiereAnadir) {
+                window.location.href = "configProfile.html";
+            } else {
+                window.location.href = "store.html";
+            }
+
+            return;
+        }
+
         const cantidad = parseInt(qtyInput.value);
 
         const aceptado = await showConfirm(
             "Confirmar Compra",
             "¿Estás seguro de que quieres comprar este libro?",
-            "Si, comprar",
+            "Sí, comprar",
             "Cancelar"
         );
 
         if (aceptado) {
-            const userId = currentUser.profile_code || currentUser.id;
+            const userId = getUserId(currentUser);
             comprarAhora(libro.isbn, cantidad, userId);
         }
     });
@@ -353,7 +322,6 @@ async function submitComment(e, user) {
 
 async function loadComments(isbn) {
     const commentsList = document.getElementById('commentsList');
-    // Usamos el ID del usuario actual si existe
     const myProfileCode = getUserId(currentUser);
 
     try {
@@ -364,68 +332,68 @@ async function loadComments(isbn) {
         try {
             comments = JSON.parse(rawText);
         } catch (error) {
-            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
-            commentsList.innerHTML = '<p class="error-msg">Error loading comments.</p>';
-            return; // Salimos de la función
+            console.error("❌ Error JSON del servidor:", rawText);
+            commentsList.innerHTML = '<p class="error-msg">Error cargando comentarios.</p>';
+            return;
         }
 
-        console.log("Datos recibidos del servidor:", comments);
+        console.log("📚 Comentarios recibidos:", comments);
         commentsList.innerHTML = '';
         let myReview = null;
 
         if (comments.length > 0) {
-            comments.forEach(c => {
+            comments.forEach((c, index) => {
                 const item = document.createElement('div');
                 item.classList.add('comment-item');
+                const authorId = c.profile_code;
 
-                // Comprobamos si este comentario es mío
-                const isMine = myProfileCode && (parseInt(c.PROFILE_CODE) === parseInt(myProfileCode));
-                console.log("Comentario recibido:", c);
+                const isMine = myProfileCode && authorId && (parseInt(authorId) === parseInt(myProfileCode));
+
                 if (isMine) myReview = c;
 
-                // Generamos los botones (Lápiz y Basura) solo si es mío
                 let buttonsHtml = '';
                 if (isMine) {
-                    // Escapamos las comillas simples para que no rompan el HTML del onclick
-                    const safeText = c.comment_text.replace(/'/g, "\\'");
+                    const safeText = c.comment_text ? c.comment_text.replace(/'/g, "\\'") : "";
                     buttonsHtml = `
                         <div class="comment-actions">
-                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Edit">✏️</button>
-                            <button onclick="deleteComment('${isbn}')" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Editar">✏️</button>
+                            <button onclick="deleteComment('${isbn}')" class="btn-icon btn-delete" title="Borrar">🗑️</button>
                         </div>
                     `;
                 }
 
+                const userName = c.user_name || c.USER_NAME || "Usuario";
+                const commentText = c.comment_text || c.COMMENT_TEXT || c.text || "";
+                const date = c.dateComent || c.DATE_COMENT || c.date || "";
+
                 item.innerHTML = `
                     ${buttonsHtml}
                     <p class="comment-header">
-                        ${c.USER_NAME} 
-                        <span class="comment-date">${c.dateComent}</span>
+                        ${userName} 
+                        <span class="comment-date">${date}</span>
                     </p>
-                    <div class="star-rating">${'⭐'.repeat(c.valoration)}</div>
-                    <p class="comment-text">${c.comment_text}</p> <div class="clear-fix"></div>
+                    <div class="star-rating">${'⭐'.repeat(c.valoration || 0)}</div>
+                    <p class="comment-text">${commentText}</p> 
+                    <div class="clear-fix"></div>
                 `;
                 commentsList.appendChild(item);
             });
         } else {
-            commentsList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to write one!</p>';
+            commentsList.innerHTML = '<p class="no-reviews">No hay reseñas todavía. ¡Sé el primero!</p>';
         }
 
-        // --- AQUÍ ESTÁ LA LÓGICA QUE PIDES ---
+        // Lógica del formulario (Ocultar si ya he comentado)
         const actionContainer = document.getElementById('userActionContainer');
-
         if (myReview) {
-            // SI YA COMENTÉ: Borro todo lo de abajo. Limpio total.
-            actionContainer.innerHTML = '';
+            actionContainer.innerHTML = '<p class="info-msg" style="text-align:center; padding:10px;">Ya has publicado una reseña para este libro.</p>';
         } else {
-            // SI NO HE COMENTADO: Muestro el formulario (si no está ya pintado)
             if (!document.getElementById('commentForm')) {
                 handleCommentSection();
             }
         }
 
     } catch (error) {
-        console.error(error);
+        console.error("Error fatal en loadComments:", error);
     }
 }
 
@@ -558,7 +526,7 @@ async function comprarAhora(isbn, quantity, userId) {
 // Función auxiliar para obtener el ID, venga como venga
 export function getUserId(user) {
     if (!user) return null;
-    return user.profile_code || user.id || user.PROFILE_CODE;
+    return user.profile_code;
 }
 
 

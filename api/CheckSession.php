@@ -1,21 +1,39 @@
 <?php
 // api/CheckSession.php
-session_start();
+require_once "../config/Session.php";
 header("Content-Type: application/json; charset=utf-8");
 
-// Verificamos si existe la variable 'user' que creó el AuthController en el Login
-if (isset($_SESSION['user'])) {
+// --- ¡ESTAS SON LAS LÍNEAS QUE FALTAN! ---
+// Sin esto, PHP no entiende el objeto de la sesión y toArray() falla.
+require_once '../model/entities/Profile.php';
+require_once '../model/entities/User.php';
+require_once '../model/entities/Admin.php'; // Si tienes admins
+// ------------------------------------------
 
-    // CASO 1: Hay sesión activa
+// Verificamos si existe la variable 'user' en la sesión
+if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+
+    $userData = $user;
+
+    if (is_object($user) && method_exists($user, 'toArray')) {
+        $userData = $user->toArray();
+    } elseif (is_object($user)) {
+        session_destroy();
+        echo json_encode(["success" => false, "error" => "Sesión antigua incompatible. Recarga."]);
+        exit();
+    }
+
     echo json_encode([
         "success" => true,
-        "user" => $_SESSION['user'] // Devolvemos el array de datos (id, nombre, rol...)
+        "user" => $userData
     ]);
-} else {
 
-    // CASO 2: No hay sesión (Visitante)
+} else {
+    // No hay sesión
     echo json_encode([
         "success" => false,
         "error" => "No hay sesión activa"
     ]);
 }
+?>
