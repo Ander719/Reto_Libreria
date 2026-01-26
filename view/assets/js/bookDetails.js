@@ -221,20 +221,35 @@ function handleCommentSection() {
     const loginPrompt = document.getElementById('loginPrompt');
     const formName = document.querySelector('#userActionContainer strong');
 
-    if (currentUser) {
+    // CAMBIO: Añadimos && !currentUser.isAdmin
+    if (currentUser && !currentUser.isAdmin) {
 
+        // --- USUARIO NORMAL: VE EL FORMULARIO ---
         actionContainer.hidden = false;
         loginPrompt.hidden = true;
 
         formName.textContent = currentUser.name;
 
-        // Listener
-        document.getElementById('commentForm').addEventListener('submit', (e) => submitComment(e, currentUser));
-        document.getElementById('cancelEditBtn').addEventListener('click', () => {
-            resetForm();
-        });
+        // Listener (usamos onclick para evitar acumulación de listeners si se llama varias veces)
+        const form = document.getElementById('commentForm');
+        if (form) {
+            form.onsubmit = (e) => submitComment(e, currentUser);
+        }
+
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        if (cancelBtn) {
+            cancelBtn.onclick = () => resetForm();
+        }
+
+    } else if (currentUser && currentUser.isAdmin) {
+
+        // --- ADMIN: NO VE NADA (Ni formulario, ni aviso de login) ---
+        actionContainer.hidden = true;
+        loginPrompt.hidden = true; // Opcional: Puedes ponerlo false y cambiar el texto a "Modo Admin"
 
     } else {
+
+        // --- NO LOGUEADO: VE EL AVISO DE "INICIA SESIÓN" ---
         actionContainer.hidden = true;
         loginPrompt.hidden = false;
     }
