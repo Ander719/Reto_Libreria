@@ -203,8 +203,7 @@
 /* --- La Imagen --- */
 .book-image-card {
   width: 100%;
-  height: 300px;
-  /* ALTURA FIJA: Crucial para la uniformidad */
+  aspect-ratio: 2/3;
   object-fit: cover;
   /* Evita que la imagen se estire o deforme, la recorta si es necesario */
   object-position: top center;

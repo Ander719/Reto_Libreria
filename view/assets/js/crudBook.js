@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleError(err) {
-        console.error(err);
+        console.error(err.message);
         alert("Error de conexión con la API.");
     }
 

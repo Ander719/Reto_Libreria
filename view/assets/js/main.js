@@ -172,16 +172,13 @@ function performSearch(term) {
 function toggleSearchView(isSearching) {
     const searchSection = document.getElementById('searchSection');
     const defaultSections = document.getElementById('defaultContent');
-    const clearBtn = document.getElementById('clearBtn');
 
     if (isSearching) {
         searchSection.style.display = 'block';
         defaultSections.style.display = 'none';
-        clearBtn.style.display = 'block'; // Mostrar la X
     } else {
         searchSection.style.display = 'none';
         defaultSections.style.display = 'block';
-        clearBtn.style.display = 'none'; // Ocultar la X si quieres
     }
 }
 
