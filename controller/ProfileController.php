@@ -1,18 +1,21 @@
 <?php
 require_once '../model/dao/ProfileDAO.php';
 
-class ProfileController {
+class ProfileController
+{
     private $ProfileDAO;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->ProfileDAO = new ProfileDAO();
     }
 
     // --- FUNCIONES DE USUARIO ---
-    public function loginUser($username, $password) {
-         // 1. SANITIZACIÓN Y VALIDACIÓN (Rúbrica IL8.4)
+    public function loginUser($username, $password)
+    {
+        // 1. SANITIZACIÓN Y VALIDACIÓN (Rúbrica IL8.4)
         $username = trim(htmlspecialchars($username));
-        
+
         if (empty($username) || empty($password)) {
             return ["success" => false, "error" => "Datos vacíos", "status_code" => 400];
         }
@@ -24,14 +27,13 @@ class ProfileController {
         // Si encontramos un admin, verificamos SU contraseña
         if ($admin && password_verify($password, $admin->getPswd())) {
             // Usamos toArray() que incluye el rol 'admin'
-            $_SESSION['user'] = $admin->toArray(); 
-            
-            return [
-                "success" => true, 
-                "role" => "admin", 
-                "user" => $admin->toArray(),
-                "status_code" => 200
+            $_SESSION['user'] = [
+                'profile_code' => $admin->getProfile_code(),
+                'user_name' => $admin->getUser_name(),
+                'role' => 'admin'
             ];
+
+            return ["success" => true, "role" => "admin" , "status_code" => 200];
         }
 
         // ---------------------------------------------------------
@@ -41,14 +43,12 @@ class ProfileController {
         $user = $this->ProfileDAO->findUserByUsername($username); // O findByUsername si lo dejaste así
 
         if ($user && password_verify($password, $user->getPswd())) {
-            $_SESSION['user'] = $user->toArray();
-            
-            return [
-                "success" => true, 
-                "role" => "user", 
-                "user" => $user->toArray(),
-                "status_code" => 200
+            $_SESSION['user'] = [
+                'profile_code' => $user->getProfile_code(), // O getId(), revisa tu modelo User
+                'user_name' => $user->getUser_name(),
+                'role' => 'user'
             ];
+            return ["success" => true, "role" => "user" , "status_code" => 200];
         }
 
         // ---------------------------------------------------------
@@ -57,10 +57,11 @@ class ProfileController {
         return ["success" => false, "error" => "Usuario o contraseña incorrectos", "status_code" => 401];
     }
 
-    public function register($username, $password) {
+    public function register($username, $password)
+    {
         // 1. Saneamiento (Rúbrica Seguridad)
         $username = trim(htmlspecialchars($username));
-        
+
         // 2. Validación de contraseña
         if (strlen($password) < 4) {
             return ["success" => false, "error" => "La contraseña debe tener al menos 4 caracteres"];
@@ -73,7 +74,7 @@ class ProfileController {
         // Pasamos el HASH, no la contraseña plana
         $resultado = $this->ProfileDAO->register($username, $passwordHash);
         // CASO 1: ÉXITO (Es un objeto)
-        if ($resultado instanceof User) { 
+        if ($resultado instanceof User) {
             // Iniciar sesión automáticamente tras registro (Opcional, pero recomendado)
             if (session_status() === PHP_SESSION_NONE) session_start();
             $_SESSION['user'] = $resultado->toArray();
@@ -84,12 +85,13 @@ class ProfileController {
         if ($resultado === "ERROR_DUPLICADO") {
             return ["success" => false, "error" => "Ese nombre de usuario ya está cogido."];
         }
-        
+
         // CASO 3: OTROS FALLOS
         return ["success" => false, "error" => "Error del sistema: " . $resultado];
     }
 
-     public function logout() {
+    public function logout()
+    {
         // 1. Iniciamos sesión solo si no está iniciada (para tener acceso a ella)
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -104,20 +106,30 @@ class ProfileController {
         return ["success" => true];
     }
 
-    public function get_all_users() { return $this->ProfileDAO->get_all_users(); }
-    public function delete_user($id) { return $this->ProfileDAO->delete_user($id); }
+    public function get_all_users()
+    {
+        return $this->ProfileDAO->get_all_users();
+    }
+    public function delete_user($id)
+    {
+        return $this->ProfileDAO->delete_user($id);
+    }
     //public function modifyPassword($profile_code, $password) { return $this->ProfileDAO->modifyPassword($profile_code, $password); }
-    
-    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code) {
+
+    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code)
+    {
         return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code);
     }
-    public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code) {
+    public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
+    {
         return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
     }
 
-    // --- NUEVO: NECESARIO PARA EL BOTÓN 'ADJUST DATA' ---
-    public function getUserData($id) {
-        // Esta función llama al modelo para obtener tus datos
+    public function getFullProfileData($id, $role) {
+    if ($role === 'admin') {
+        return $this->ProfileDAO->getAdminById($id); 
+    } else {
         return $this->ProfileDAO->getUserById($id);
     }
+}
 }

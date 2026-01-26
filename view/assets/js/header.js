@@ -21,15 +21,15 @@ export async function loadHeader(filter) {
             window.location.href = document.referrer;
         }
     });
-    if (filter !== "main") {
-        searchGroup.style.display = "none";
-    }
 
     // Seleccionamos los elementos del DOM
     const welcomeText = document.querySelector('.welcome-text');
     const navItems = document.querySelectorAll('.nav-menu li');
     const searchGroup = document.querySelector('.search-group')
-    console.log(searchGroup);
+    if (filter !== "main") {
+        searchGroup.style.display = "none";
+    }
+    //console.log(searchGroup);
     // navItems[0] es "Iniciar Sesión"
     // navItems[1] es "Opciones", navItems[2] es "Cerrar Sesión", etc.
     if (currentUser) {

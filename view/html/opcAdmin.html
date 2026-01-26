@@ -11,17 +11,30 @@
 
 <body>
     <header class="main-header">
-        <nav class="nav-container">
-            <a href="main.html" class="logo-link">
-                <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
-            </a>
-            <div class="welcome-text">Panel de Control</div>
-            <ul class="nav-menu">
-                <li><a href="main.html" class="nav-link">Ir a Tienda</a></li>
-                <li><a href="#" class="nav-link" id="btnLogoutNav">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
-    </header>
+    <nav class="nav-container">
+      <a href="main.html" class="logo-link">
+        <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+      </a>
+
+      <div class="welcome-text">Bienvenido</div>
+
+      <div class="search-group">
+        <form id="searchForm">
+          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN" autocomplete="off">
+          <div id="suggestionsList" class="suggestions-list"></div>
+        </form>
+        <button class="search-clear-btn" id="clearBtn">x</button>
+      </div>
+
+      <ul class="nav-menu">
+        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
+        <li><a href="#" class="nav-link" id="opcionesLink">Opciones</a></li>
+        <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
+        <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
+        <li><a href="#" class="nav-link">volver</a></li>
+      </ul>
+    </nav>
+  </header>
 
     <main class="admin-main">
         <div class="admin-actions">

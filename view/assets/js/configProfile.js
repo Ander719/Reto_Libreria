@@ -206,11 +206,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
     };
 
-    function loadMyProfile() {
+    async function loadMyProfile() {
+        const response = await fetch('../../api/GetProfile.php');
+        const rawText = await response.text();
+        console.log(rawText);
         fetch('../../api/GetProfile.php')
             .then(r => r.json())
             .then(data => {
-                if(data.exito && data.user) {
+                if(data.success && data.user) {
                     const u = data.user;
                     currentEditingUser.id = u.profile_code;
                     currentEditingUser.username = u.user_name;
