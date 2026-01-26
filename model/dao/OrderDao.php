@@ -62,5 +62,19 @@ class OrderDao {
             return false;
         }
     }
+    // Historial Compras
+    public function getOrdersByProfile($profileCode) {
+    $query = "SELECT o.id_order, o.date_buy, c.isbn, c.quantity, b.title, b.price, b.cover 
+              FROM order_ o
+              JOIN content_ c ON o.id_order = c.id_order
+              JOIN book_ b ON c.isbn = b.isbn
+              WHERE o.profile_code = :profile
+              ORDER BY o.date_buy DESC";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':profile', $profileCode);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>

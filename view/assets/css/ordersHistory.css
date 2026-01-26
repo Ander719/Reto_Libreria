@@ -1,0 +1,89 @@
+/* Estilos para el contenedor principal */
+#ordersContainer {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tarjeta de cada pedido */
+.order-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagen del libro */
+.order-item img {
+    width: 100px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Detalles del texto */
+.order-details {
+    flex-grow: 1;
+}
+
+.order-details h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.25rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.order-details p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.order-details strong {
+    color: #444;
+}
+
+/* Estilo para el precio total resaltado */
+.order-details p:last-child {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Mensaje de historial vacío */
+#ordersContainer > p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+    margin-top: 50px;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 600px) {
+    .order-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .order-item img {
+        width: 120px;
+        height: auto;
+    }
+}
