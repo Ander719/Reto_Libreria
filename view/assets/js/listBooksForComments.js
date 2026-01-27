@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function fetchBooks() {
-    // La ruta debe subir dos niveles para llegar a la carpeta 'api'
+    // La ruta sube dos niveles para llegar a la carpeta 'api' desde view/html/
     fetch('../../api/GetAllBooks.php')
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById('booksBody');
-            if (!tbody) return; // Seguridad si el elemento no existe
+            if (!tbody) return; 
 
             tbody.innerHTML = '';
 
@@ -19,12 +19,13 @@ function fetchBooks() {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td style="text-align:center;">
-                            <img src="../assets/img/covers/${book.cover}" width="50">
+                            <img src="../assets/img/covers/${book.cover}" class="book-cover-img" width="50" alt="Portada">
                         </td>
                         <td>${book.title}</td>
-                        <td>${book.isbn}</td>
-                        <td>
-                            <button onclick="verComentarios('${book.isbn}')">Ver Comentarios</button>
+                        <td style="text-align:center;">
+                            <button class="view-comments-btn" onclick="verComentarios('${book.isbn}')">
+                                Ver Comentarios
+                            </button>
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -35,6 +36,6 @@ function fetchBooks() {
 }
 
 function verComentarios(isbn) {
-    // Asegúrate de que el nombre del archivo sea viewComments.html
+    // Redirige a la página de visualización pasando el ISBN por la URL
     window.location.href = `viewComments.html?isbn=${isbn}`;
 }
