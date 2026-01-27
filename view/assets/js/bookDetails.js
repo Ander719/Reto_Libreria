@@ -221,8 +221,8 @@ function handleCommentSection() {
     const loginPrompt = document.getElementById('loginPrompt');
     const formName = document.querySelector('#userActionContainer strong');
 
-    // CAMBIO: Añadimos && !currentUser.isAdmin
-    if (currentUser && !currentUser.isAdmin) {
+    // CAMBIO: Añadimos && !currentUser.role === "admin"
+    if (currentUser && !currentUser.role === "admin") {
 
         // --- USUARIO NORMAL: VE EL FORMULARIO ---
         actionContainer.hidden = false;
@@ -241,7 +241,7 @@ function handleCommentSection() {
             cancelBtn.onclick = () => resetForm();
         }
 
-    } else if (currentUser && currentUser.isAdmin) {
+    } else if (currentUser && currentUser.role === "admin") {
 
         // --- ADMIN: NO VE NADA (Ni formulario, ni aviso de login) ---
         actionContainer.hidden = true;
@@ -357,7 +357,7 @@ async function loadComments(isbn) {
                 const authorId = c.profile_code || c.PROFILE_CODE;
                 const isMine = myProfileCode && authorId && (parseInt(authorId) === parseInt(myProfileCode));
                 // Verificamos si es Admin (flag enviado desde CheckSession.php)
-                const isAdmin = currentUser && currentUser.isAdmin === true;
+                const isAdmin = currentUser && currentUser.role === "admin";
 
                 if (isMine) myReview = c;
 
@@ -368,7 +368,8 @@ async function loadComments(isbn) {
                     // Escapamos comillas simples, dobles y saltos de línea para que no rompa el botón
                     const safeText = c.comment_text
                         ? c.comment_text.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')
-                        : ""; buttonsHtml = `
+                        : "";
+                        buttonsHtml = `
                         <div class="comment-actions">
                             <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Editar">✏️</button>
                             <button onclick="deleteComment('${isbn}', '${authorId}')" class="btn-icon btn-delete" title="Borrar">🗑️</button>

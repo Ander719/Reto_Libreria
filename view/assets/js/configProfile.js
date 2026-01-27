@@ -1,298 +1,292 @@
-import { checkSession, currentUser } from './session.js';
+import { checkSession } from './session.js';
 import { loadHeader } from './header.js';
 
-let currentEditingUser = {
-    id: null,
-    username: null
+const appState = { allUsers: [] };
+const getEl = (id) => document.getElementById(id);
+
+// Función segura para rellenar inputs
+const fill = (id, value) => {
+    const el = getEl(id);
+    if (el) el.value = (value === null || value === undefined) ? '' : value;
 };
 
+// ==========================================
+// 1. INICIALIZACIÓN
+// ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
-
-    // 1. Verificar sesión
     const isLogged = await checkSession();
-    if (!isLogged) {
-        window.location.href = 'login.html';
-    }
+    if (!isLogged) return window.location.href = 'login.html';
+
     loadHeader('configProfile');
+    setupEventListeners();
+    initAdminPanel();
+});
 
-    // --- REFERENCIAS ---
-    const adjustDataBtn = document.getElementById('adjustData');
-    const adminPanelSection = document.getElementById('adminPanelSection');
-    const tableBody = document.getElementById('adminTableBody');
-    const saveBtnUser = document.getElementById('saveBtnUser');
-    const saveBtnAdmin = document.getElementById('saveBtnAdmin');
-    
-    // Modales y Botones de Password
-    const verifyModal = document.getElementById('verifyPasswordModal');
-    const changeModal = document.getElementById('changePasswordModal');
-    const changePwdBtn = document.getElementById('changePwdBtn');
-    const changePwdBtnAdmin = document.getElementById('changePwdBtnAdmin');
-    const verifyForm = document.getElementById('verifyPasswordForm');
-    const changeForm = document.getElementById('changePasswordForm');
-    const btnCancelVerify = document.getElementById('btnCancelVerify');
-    
-    // Cerrar Modales
-    const closeUser = document.getElementById('closeUserModal');
-    const closeAdmin = document.getElementById('closeAdminModal');
-    const closeVerify = document.getElementById('closeVerifyModal');
-    const closeChange = document.getElementById('closeChangeModal');
-    const modifyUserPopup = document.getElementById('modifyUserPopupAdmin');
-    const modifyAdminPopup = document.getElementById('modifyAdminPopup');
+// ==========================================
+// 2. GESTIÓN DE EVENTOS
+// ==========================================
+function setupEventListeners() {
+    // Abrir Perfil Propio
+    const adjustBtn = getEl('adjustData');
+    if (adjustBtn) adjustBtn.onclick = (e) => { e.preventDefault(); loadMyProfile(); };
 
-    window.allUsers = [];
+    // Guardar Datos
+    const saveUserBtn = getEl('saveBtnUser');
+    const saveAdminBtn = getEl('saveBtnAdmin');
+    if (saveUserBtn) saveUserBtn.onclick = (e) => { e.preventDefault(); saveUserData('user'); };
+    if (saveAdminBtn) saveAdminBtn.onclick = (e) => { e.preventDefault(); saveUserData('admin'); };
 
-    // 2. INICIO
-    checkUserRole(); 
+    // Cerrar Modales DIV (Los Dialogs se cierran solos con command="close")
+    const closeUser = getEl('closeUserModal');
+    const closeAdmin = getEl('closeAdminModal');
+    if (closeUser) closeUser.onclick = () => toggleModal('modifyUserPopupAdmin', false);
+    if (closeAdmin) closeAdmin.onclick = () => toggleModal('modifyAdminPopup', false);
 
-    // 3. EVENTO MI PERFIL
-    if (adjustDataBtn) {
-        adjustDataBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if(saveBtnUser) saveBtnUser.removeAttribute('data-target-id');
-            if(saveBtnAdmin) saveBtnAdmin.removeAttribute('data-target-id');
-            loadMyProfile();
+    // Click en el fondo oscuro de los DIVs para cerrar
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            // Si el clic fue directamente en el fondo (overlay) y no en la tarjeta
+            if (e.target === overlay) {
+                overlay.style.display = 'none';
+            }
         });
+    });
+
+    // Abrir Modal de Contraseña (Dialog)
+    const pwdBtns = [getEl('changePwdBtn'), getEl('changePwdBtnAdmin')];
+    pwdBtns.forEach(btn => {
+        if (btn) btn.onclick = (e) => {
+            e.preventDefault();
+            fill('verifyCurrentPassword', '');
+            toggleModal('verifyPasswordModal', true);
+        };
+    });
+
+    setupPasswordLogic();
+}
+
+// ==========================================
+// 3. FUNCIÓN INTELIGENTE TOGGLE MODAL
+// ==========================================
+function toggleModal(id, show) {
+    const el = getEl(id);
+    if (!el) return;
+
+    // Detectamos si es un DIALOG nativo o un DIV clásico
+    if (el.tagName === 'DIALOG') {
+        if (show) {
+            if (!el.open) el.showModal();
+        } else {
+            el.close();
+        }
+    } else {
+        // Es un DIV
+        el.style.display = show ? 'flex' : 'none';
+    }
+}
+
+// ==========================================
+// 4. LOGICA DE PERFIL
+// ==========================================
+async function loadMyProfile() {
+    try {
+        const res = await fetch('../../api/GetProfile.php');
+        const data = await res.json();
+
+        if (data.success && data.user) {
+            const u = data.user;
+            //console.log(u);
+            const isAdmin = (data.role === 'admin');
+            const prefix = isAdmin ? 'Admin' : 'User';
+            const modalId = isAdmin ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
+
+            fillProfileForm(u, prefix);
+            
+            const saveBtn = getEl(isAdmin ? 'saveBtnAdmin' : 'saveBtnUser');
+            if (saveBtn) saveBtn.setAttribute('data-target-id', u.profile_code);
+
+            toggleModal(modalId, true);
+        }
+    } catch (err) { console.error(err); }
+}
+
+function fillProfileForm(u, prefix) {
+    fill(`firstName${prefix}`, u.name_);
+    fill(`lastName${prefix}`, u.surname);
+    fill(`email${prefix}`, u.email);
+    fill(`username${prefix}`, u.user_name);
+    fill(`phone${prefix}`, u.telephone);
+
+    if (prefix === 'Admin') {
+        fill('profileCodeAdmin', u.profile_code);
+        fill('currentAccountAdmin', u.current_account);
+    } else {
+        fill('cardNumberUser', u.card_no);
+        if (u.gender && getEl('genderUser')) getEl('genderUser').value = u.gender;
+    }
+}
+
+async function saveUserData(role) {
+    const suffix = role === 'admin' ? 'Admin' : 'User';
+    const saveBtn = getEl(role === 'admin' ? 'saveBtnAdmin' : 'saveBtnUser');
+    const targetId = saveBtn?.getAttribute('data-target-id');
+    const modalId = role === 'admin' ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
+
+    const formData = new FormData();
+    formData.append('target_id', targetId);
+    formData.append('role', role);
+    formData.append('name', getEl(`firstName${suffix}`).value);
+    formData.append('surname', getEl(`lastName${suffix}`).value);
+    formData.append('email', getEl(`email${suffix}`).value);
+    formData.append('username', getEl(`username${suffix}`).value);
+    formData.append('phone', getEl(`phone${suffix}`).value);
+
+    if (role === 'user') {
+        formData.append('cardNumber', getEl('cardNumberUser').value);
+        const gender = getEl('genderUser');
+        if (gender) formData.append('gender', gender.value);
+    } else {
+        formData.append('accountNumber', getEl('currentAccountAdmin').value);
     }
 
-    // 4. GUARDAR PERFIL
-    if (saveBtnUser) saveBtnUser.onclick = (e) => { e.preventDefault(); saveUserData('user'); };
-    if (saveBtnAdmin) saveBtnAdmin.onclick = (e) => { e.preventDefault(); saveUserData('admin'); };
+    try {
+        const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
+        const data = await res.json();
 
-    // ==========================================
-    // LÓGICA DE CONTRASEÑA (DOBLE PASO)
-    // ==========================================
-    
-    // A) Abrir Modal
-    const openVerifyModal = (e) => {
-        e.preventDefault();
-        if(document.getElementById('verifyCurrentPassword')) 
-            document.getElementById('verifyCurrentPassword').value = '';
-        if(verifyModal) verifyModal.style.display = 'flex';
-    };
+        if (data.exito || data.success) {
+            alert("Datos actualizados.");
+            toggleModal(modalId, false);
+            
+            if (getEl('adminPanelSection').style.display !== 'none') {
+                loadUsersTable();
+            }
+        } else {
+            alert("Error: " + data.error);
+        }
+    } catch (err) { console.error(err); }
+}
 
-    if(changePwdBtn) changePwdBtn.onclick = openVerifyModal;
-    if(changePwdBtnAdmin) changePwdBtnAdmin.onclick = openVerifyModal;
+// ==========================================
+// 5. PANEL ADMIN
+// ==========================================
+async function initAdminPanel() {
+    try {
+        const res = await fetch('../../api/CheckSession.php');
+        const data = await res.json();
+        if (data.success && (data.user.role === 'admin' || data.user.isAdmin)) {
+            const section = getEl('adminPanelSection');
+            if(section) section.style.display = 'flex';
+            loadUsersTable();
+        }
+    } catch (err) { console.error(err); }
+}
 
-    // B) Cerrar Modales
-    const closeModals = () => {
-        if(verifyModal) verifyModal.style.display = 'none';
-        if(changeModal) changeModal.style.display = 'none';
-    };
-    if(btnCancelVerify) btnCancelVerify.onclick = closeModals;
-    if(closeVerify) closeVerify.onclick = closeModals;
-    if(closeChange) closeChange.onclick = closeModals;
+async function loadUsersTable() {
+    const tbody = getEl('adminTableBody');
+    const template = getEl('userRowTemplate');
+    if (!tbody || !template) return;
 
-    // C) Paso 1: Verificar
-    if(verifyForm) {
+    try {
+        const res = await fetch('../../api/GetAllUsers.php');
+        const data = await res.json();
+        const users = data.resultado || data.users || [];
+        appState.allUsers = users;
+        tbody.innerHTML = '';
+
+        users.forEach((u, index) => {
+            const clone = template.content.cloneNode(true);
+            clone.querySelector('.col-username').textContent = u.user_name;
+            clone.querySelector('.col-fullname').textContent = `${u.name_} ${u.surname}`;
+            clone.querySelector('.col-email').textContent = u.email;
+
+            const btnEdit = clone.querySelector('.btn-edit');
+            const btnDel = clone.querySelector('.btn-delete');
+
+            if (btnEdit) btnEdit.onclick = () => prepareEditUser(index);
+            if (btnDel) btnDel.onclick = () => deleteUser(u.profile_code);
+
+            tbody.appendChild(clone);
+        });
+    } catch (err) { console.error(err); }
+}
+
+function prepareEditUser(index) {
+    const u = appState.allUsers[index];
+    if (!u) return;
+    fillProfileForm(u, 'User');
+    const saveBtn = getEl('saveBtnUser');
+    if (saveBtn) saveBtn.setAttribute('data-target-id', u.profile_code);
+    toggleModal('modifyUserPopupAdmin', true);
+}
+
+async function deleteUser(id) {
+    if (!confirm("¿Eliminar usuario?")) return;
+    try {
+        const res = await fetch('../../api/DeleteUser.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert("Usuario eliminado.");
+            loadUsersTable();
+        }
+    } catch (err) { console.error(err); }
+}
+
+// ==========================================
+// 6. CONTRASEÑAS (DIALOGS)
+// ==========================================
+function setupPasswordLogic() {
+    const verifyForm = getEl('verifyPasswordForm');
+    const changeForm = getEl('changePasswordForm');
+
+    if (verifyForm) {
         verifyForm.onsubmit = async (e) => {
             e.preventDefault();
-            const pass = document.getElementById('verifyCurrentPassword').value;
-            // Usamos el username global o el del input visible
-            let username = currentEditingUser.username || document.getElementById('usernameUser').value || document.getElementById('usernameAdmin').value;
-            
+            const pass = getEl('verifyCurrentPassword').value;
+            const username = getEl('usernameUser')?.value || getEl('usernameAdmin')?.value;
+
             try {
-                // Reutilizamos Login.php para verificar
                 const res = await fetch('../../api/Login.php', {
                     method: 'POST',
-                    body: JSON.stringify({ username: username, password: pass })
+                    body: JSON.stringify({ username, password: pass })
                 });
                 const data = await res.json();
-                
-                // Login.php devuelve 'success' o 'exito' dependiendo de tu versión, comprobamos ambos
+
                 if (data.success || data.exito) {
-                    verifyModal.style.display = 'none';
-                    document.getElementById('newPassword').value = '';
-                    document.getElementById('confirmNewPassword').value = '';
-                    changeModal.style.display = 'flex';
+                    toggleModal('verifyPasswordModal', false);
+                    fill('newPassword', '');
+                    fill('confirmNewPassword', '');
+                    toggleModal('changePasswordModal', true);
                 } else {
                     alert("Contraseña incorrecta.");
                 }
-            } catch (err) { console.error(err); alert("Error de conexión"); }
+            } catch (err) { console.error(err); }
         };
     }
 
-    // D) Paso 2: Cambiar
-    if(changeForm) {
+    if (changeForm) {
         changeForm.onsubmit = async (e) => {
             e.preventDefault();
-            const newP = document.getElementById('newPassword').value;
-            const confP = document.getElementById('confirmNewPassword').value;
-            
-            if(newP !== confP) return alert("Las contraseñas no coinciden");
-            if(newP.length < 4) return alert("Mínimo 4 caracteres");
+            const newP = getEl('newPassword').value;
+            const confP = getEl('confirmNewPassword').value;
+            const targetId = getEl('saveBtnUser')?.getAttribute('data-target-id') || getEl('saveBtnAdmin')?.getAttribute('data-target-id');
+
+            if (newP !== confP) return alert("No coinciden.");
             
             try {
                 const res = await fetch('../../api/ModifyPassword.php', {
                     method: 'POST',
-                    body: JSON.stringify({ profile_code: currentEditingUser.id, password: newP })
+                    body: JSON.stringify({ profile_code: targetId, password: newP })
                 });
                 const data = await res.json();
-                if(data.success) {
+                if (data.success) {
                     alert("Contraseña cambiada.");
-                    closeModals();
-                } else {
-                    alert("Error: " + data.error);
+                    toggleModal('changePasswordModal', false);
                 }
-            } catch(err) { console.error(err); }
+            } catch (err) { console.error(err); }
         };
     }
-
-    // ==========================================
-    // FUNCIONES AUXILIARES
-    // ==========================================
-
-    function checkUserRole() {
-        if(adminPanelSection) adminPanelSection.style.display = 'none';
-        const urlParams = new URLSearchParams(window.location.search);
-        const mode = urlParams.get('mode');
-
-        // CheckUserType.php debe devolver si es admin
-        fetch('../../api/CheckUserType.php', { credentials: 'include' })
-            .then(r => r.json())
-            .then(data => {
-                // Ajusta esto según lo que devuelva tu nuevo CheckUserType (isAdmin o role === 'admin')
-                if (data.isAdmin === true || (data.user && data.user.role === 'admin')) {
-                    if(adminPanelSection) {
-                        adminPanelSection.style.display = 'flex';
-                        loadUsers(mode);
-                    }
-                }
-            });
-    }
-
-    function loadUsers(mode) {
-        if (!tableBody) return;
-        tableBody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
-        
-        fetch('../../api/GetAllUsers.php')
-            .then(r => r.json())
-            .then(data => {
-                tableBody.innerHTML = '';
-                const users = data.resultado || data.users || []; // Ajustar según respuesta
-                window.allUsers = users;
-
-                users.forEach((u, index) => {
-                    const tr = document.createElement('tr');
-                    // Usamos profile_code (nueva BD)
-                    const uid = u.profile_code;
-                    const uname = u.user_name;
-                    
-                    let btns = '';
-                    if (mode === 'modifyUser') btns = `<button class="saveBtn" onclick="prepareEditUser(${index})">Edit</button>`;
-                    else if (mode === 'deleteUser') btns = `<button class="deleteBtn" style="color:red" onclick="deleteUser('${uid}')">Del</button>`;
-                    else btns = `<button class="saveBtn" onclick="prepareEditUser(${index})">Edit</button> <button class="deleteBtn" style="color:red" onclick="deleteUser('${uid}')">Del</button>`;
-
-                    tr.innerHTML = `<td>${uname}</td><td>${u.name_} ${u.surname}</td><td>${u.email}</td><td>${btns}</td>`;
-                    tableBody.appendChild(tr);
-                });
-            });
-    }
-
-    window.prepareEditUser = function(index) {
-        const u = window.allUsers[index];
-        if (!u) return;
-        
-        currentEditingUser.id = u.profile_code;
-        currentEditingUser.username = u.user_name;
-
-        setValue('firstNameUser', u.name_);
-        setValue('lastNameUser', u.surname);
-        setValue('emailUser', u.email);
-        setValue('usernameUser', u.user_name);
-        setValue('phoneUser', u.telephone);
-        setValue('cardNumberUser', u.card_no);
-        
-        if(saveBtnUser) saveBtnUser.setAttribute('data-target-id', u.profile_code);
-        document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
-    };
-
-    async function loadMyProfile() {
-        const response = await fetch('../../api/GetProfile.php');
-        const rawText = await response.json();
-        console.log(rawText);
-        fetch('../../api/GetProfile.php')
-            .then(r => r.json())
-            .then(data => {
-                if(data.success && data.user) {
-                    const u = data.user;
-                    currentEditingUser.id = u.profile_code;
-                    currentEditingUser.username = u.user_name;
-
-                    const isAdmin = (u.role === 'admin' || u.current_account);
-                    
-                    if(isAdmin) {
-                        setValue('firstNameAdmin', u.name_);
-                        setValue('lastNameAdmin', u.surname);
-                        setValue('emailAdmin', u.email);
-                        setValue('usernameAdmin', u.user_name);
-                        setValue('phoneAdmin', u.telephone);
-                        setValue('profileCodeAdmin', u.profile_code);
-                        setValue('currentAccountAdmin', u.current_account);
-                        if(saveBtnAdmin) saveBtnAdmin.setAttribute('data-target-id', u.profile_code);
-                        document.getElementById('modifyAdminPopup').style.display = 'flex';
-                    } else {
-                        setValue('firstNameUser', u.name_);
-                        setValue('lastNameUser', u.surname);
-                        setValue('emailUser', u.email);
-                        setValue('usernameUser', u.user_name);
-                        setValue('phoneUser', u.telephone);
-                        setValue('cardNumberUser', u.card_no);
-                        if(saveBtnUser) saveBtnUser.setAttribute('data-target-id', u.profile_code);
-                        document.getElementById('modifyUserPopupAdmin').style.display = 'flex';
-                    }
-                }
-            });
-    }
-
-    function saveUserData(role) {
-        let formData = new FormData();
-        let targetId = (role === 'admin') 
-            ? document.getElementById('saveBtnAdmin').getAttribute('data-target-id')
-            : document.getElementById('saveBtnUser').getAttribute('data-target-id');
-            
-        // ... (Tu lógica de FormData sigue igual, solo asegúrate de apuntar a los IDs correctos)
-        // Ejemplo simplificado:
-        if(role === 'user') {
-            formData.append('name', document.getElementById('firstNameUser').value);
-            formData.append('surname', document.getElementById('lastNameUser').value);
-            formData.append('email', document.getElementById('emailUser').value);
-            formData.append('username', document.getElementById('usernameUser').value);
-            formData.append('phone', document.getElementById('phoneUser').value);
-            formData.append('cardNumber', document.getElementById('cardNumberUser').value);
-            formData.append('gender', document.getElementById('genderUser') ? document.getElementById('genderUser').value : 'Other');
-        } else {
-             formData.append('name', document.getElementById('firstNameAdmin').value);
-             formData.append('surname', document.getElementById('lastNameAdmin').value);
-             formData.append('email', document.getElementById('emailAdmin').value);
-             formData.append('username', document.getElementById('usernameAdmin').value);
-             formData.append('phone', document.getElementById('phoneAdmin').value);
-             formData.append('accountNumber', document.getElementById('currentAccountAdmin').value);
-        }
-
-        if(targetId) formData.append('target_id', targetId);
-        formData.append('role', role);
-
-        fetch('../../api/ModifyUser.php', { method: 'POST', body: formData })
-            .then(r => r.json())
-            .then(data => {
-                if(data.exito) {
-                    alert("Guardado");
-                    document.getElementById('modifyUserPopupAdmin').style.display = 'none';
-                    document.getElementById('modifyAdminPopup').style.display = 'none';
-                    loadUsers(new URLSearchParams(window.location.search).get('mode'));
-                } else {
-                    alert("Error: " + data.error);
-                }
-            });
-    }
-    
-    function setValue(id, v) { 
-        const el = document.getElementById(id); 
-        if(el) el.value = v || ''; 
-    }
-    
-    // Cerrar Modales (X)
-    const closeMain = (m) => { if(m) m.style.display = 'none'; };
-    if(closeUser) closeUser.onclick = () => closeMain(modifyUserPopup);
-    if(closeAdmin) closeAdmin.onclick = () => closeMain(modifyAdminPopup);
-});
+}

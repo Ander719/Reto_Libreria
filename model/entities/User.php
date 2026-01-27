@@ -26,7 +26,7 @@ class User extends Profile {
     public function toArray() {
         $data = parent::toArray(); // Obtiene los datos básicos (Profile)
         $data['gender'] = $this->gender;
-        $data['card_number'] = $this->cardNumber;
+        $data['card_no'] = $this->cardNumber;
         $data['role'] = 'user'; // Útil para el frontend saber qué es
         return $data;
     }

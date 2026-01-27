@@ -38,7 +38,7 @@
             'user_name' => $this->user_name,
             'pswd' => $this->pswd, // experimental para debug
             'telephone' => $this->telephone,
-            'name' => $this->name_,
+            'name_' => $this->name_,
             'surname' => $this->surname
         ];
     }

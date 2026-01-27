@@ -149,11 +149,6 @@ class ProfileDAO
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $row['role_type'] = 'admin'; // Añadimos marca de rol manualmente
-            return $row;
-        }
-
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new Admin(
                 $row['profile_code'],
                 $row['email'],
