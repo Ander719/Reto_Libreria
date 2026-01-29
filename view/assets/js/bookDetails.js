@@ -197,8 +197,6 @@ function rellenarVista(libro) {
 
             if (quiereAnadir) {
                 window.location.href = "configProfile.html";
-            } else {
-                window.location.href = "store.html";
             }
 
             return;
