@@ -1,6 +1,18 @@
-// view/assets/js/listBooksForComments.js
+import { checkSession, currentUser } from './session.js';
+import { loadHeader} from './header.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async() => {
+    console.log("Verificando sesión con el servidor...");
+
+    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
+    const isLogged = await checkSession();
+
+    if (isLogged) {
+        console.log("Usuario logueado:", currentUser);
+    } else {
+        console.log("No hay sesión activa");
+    }
+    await loadHeader("opcAdmin");
     fetchBooks();
 });
 
@@ -39,3 +51,4 @@ function verComentarios(isbn) {
     // Redirige a la página de visualización pasando el ISBN por la URL
     window.location.href = `viewComments.html?isbn=${isbn}`;
 }
+window.verComentarios = verComentarios;

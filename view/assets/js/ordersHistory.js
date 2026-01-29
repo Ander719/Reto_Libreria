@@ -1,13 +1,18 @@
-import { currentUser, checkSession, logout } from './session.js';
+import { checkSession, currentUser } from './session.js';
+import { loadHeader} from './header.js';
 
-document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Verificar sesión
+document.addEventListener('DOMContentLoaded', async() => {
+    console.log("Verificando sesión con el servidor...");
+
+    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
-    
-    if (!isLogged) {
-        window.location.href = "login.html";
-        return;
+
+    if (isLogged) {
+        console.log("Usuario logueado:", currentUser);
+    } else {
+        console.log("No hay sesión activa");
     }
+    await loadHeader("configProfile");
 
     // 2. Mostrar nombre de usuario en el Header
     const welcomeLabel = document.getElementById('welcomeUser');
