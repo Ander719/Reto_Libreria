@@ -220,9 +220,8 @@ function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');
     const loginPrompt = document.getElementById('loginPrompt');
     const formName = document.querySelector('#userActionContainer strong');
-
     // CAMBIO: Añadimos && !currentUser.role === "admin"
-    if (currentUser && !currentUser.role === "admin") {
+    if (currentUser && currentUser.role !== "admin") {
 
         // --- USUARIO NORMAL: VE EL FORMULARIO ---
         actionContainer.hidden = false;
