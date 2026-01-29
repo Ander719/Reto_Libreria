@@ -354,7 +354,7 @@ async function loadComments(isbn) {
                 const item = document.createElement('div');
                 item.classList.add('comment-item');
 
-                const authorId = c.profile_code || c.PROFILE_CODE;
+                const authorId = c.profile_code;
                 const isMine = myProfileCode && authorId && (parseInt(authorId) === parseInt(myProfileCode));
                 // Verificamos si es Admin (flag enviado desde CheckSession.php)
                 const isAdmin = currentUser && currentUser.role === "admin";
