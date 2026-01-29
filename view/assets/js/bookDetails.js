@@ -175,9 +175,18 @@ function rellenarVista(libro) {
             showModal("Atención", "Debes iniciar sesión para comprar.");
             return;
         }
+        let userCard;
+        try {
+            const res = await fetch('../../api/GetProfile.php');
+            const data = await res.json();
 
-        const userCard = currentUser.card_no || currentUser.CardNo;
-
+            if (data.success && data.user) {
+                const u = data.user;
+                userCard = u.card_no || u.CardNo || u.CARD_NO || u.cardNo;
+            }
+        } catch (err) { console.error(err); }
+        // Intentamos leer la tarjeta con todas las variantes posibles de mayúsculas/minúsculas
+        console.log("Tarjeta del usuario:", userCard);
         if (!userCard || userCard.trim() === "") {
             const quiereAnadir = await showConfirm(
                 "Método de pago no encontrado",
@@ -219,222 +228,182 @@ function agregarAlCarrito(isbn, cantidad) {
 function handleCommentSection() {
     const actionContainer = document.getElementById('userActionContainer');
     const loginPrompt = document.getElementById('loginPrompt');
-    const formName = document.querySelector('#userActionContainer strong');
-    // CAMBIO: Añadimos && !currentUser.role === "admin"
-    if (currentUser && currentUser.role !== "admin") {
+    // Usamos el ID nuevo que pusimos en el HTML
+    const nameDisplay = document.getElementById('userNameDisplay');
 
-        // --- USUARIO NORMAL: VE EL FORMULARIO ---
+    // MODO DETECTIVE: Mira en la consola del navegador (F12) qué imprime esto
+    if (currentUser) console.log("Datos del usuario:", currentUser);
+
+    if (currentUser && currentUser.role !== "admin") {
         actionContainer.hidden = false;
         loginPrompt.hidden = true;
 
-        formName.textContent = currentUser.name;
+        // --- CORRECCIÓN AQUÍ ---
+        // Intentamos obtener el nombre de varias formas posibles por si acaso
+        const realName = currentUser.name || currentUser.user_name || currentUser.nombre || currentUser.username || "Usuario";
 
-        // Listener (usamos onclick para evitar acumulación de listeners si se llama varias veces)
-        const form = document.getElementById('commentForm');
-        if (form) {
-            form.onsubmit = (e) => submitComment(e, currentUser);
+        if (nameDisplay) {
+            nameDisplay.textContent = realName;
         }
+        // -----------------------
+
+        const form = document.getElementById('commentForm');
+        if (form) form.onsubmit = (e) => submitComment(e, currentUser);
 
         const cancelBtn = document.getElementById('cancelEditBtn');
-        if (cancelBtn) {
-            cancelBtn.onclick = () => resetForm();
-        }
+        if (cancelBtn) cancelBtn.onclick = () => resetForm();
 
     } else if (currentUser && currentUser.role === "admin") {
-
-        // --- ADMIN: NO VE NADA (Ni formulario, ni aviso de login) ---
         actionContainer.hidden = true;
-        loginPrompt.hidden = true; // Opcional: Puedes ponerlo false y cambiar el texto a "Modo Admin"
-
+        loginPrompt.hidden = true;
     } else {
-
-        // --- NO LOGUEADO: VE EL AVISO DE "INICIA SESIÓN" ---
         actionContainer.hidden = true;
         loginPrompt.hidden = false;
     }
 }
-
-async function submitComment(e, user) {
+async function submitComment(e) {
     e.preventDefault();
 
-    const rating = document.getElementById('ratingScore').value;
+    // Obtenemos el valor del select (que ahora puede ser "4.5")
+    const ratingInput = document.getElementById('ratingScore').value;
     const text = document.getElementById('commentBody').value;
-    const messageSpan = document.getElementById('formMessage');
-    const urlParams = new URLSearchParams(window.location.search);
-    const isbn = urlParams.get('isbn');
+    const msg = document.getElementById('formMessage');
+    const params = new URLSearchParams(window.location.search);
+    const isbn = params.get('isbn');
 
-    messageSpan.className = '';
-    messageSpan.innerText = '';
-    messageSpan.style.display = 'block';
-
-    if (!text || !isbn) {
-        messageSpan.innerText = "Please complete all fields.";
-        messageSpan.classList.add('msg-error');
+    if (!text) {
+        msg.textContent = "Por favor escribe una reseña.";
+        msg.className = "msg-error";
         return;
     }
 
-    console.log("🕵️ OBJETO USUARIO:", user);
-
-    const profileCode = getUserId(user);
-    // Comprobación de seguridad
-    if (!profileCode) {
-        console.error("❌ Error: No se encuentra el ID del usuario en:", user);
-        alert("Error de sesión. Por favor, recarga la página e inicia sesión de nuevo.");
-        return;
-    }
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
+    // CORRECCIÓN: Usamos parseFloat para permitir decimales (4.5)
     const payload = {
-        profileCode: profileCode,
+        profileCode: getUserId(currentUser),
         isbn: isbn,
         comment: text,
         text: text,
-        rating: rating,
-        valoration: rating,
+        rating: parseFloat(ratingInput),      // <--- IMPORTANTE: parseFloat
+        valoration: parseFloat(ratingInput),  // <--- IMPORTANTE: parseFloat
         date: new Date().toISOString().slice(0, 10)
     };
 
-    console.log("Sending payload:", payload);
-
     try {
-        const response = await fetch(url, {
+        const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        if (response.ok) {
-            messageSpan.innerText = isEditing ? "Updated successfully!" : "Posted successfully!";
-            messageSpan.classList.add('msg-success');
-
+        if (res.ok) {
+            msg.className = "msg-success";
+            msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
             resetForm();
             loadComments(isbn);
-
-            setTimeout(() => {
-                messageSpan.innerText = '';
-                messageSpan.className = '';
-            }, 3000);
-
+            setTimeout(() => msg.textContent = "", 3000);
         } else {
-            const errorText = await response.text();
-            console.error("Server Error:", errorText);
-
-            try {
-                const errJson = JSON.parse(errorText);
-                messageSpan.innerText = errJson.message || "Error saving review.";
-            } catch (e) {
-                messageSpan.innerText = "Error (Maybe duplicate review?)";
-            }
-            messageSpan.classList.add('msg-error');
+            const err = await res.json();
+            msg.className = "msg-error";
+            msg.textContent = err.message || "Error al guardar.";
         }
-    } catch (error) {
-        console.error(error);
-        messageSpan.innerText = "Connection error.";
-        messageSpan.classList.add('msg-error');
-    }
+    } catch (e) { console.error(e); }
 }
 
 // --- FUNCIÓN CORREGIDA Y ARREGLADA ---
 async function loadComments(isbn) {
-    const commentsList = document.getElementById('commentsList');
-    const myProfileCode = getUserId(currentUser);
+    const list = document.getElementById('commentsList');
+    const myId = getUserId(currentUser);
 
     try {
-        const response = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
-        const rawText = await response.text();
-        let comments;
-        try { comments = JSON.parse(rawText); } catch (e) { console.error("Error JSON", rawText); return; }
+        const res = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
+        const comments = await res.json(); // Si falla aquí, tu PHP devolvió error
 
-        commentsList.innerHTML = '';
+        list.innerHTML = "";
         let myReview = null;
 
-        if (comments.length > 0) {
-            comments.forEach((c) => {
-                const item = document.createElement('div');
-                item.classList.add('comment-item');
+        // --- ORDENAR: Mis comentarios primero ---
+        if (myId && comments.length > 0) {
+            comments.sort((a, b) => {
+                const idA = a.profile_code || a.PROFILE_CODE;
+                const idB = b.profile_code || b.PROFILE_CODE;
+                if (parseInt(idA) === parseInt(myId)) return -1;
+                if (parseInt(idB) === parseInt(myId)) return 1;
+                return 0;
+            });
+        }
+        // ----------------------------------------
 
-                const authorId = c.profile_code;
-                const isMine = myProfileCode && authorId && (parseInt(authorId) === parseInt(myProfileCode));
-                // Verificamos si es Admin (flag enviado desde CheckSession.php)
-                const isAdmin = currentUser && currentUser.role === "admin";
+        if (comments.length > 0) {
+            comments.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+
+                const authorId = c.profile_code || c.PROFILE_CODE;
+                const isMine = myId && authorId && (parseInt(authorId) === parseInt(myId));
+                const isAdmin = currentUser && currentUser.isAdmin === true;
 
                 if (isMine) myReview = c;
 
-                let buttonsHtml = '';
+                let btnHtml = "";
+                // Escapamos comillas para evitar errores en el botón editar
+                const safeText = (c.comment_text || "").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
 
-                // CASO 1: ES MÍO (Editar + Borrar)
                 if (isMine) {
-                    // Escapamos comillas simples, dobles y saltos de línea para que no rompa el botón
-                    const safeText = c.comment_text
-                        ? c.comment_text.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')
-                        : "";
-                        buttonsHtml = `
+                    btnHtml = `
                         <div class="comment-actions">
-                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon" title="Editar">✏️</button>
-                            <button onclick="deleteComment('${isbn}', '${authorId}')" class="btn-icon btn-delete" title="Borrar">🗑️</button>
-                        </div>
-                    `;
-                }
-                // CASO 2: SOY ADMIN Y NO ES MÍO (Solo Borrar)
-                else if (isAdmin) {
-                    buttonsHtml = `
+                            <button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon">✏️</button>
+                            <button onclick="deleteComment('${isbn}', '${authorId}')" class="btn-icon btn-delete">🗑️</button>
+                        </div>`;
+                } else if (isAdmin) {
+                    btnHtml = `
                         <div class="comment-actions">
-                            <button onclick="deleteComment('${isbn}', '${authorId}')" class="btn-icon btn-delete" title="Borrar como Admin">🗑️</button>
-                        </div>
-                    `;
+                            <button onclick="deleteComment('${isbn}', '${authorId}')" class="btn-icon btn-delete">🗑️</button>
+                        </div>`;
                 }
 
-                const userName = c.user_name || c.USER_NAME || "Usuario";
-                const commentText = c.comment_text || c.COMMENT_TEXT || "";
-                const date = c.dateComent || c.DATE_COMENT || "";
+                // --- AQUÍ ESTÁ EL CAMBIO DE LAS ESTRELLAS ---
+                // Usamos getStarHtml y parseFloat
+                const starsHtml = getStarHtml(parseFloat(c.valoration));
+                // --------------------------------------------
 
                 item.innerHTML = `
-                    ${buttonsHtml}
+                    ${btnHtml}
                     <div class="comment-header">
-                        <strong>${userName}</strong>
-                        <span class="comment-date">${date}</span>
+                        <strong>${c.user_name || "Usuario"}</strong>
+                        <span class="comment-date">${c.dateComent || ""}</span>
                     </div>
-                    <div class="star-rating">${'⭐'.repeat(c.valoration || 0)}</div>
-                    <p class="comment-text">${commentText}</p> 
+                    <div class="star-rating">${starsHtml}</div> <p class="comment-text">${c.comment_text || ""}</p>
                     <div class="clear-fix"></div>
                 `;
-                commentsList.appendChild(item);
+                list.appendChild(item);
             });
         } else {
-            commentsList.innerHTML = '<p class="no-reviews" style="text-align:center; color:#999;">No hay reseñas todavía.</p>';
+            list.innerHTML = "<p style='text-align:center'>Sin comentarios.</p>";
         }
 
-        // Ocultar formulario si ya he comentado (SIN BORRARLO)
+        // --- GESTIÓN DEL FORMULARIO (OCULTAR/MOSTRAR) ---
         const actionContainer = document.getElementById('userActionContainer');
         const form = document.getElementById('commentForm');
-
-        // 1. Limpiamos mensaje de "ya comentado" si existía de antes
         const msgExistente = document.getElementById('msg-review-exists');
         if (msgExistente) msgExistente.remove();
 
         if (myReview) {
-            // Si ya comenté: OCULTO el formulario (no lo borro)
             if (form) form.style.display = 'none';
-
-            // Y creo el mensaje de texto con un ID para poder quitarlo luego al editar
             const p = document.createElement('p');
             p.id = 'msg-review-exists';
             p.className = 'info-msg';
             p.style.cssText = "text-align:center; padding:10px; color:#28a745;";
             p.innerText = "Ya has publicado una reseña para este libro.";
             actionContainer.appendChild(p);
-
             actionContainer.hidden = false;
         } else {
-            // Si no he comentado: ASEGURO que se vea el formulario
             if (form) form.style.display = 'block';
-
-            // Si por algún casual no existe (primera carga sin login), lo generamos
             if (!form && currentUser) handleCommentSection();
         }
-    } catch (error) {
-        console.error("Error loadComments:", error);
-    }
+
+    } catch (e) { console.error(e); }
 }
 // --- FUNCIÓN DE BORRADO ---
 window.deleteComment = async function (isbn, targetProfileCode) {
@@ -478,34 +447,27 @@ window.startEdit = function (text, rating, doScroll = true) {
     const msg = document.getElementById('msg-review-exists');
     const container = document.getElementById('userActionContainer');
 
-    // 1. Si el formulario no existe (seguridad), recargamos
-    if (!form) {
-        console.error("Formulario no encontrado. Recargando...");
-        location.reload();
-        return;
-    }
+    if (!form) { location.reload(); return; }
 
-    // 2. Preparamos la vista: Ocultar mensaje de "Ya comentado", Mostrar form
+    // Restauramos vista
     if (msg) msg.style.display = 'none';
     form.style.display = 'block';
     container.hidden = false;
 
-    // 3. Rellenamos los datos
     document.getElementById('commentBody').value = text;
-    document.getElementById('ratingScore').value = parseInt(rating);
 
-    // 4. Ajustamos textos de botones
+    // CORRECCIÓN: Usamos parseFloat para que el select reconozca "4.5"
+    document.getElementById('ratingScore').value = parseFloat(rating);
+
     document.getElementById('formTitle').innerText = "Editar Reseña";
     document.getElementById('submitBtn').innerText = "Actualizar";
 
     const cancelBtn = document.getElementById('cancelEditBtn');
     cancelBtn.style.display = "inline-block";
 
-    // 5. Configurar botón Cancelar para restaurar el estado anterior
     cancelBtn.onclick = () => {
         isEditing = false;
         resetForm();
-        // Si había mensaje de "ya comentado", volvemos a mostrarlo y ocultamos form
         if (msg) {
             msg.style.display = 'block';
             form.style.display = 'none';
@@ -519,13 +481,14 @@ window.startEdit = function (text, rating, doScroll = true) {
 function resetForm() {
     isEditing = false;
     document.getElementById('commentBody').value = "";
-    document.getElementById('formTitle').innerText = "Write a Review";
-    document.getElementById('submitBtn').innerText = "Submit Review";
+    document.getElementById('formTitle').innerText = "Escribe una reseña"; // Español
+    document.getElementById('submitBtn').innerText = "Publicar Reseña";   // Español
     document.getElementById('cancelEditBtn').style.display = "none";
     document.getElementById('formMessage').innerText = "";
     document.getElementById('formMessage').className = "";
-}
 
+    setRating(5);
+}
 
 
 async function comprarAhora(isbn, quantity, userId) {
@@ -575,3 +538,91 @@ export function getUserId(user) {
 }
 
 
+
+// --- FUNCIÓN NUEVA: DIBUJAR ESTRELLAS ---
+function getStarHtml(rating) {
+    let html = '';
+    const fullStars = Math.floor(rating); // Parte entera (ej: 4.5 -> 4)
+    const hasHalf = (rating % 1) >= 0.5;  // ¿Tiene decimal? (ej: 4.5 -> true)
+
+    // Calculamos las vacías (Total 5 - llenas - media)
+    const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+
+    // 1. Estrellas enteras
+    for (let i = 0; i < fullStars; i++) {
+        html += '<span class="full">★</span>';
+    }
+    // 2. Media estrella (si aplica)
+    if (hasHalf) {
+        html += '<span class="half">★</span>';
+    }
+    // 3. Estrellas vacías
+    for (let i = 0; i < emptyStars; i++) {
+        html += '<span>★</span>';
+    }
+    return html;
+}
+
+
+
+// --- 1. FUNCIÓN AUXILIAR PARA MARCAR ESTRELLAS ---
+// Esta función se llama al hacer click en una estrella o desde startEdit
+window.setRating = function (val) {
+    // 1. Guardamos el valor numérico (ej: 4.5)
+    const hiddenInput = document.getElementById('ratingScore');
+    if (hiddenInput) hiddenInput.value = val;
+
+    // 2. Marcamos el radio button específico (ID dinámico st45, st3, st25...)
+    // Quitamos el punto del decimal para el ID: 4.5 -> st45, 4 -> st4
+    const starId = 'st' + val.toString().replace('.', '');
+    const radioBtn = document.getElementById(starId);
+    if (radioBtn) radioBtn.checked = true;
+
+    // 3. Actualizamos el texto visual de la nota
+    const textDiv = document.getElementById('rating-text');
+    if (textDiv) textDiv.innerText = val + "/5";
+};
+
+window.startEdit = function (text, rating, doScroll = true) {
+    isEditing = true;
+
+    const form = document.getElementById('commentForm');
+    const msg = document.getElementById('msg-review-exists');
+    const container = document.getElementById('userActionContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const formTitle = document.getElementById('formTitle');
+    const commentBody = document.getElementById('commentBody');
+    const cancelBtn = document.getElementById('cancelEditBtn');
+
+    if (!form) { location.reload(); return; }
+
+    if (msg) msg.style.display = 'none';
+    form.style.display = 'block';
+    container.hidden = false;
+
+    if (commentBody) commentBody.value = text;
+
+    // Llamamos a setRating con el float (ej: 4.5)
+    setRating(parseFloat(rating));
+
+    // TRADUCCIÓN AQUÍ
+    if (formTitle) formTitle.innerText = "Editar Reseña";
+    if (submitBtn) submitBtn.innerText = "Actualizar Reseña";
+
+    if (cancelBtn) {
+        cancelBtn.style.display = "inline-block";
+        cancelBtn.innerText = "Cancelar"; // Aseguramos español
+        cancelBtn.onclick = () => {
+            isEditing = false;
+            resetForm();
+            if (msg) {
+                msg.style.display = 'block';
+                form.style.display = 'none';
+            }
+        };
+    }
+
+    if (doScroll) {
+        container.scrollIntoView({ behavior: 'smooth' });
+    }
+};
