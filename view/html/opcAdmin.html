@@ -45,18 +45,12 @@
                 <span class="card-desc">Añadir o editar libros de la tienda</span>
             </a>
 
-            <a href="configProfile.html?mode=modifyUser" class="admin-card">
-                <img src="../assets/img/edit.svg" alt="Editar Usuario" class="card-icon">
-                <span class="card-title">Modificar Usuarios</span>
+            <a href="configProfile.html?" class="admin-card">
+                <img src="../assets/img/user.svg" alt="Editar Usuario" class="card-icon">
+                <span class="card-title">Gestionar Usuarios</span>
                 <span class="card-desc">Editar datos de perfiles de clientes</span>
             </a>
-
-            <a href="configProfile.html?mode=deleteUser" class="admin-card">
-                <img src="../assets/img/trash.svg" alt="Borrar Usuario" class="card-icon">
-                <span class="card-title">Eliminar Usuarios</span>
-                <span class="card-desc">Borrar cuentas de forma permanente</span>
-            </a>
-
+            
             <a href="deleteComment.html" class="admin-card">
                 <img src="../assets/img/deleteComments.svg" alt="Comentarios" class="card-icon">
                 <span class="card-title">Eliminar Comentarios</span>
@@ -76,7 +70,7 @@
     <div class="brand-col">
       <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
       <p class="desc">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
+       Donde cada página es un nuevo destino. En BOOK & BUGS, creemos que hay un libro perfecto para cada persona. Explora nuestra selección curada que va desde los clásicos que definieron épocas hasta los bestsellers que están marcando el hoy. Tu próxima gran historia te está esperando.
       </p>
     </div>
     <ul class="footerList">
@@ -104,6 +98,7 @@
 
     <script type="module">
         import { checkSession, currentUser, logout } from '../assets/js/session.js';
+        import{loadHeader} from '../assets/js/header.js';
 
         document.addEventListener('DOMContentLoaded', async () => {
             // Verificar que sea admin
@@ -112,6 +107,7 @@
                 window.location.href = 'main.html';
                 return;
             }
+            await loadHeader("opcAdmin");
 
             // Configurar botón de cerrar sesión del header
             const btnLogoutNav = document.getElementById('btnLogoutNav');
