@@ -39,7 +39,7 @@ CREATE TABLE book_ (
     id_author INT,
     pages INT,
     stock INT,
-    synopsis VARCHAR(300),
+    synopsis text,
     price FLOAT,
     editorial VARCHAR(100),
     cover VARCHAR(100),
@@ -68,7 +68,7 @@ CREATE TABLE content_ (
 CREATE TABLE comment_ (
     profile_code INT NOT NULL,
     isbn CHAR(13) NOT NULL,
-    comment_text VARCHAR(200),
+    comment_text text,
     valoration INT,
     date_comment DATE,
     PRIMARY KEY(profile_code, isbn),
@@ -94,19 +94,22 @@ INSERT INTO admin_ (profile_code, current_account) VALUES
 
 -- 3. Autores
 INSERT INTO author_ (id_author, name_author, last_name) VALUES
-(1, 'J.K.', 'Rowling'),
-(2, 'Miguel', 'de Cervantes'),
-(3, 'George', 'Orwell'),
-(4, 'Gabriel', 'García Márquez'),
-(5, 'Brandon', 'Sanderson');
+(1, null ,null),
+(2, 'J.K.', 'Rowling'),
+(3, 'Miguel', 'de Cervantes'),
+(4, 'George', 'Orwell'),
+(5, 'Gabriel', 'García Márquez'),
+(6, 'Brandon', 'Sanderson'),
+(7, 'Ayuto', 'Suzuki');
 
 -- 4. Libros
 INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) VALUES
-('9780439139595', 'Harry Potter y el Cáliz de Fuego', 1, 636, 10, 'Harry se enfrenta a desafíos mortales en el Torneo de los Tres Magos.', 22.50, 'Salamandra', 'hp4.jpg'),
-('9788420412146', 'Don Quijote de la Mancha', 2, 1345, 5, 'Las aventuras de un hidalgo que enloquece leyendo libros de caballerías.', 15.99, 'Alfaguara', 'quijote.jpg'),
-('9780451524935', '1984', 3, 328, 20, 'El Gran Hermano te vigila. Una distopía sobre el control total.', 12.00, 'Debolsillo', '1984.jpg'),
-('9780307474728', 'Cien años de soledad', 4, 471, 8, 'La saga de la familia Buendía en el pueblo mágico de Macondo.', 18.50, 'Cátedra', 'cien_anos.jpg'),
-('9788466657523', 'El Imperio Final', 5, 672, 12, 'En un mundo donde cae ceniza del cielo, un ladrón planea el robo definitivo.', 21.90, 'Nova', 'mistborn.jpg');
+('9780439139595', 'Harry Potter y el Cáliz de Fuego', 2, 636, 10, 'Harry se enfrenta a desafíos mortales en el Torneo de los Tres Magos.', 22.50, 'Salamandra', 'hp4.jpg'),
+('9788420412146', 'Don Quijote de la Mancha', 3, 1345, 5, 'Las aventuras de un hidalgo que enloquece leyendo libros de caballerías.', 15.99, 'Alfaguara', 'quijote.jpg'),
+('9780451524935', '1984', 4, 328, 20, 'El Gran Hermano te vigila. Una distopía sobre el control total.', 12.00, 'Debolsillo', '1984.jpg'),
+('9780307474728', 'Cien años de soledad', 5, 471, 8, 'La saga de la familia Buendía en el pueblo mágico de Macondo.', 18.50, 'Cátedra', 'cien_anos.jpg'),
+('9788419306074', 'SAKAMOTO DAYS 1', 7, 192, 20, 'Taro Sakamoto era un asesino a sueldo que lo dejó todo tras conocer a la mujer de su vida. Tiempo después, con una hija y unos cuantos kilos de más, vive una vida tranquila regentando un combini, aunque su instinto sigue intacto. Un antiguo compañero descubre su paradero y a partir de ahí, otros conocidos suyos y rivales empezarán a buscarlo para darle pasaporte al otro mundo de una vez. Con una familia y un negocio que proteger, la cosas se van a poner complicadas para Taro. Pero eso no es todo: entre otras muchas reglas que ha acordado con su mujer, Taro tiene prohibido volver a matar a nadie más! ¿Cómo se las apañará para proteger su pacífica vida con la que se le viene encima?', 7.60, 'Ivrea', 'sakamoto_days1.jpg'),
+('9788466657523', 'El Imperio Final', 6, 672, 12, 'En un mundo donde cae ceniza del cielo, un ladrón planea el robo definitivo.', 21.90, 'Nova', 'mistborn.jpg');
 
 -- 5. Pedidos
 INSERT INTO order_ (id_order, profile_code, date_buy, buyed) VALUES
