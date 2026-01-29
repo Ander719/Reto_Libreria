@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', async() => {
     if (isLogged) {
         console.log("Usuario logueado:", currentUser);
     } else {
-        console.log("No hay sesión activa");
+        console.log("No hay sesión activa, redirigiendo...");
+        window.location.href = 'login.html';
     }
     await loadHeader("deleteComment");
 

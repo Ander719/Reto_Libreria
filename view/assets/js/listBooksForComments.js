@@ -1,7 +1,7 @@
 import { checkSession, currentUser } from './session.js';
-import { loadHeader} from './header.js';
+import { loadHeader } from './header.js';
 
-document.addEventListener('DOMContentLoaded', async() => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log("Verificando sesión con el servidor...");
 
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', async() => {
     if (isLogged) {
         console.log("Usuario logueado:", currentUser);
     } else {
-        console.log("No hay sesión activa");
+        console.log("No hay sesión activa, redirigiendo...");
+        window.location.href = 'login.html';
     }
     await loadHeader("opcAdmin");
     fetchBooks();
@@ -22,7 +23,7 @@ function fetchBooks() {
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById('booksBody');
-            if (!tbody) return; 
+            if (!tbody) return;
 
             tbody.innerHTML = '';
 
