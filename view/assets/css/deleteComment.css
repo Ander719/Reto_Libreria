@@ -13,12 +13,12 @@ h2 {
 
 #booksTable {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse; /* Cambiado a collapse para que los bordes se vean correctamente */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-radius: 8px;
     overflow: hidden;
-    border: none;
+    margin-top: 20px;
+    border: 1px solid #ccc; /* Equivale al antiguo border="1" */
 }
 
 #booksTable th {
@@ -27,13 +27,15 @@ h2 {
     padding: 15px;
     text-transform: uppercase;
     font-size: 0.9rem;
+    border: 1px solid #eee;
 }
 
 #booksTable td {
     padding: 12px;
     text-align: center;
-    border-bottom: 1px solid #eee;
+    border: 1px solid #eee;
     background-color: white;
+    color: #444;
 }
 
 #booksTable tr:hover td {
@@ -47,24 +49,9 @@ h2 {
     border-radius: 4px;
 }
 
-/* Estilo para el botón de acción */
+/* Estilo para el botón de ver comentarios (Azul) */
 .view-comments-btn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.view-comments-btn:hover {
-    background-color: #c0392b;
-}
-
-/* Estilo para el botón de ver comentarios */
-.view-comments-btn {
-    background-color: #3498db; /* Azul para diferenciarlo de acciones de borrado */
+    background-color: #3498db;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -74,3 +61,16 @@ h2 {
     transition: background-color 0.3s ease, transform 0.2s;
 }
 
+.view-comments-btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+/* Estilo para ocultar el botón del diálogo por defecto */
+#confirmDialogBtn {
+    display: none;
+}
+
+#listTitle {
+    border: 0;
+}
