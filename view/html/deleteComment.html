@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book Details</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/deleteComment.css" />
     <script src="../assets/js/listBooksForComments.js"></script>
 </head>
 
@@ -27,7 +28,6 @@
             </div>
 
             <ul class="nav-menu">
-                <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
                 <li><a href="#" class="nav-link" id="opcionesLink">Opciones</a></li>
                 <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
                 <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
@@ -35,13 +35,11 @@
         </nav>
     </header>
     <main class="container">
-        <h2>Selecciona un libro para ver sus comentarios</h2>
         <table id="booksTable" border="1" style="width:100%; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th>Portada</th>
                     <th>Título</th>
-                    <th>ISBN</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -91,5 +89,17 @@
             </div>
         </div>
     </dialog>
+    <script type="module">
+        import { checkSession } from '../assets/js/session.js';
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const isLoggedIn = await checkSession();
+            if (!isLoggedIn) {
+                // Si no hay sesión, redirige al login
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
 </body>
+
 </html>

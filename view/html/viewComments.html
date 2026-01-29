@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Comentarios</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/viewComments.css" />
+    <script src="../assets/js/manageComments.js" defer></script>
 </head>
+
 <body>
+    <header class="main-header">
+        <nav class="nav-container">
+            <a href="main.html" class="logo-link">
+                <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+            </a>
+
+            <div class="welcome-text">Bienvenido</div>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
+                <li><a href="#" class="nav-link">Volver</a></li>
+            </ul>
+        </nav>
+    </header>
     <main class="container">
-        <h2>Comentarios del libro</h2>
-        <table border="1" id="commentsTable">
+        <table id="commentsTable" class="modern-table">
             <thead>
                 <tr>
                     <th>Usuario</th>
@@ -17,12 +34,38 @@
                 </tr>
             </thead>
             <tbody id="commentsBody">
-                </tbody>
+            </tbody>
         </table>
-        <br>
-        <a href="manageComments.html">Volver a libros</a>
     </main>
-
-    <script src="../assets/js/manageComments.js"></script>
+    <footer>
+        <div class="brand-col">
+            <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
+            <p class="desc">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
+            </p>
+        </div>
+        <ul class="footerList">
+            <li class="listTitle">Contacto</li>
+            <li>Dirección: xxxxxxx, xxx, xxx</li>
+            <li>Teléfono: +34 678 439 478</li>
+            <li>Email: ejemplo@gmail.com</li>
+            <li>Horario: L-V 8:00-14:25</li>
+        </ul>
+        <ul>
+            <li class="listTitle">Enlaces útiles</li>
+            <li>Inicio</li>
+            <li>Servicios</li>
+            <li>Acerca de nosotros</li>
+        </ul>
+        <div class="map">
+            <p class="listTitle">Ubicacion</p>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
+                width="300" height="200" style="border: 0" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
+    </footer>
 </body>
+
 </html>

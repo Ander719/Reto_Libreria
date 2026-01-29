@@ -19,18 +19,23 @@ function cargarComentarios(isbn) {
             
             tbody.innerHTML = '';
 
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3">No hay comentarios para este libro.</td></tr>';
+            // El API devuelve un array directamente
+            const comentarios = data;
+
+            if (!comentarios || comentarios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data">No hay comentarios para este libro.</td></tr>';
                 return;
             }
 
-            data.forEach(comment => {
+            comentarios.forEach(comment => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${comment.user_name}</td>
-                    <td>${comment.comment_text}</td>
+                    <td class="user-cell">${comment.user_name}</td>
+                    <td class="text-cell">${comment.comment_text}</td>
                     <td>
-                        <button onclick="eliminarComentario('${isbn}', '${comment.profile_code}')">Eliminar</button>
+                        <button class="delete-btn" onclick="eliminarComentario('${isbn}', '${comment.profile_code}')">
+                            Eliminar
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -44,13 +49,28 @@ function eliminarComentario(isbn, profileCode) {
         fetch('../../api/DeleteComment.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isbn: isbn, profileCode: profileCode })
+            body: JSON.stringify({ 
+                isbn: isbn, 
+                profileCode: profileCode 
+            })
         })
         .then(response => response.json())
         .then(result => {
-            alert(result.message);
-            location.reload(); // Recargar para ver los cambios
+            // Verificamos si la operación fue exitosa según la respuesta del servidor
+            if (result.success || result.message.includes("correctamente")) {
+                alert(result.message); 
+                
+                // RECARGA DINÁMICA: Volvemos a llamar a la función de carga.
+                // Esto limpia el tbody y vuelve a pedir los datos a la API,
+                // actualizando la tabla sin recargar la pestaña.
+                cargarComentarios(isbn); 
+            } else {
+                alert('Error: ' + result.message);
+            }
         })
-        .catch(error => console.error('Error al eliminar:', error));
+        .catch(error => {
+            console.error('Error al eliminar:', error);
+            alert('No se pudo eliminar el comentario.');
+        });
     }
 }
