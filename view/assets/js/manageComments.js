@@ -1,5 +1,19 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Obtener el ISBN de la URL
+import { checkSession, currentUser } from './session.js';
+import { loadHeader} from './header.js';
+
+document.addEventListener('DOMContentLoaded', async() => {
+    console.log("Verificando sesión con el servidor...");
+
+    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
+    const isLogged = await checkSession();
+
+    if (isLogged) {
+        console.log("Usuario logueado:", currentUser);
+    } else {
+        console.log("No hay sesión activa");
+    }
+    await loadHeader("deleteComment");
+
     const urlParams = new URLSearchParams(window.location.search);
     const isbn = urlParams.get('isbn');
 
@@ -74,3 +88,5 @@ function eliminarComentario(isbn, profileCode) {
         });
     }
 }
+window.eliminarComentario = eliminarComentario;
+window.cargarComentarios = cargarComentarios;
