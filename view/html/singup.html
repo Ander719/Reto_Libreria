@@ -1,53 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MyWebsite SignUp</title>
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <script type="module" src="../assets/js/signUp.js"></script>
-  </head>
-  <body>
-    <main class="container">
-      <section class="leftPanel">
-        <img src="../assets/img/mountainVertical.jpg" alt="Imagen de fondo" />
-      </section>
-      <section class="rightPanel">
-        <form class="loginForm" id="signupForm">
-          <h2>Create Account</h2>
-          <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Username"
-            required
-          />
-          <label for="pswd1">Password</label>
-          <input
-            type="password"
-            id="pswd1"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <label for="pswd2">Repeat Password</label>
-          <input
-            type="password"
-            id="pswd2"
-            name="password"
-            placeholder="Repeat password"
-            required
-          />
-          <button type="submit" class="btn btn-primary">Sign Up</button>
-          
-          <p class="registerLink">
-            Already have an account? <a href="login.html">Log In</a>
-          </p>
-          <br />
-          <h5 id="mensaje"></h5>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyWebsite SignUp</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script type="module" src="../assets/js/signUp.js"></script>
+</head>
+
+<body>
+  <header class="main-header">
+    <nav class="nav-container">
+      <a href="main.html" class="logo-link">
+        <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+      </a>
+
+      <div class="welcome-text">Bienvenido</div>
+
+      <div class="search-group">
+        <form id="searchForm">
+          <input type="text" id="search-input" placeholder="Buscar Titulo, Autor o ISBN" autocomplete="off">
+          <div id="suggestionsList" class="suggestions-list"></div>
         </form>
-      </section>
-    </main>
-  </body>
+        <button class="search-clear-btn" id="clearBtn">x</button>
+      </div>
+
+      <ul class="nav-menu">
+        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
+        <li><a href="#" class="nav-link" id="opcionesLink">Opciones</a></li>
+        <li><a href="#" class="nav-link" id="btnLogout">Cerrar Sesión</a></li>
+        <li><a href="ordersHistory.html" class="nav-link">Historial de Compras</a></li>
+        <li><a href="#" class="nav-link">volver</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    <section class="leftPanel">
+      <img src="../assets/img/mountainVertical.jpg" alt="Imagen de fondo" />
+    </section>
+    <section class="rightPanel">
+      <form class="loginForm" id="signupForm">
+        <h2>Create Account</h2>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Username" required />
+        <label for="pswd1">Password</label>
+        <input type="password" id="pswd1" name="password" placeholder="Password" required />
+        <label for="pswd2">Repeat Password</label>
+        <input type="password" id="pswd2" name="password" placeholder="Repeat password" required />
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+
+        <p class="registerLink">
+          Already have an account? <a href="login.html">Log In</a>
+        </p>
+        <br />
+        <h5 id="mensaje"></h5>
+      </form>
+    </section>
+  </main>
+  <footer>
+    <div class="brand-col">
+      <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
+      <p class="desc">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...
+      </p>
+    </div>
+    <ul class="footerList">
+      <li class="listTitle">Contacto</li>
+      <li>Dirección: xxxxxxx, xxx, xxx</li>
+      <li>Teléfono: +34 678 439 478</li>
+      <li>Email: ejemplo@gmail.com</li>
+      <li>Horario: L-V 8:00-14:25</li>
+    </ul>
+    <ul>
+      <li class="listTitle">Enlaces útiles</li>
+      <li>Inicio</li>
+      <li>Servicios</li>
+      <li>Acerca de nosotros</li>
+    </ul>
+    <div class="map">
+      <p class="listTitle">Ubicacion</p>
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4665578500917!2d-2.9767551238415364!3d43.30449177112096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4e5a896ea04725%3A0x42b47eab7fd92f60!2sC.%20Tartanga%2C%204%2C%2048950%20Erandio%2C%20Vizcaya!5e0!3m2!1ses!2ses!4v1761209636743!5m2!1ses!2ses"
+        width="300" height="200" style="border: 0" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
+  </footer>
+</body>
+
 </html>

@@ -42,7 +42,7 @@ export async function loadHeader(filter) {
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
-            if ((filter === "main" || filter === "admin") && index === 3) item.hidden = true;
+            if ((filter === "main" || filter === "opcadmin") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
             if (filter === "main" && index === 4) item.hidden = true;
         });
@@ -51,14 +51,20 @@ export async function loadHeader(filter) {
         // --- MODO VISITANTE ---
         welcomeText.textContent = "Bienvenido";
 
-        // Mostramos "Iniciar Sesión"
-        navItems[0].hidden = false;
+        // Por defecto solo mostramos "Iniciar Sesión"
+        showOnly([0]);
 
-        // Ocultamos las opciones privadas
-        navItems.forEach((item, index) => {
-            if (index > 0) item.hidden = true;
-        });
+        if (filter === "logInSignUp") {
+            // Mostramos solo el item 4
+            showOnly([4]);
+        }
     }
+}
+function showOnly(indices = []) {
+    const navItems = document.querySelectorAll('.nav-menu li');
+    navItems.forEach((item, index) => {
+        item.hidden = !indices.includes(index);
+    });
 }
 export function initSearchLogic() {
     const searchInput = document.getElementById('search-input');
