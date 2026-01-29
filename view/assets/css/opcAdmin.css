@@ -41,7 +41,7 @@ body, html { height: 100%; font-family: var(--font-family); background-color: va
 /* CONTENEDOR DE ACCIONES (5 en línea) */
 .admin-actions {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columnas fijas */
+  grid-template-columns: repeat(4, 1fr);
   gap: 15px;
   width: 98%;
   max-width: 1500px; /* Un poco más ancho para que quepan bien los iconos grandes */

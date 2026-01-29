@@ -1,17 +1,16 @@
-import { checkSession, currentUser } from './session.js';
+import { loadHeader } from './header.js';
+import { checkSession } from './session.js';
 
 init();
 
 async function init() {
   const isLogged = await checkSession();
 
+  await loadHeader("logInSignUp")
+
   if (isLogged) {
-    if (currentUser.rol === 'admin') {
-      window.location.replace("opcAdmin.html");
-    } else {
       window.location.replace("main.html");
-    }
-    return; // Detenemos la ejecución del script
+    return;
   }
 }
 

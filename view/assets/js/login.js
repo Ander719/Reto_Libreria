@@ -1,9 +1,12 @@
 import { checkSession } from "./session.js";
+import { loadHeader } from "./header.js"
 
 init();
 
 async function init() {
     const isLogged = await checkSession();
+
+    await loadHeader("logInSignUp");
 
     if (isLogged) {
         window.location.replace("main.html");

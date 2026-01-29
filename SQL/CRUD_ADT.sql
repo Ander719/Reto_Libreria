@@ -69,7 +69,7 @@ CREATE TABLE comment_ (
     profile_code INT NOT NULL,
     isbn CHAR(13) NOT NULL,
     comment_text text,
-    valoration INT,
+    valoration FLOAT,
     date_comment DATE,
     PRIMARY KEY(profile_code, isbn),
     FOREIGN KEY (isbn) REFERENCES book_(isbn) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -100,7 +100,9 @@ INSERT INTO author_ (id_author, name_author, last_name) VALUES
 (4, 'George', 'Orwell'),
 (5, 'Gabriel', 'García Márquez'),
 (6, 'Brandon', 'Sanderson'),
-(7, 'Ayuto', 'Suzuki');
+(7, 'Brandon', 'Sanderson'),
+(8, 'Fiódor', 'Dostoievski'),
+(9, 'Osamu', 'Dazai');
 
 -- 4. Libros
 INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) VALUES
@@ -108,6 +110,8 @@ INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editor
 ('9788420412146', 'Don Quijote de la Mancha', 3, 1345, 5, 'Las aventuras de un hidalgo que enloquece leyendo libros de caballerías.', 15.99, 'Alfaguara', 'quijote.jpg'),
 ('9780451524935', '1984', 4, 328, 20, 'El Gran Hermano te vigila. Una distopía sobre el control total.', 12.00, 'Debolsillo', '1984.jpg'),
 ('9780307474728', 'Cien años de soledad', 5, 471, 8, 'La saga de la familia Buendía en el pueblo mágico de Macondo.', 18.50, 'Cátedra', 'cien_anos.jpg'),
+('9788419035769', 'INDIGNO DE SER HUMANO', 9, 240, 10, 'Indigno de ser humano es la obra maestra de Osamu Dazai. Su protagonista Yozo, autorretrato crudo y revelador del propio Dazai, narra en primera persona las circunstancias de su vida desde su nacimiento en una familia de la aristocracia rural hasta su ruina y decadencia en Tokio. Un periplo vital que es un viaje sin retorno a través las sombras de la alienación, la adicción y la búsqueda incesante de identidad y que lleva a Yozo por sombríos callejones, antros de mala muerte y sórdidos rincones de la ciudad para acabar hundido sin remedio en el foso de la autodestrucción.Mientras Yozo busca consuelo y comprensión en un mundo que le resulta a la vez indiferente e implacable, Dazai elabora una narrativa que trasciende fronteras y sondea con amarga intuición los temas universales de la desesperación, el aislamiento y la angustia vital.', 22.80, 'Satori Ediciones', 'indigno_de_ser_humano.jpg'),
+('9788416440047', 'NOCHES BLANCAS', 8, 128, 30, 'Un joven solitario e introvertido narra cómo conoce de forma accidental a una muchacha durante una “noche blanca”, fenómeno que se da en la ciudad rusa durante la época del solsticio de verano y a causa del cual la oscuridad nunca es completa. Tras el primer encuentro, la pareja de desconocidos se citará durante las cuatro noches siguientes, noches en las que la chica, de nombre Nastenka, relatará su triste historia, y en las que harán acto de presencia, de forma sutil y envolvente, las grandes pasiones que mueven al ser humano: el amor, la ilusión, la esperanza, el desamor, el desengaño.', 17.10, 'Nórdica Libros', 'noches_blancas.jpg'),
 ('9788419306074', 'SAKAMOTO DAYS 1', 7, 192, 20, 'Taro Sakamoto era un asesino a sueldo que lo dejó todo tras conocer a la mujer de su vida. Tiempo después, con una hija y unos cuantos kilos de más, vive una vida tranquila regentando un combini, aunque su instinto sigue intacto. Un antiguo compañero descubre su paradero y a partir de ahí, otros conocidos suyos y rivales empezarán a buscarlo para darle pasaporte al otro mundo de una vez. Con una familia y un negocio que proteger, la cosas se van a poner complicadas para Taro. Pero eso no es todo: entre otras muchas reglas que ha acordado con su mujer, Taro tiene prohibido volver a matar a nadie más! ¿Cómo se las apañará para proteger su pacífica vida con la que se le viene encima?', 7.60, 'Ivrea', 'sakamoto_days1.jpg'),
 ('9788466657523', 'El Imperio Final', 6, 672, 12, 'En un mundo donde cae ceniza del cielo, un ladrón planea el robo definitivo.', 21.90, 'Nova', 'mistborn.jpg');
 
