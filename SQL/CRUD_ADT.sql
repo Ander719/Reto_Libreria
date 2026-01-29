@@ -69,7 +69,7 @@ CREATE TABLE comment_ (
     profile_code INT NOT NULL,
     isbn CHAR(13) NOT NULL,
     comment_text text,
-    valoration INT,
+    valoration FLOAT,
     date_comment DATE,
     PRIMARY KEY(profile_code, isbn),
     FOREIGN KEY (isbn) REFERENCES book_(isbn) ON UPDATE CASCADE ON DELETE CASCADE,
