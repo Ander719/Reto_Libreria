@@ -365,6 +365,10 @@ footer ul:not(.footerList) li:hover {
   color: #666;
 }
 
+#listTitle {
+    border: 0;
+}
+
 /* --- Responsive Design (Móvil y Tablet) --- */
 @media (max-width: 900px) {
   footer {
