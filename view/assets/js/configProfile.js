@@ -196,8 +196,8 @@ async function loadUsersTable() {
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
             clone.querySelector('.col-username').textContent = u.user_name;
-            clone.querySelector('.col-fullname').textContent = `${u.name_} ${u.surname}`;
-            clone.querySelector('.col-email').textContent = u.email;
+            clone.querySelector('.col-fullname').textContent = (u.name_ && u.surname) ? `${u.name_} ${u.surname}` : "";
+            clone.querySelector('.col-email').textContent = u.email ? u.email : "";
 
             const btnEdit = clone.querySelector('.btn-edit');
             const btnDel = clone.querySelector('.btn-delete');

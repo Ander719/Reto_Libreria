@@ -42,7 +42,7 @@ export async function loadHeader(filter) {
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
-            if ((filter === "main" || filter === "opcadmin") && index === 3) item.hidden = true;
+            if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment" || filter === "configProfile") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
             if (filter === "main" && index === 4) item.hidden = true;
         });
@@ -127,4 +127,101 @@ export function initSearchLogic() {
         toggleSearchView(false); // Volver al inicio
         searchInput.focus(); // Mantener foco
     });
+}
+// --- FUNCIÓN PARA GENERAR SUGERENCIAS ---
+function updateSuggestions(term) {
+    const suggestionsList = document.getElementById('suggestionsList');
+    term = term.toLowerCase();
+
+    // 1. Filtrar libros (Igual que en performSearch)
+    const matches = globalBooks.filter(book => {
+        const title = book.title.toLowerCase();
+        const isbn = book.isbn.toLowerCase();
+        const authorName = book.author ? (book.author.name + " " + book.author.lastname).toLowerCase() : "";
+
+        // Coincide con cualquiera de los 3
+        return title.includes(term) || isbn.includes(term) || authorName.includes(term);
+    });
+
+    // 2. Extraer SOLO TÍTULOS ÚNICOS
+    // Usamos Set para eliminar duplicados si hubiera libros con mismo nombre
+    const uniqueTitles = [...new Set(matches.map(book => book.title))];
+
+    // 3. Limitar a 5 o 6 sugerencias (para no llenar la pantalla)
+    const topSuggestions = uniqueTitles.slice(0, 6);
+
+    // 4. Renderizar HTML
+    if (topSuggestions.length > 0) {
+        suggestionsList.innerHTML = topSuggestions.map(title => `
+            <div class="suggestion-item" data-title="${title}">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>${highlightMatch(title, term)}</span>
+            </div>
+        `).join('');
+
+        suggestionsList.classList.add('active'); // Mostrar lista
+    } else {
+        suggestionsList.classList.remove('active'); // Ocultar si no hay nada
+    }
+}
+
+// (Opcional) Función para poner en negrita la parte que coincide
+function highlightMatch(text, term) {
+    const regex = new RegExp(`(${term})`, 'gi');
+    return text.replace(regex, '<b>$1</b>');
+}
+function performSearch(term) {
+    if (!term) return;
+    term = term.toLowerCase();
+
+    console.log("Buscando:", term);
+
+    // 1. Filtramos el array global
+    const results = globalBooks.filter(book => {
+        // Datos a buscar
+        const title = book.title.toLowerCase();
+        const isbn = book.isbn.toLowerCase();
+        // Cuidado con author, verifica si es objeto o string en tu JSON final
+        // Si tu JSON devuelve author: {name: '...', lastname: '...'}
+        const authorName = (book.author.name + " " + book.author.lastname).toLowerCase();
+
+        return title.includes(term) || isbn.includes(term) || authorName.includes(term);
+    });
+
+    // 2. RENDERIZADO EXCLUSIVO PARA BÚSQUEDA (Aquí estaba el fallo)
+    // No llamamos a renderizarLibros(), lo hacemos manualmente en el contenedor de búsqueda
+    const container = document.getElementById('searchResultsContainer'); // Asegúrate de tener este ID en tu HTML (div oculto searchSection)
+    const template = document.getElementById('book-card-template');
+
+    // Limpiamos resultados anteriores
+    container.innerHTML = '';
+
+    // Reutilizamos tu función 'renderCard' que funciona bien
+    results.forEach(libro => {
+        renderCard(libro, container, template);
+    });
+
+    // 3. Manejo de "Sin resultados"
+    const noResults = document.getElementById('noResultsMessage');
+    if (results.length === 0) {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+
+    // 4. Cambiamos la vista
+    toggleSearchView(true);
+}
+
+function toggleSearchView(isSearching) {
+    const searchSection = document.getElementById('searchSection');
+    const defaultSections = document.getElementById('defaultContent');
+
+    if (isSearching) {
+        searchSection.style.display = 'block';
+        defaultSections.style.display = 'none';
+    } else {
+        searchSection.style.display = 'none';
+        defaultSections.style.display = 'block';
+    }
 }
