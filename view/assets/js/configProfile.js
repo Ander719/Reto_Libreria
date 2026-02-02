@@ -1,5 +1,5 @@
 import { checkSession } from './session.js';
-import { loadHeader } from './header.js';
+import { loadHeader, loadFooter } from './header.js';
 
 const appState = { allUsers: [] };
 const getEl = (id) => document.getElementById(id);
@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isLogged = await checkSession();
     if (!isLogged) return window.location.href = 'login.html';
 
-    loadHeader('configProfile');
+    await loadHeader('configProfile');
+    await loadFooter();
     setupEventListeners();
     initAdminPanel();
 });

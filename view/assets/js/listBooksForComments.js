@@ -1,5 +1,5 @@
 import { checkSession, currentUser } from './session.js';
-import { loadHeader } from './header.js';
+import { loadHeader, loadFooter } from './header.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Verificando sesión con el servidor...");
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'login.html';
     }
     await loadHeader("opcAdmin");
+    await loadFooter();
     fetchBooks();
 });
 

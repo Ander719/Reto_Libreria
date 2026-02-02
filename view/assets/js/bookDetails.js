@@ -1,5 +1,5 @@
 import { currentUser, checkSession } from './session.js';
-import { loadHeader } from './header.js';
+import { loadHeader,loadFooter } from './header.js';
 let isEditing = false;
 
 // --- CONFIGURACIÓN DEL MODAL ---
@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     // Cargar el header
     await loadHeader("bookDetails");
+    await loadFooter();
 
     // 1. Cargar detalles del libro (Tu lógica actual)...
     loadBookDetails(isbn);
