@@ -1,64 +1,51 @@
 <?php
-class Coment
-{
-    public  $profile_code;
-    public  $isbn;
-    public  $coment;
-    public  $valoration;
-    public  $dateComent; // YYYY-MM-DD
+class Comment {
+    private $profileCode;
+    private $isbn;
+    private $commentText;
+    private $rating;
+    private $dateComment;
 
-    public function __construct( $profile_code = null, $isbn = null,  $coment = null,  $valoration = null, $dateComent = null)
-    {
-        if ($profile_code !== null) $this->profile_code = $profile_code;
-        if ($isbn !== null) $this->isbn = $isbn;
-
-        $this->coment = $coment;
-        $this->valoration = $valoration;
-        $this->dateComent = $dateComent;
-    }
-
-    public function getProfileCode()
-    {
-        return $this->profile_code;
-    }
-
-    public function setProfileCode( $profile_code)
-    {
-        $this->profile_code = $profile_code;
-    }
-
-    public function getIsbn()
-    {
-        return $this->isbn;
-    }
-
-    public function setIsbn( $isbn)
-    {
+    public function __construct($profileCode = null, $isbn = null, $commentText = null, $rating = null, $dateComment = null) {
+        $this->profileCode = $profileCode;
         $this->isbn = $isbn;
+        $this->commentText = $commentText;
+        $this->rating = $rating;
+        $this->dateComment = $dateComment;
     }
 
-    public function getComent()
-    {
-        return $this->coment;
-    }
-    public function setComent( $coment)
-    {
-        $this->coment = $coment;
-    }
-    public function getValoration()
-    {
-        return $this->valoration;
-    }
-    public function setValoration( $valoration)
-    {
-        $this->valoration = $valoration;
-    }
-    public function getDateComent()
-    {
-        return $this->dateComent;
-    }
-    public function setDateComent( $dateComent)
-    {
-        $this->dateComent = $dateComent;
-    }
+    // Getters
+    public function getProfileCode() {
+         return $this->profileCode; 
+        }
+    public function getIsbn() {
+         return $this->isbn; 
+        }
+    public function getCommentText() {
+         return $this->commentText; 
+        }
+    public function getRating() {
+         return $this->rating; 
+        }
+    public function getDateComment() {
+         return $this->dateComment; 
+        }
+
+    // Setters
+    public function setProfileCode($profileCode) {
+         $this->profileCode = $profileCode; 
+        }
+    public function setIsbn($isbn) {
+         $this->isbn = $isbn; 
+        }
+    public function setCommentText($commentText) {
+         $this->commentText = $commentText; 
+        }
+    public function setRating($rating) {
+         $this->rating = $rating; 
+        }
+    public function setDateComment($dateComment) {
+         $this->dateComment = $dateComment; 
+        }
 }
+?>
