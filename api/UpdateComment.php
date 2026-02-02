@@ -9,7 +9,7 @@ include_once '../model/entities/Comment.php';
 $commentDAO = new CommentDAO();
 $data = json_decode(file_get_contents("php://input"));
 
-// Tu JS envía 'text' y 'rating' cuando edita
+// Tu JS envía 'text' y 'rating' cuando edito
 if(
     !empty($data->isbn) && 
     !empty($data->profileCode) && 
