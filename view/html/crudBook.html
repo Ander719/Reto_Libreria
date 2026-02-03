@@ -12,21 +12,20 @@
 <body>
     <main class="books-page">
         <div class="books-topbar">
-            <h2 id="pageTitle">Gestión de Libro</h2> 
+            <h2 id="pageTitle">Gestión de Libro</h2>
             <a href="bookOptions.html" class="btn btn-secondary btn-sm">Volver</a>
         </div>
 
         <div class="crud-container"
             style="max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; border: 1px solid #ddd;">
 
-            <div id="searchSection"
-                style="display:none; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 20px;">
-                <label for="searchIsbn">Introduce el ISBN del libro:</label>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <input type="text" id="searchIsbn" placeholder="Ej: 978-3-16-148410-0" style="margin-bottom:0;">
-                    <button id="btnSearch" class="btn btn-secondary btn-sm">Buscar</button>
-                </div>
-                <p id="searchMessage" style="color: red; margin-top: 5px;"></p>
+            <div id="searchSection" style="display: none;">
+                <label for="searchIsbn">Seleccionar Libro:</label>
+                <select id="searchIsbn" class="form-control">
+                    <option value="">-- Seleccione un libro --</option>
+                </select>
+                <button type="button" id="btnSearch" class="btn-primary">Cargar Datos</button>
+                <p id="searchMessage" class="error-msg"></p>
             </div>
 
             <form id="bookForm" class="profileForm">
@@ -72,7 +71,8 @@
 
                         <div class="drop-zone" id="dropZone">
                             <span class="drop-zone__prompt">Arrastra la imagen aquí o haz clic para buscar</span>
-                            <input type="file" name="coverFile" class="drop-zone__input" id="coverInput" accept="image/*">
+                            <input type="file" name="coverFile" class="drop-zone__input" id="coverInput"
+                                accept="image/*">
                         </div>
                         <input type="hidden" id="cover" name="cover">
                     </div>
@@ -92,4 +92,5 @@
 
     <script src="../assets/js/crudBook.js"></script>
 </body>
+
 </html>

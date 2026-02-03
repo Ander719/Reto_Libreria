@@ -8,9 +8,9 @@ $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 
 $controller = new ProfileController();
-
+// El método loginUser ya devuelve un array con 'success' y 'status_code'
 $response = $controller->loginUser($username, $password);
 
-// Devolvemos respuesta estandarizada (Rúbrica IL8.2)
 http_response_code($response['status_code']); 
 echo json_encode($response);
+?>

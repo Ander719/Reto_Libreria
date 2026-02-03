@@ -1,8 +1,9 @@
+// view/assets/js/crudBook.js
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Referencias
+    // Referencias al DOM
     const pageTitle = document.getElementById('pageTitle');
     const searchSection = document.getElementById('searchSection');
     const actionBtn = document.getElementById('actionBtn');
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formInputs = document.querySelectorAll('#bookForm input:not(#isbn), #bookForm textarea');
     const msgSearch = document.getElementById('searchMessage');
     const form = document.getElementById('bookForm');
+    const searchSelect = document.getElementById('searchIsbn'); // Referencia al ComboBox
 
     // DropZone Refs
     const dropZone = document.getElementById("dropZone");
@@ -30,6 +32,26 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.innerText = "Guardar Cambios";
             isbnInput.readOnly = true; 
             toggleForm(true); 
+            loadBooksToSelect(); // Carga la lista de libros en el ComboBox
+        }
+    }
+
+    // --- CARGAR LIBROS EN EL COMBOBOX ---
+    async function loadBooksToSelect() {
+        try {
+            const res = await fetch('../../api/GetAllBooks.php');
+            const books = await res.json();
+            
+            searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
+
+            books.forEach(book => {
+                const option = document.createElement('option');
+                option.value = book.isbn;
+                option.textContent = `${book.title} (${book.isbn})`;
+                searchSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error("Error cargando la lista de libros:", err);
         }
     }
 
@@ -38,8 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnSearch) {
         btnSearch.addEventListener('click', (e) => {
             e.preventDefault();
-            const isbnToSearch = document.getElementById('searchIsbn').value;
-            if (!isbnToSearch) return;
+            const isbnToSearch = searchSelect.value; // Obtiene el ISBN seleccionado del ComboBox
+            if (!isbnToSearch) {
+                msgSearch.innerText = "Por favor, seleccione un libro.";
+                return;
+            }
 
             fetch(`../../api/GetBook.php?isbn=${isbnToSearch}`)
                 .then(res => {
@@ -55,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         msgSearch.innerText = "Libro no encontrado.";
                         form.reset();
                         resetDropZone();
-                        document.getElementById('searchIsbn').value = isbnToSearch;
                         if (mode !== 'create') toggleForm(true);
                     }
                 })
@@ -66,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- SUBMIT ---
+    // --- ENVÍO DEL FORMULARIO ---
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!mode) return;
@@ -74,24 +98,19 @@ document.addEventListener('DOMContentLoaded', () => {
         let url = '';
         if (mode === 'create') url = '../../api/AddBook.php';
         else if (mode === 'edit') url = '../../api/ModifyBook.php';
-        else if (mode === 'delete') url = `../../api/DeleteBook.php?isbn=${document.getElementById('isbn').value}`;
 
-        if (mode === 'delete') {
-             fetch(url).then(res=>res.json()).then(handleResponse).catch(handleError);
-             return; 
-        }
-
-        // Enviamos FormData (incluye el archivo nuevo en 'coverFile' y el nombre viejo en 'cover')
         const formData = new FormData(e.target);
 
         fetch(url, { method: 'POST', body: formData })
-            .then(res => res.json()).then(handleResponse).catch(handleError);
+            .then(res => res.json())
+            .then(handleResponse)
+            .catch(handleError);
     });
 
     function handleResponse(data) {
         if (data.exito || data.success) {
             alert(data.message || "Operación exitosa");
-            window.location.href = 'bookOptions.html'; // Volver al listado
+            window.location.href = 'bookOptions.html'; 
         } else {
             alert("Error: " + (data.error || "Desconocido"));
         }
@@ -99,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleError(err) {
         console.error(err.message);
-        alert("Error de conexión con la API.");
+        alert("Error de conexión con el servidor.");
     }
 
     function toggleForm(isDisabled) {
@@ -107,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode !== 'create') actionBtn.disabled = isDisabled;
     }
 
-    // --- FILL FORM ---
+    // --- RELLENAR FORMULARIO ---
     function fillForm(data) {
         document.getElementById('isbn').value = data.isbn || "";
         document.getElementById('title').value = data.title || "";
@@ -120,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(document.getElementById('authorName')) document.getElementById('authorName').value = data.name_author || ""; 
         if(document.getElementById('authorSurname')) document.getElementById('authorSurname').value = data.last_name || ""; 
 
-        // --- CLAVE: Aquí guardamos el nombre de la imagen ACTUAL (Vieja) ---
-        const coverName = data.cover; 
+        // Guardar nombre de imagen actual
+        const coverName = data.cover;
         document.getElementById('cover').value = coverName || ""; 
 
         if (coverName) {
@@ -138,9 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (prompt) prompt.style.display = 'block';
     }
 
-    /* ------------------------------------------------------
-       LÓGICA DRAG & DROP
-       ------------------------------------------------------ */
+    // --- LÓGICA DRAG & DROP PARA LA PORTADA ---
     dropZone.addEventListener("click", () => inputElement.click());
 
     inputElement.addEventListener("change", () => {
@@ -170,9 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateThumbnailFile(dropZoneElement, file) {
-        // --- CAMBIO IMPORTANTE: NO actualizamos hiddenInput.value aquí.
-        // hiddenInput mantiene el nombre de la imagen VIEJA para enviarlo al servidor.
-        
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {

@@ -1,7 +1,11 @@
 import { checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 
-const appState = { allUsers: [] };
+const appState = { 
+    allUsers: [],
+    myProfileCode: null // Para recordar siempre tu propio ID
+};
+
 const getEl = (id) => document.getElementById(id);
 
 // Función segura para rellenar inputs
@@ -19,6 +23,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadHeader('configProfile');
     await loadFooter();
+    
+    // Primero cargamos nuestro perfil para conocer nuestro ID
+    await loadMyProfile(true); 
+    
     setupEventListeners();
     initAdminPanel();
 });
@@ -29,7 +37,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 function setupEventListeners() {
     // Abrir Perfil Propio
     const adjustBtn = getEl('adjustData');
-    if (adjustBtn) adjustBtn.onclick = (e) => { e.preventDefault(); loadMyProfile(); };
+    if (adjustBtn) adjustBtn.onclick = (e) => { 
+        e.preventDefault(); 
+        loadMyProfile(); 
+    };
 
     // Guardar Datos
     const saveUserBtn = getEl('saveBtnUser');
@@ -37,23 +48,19 @@ function setupEventListeners() {
     if (saveUserBtn) saveUserBtn.onclick = (e) => { e.preventDefault(); saveUserData('user'); };
     if (saveAdminBtn) saveAdminBtn.onclick = (e) => { e.preventDefault(); saveUserData('admin'); };
 
-    // Cerrar Modales DIV (Los Dialogs se cierran solos con command="close")
+    // Cerrar Modales
     const closeUser = getEl('closeUserModal');
     const closeAdmin = getEl('closeAdminModal');
-    if (closeUser) closeUser.onclick = () => toggleModal('modifyUserPopupAdmin', false);
-    if (closeAdmin) closeAdmin.onclick = () => toggleModal('modifyAdminPopup', false);
+    if (closeUser) closeUser.onclick = () => closeModalAndReset('modifyUserPopupAdmin');
+    if (closeAdmin) closeAdmin.onclick = () => closeModalAndReset('modifyAdminPopup');
 
-    // Click en el fondo oscuro de los DIVs para cerrar
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
-            // Si el clic fue directamente en el fondo (overlay) y no en la tarjeta
-            if (e.target === overlay) {
-                overlay.style.display = 'none';
-            }
+            if (e.target === overlay) closeModalAndReset(overlay.id);
         });
     });
 
-    // Abrir Modal de Contraseña (Dialog)
+    // Abrir Modal de Contraseña
     const pwdBtns = [getEl('changePwdBtn'), getEl('changePwdBtnAdmin')];
     pwdBtns.forEach(btn => {
         if (btn) btn.onclick = (e) => {
@@ -66,38 +73,47 @@ function setupEventListeners() {
     setupPasswordLogic();
 }
 
+function closeModalAndReset(modalId) {
+    toggleModal(modalId, false);
+    // Al cerrar, nos aseguramos de que los botones vuelvan a apuntar a nosotros
+    resetTargetIds();
+}
+
+function resetTargetIds() {
+    const saveU = getEl('saveBtnUser');
+    const saveA = getEl('saveBtnAdmin');
+    if (saveU) saveU.setAttribute('data-target-id', appState.myProfileCode);
+    if (saveA) saveA.setAttribute('data-target-id', appState.myProfileCode);
+}
+
 // ==========================================
-// 3. FUNCIÓN INTELIGENTE TOGGLE MODAL
+// 3. UTILIDADES
 // ==========================================
 function toggleModal(id, show) {
     const el = getEl(id);
     if (!el) return;
-
-    // Detectamos si es un DIALOG nativo o un DIV clásico
     if (el.tagName === 'DIALOG') {
-        if (show) {
-            if (!el.open) el.showModal();
-        } else {
-            el.close();
-        }
+        show ? (!el.open && el.showModal()) : el.close();
     } else {
-        // Es un DIV
         el.style.display = show ? 'flex' : 'none';
     }
 }
 
 // ==========================================
-// 4. LOGICA DE PERFIL
+// 4. LÓGICA DE PERFIL
 // ==========================================
-async function loadMyProfile() {
+async function loadMyProfile(isInit = false) {
     try {
         const res = await fetch('../../api/GetProfile.php');
         const data = await res.json();
 
         if (data.success && data.user) {
             const u = data.user;
-            //console.log(u);
             const isAdmin = (data.role === 'admin');
+            
+            // Si es la carga inicial, guardamos nuestro ID permanentemente
+            if (isInit) appState.myProfileCode = u.profile_code;
+
             const prefix = isAdmin ? 'Admin' : 'User';
             const modalId = isAdmin ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
 
@@ -106,7 +122,7 @@ async function loadMyProfile() {
             const saveBtn = getEl(isAdmin ? 'saveBtnAdmin' : 'saveBtnUser');
             if (saveBtn) saveBtn.setAttribute('data-target-id', u.profile_code);
 
-            toggleModal(modalId, true);
+            if (!isInit) toggleModal(modalId, true);
         }
     } catch (err) { console.error(err); }
 }
@@ -119,7 +135,6 @@ function fillProfileForm(u, prefix) {
     fill(`phone${prefix}`, u.telephone);
 
     if (prefix === 'Admin') {
-        fill('profileCodeAdmin', u.profile_code);
         fill('currentAccountAdmin', u.current_account);
     } else {
         fill('cardNumberUser', u.card_no);
@@ -154,13 +169,11 @@ async function saveUserData(role) {
         const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
         const data = await res.json();
 
-        if (data.exito || data.success) {
-            alert("Datos actualizados.");
+        if (data.success || data.exito) {
+            alert("Datos actualizados correctamente.");
             toggleModal(modalId, false);
-            
-            if (getEl('adminPanelSection').style.display !== 'none') {
-                loadUsersTable();
-            }
+            resetTargetIds(); // Volver a apuntar a mi perfil
+            if (getEl('adminPanelSection')?.style.display !== 'none') loadUsersTable();
         } else {
             alert("Error: " + data.error);
         }
@@ -197,8 +210,8 @@ async function loadUsersTable() {
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
             clone.querySelector('.col-username').textContent = u.user_name;
-            clone.querySelector('.col-fullname').textContent = (u.name_ && u.surname) ? `${u.name_} ${u.surname}` : "";
-            clone.querySelector('.col-email').textContent = u.email ? u.email : "";
+            clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`;
+            clone.querySelector('.col-email').textContent = u.email || "";
 
             const btnEdit = clone.querySelector('.btn-edit');
             const btnDel = clone.querySelector('.btn-delete');
@@ -214,6 +227,8 @@ async function loadUsersTable() {
 function prepareEditUser(index) {
     const u = appState.allUsers[index];
     if (!u) return;
+    
+    // Forzamos a que se use el modal de 'User' para otros usuarios
     fillProfileForm(u, 'User');
     const saveBtn = getEl('saveBtnUser');
     if (saveBtn) saveBtn.setAttribute('data-target-id', u.profile_code);
@@ -221,7 +236,7 @@ function prepareEditUser(index) {
 }
 
 async function deleteUser(id) {
-    if (!confirm("¿Eliminar usuario?")) return;
+    if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
     try {
         const res = await fetch('../../api/DeleteUser.php', {
             method: 'POST',
@@ -232,12 +247,14 @@ async function deleteUser(id) {
         if (data.success) {
             alert("Usuario eliminado.");
             loadUsersTable();
+        } else {
+            alert("Error: " + data.error);
         }
     } catch (err) { console.error(err); }
 }
 
 // ==========================================
-// 6. CONTRASEÑAS (DIALOGS)
+// 6. CONTRASEÑAS
 // ==========================================
 function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
@@ -247,22 +264,24 @@ function setupPasswordLogic() {
         verifyForm.onsubmit = async (e) => {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
-            const username = getEl('usernameUser')?.value || getEl('usernameAdmin')?.value;
+            // Usamos nuestro propio username para verificar
+            const resInit = await fetch('../../api/GetProfile.php');
+            const dataInit = await resInit.json();
+            const username = dataInit.user.user_name;
 
             try {
                 const res = await fetch('../../api/Login.php', {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password: pass })
                 });
                 const data = await res.json();
 
-                if (data.success || data.exito) {
+                if (data.success) {
                     toggleModal('verifyPasswordModal', false);
-                    fill('newPassword', '');
-                    fill('confirmNewPassword', '');
                     toggleModal('changePasswordModal', true);
                 } else {
-                    alert("Contraseña incorrecta.");
+                    alert("Contraseña actual incorrecta.");
                 }
             } catch (err) { console.error(err); }
         };
@@ -273,19 +292,26 @@ function setupPasswordLogic() {
             e.preventDefault();
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
-            const targetId = getEl('saveBtnUser')?.getAttribute('data-target-id') || getEl('saveBtnAdmin')?.getAttribute('data-target-id');
+            
+            // El targetId debe ser el del usuario que estamos editando actualmente
+            const targetId = getEl('saveBtnUser').getAttribute('data-target-id') || 
+                             getEl('saveBtnAdmin').getAttribute('data-target-id');
 
-            if (newP !== confP) return alert("No coinciden.");
+            if (newP !== confP) return alert("Las contraseñas no coinciden.");
             
             try {
                 const res = await fetch('../../api/ModifyPassword.php', {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ profile_code: targetId, password: newP })
                 });
                 const data = await res.json();
                 if (data.success) {
-                    alert("Contraseña cambiada.");
+                    alert("Contraseña actualizada con éxito.");
                     toggleModal('changePasswordModal', false);
+                    resetTargetIds();
+                } else {
+                    alert("Error: " + data.error);
                 }
             } catch (err) { console.error(err); }
         };

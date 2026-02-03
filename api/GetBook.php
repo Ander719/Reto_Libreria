@@ -1,28 +1,22 @@
 <?php
 // api/GetBook.php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
 $isbn = $_GET['isbn'] ?? '';
 
-if (!$isbn) {
-    echo json_encode(["exito" => false, "error" => "No se proporcionó ISBN"]);
+if (empty($isbn)) {
+    echo json_encode(['exito' => false, 'error' => 'ISBN no proporcionado']);
     exit;
 }
 
-try {
-    $controller = new BookController();
-    $book = $controller->getBook($isbn);
+$controller = new BookController();
+$libro = $controller->getBook($isbn);
 
-    if ($book) {
-        echo json_encode(["exito" => true, "libro" => $book]);
-    } else {
-        echo json_encode(["exito" => false, "error" => "Libro no encontrado"]);
-    }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["exito" => false, "error" => $e->getMessage()]);
+if ($libro) {
+    // El controlador ya devuelve el libro formateado para el JS
+    echo json_encode(['exito' => true, 'libro' => $libro]);
+} else {
+    echo json_encode(['exito' => false, 'error' => 'Libro no encontrado']);
 }
 ?>
