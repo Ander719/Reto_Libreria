@@ -1,10 +1,5 @@
 import { currentUser, checkSession } from './session.js';
-<<<<<<< HEAD
 import { loadHeader,loadFooter } from './header.js';
-=======
-import { loadHeader } from './header.js';
-
->>>>>>> a89ff5259b322456fa712f01948ebd75565b4e70
 let isEditing = false;
 
 // --- CONFIGURACIÓN DEL MODAL ---
@@ -29,12 +24,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => window.location.href = "main.html", 2000);
         return;
     }
-<<<<<<< HEAD
     // Cargar el header
     await loadHeader("bookDetails");
     await loadFooter();
-=======
->>>>>>> a89ff5259b322456fa712f01948ebd75565b4e70
 
     loadBookDetails(isbn);
     handleCommentSection();
