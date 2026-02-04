@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 require_once '../controller/ProfileController.php';
 
 if (!isset($_GET['id'])) {
-    echo json_encode(['result' => false, 'error' => 'No ID provided']);
+    echo json_encode(['success' => false, 'error' => 'No ID provided']);
     exit;
 }
 
@@ -24,10 +24,10 @@ if ($result) {
     }
 
     echo json_encode([
-        'result' => true, 
+        'success' => true, 
         'isSelfDelete' => $isSelfDelete 
     ]);
 } else {
-    echo json_encode(['result' => false, 'error' => 'Error in DB']);
+    echo json_encode(['success' => false, 'error' => 'Error in DB']);
 }
 ?>

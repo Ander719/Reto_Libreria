@@ -204,6 +204,7 @@ async function loadUsersTable() {
             const btnDel = clone.querySelector('.btn-delete');
 
             if (btnEdit) btnEdit.onclick = () => prepareEditUser(index);
+            console.log(u);
             if (btnDel) btnDel.onclick = () => deleteUser(u.profile_code);
 
             tbody.appendChild(clone);
@@ -222,16 +223,21 @@ function prepareEditUser(index) {
 
 async function deleteUser(id) {
     if (!confirm("¿Eliminar usuario?")) return;
+    console.log("Deleting user ID:", id);
     try {
         const res = await fetch('../../api/DeleteUser.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         });
-        const data = await res.json();
+        let rawtext = await res.text();
+        console.log("Raw response:", rawtext);
+        const data = await JSON.parse(rawtext);
         if (data.success) {
             alert("Usuario eliminado.");
             loadUsersTable();
+        }else {
+            console.error("Error deleting user:", data.error);
         }
     } catch (err) { console.error(err); }
 }
