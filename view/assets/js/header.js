@@ -43,7 +43,7 @@ export async function loadHeader(filter) {
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
-            if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment" || filter === "configProfile") && index === 3) item.hidden = true;
+            if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
             if (filter === "main" && index === 4) item.hidden = true;
         });

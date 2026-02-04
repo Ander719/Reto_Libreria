@@ -204,7 +204,6 @@ async function loadUsersTable() {
             const btnDel = clone.querySelector('.btn-delete');
 
             if (btnEdit) btnEdit.onclick = () => prepareEditUser(index);
-            console.log(u);
             if (btnDel) btnDel.onclick = () => deleteUser(u.profile_code);
 
             tbody.appendChild(clone);
@@ -223,7 +222,6 @@ function prepareEditUser(index) {
 
 async function deleteUser(id) {
     if (!confirm("¿Eliminar usuario?")) return;
-    console.log("Deleting user ID:", id);
     try {
         const res = await fetch('../../api/DeleteUser.php', {
             method: 'POST',
