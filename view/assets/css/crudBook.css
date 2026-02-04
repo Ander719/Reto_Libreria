@@ -205,3 +205,46 @@ input:focus, textarea:focus {
         text-align: center;
     }
 }
+/* Estilo para el ComboBox de búsqueda por ISBN */
+#searchIsbn {
+    width: 100%;
+    padding: var(--input-padding);
+    margin-bottom: 15px;
+    border: 2px solid #ccc;
+    border-radius: var(--border-radius);
+    font-family: var(--font-family);
+    font-size: 1rem;
+    background-color: white;
+    appearance: none; /* Elimina la flecha por defecto en algunos navegadores */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+#searchIsbn:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+/* Estilo específico para el botón de búsqueda/carga en el modo edición */
+#btnSearch {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #5cb85c; /* Un color verde para indicar 'acción de carga' */
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#btnSearch:hover {
+    background-color: #4cae4c;
+}
+
+#btnSearch:active {
+    transform: scale(0.98);
+}

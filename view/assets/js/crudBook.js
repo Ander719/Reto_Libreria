@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DropZone Refs
     const dropZone = document.getElementById("dropZone");
     const inputElement = document.getElementById("coverInput");
+    const hiddenInput = document.getElementById("cover"); 
 
     initInterface();
 
@@ -35,31 +36,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Carga los libros en el ComboBox reutilizando GetAllBooks.php
+     */
     async function loadBooksToSelect() {
-    try {
-        const res = await fetch('../../api/GetAllBooks.php');
-        const books = await res.json();
-        
-        // Limpiar el select antes de rellenar
-        const searchSelect = document.getElementById('searchIsbn'); 
-        searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
+        try {
+            const res = await fetch('../../api/GetAllBooks.php');
+            const data = await res.json();
+            
+            // GetAllBooks.php devuelve {"success": true, "books": [...]}
+            const books = data.books || [];
+            
+            searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
 
-        // Validar que 'books' sea un array
-        if (Array.isArray(books)) {
-            books.forEach(book => {
-                const option = document.createElement('option');
-                // Asegúrate de que estos nombres coincidan con tu BD (minúsculas/mayúsculas)
-                option.value = book.isbn || book.ISBN; 
-                option.textContent = `${book.title || book.TITLE} (${book.isbn || book.ISBN})`;
-                searchSelect.appendChild(option);
-            });
-        } else {
-            console.error("La API no devolvió un array:", books);
+            if (Array.isArray(books)) {
+                books.forEach(book => {
+                    const option = document.createElement('option');
+                    // Usamos los nombres de columna de la base de datos
+                    option.value = book.isbn; 
+                    option.textContent = `${book.title} (${book.isbn})`;
+                    searchSelect.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error("Error cargando la lista de libros:", err);
         }
-    } catch (err) {
-        console.error("Error cargando la lista de libros:", err);
     }
-}
 
     const btnSearch = document.getElementById('btnSearch');
     if (btnSearch) {
@@ -95,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const formData = new FormData(form);
+        // Si hay un archivo en el input de la dropzone, se añade automáticamente por el name="coverFile"
         const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
 
         fetch(url, { method: 'POST', body: formData })
@@ -125,8 +128,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('synopsis').value = data.synopsis || "";
         document.getElementById('authorName').value = data.name_author || ""; 
         document.getElementById('authorSurname').value = data.last_name || ""; 
-        document.getElementById('cover').value = data.cover || ""; 
+        
+        // Mostrar la portada actual si existe
+        const coverName = data.cover;
+        document.getElementById('cover').value = coverName || ""; 
+        if (coverName) {
+            updateThumbnailVisual(dropZone, `../assets/img/covers/${coverName}`, coverName);
+        } else {
+            resetDropZone();
+        }
     }
+
     function resetDropZone() {
         const prompt = dropZone.querySelector(".drop-zone__prompt");
         const thumb = dropZone.querySelector(".drop-zone__thumb");
@@ -135,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ------------------------------------------------------
-       LÓGICA DRAG & DROP
+       LÓGICA DRAG & DROP (Corregida)
        ------------------------------------------------------ */
     dropZone.addEventListener("click", () => inputElement.click());
 
@@ -160,14 +172,34 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         dropZone.classList.remove("drop-zone--over");
         if (e.dataTransfer.files.length) {
-            inputElement.files = e.dataTransfer.files;
+            inputElement.files = e.dataTransfer.files; // Asignar archivo al input real
             updateThumbnailFile(dropZone, e.dataTransfer.files[0]);
         }
     });
 
     function updateThumbnailFile(dropZoneElement, file) {
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                updateThumbnailVisual(dropZoneElement, reader.result, file.name);
+            };
+        }
     }
 
     function updateThumbnailVisual(dropZoneElement, url, label) {
+        let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+        const prompt = dropZoneElement.querySelector(".drop-zone__prompt");
+
+        if (prompt) prompt.style.display = "none";
+
+        if (!thumbnailElement) {
+            thumbnailElement = document.createElement("div");
+            thumbnailElement.classList.add("drop-zone__thumb");
+            dropZoneElement.appendChild(thumbnailElement);
+        }
+
+        thumbnailElement.dataset.label = label;
+        thumbnailElement.style.backgroundImage = `url('${url}')`;
     }
 });
