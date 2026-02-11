@@ -366,7 +366,7 @@ footer ul:not(.footerList) li:hover {
 }
 
 #listTitle {
-    border: 0;
+  border: 0;
 }
 
 /* --- Responsive Design (Móvil y Tablet) --- */
@@ -404,212 +404,61 @@ footer ul:not(.footerList) li:hover {
   }
 }
 
-
-/* --- LOGIN / SIGNUP --- */
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-.leftPanel {
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.leftPanel img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.rightPanel {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.loginForm {
-  width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  background: white;
-  border-radius: var(--border-radius);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  /* Sombra suave */
-}
-
-.loginForm h2 {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.registerLink {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 0.9rem;
-}
-
 /* ======================================================
-   5. MEDIA QUERIES (RESPONSIVE)
+   4. MODAL NATIVO (<dialog>) Y ANIMACIÓN
    ====================================================== */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-
-  .leftPanel {
-    width: 100%;
-    height: 250px;
-  }
-
-  .rightPanel {
-    width: 100%;
-    height: auto;
-  }
-
-  .field.half {
-    width: 100%;
-  }
-
-  .saveDataBox {
-    width: 90%;
-  }
-
-  .saveDataBox h1 {
-    font-size: 2rem;
-    width: auto;
-  }
-
-  .buttons {
-    flex-direction: column;
-  }
-}
-
-/* --- Estilos para la sección de reseñas --- */
-.login-prompt {
-  text-align: center;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.success-message {
-  color: green;
-  display: none;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.error-msg {
-  color: red;
-  font-weight: bold;
-}
-
-/* Clases para mensajes de estado */
-.msg-success {
-  color: green;
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.msg-error {
-  color: #dc3545;
-  /* Rojo */
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-/* Estilo para el Modal Nativo (<dialog>) */
 dialog {
-  border: none;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 400px;
-  background: white;
-  /* Aseguramos que se vea encima de todo */
-  z-index: 1000;
-}
-
-/* Fondo oscuro detrás del modal */
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-/* SOBREESCRIBIR ESTILOS PARA QUE EL FORMULARIO OCUPE TODO EL MODAL */
-.profileForm {
-  width: 100% !important;
-  max-width: 100% !important;
-  /* Anula el límite de 400px de .loginForm */
-  padding: 0 !important;
-  /* Elimina el relleno extra (la tarjeta ya tiene relleno) */
-  box-shadow: none !important;
-  /* Elimina la sombra doble */
-  background-color: transparent !important;
-}
-
-
-/* ======================================================
-   MODAL NATIVO MEJORADO (<dialog>)
-   ====================================================== */
-
-dialog {
-  /* 1. CENTRADO: Esto es lo crucial que faltaba */
   margin: auto;
   inset: 0;
-
-  /* 2. ESTÉTICA */
   border: none;
   border-radius: 12px;
   padding: 30px;
   width: 90%;
-  max-width: 450px;
+  max-width: 400px;
   background: white;
-  color: #333;
   text-align: center;
-
-  /* 3. SOMBRA Y CAPAS */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-
-  /* 4. ANIMACIÓN DE ENTRADA */
   animation: modalFadeIn 0.3s ease-out forwards;
 }
 
-/* Título del modal */
-dialog h3 {
-  margin-bottom: 15px;
-  color: var(--primary-color, #101416);
-  font-size: 1.5rem;
-}
-
-dialog p {
-  margin-bottom: 25px;
-  color: #555;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-/* Botones dentro del modal */
-dialog .modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-/* FONDO OSCURO (BACKDROP) */
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
 }
 
-/* DEFINICIÓN DE LA ANIMACIÓN */
+/* Contenido interno del Dialog */
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+#dialogMessage {
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Botón OK (Secundario) dentro del Modal */
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: scale(1.05);
+}
+
+/* Definición de la Animación */
 @keyframes modalFadeIn {
   from {
     opacity: 0;

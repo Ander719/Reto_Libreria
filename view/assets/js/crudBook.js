@@ -1,8 +1,9 @@
+// view/assets/js/crudBook.js
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Referencias
+    // Referencias al DOM
     const pageTitle = document.getElementById('pageTitle');
     const searchSection = document.getElementById('searchSection');
     const actionBtn = document.getElementById('actionBtn');
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formInputs = document.querySelectorAll('#bookForm input:not(#isbn), #bookForm textarea');
     const msgSearch = document.getElementById('searchMessage');
     const form = document.getElementById('bookForm');
+    const searchSelect = document.getElementById('searchIsbn'); 
 
     // DropZone Refs
     const dropZone = document.getElementById("dropZone");
@@ -30,84 +32,92 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.innerText = "Guardar Cambios";
             isbnInput.readOnly = true; 
             toggleForm(true); 
+            loadBooksToSelect(); 
         }
     }
 
-    // --- BÚSQUEDA ---
+    /**
+     * Carga los libros en el ComboBox reutilizando GetAllBooks.php
+     */
+    async function loadBooksToSelect() {
+        try {
+            const res = await fetch('../../api/GetAllBooks.php');
+            const data = await res.json();
+            
+            // GetAllBooks.php devuelve {"success": true, "books": [...]}
+            const books = data.books || [];
+            
+            searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
+
+            if (Array.isArray(books)) {
+                books.forEach(book => {
+                    const option = document.createElement('option');
+                    // Usamos los nombres de columna de la base de datos
+                    option.value = book.isbn; 
+                    option.textContent = `${book.title} (${book.isbn})`;
+                    searchSelect.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error("Error cargando la lista de libros:", err);
+        }
+    }
+
     const btnSearch = document.getElementById('btnSearch');
     if (btnSearch) {
         btnSearch.addEventListener('click', (e) => {
             e.preventDefault();
-            const isbnToSearch = document.getElementById('searchIsbn').value;
-            if (!isbnToSearch) return;
-
+            const isbnToSearch = searchSelect.value;
+            if (!isbnToSearch) {
+                msgSearch.innerText = "Por favor, seleccione un libro.";
+                return;
+            }
             fetch(`../../api/GetBook.php?isbn=${isbnToSearch}`)
-                .then(res => {
-                    if (!res.ok) throw new Error("Error conexión servidor");
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => {
                     if (data.exito && data.libro) {
                         fillForm(data.libro); 
                         msgSearch.innerText = "";
-                        if (mode === 'edit') toggleForm(false);
+                        toggleForm(false);
                     } else {
-                        msgSearch.innerText = "Libro no encontrado.";
-                        form.reset();
-                        resetDropZone();
-                        document.getElementById('searchIsbn').value = isbnToSearch;
-                        if (mode !== 'create') toggleForm(true);
+                        msgSearch.innerText = "Error al cargar datos.";
                     }
-                })
-                .catch(err => {
-                    console.error(err);
-                    msgSearch.innerText = "Error de conexión o libro no encontrado.";
                 });
         });
     }
 
-    // --- SUBMIT ---
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        if (!mode) return;
         
-        let url = '';
-        if (mode === 'create') url = '../../api/AddBook.php';
-        else if (mode === 'edit') url = '../../api/ModifyBook.php';
-        else if (mode === 'delete') url = `../../api/DeleteBook.php?isbn=${document.getElementById('isbn').value}`;
-
-        if (mode === 'delete') {
-             fetch(url).then(res=>res.json()).then(handleResponse).catch(handleError);
-             return; 
+        // RESTRICCIÓN: ISBN 13 caracteres
+        const isbnVal = isbnInput.value.trim();
+        if (isbnVal.length !== 13) {
+            alert("El ISBN debe tener exactamente 13 caracteres.");
+            return;
         }
 
-        // Enviamos FormData (incluye el archivo nuevo en 'coverFile' y el nombre viejo en 'cover')
-        const formData = new FormData(e.target);
+        const formData = new FormData(form);
+        // Si hay un archivo en el input de la dropzone, se añade automáticamente por el name="coverFile"
+        const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
 
         fetch(url, { method: 'POST', body: formData })
-            .then(res => res.json()).then(handleResponse).catch(handleError);
+            .then(res => res.json())
+            .then(data => {
+                if (data.exito || data.success) {
+                    alert(data.message || "Operación exitosa");
+                    window.location.href = 'bookOptions.html'; 
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(() => alert("Error de conexión con el servidor."));
     });
-
-    function handleResponse(data) {
-        if (data.exito || data.success) {
-            alert(data.message || "Operación exitosa");
-            window.location.href = 'bookOptions.html'; // Volver al listado
-        } else {
-            alert("Error: " + (data.error || "Desconocido"));
-        }
-    }
-
-    function handleError(err) {
-        console.error(err.message);
-        alert("Error de conexión con la API.");
-    }
 
     function toggleForm(isDisabled) {
         formInputs.forEach(input => input.disabled = isDisabled);
-        if (mode !== 'create') actionBtn.disabled = isDisabled;
+        actionBtn.disabled = isDisabled;
     }
 
-    // --- FILL FORM ---
     function fillForm(data) {
         document.getElementById('isbn').value = data.isbn || "";
         document.getElementById('title').value = data.title || "";
@@ -116,14 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('price').value = data.price || "";
         document.getElementById('editorial').value = data.editorial || "";
         document.getElementById('synopsis').value = data.synopsis || "";
+        document.getElementById('authorName').value = data.name_author || ""; 
+        document.getElementById('authorSurname').value = data.last_name || ""; 
         
-        if(document.getElementById('authorName')) document.getElementById('authorName').value = data.name_author || ""; 
-        if(document.getElementById('authorSurname')) document.getElementById('authorSurname').value = data.last_name || ""; 
-
-        // --- CLAVE: Aquí guardamos el nombre de la imagen ACTUAL (Vieja) ---
-        const coverName = data.cover; 
+        // Mostrar la portada actual si existe
+        const coverName = data.cover;
         document.getElementById('cover').value = coverName || ""; 
-
         if (coverName) {
             updateThumbnailVisual(dropZone, `../assets/img/covers/${coverName}`, coverName);
         } else {
@@ -139,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ------------------------------------------------------
-       LÓGICA DRAG & DROP
+       LÓGICA DRAG & DROP (Corregida)
        ------------------------------------------------------ */
     dropZone.addEventListener("click", () => inputElement.click());
 
@@ -164,32 +172,33 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         dropZone.classList.remove("drop-zone--over");
         if (e.dataTransfer.files.length) {
-            inputElement.files = e.dataTransfer.files;
+            inputElement.files = e.dataTransfer.files; // Asignar archivo al input real
             updateThumbnailFile(dropZone, e.dataTransfer.files[0]);
         }
     });
 
     function updateThumbnailFile(dropZoneElement, file) {
-        // --- CAMBIO IMPORTANTE: NO actualizamos hiddenInput.value aquí.
-        // hiddenInput mantiene el nombre de la imagen VIEJA para enviarlo al servidor.
-        
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            updateThumbnailVisual(dropZoneElement, reader.result, file.name);
-        };
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                updateThumbnailVisual(dropZoneElement, reader.result, file.name);
+            };
+        }
     }
 
     function updateThumbnailVisual(dropZoneElement, url, label) {
         let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
         const prompt = dropZoneElement.querySelector(".drop-zone__prompt");
-        if (prompt) prompt.style.display = 'none';
+
+        if (prompt) prompt.style.display = "none";
 
         if (!thumbnailElement) {
             thumbnailElement = document.createElement("div");
             thumbnailElement.classList.add("drop-zone__thumb");
             dropZoneElement.appendChild(thumbnailElement);
         }
+
         thumbnailElement.dataset.label = label;
         thumbnailElement.style.backgroundImage = `url('${url}')`;
     }

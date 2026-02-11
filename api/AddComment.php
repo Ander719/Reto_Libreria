@@ -6,80 +6,41 @@ header("Access-Control-Allow-Methods: POST");
 
 include_once '../Config/Database.php';
 include_once '../model/dao/CommentDAO.php';
+include_once '../model/entities/Comment.php';
 
-// Desactivar errores visibles para asegurar JSON limpio
 error_reporting(0);
 ini_set('display_errors', 0);
 
-// 1. Instanciar DAO
 $commentDAO = new CommentDAO();
+$data = json_decode(file_get_contents("php://input"));
 
-// 2. Leer datos
-$input_raw = file_get_contents("php://input");
-$data = json_decode($input_raw);
-
-// Comprobamos JSON
-if ($data === null) {
-    http_response_code(400);
-    echo json_encode(["message" => "Error: JSON inválido.", "debug_raw" => $input_raw]);
-    exit();
-}
-
-// 3. Verificamos datos obligatorios
+// AHORA ES CONSISTENTE: Esperamos 'text' y 'rating', igual que en UpdateComment
 if (
     !empty($data->profileCode) &&
     !empty($data->isbn) &&
-    !empty($data->comment) &&
-    !empty($data->valoration)
+    !empty($data->text) &&    // ANTES: $data->comment
+    !empty($data->rating)     // ANTES: Valoration o Rating
 ) {
+    $newComment = new Comment();
+    $newComment->setProfileCode($data->profileCode);
+    $newComment->setIsbn($data->isbn);
     
-    // =======================================================================
-    // 🛡️ BLOQUE DE SEGURIDAD: VERIFICAR SI ES ADMIN
-    // =======================================================================
-    $db = new Database();
-    $conn = $db->getConnection();
+    // Usamos 'text' consistentemente
+    $newComment->setCommentText($data->text); 
+    $newComment->setRating($data->rating);
     
-    // Consultamos si este profileCode existe en la tabla admin_
-    $sqlAdmin = "SELECT profile_code FROM admin_ WHERE profile_code = :id";
-    $stmtAdmin = $conn->prepare($sqlAdmin);
-    $stmtAdmin->execute([':id' => $data->profileCode]);
-    
-    if ($stmtAdmin->fetch(PDO::FETCH_ASSOC)) {
-        // ¡ES UN ADMIN! -> Prohibido pasar
-        http_response_code(403);
-        echo json_encode(["message" => "Acción denegada: Los administradores no pueden publicar reseñas."]);
-        exit(); // Detenemos el script aquí mismo
-    }
-    // =======================================================================
+    $newComment->setDateComment($data->date ?? date('Y-m-d'));
 
-    // 4. Si no es admin, procedemos a crear el comentario
-    $fecha = $data->date ?? date('Y-m-d');
-
-    if ($commentDAO->createComment(
-        $data->profileCode,
-        $data->isbn,
-        $data->comment,
-        $data->valoration,
-        $fecha
-    )) {
+    if ($commentDAO->createComment($newComment)) {
         http_response_code(201);
-        echo json_encode(array("message" => "Review posted successfully."));
+        echo json_encode(["message" => "Review posted successfully."]);
     } else {
         http_response_code(503);
-        echo json_encode(array("message" => "Unable to post review. SQL Error or Duplicate."));
+        echo json_encode(["message" => "Unable to post review."]);
     }
 
 } else {
-    // 5. Datos incompletos
     http_response_code(400);
-    echo json_encode(array(
-        "message" => "Incomplete data.",
-        "debug_missing" => [
-            "profileCode" => !empty($data->profileCode) ? "OK" : "FALTA",
-            "isbn"        => !empty($data->isbn) ? "OK" : "FALTA",
-            "comment"     => !empty($data->comment) ? "OK" : "FALTA",
-            "valoration"  => !empty($data->valoration) ? "OK" : "FALTA"
-        ]
-    ));
+    echo json_encode(["message" => "Incomplete data. Expecting 'text' and 'rating'."]);
 }
 ?>

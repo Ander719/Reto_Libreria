@@ -1,4 +1,4 @@
-import { loadHeader } from './header.js';
+import { loadHeader,loadFooter } from './header.js';
 import { checkSession } from './session.js';
 
 init();
@@ -7,6 +7,7 @@ async function init() {
   const isLogged = await checkSession();
 
   await loadHeader("logInSignUp")
+  await loadFooter()
 
   if (isLogged) {
       window.location.replace("main.html");

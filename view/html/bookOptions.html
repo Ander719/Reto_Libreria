@@ -47,7 +47,7 @@
   </main>
 <script type="module">
         import { checkSession, currentUser, logout } from '../assets/js/session.js';
-        import { loadHeader } from '../assets/js/header.js';
+        import { loadHeader,loadFooter } from '../assets/js/header.js';
 
         document.addEventListener('DOMContentLoaded', async () => {
             // Verificar que sea admin
@@ -65,7 +65,8 @@
                     logout();
                 });
             }
-            loadHeader("bookOptions");
+            await loadHeader("bookOptions");
+            await loadFooter();
         });
     </script>
 </body>

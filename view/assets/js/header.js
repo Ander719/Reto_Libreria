@@ -33,6 +33,7 @@ export async function loadHeader(filter) {
     // navItems[0] es "Iniciar Sesión"
     // navItems[1] es "Opciones", navItems[2] es "Cerrar Sesión", etc.
     if (currentUser) {
+        if (currentUser.role === "admin") navItems[3].hidden = true;
         // --- MODO USUARIO LOGUEADO ---
         welcomeText.textContent = `${currentUser.user_name}`;
 
@@ -42,7 +43,7 @@ export async function loadHeader(filter) {
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
-            if ((filter === "main" || filter === "opcadmin") && index === 3) item.hidden = true;
+            if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment") && index === 3) item.hidden = true;
             if (filter === "configProfile" && index === 1) item.hidden = true;
             if (filter === "main" && index === 4) item.hidden = true;
         });
@@ -66,65 +67,16 @@ function showOnly(indices = []) {
         item.hidden = !indices.includes(index);
     });
 }
-export function initSearchLogic() {
-    const searchInput = document.getElementById('search-input');
-    const clearBtn = document.getElementById('clearBtn');
-    const suggestionsList = document.getElementById('suggestionsList');
-
-    // A. Evento al escribir (KEYUP)
-    searchInput.addEventListener('input', (e) => {
-        const query = searchInput.value.trim();
-
-        if (query.length > 0) {
-            updateSuggestions(query);
-        } else {
-            suggestionsList.classList.remove('active'); // Ocultar si está vacío
-            toggleSearchView(false); // Volver a home si borras todo
-        }
-
+export async function loadFooter(){
+    const footerLinks = document.querySelectorAll("#footerLink li")
+    console.log(footerLinks)
+    footerLinks[1].addEventListener("click",()=>{
+        window.location.href="main.html";
     });
-    suggestionsList.addEventListener('click', (e) => {
-        // Buscamos el elemento .suggestion-item más cercano al click
-        const item = e.target.closest('.suggestion-item');
-        if (item) {
-            const title = item.getAttribute('data-title'); // Cogemos el título guardado
-
-            searchInput.value = title; // Ponemos el título en el input
-            suggestionsList.classList.remove('active'); // Ocultamos lista
-
-            performSearch(title); // Ejecutamos búsqueda oficial
-        }
+    footerLinks[2].addEventListener("click",()=>{
+        window.location.href="https://www.osakidetza.euskadi.eus/portada/";
     });
-    document.addEventListener('click', (e) => {
-        const clickedInput = searchInput.contains(e.target);
-        const clickedSuggestions = suggestionsList.contains(e.target);
-
-        if (!clickedInput && !clickedSuggestions) {
-            suggestionsList.classList.remove('active');
-        } else if (clickedInput) {
-            if (searchInput.value.trim().length > 0) {
-                updateSuggestions(searchInput.value.trim());
-            }
-        }
-    });
-    // EXTRA: Si el usuario hace TAB hasta el input, también mostrar
-    searchInput.addEventListener('focus', () => {
-        if (searchInput.value.trim().length > 0) {
-            updateSuggestions(searchInput.value.trim());
-        }
-    });
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            suggestionsList.classList.remove('active');
-            performSearch(searchInput.value);
-        }
-    });
-
-    // D. Evento botón X (Limpiar)
-    clearBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        toggleSearchView(false); // Volver al inicio
-        searchInput.focus(); // Mantener foco
+    footerLinks[3].addEventListener("click",()=>{
+        window.location.href="https://www.tartanga.eus/";
     });
 }
