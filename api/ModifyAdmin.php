@@ -1,16 +1,7 @@
 <?php
-// api/ModifyAdmin.php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 header('Content-Type: application/json; charset=utf-8');
-
-// --- CORRECCIÓN: Usamos ProfileController ---
 require_once '../controller/ProfileController.php';
 
-// Nota: modifyAdmin suele venir por POST en tu ModifyUser, pero si aquí usas GET, lo mantenemos.
-// Si prefieres usar JSON body como los demás, avísame.
 $profile_code = $_GET['profile_code'] ?? '';
 $email = $_GET['email'] ?? '';
 $username = $_GET['username'] ?? '';

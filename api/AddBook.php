@@ -1,5 +1,4 @@
 <?php
-// api/AddBook.php
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
@@ -19,6 +18,7 @@ $price = $_POST['price'] ?? 0;
 $editorial = $_POST['editorial'] ?? '';
 $coverName = "default.jpg"; 
 
+// Procesar Imagen
 if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
     $uploadDir = '../view/assets/img/covers/';
     $extension = strtolower(pathinfo($_FILES['coverFile']['name'], PATHINFO_EXTENSION));

@@ -1,10 +1,6 @@
 <?php
-// api/ModifyPassword.php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+session_start(); 
 header('Content-Type: application/json; charset=utf-8');
-
-// IMPORTANTE: Llamamos al DAO directamente por si el Controller no tiene el método activado
 require_once '../model/dao/ProfileDAO.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -16,11 +12,8 @@ if (empty($profile_code) || empty($password)) {
     exit;
 }
 
-// 1. ENCRIPTAR LA CONTRASEÑA (¡Vital!)
-// El nuevo sistema usa password_verify, así que debemos guardar el hash.
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-// 2. GUARDAR
 $dao = new ProfileDAO();
 $modify = $dao->modifyPassword($profile_code, $passwordHash);
 

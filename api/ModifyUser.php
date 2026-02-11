@@ -14,23 +14,22 @@ $isAdmin = ($userSession['role'] === 'admin');
 $targetId = $_POST['target_id'] ?? $loggedUserId;
 $roleForm = $_POST['role'] ?? 'user';
 
-// Restricción de permisos
 if ($targetId != $loggedUserId && !$isAdmin) {
     echo json_encode(['success' => false, 'error' => 'Sin permisos']);
     exit;
 }
 
 $telephone = $_POST['phone'] ?? '';
-// Validación de Teléfono
-if (strlen($telephone) !== 9 || !is_numeric($telephone)) {
-    echo json_encode(['success' => false, 'error' => 'Teléfono inválido (9 dígitos)']);
-    exit;
-}
-
 $name = $_POST['name'] ?? '';
 $surname = $_POST['surname'] ?? '';
 $email = $_POST['email'] ?? '';
 $username = $_POST['username'] ?? '';
+
+// Validaciones básicas manteniendo lógica original
+if (strlen($telephone) !== 9 || !is_numeric($telephone)) {
+    echo json_encode(['success' => false, 'error' => 'Teléfono inválido (9 dígitos)']);
+    exit;
+}
 
 $controller = new ProfileController();
 $result = false;
@@ -53,3 +52,4 @@ if ($roleForm === 'admin') {
 }
 
 echo json_encode(['success' => $result, 'error' => $result ? null : 'Error en BD']);
+?>

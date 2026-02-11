@@ -1,5 +1,4 @@
 <?php
-// api/ModifyBook.php
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
@@ -8,7 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Datos recibidos del FormData
 $isbn = $_POST['isbn'] ?? '';
 $title = $_POST['title'] ?? '';
 $authorName = $_POST['authorName'] ?? '';
@@ -18,11 +16,10 @@ $stock = $_POST['stock'] ?? 0;
 $synopsis = $_POST['synopsis'] ?? '';
 $price = $_POST['price'] ?? 0;
 $editorial = $_POST['editorial'] ?? '';
-$oldCover = $_POST['cover'] ?? ''; // Nombre de la imagen actual en la BD
+$oldCover = $_POST['cover'] ?? ''; 
 
 $finalCoverName = $oldCover;
 
-// Gestión de nueva imagen si se ha subido una
 if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
     $uploadDir = '../view/assets/img/covers/';
     $extension = strtolower(pathinfo($_FILES['coverFile']['name'], PATHINFO_EXTENSION));
@@ -30,30 +27,18 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_
     
     if (move_uploaded_file($_FILES['coverFile']['tmp_name'], $uploadDir . $newFileName)) {
         $finalCoverName = $newFileName;
-        // Opcional: Borrar la imagen vieja si no es la default
         if ($oldCover && $oldCover !== 'default.jpg' && file_exists($uploadDir . $oldCover)) {
-            unlink($uploadDir . $oldCover);
+            @unlink($uploadDir . $oldCover);
         }
     }
 }
 
 $controller = new BookController();
-// Pasamos nombre y apellido del autor para que el controlador gestione el ID
-$result = $controller->modifyBook(
-    $isbn, 
-    $title, 
-    $authorName, 
-    $authorSurname, 
-    $pages, 
-    $stock, 
-    $synopsis, 
-    $price, 
-    $editorial, 
-    $finalCoverName
-);
+$result = $controller->modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $finalCoverName);
 
 if ($result) {
     echo json_encode(['exito' => true, 'message' => 'Libro actualizado correctamente.']);
 } else {
     echo json_encode(['exito' => false, 'error' => 'Error al actualizar el libro en la base de datos.']);
 }
+?>
