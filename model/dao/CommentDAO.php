@@ -46,7 +46,6 @@ class CommentDAO {
         $resultArray = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Creamos el objeto correctamente
             $commentObj = new Comment();
             
             $commentObj->setProfileCode($row['profile_code']);
@@ -54,12 +53,11 @@ class CommentDAO {
             $commentObj->setRating($row['valoration']);
             $commentObj->setDateComment($row['date_comment']);
 
-            // Mapeamos la salida para mantener compatibilidad con tu JS actual
             $resultArray[] = [
-                'profile_code' => $commentObj->getProfileCode(), // JS usa esto
-                'comment_text' => $commentObj->getCommentText(), // JS usa esto
-                'valoration'   => $commentObj->getRating(),      // JS usa esto
-                'dateComent'   => $commentObj->getDateComment(), // JS usa esto
+                'profile_code' => $commentObj->getProfileCode(), 
+                'comment_text' => $commentObj->getCommentText(), 
+                'valoration'   => $commentObj->getRating(),      
+                'dateComent'   => $commentObj->getDateComment(), 
                 'user_name'    => $row['user_name']
             ];
         }
@@ -67,7 +65,6 @@ class CommentDAO {
         return $resultArray;
     }
 
-    // Update recibiendo un Objeto para ser consistente
     public function updateComment(Comment $comment) {
         $query = "UPDATE comment_ 
                   SET comment_text = :text, 

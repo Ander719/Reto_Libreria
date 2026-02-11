@@ -80,7 +80,7 @@ public function updateBook(Book $book) {
     $stmt = $this->conn->prepare($query);
     return $stmt->execute([
         ":title" => $book->getTitle(),
-        ":author" => $book->getAuthor(), // Este debe ser el ID
+        ":author" => $book->getAuthor(), 
         ":pages" => $book->getPages(),
         ":stock" => $book->getStock(),
         ":synopsis" => $book->getSynopsis(),
