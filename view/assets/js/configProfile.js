@@ -26,21 +26,64 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function setupEventListeners() {
+    // 1. Botón "Ajustar mis datos" (Hero)
     const adjustBtn = getEl('adjustData');
     if (adjustBtn) adjustBtn.onclick = (e) => { 
         e.preventDefault(); 
         loadMyProfile(); 
     };
 
+    // 2. Botones de Guardar (Usuario y Admin)
     const saveUserBtn = getEl('saveBtnUser');
     const saveAdminBtn = getEl('saveBtnAdmin');
     if (saveUserBtn) saveUserBtn.onclick = (e) => { e.preventDefault(); saveUserData('user'); };
     if (saveAdminBtn) saveAdminBtn.onclick = (e) => { e.preventDefault(); saveUserData('admin'); };
 
+    // 3. Botones de Cerrar Modales de Edición (Perfil)
     const closeUser = getEl('closeUserModal');
     const closeAdmin = getEl('closeAdminModal');
     if (closeUser) closeUser.onclick = () => closeModalAndReset('modifyUserPopupAdmin');
     if (closeAdmin) closeAdmin.onclick = () => closeModalAndReset('modifyAdminPopup');
+
+    // 4. Botón "Eliminar Cuenta" (Dentro del modal)
+    const deleteBtn = getEl('deleteBtn');
+    if (deleteBtn) {
+        deleteBtn.onclick = (e) => {
+            e.preventDefault();
+            // Obtenemos el ID del usuario que se está editando actualmente
+            const targetId = getEl('saveBtnUser').getAttribute('data-target-id');
+            if (targetId) {
+                deleteUser(targetId);
+            } else {
+                console.error("Error: No se encontró el ID del usuario.");
+            }
+        };
+    }
+
+    // 5. Botones "Cambiar Contraseña"
+    const changePwdBtn = getEl('changePwdBtn');
+    const changePwdBtnAdmin = getEl('changePwdBtnAdmin');
+
+    const openPasswordModal = (e) => {
+        e.preventDefault();
+        
+        // IMPORTANTE: Reseteamos el formulario para que aparezca vacío
+        const verifyForm = getEl('verifyPasswordForm');
+        if (verifyForm) verifyForm.reset();
+
+        const dialog = getEl('verifyPasswordModal');
+        if (dialog) {
+            // Usamos showModal() si está disponible (nativo), sino fallback
+            if (typeof dialog.showModal === "function") {
+                dialog.showModal(); 
+            } else {
+                toggleModal('verifyPasswordModal', true);
+            }
+        }
+    };
+
+    if (changePwdBtn) changePwdBtn.onclick = openPasswordModal;
+    if (changePwdBtnAdmin) changePwdBtnAdmin.onclick = openPasswordModal;
 
     setupPasswordLogic();
 }
@@ -53,6 +96,7 @@ function closeModalAndReset(modalId) {
 function resetTargetIds() {
     const saveU = getEl('saveBtnUser');
     const saveA = getEl('saveBtnAdmin');
+    // Al cerrar, volvemos a poner nuestro propio ID para seguridad
     if (saveU) saveU.setAttribute('data-target-id', appState.myProfileCode);
     if (saveA) saveA.setAttribute('data-target-id', appState.myProfileCode);
 }
@@ -108,14 +152,14 @@ async function saveUserData(role) {
     const targetId = saveBtn?.getAttribute('data-target-id');
     const modalId = role === 'admin' ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
 
-    // Captura y limpieza de valores básicos
+    // Captura valores
     const phone = getEl(`phone${suffix}`).value.trim();
     const name = getEl(`firstName${suffix}`).value.trim();
     const surname = getEl(`lastName${suffix}`).value.trim();
     const email = getEl(`email${suffix}`).value.trim();
     const username = getEl(`username${suffix}`).value.trim();
 
-    // 1. RESTRICCIÓN: Teléfono (9 números exactos)
+    // Validación 1: Teléfono
     if (phone.length !== 9 || isNaN(phone)) {
         alert("El teléfono debe tener exactamente 9 números.");
         return;
@@ -132,17 +176,13 @@ async function saveUserData(role) {
 
     if (role === 'user') {
         const cardNumberRaw = getEl('cardNumberUser').value.trim();
-        
-        // 2. RESTRICCIÓN: Limpiar guiones de la tarjeta para validar 16 dígitos
-        // Esto permite formatos como 1234-5678-1234-5678
-        const cardNumberClean = cardNumberRaw.replace(/-/g, '');
+        const cardNumberClean = cardNumberRaw.replace(/-/g, ''); // Limpiar guiones
 
+        // Validación 2: Tarjeta
         if (cardNumberClean.length !== 16 || isNaN(cardNumberClean)) {
-            alert("El número de tarjeta debe tener exactamente 16 números (los guiones no cuentan).");
+            alert("El número de tarjeta debe tener exactamente 16 números.");
             return;
         }
-        
-        // Enviamos el número limpio al servidor
         formData.append('cardNumber', cardNumberClean);
         
         const gender = getEl('genderUser');
@@ -150,12 +190,11 @@ async function saveUserData(role) {
 
     } else {
         const accountNumberRaw = getEl('currentAccountAdmin').value.trim();
-        // Limpiar guiones y espacios de la cuenta bancaria (IBAN)
-        const accountNumberClean = accountNumberRaw.replace(/[-\s]/g, '');
+        const accountNumberClean = accountNumberRaw.replace(/[-\s]/g, ''); // Limpiar IBAN
 
-        // 2. Validación de Cuenta Bancaria (24 caracteres reales)
+        // Validación 3: Cuenta Bancaria
         if (accountNumberClean.length !== 24) {
-            alert("La cuenta bancaria debe tener exactamente 24 caracteres (los guiones o espacios no cuentan).");
+            alert("La cuenta bancaria debe tener exactamente 24 caracteres.");
             return;
         }
         formData.append('accountNumber', accountNumberClean);
@@ -168,9 +207,8 @@ async function saveUserData(role) {
         if (data.success) {
             alert("Datos actualizados correctamente.");
             toggleModal(modalId, false);
-            resetTargetIds(); // Restablece los IDs a tu propio perfil
+            resetTargetIds(); 
             
-            // Si el panel de administrador está visible, refrescamos la lista de usuarios
             if (getEl('adminPanelSection')?.style.display !== 'none') {
                 loadUsersTable();
             }
@@ -178,8 +216,8 @@ async function saveUserData(role) {
             alert("Error: " + data.error);
         }
     } catch (err) { 
-        console.error("Error en la petición:", err);
-        alert("Error de conexión con el servidor.");
+        console.error("Error API:", err);
+        alert("Error de conexión.");
     }
 }
 
@@ -204,23 +242,17 @@ async function loadUsersTable() {
         const res = await fetch('../../api/GetAllUsers.php');
         const data = await res.json();
         
-        // CORRECCIÓN: La API puede devolver el array directamente o bajo la clave 'users'
         const users = Array.isArray(data) ? data : (data.users || data.resultado || []);
-        
         appState.allUsers = users;
         tbody.innerHTML = '';
 
-        if (users.length === 0) {
-            console.warn("No se encontraron usuarios o el formato de respuesta es incorrecto.");
-            return;
-        }
+        if (users.length === 0) return;
 
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
             
-            // Asegúrate de usar 'u.name_' que es como viene de la base de datos
             clone.querySelector('.col-username').textContent = u.user_name || "N/A";
-            clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`.trim() || "Sin nombre";
+            clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`.trim();
             clone.querySelector('.col-email').textContent = u.email || "Sin email";
 
             const btnEdit = clone.querySelector('.btn-edit');
@@ -231,9 +263,7 @@ async function loadUsersTable() {
 
             tbody.appendChild(clone);
         });
-    } catch (err) { 
-        console.error("Error cargando la tabla de usuarios:", err); 
-    }
+    } catch (err) { console.error(err); }
 }
 
 function prepareEditUser(index) {
@@ -246,37 +276,56 @@ function prepareEditUser(index) {
 }
 
 async function deleteUser(id) {
-    if (!confirm("¿Eliminar usuario?")) return;
+    if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
     try {
         const res = await fetch('../../api/DeleteUser.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         });
-        let rawtext = await res.text();
-        console.log("Raw response:", rawtext);
-        const data = await JSON.parse(rawtext);
-        if (data.success) {
+        
+        let data;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+             data = await res.json();
+        } else {
+             const text = await res.text();
+             try { data = JSON.parse(text); } catch(e) { console.error(text); }
+        }
+
+        if (data && data.success) {
             alert("Usuario eliminado.");
+            toggleModal('modifyUserPopupAdmin', false);
             loadUsersTable();
         } else {
-            alert("Error: " + data.error);
+            alert("Error: " + (data ? data.error : "Error desconocido"));
         }
     } catch (err) { console.error(err); }
 }
 
 // ==========================================
-// 6. CONTRASEÑAS
+// LÓGICA DE CONTRASEÑAS (DIALOGS)
 // ==========================================
 function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
 
+    // Manejar cierre manual de los dialogs
+    const closePassBtns = document.querySelectorAll('.close-pass-btn, button[command="close"]');
+    closePassBtns.forEach(btn => {
+        btn.onclick = (e) => {
+            const dialog = btn.closest('dialog');
+            if (dialog && typeof dialog.close === "function") dialog.close();
+            else if(dialog) dialog.style.display = 'none';
+        };
+    });
+
     if (verifyForm) {
         verifyForm.onsubmit = async (e) => {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
-            // Usamos nuestro propio username para verificar
+            
+            // Obtener username del usuario logueado para verificar
             const resInit = await fetch('../../api/GetProfile.php');
             const dataInit = await resInit.json();
             const username = dataInit.user.user_name;
@@ -290,10 +339,24 @@ function setupPasswordLogic() {
                 const data = await res.json();
 
                 if (data.success) {
-                    toggleModal('verifyPasswordModal', false);
-                    toggleModal('changePasswordModal', true);
+                    // 1. Cerrar modal de verificación
+                    const verifyModal = getEl('verifyPasswordModal');
+                    if(verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
+                    else toggleModal('verifyPasswordModal', false);
+
+                    // 2. Limpiar y Abrir modal de nueva contraseña
+                    const changeModal = getEl('changePasswordModal');
+                    if (changeModal) {
+                        // IMPORTANTE: Reseteamos campos para que no salga info vieja
+                        if(changeForm) changeForm.reset();
+
+                        if (typeof changeModal.showModal === 'function') changeModal.showModal();
+                        else toggleModal('changePasswordModal', true);
+                    }
+
                 } else {
                     alert("Contraseña actual incorrecta.");
+                    getEl('verifyCurrentPassword').value = ''; 
                 }
             } catch (err) { console.error(err); }
         };
@@ -305,7 +368,7 @@ function setupPasswordLogic() {
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
             
-            // El targetId debe ser el del usuario que estamos editando actualmente
+            // Obtenemos a quién cambiarle la pass (Usuario logueado o Admin editando a otro)
             const targetId = getEl('saveBtnUser').getAttribute('data-target-id') || 
                              getEl('saveBtnAdmin').getAttribute('data-target-id');
 
@@ -320,7 +383,11 @@ function setupPasswordLogic() {
                 const data = await res.json();
                 if (data.success) {
                     alert("Contraseña actualizada con éxito.");
-                    toggleModal('changePasswordModal', false);
+                    
+                    const changeModal = getEl('changePasswordModal');
+                    if(changeModal && typeof changeModal.close === 'function') changeModal.close();
+                    else toggleModal('changePasswordModal', false);
+                    
                     resetTargetIds();
                 } else {
                     alert("Error: " + data.error);

@@ -1,96 +1,111 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Acción Libro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Libros</title>
+    <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png">
     <link rel="stylesheet" href="../assets/css/crudBook.css">
-    <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png" />
-
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <script type="module" src="../assets/js/crudBook.js"></script>
 </head>
 
-<body>
-    <main class="books-page">
-        <div class="books-topbar">
-            <h2 id="pageTitle">Gestión de Libro</h2>
-            <a href="bookOptions.html" class="btn btn-secondary btn-sm">Volver</a>
-        </div>
+<body style="display: none;">
+    <header class="main-header">
+        <nav class="nav-container">
+            <a href="main.html" class="logo-link">
+                <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
+            </a>
+            <div class="welcome-text">Gestión de Inventario</div>
+            <ul class="nav-menu">
+                <li><a href="main.html" class="nav-link">Inicio</a></li>
+                <li><a href="bookOptions.html" class="nav-link">Volver</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="crud-container"
-            style="max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; border: 1px solid #ddd;">
+    <main class="main-content">
+        <h1 id="pageTitle" class="page-title">Gestión de Libros</h1>
 
-            <div id="searchSection" style="display: none;">
-                <label for="searchIsbn">Seleccionar Libro:</label>
-                <select id="searchIsbn" class="form-control">
-                    <option value="">-- Seleccione un libro --</option>
+        <section id="searchSection" class="search-section">
+            <label for="searchIsbn">Buscar Libro a Editar:</label>
+            <div class="search-group">
+                <select id="searchIsbn" class="search-select">
+                    <option value="">Cargando libros...</option>
                 </select>
-                <button type="button" id="btnSearch" class="btn-primary">Cargar Datos</button>
-                <p id="searchMessage" class="error-msg"></p>
+                <button id="btnSearch" class="btn-search">Cargar Datos</button>
             </div>
-        </br>
-            <form id="bookForm" class="profileForm">
-                <div class="fields">
-                    <div class="field full">
-                        <label for="isbn">ISBN</label>
-                        <input type="text" id="isbn" name="isbn" required>
-                    </div>
+            <p id="searchMessage" class="search-msg"></p>
+        </section>
 
-                    <div class="field half">
+        <section class="form-section">
+            <form id="bookForm" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="isbn">ISBN (13 dígitos)</label>
+                        <input type="text" id="isbn" name="isbn" required placeholder="978..." maxlength="13">
+                    </div>
+                    
+                    <div class="input-group">
                         <label for="title">Título</label>
                         <input type="text" id="title" name="title" required>
                     </div>
-                    <div class="field half">
+
+                    <div class="input-group">
                         <label for="authorName">Nombre Autor</label>
-                        <input type="text" id="authorName" name="authorName" required placeholder="Ej: Brandon">
+                        <input type="text" id="authorName" name="authorName" required>
                     </div>
-                    <div class="field half">
+
+                    <div class="input-group">
                         <label for="authorSurname">Apellido Autor</label>
-                        <input type="text" id="authorSurname" name="authorSurname" required placeholder="Ej: Sanderson">
+                        <input type="text" id="authorSurname" name="authorSurname" required>
                     </div>
 
-                    <div class="field half">
+                    <div class="input-group">
                         <label for="editorial">Editorial</label>
-                        <input type="text" id="editorial" name="editorial">
-                    </div>
-                    <div class="field half">
-                        <label for="price">Precio</label>
-                        <input type="number" step="0.01" id="price" name="price">
+                        <input type="text" id="editorial" name="editorial" required>
                     </div>
 
-                    <div class="field half">
-                        <label for="stock">Stock</label>
-                        <input type="number" id="stock" name="stock">
-                    </div>
-                    <div class="field half">
+                    <div class="input-group small">
                         <label for="pages">Páginas</label>
-                        <input type="number" id="pages" name="pages">
+                        <input type="number" id="pages" name="pages" required>
                     </div>
 
-                    <div class="field full">
-                        <label>Portada</label>
+                    <div class="input-group small">
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" name="stock" required>
+                    </div>
 
+                    <div class="input-group small">
+                        <label for="price">Precio (€)</label>
+                        <input type="number" step="0.01" id="price" name="price" required>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label for="synopsis">Sinopsis</label>
+                        <textarea id="synopsis" name="synopsis" rows="4" required></textarea>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Portada del Libro</label>
                         <div class="drop-zone" id="dropZone">
-                            <span class="drop-zone__prompt">Arrastra la imagen aquí o haz clic para buscar</span>
-                            <input type="file" name="coverFile" class="drop-zone__input" id="coverInput"
-                                accept="image/*">
+                            <span class="drop-zone__prompt">Arrastra la imagen aquí o haz clic para subir</span>
+                            <input type="file" name="coverFile" id="coverInput" class="drop-zone__input" accept="image/*">
                         </div>
                         <input type="hidden" id="cover" name="cover">
                     </div>
-
-                    <div class="field full">
-                        <label for="synopsis">Sinopsis</label>
-                        <textarea id="synopsis" name="synopsis" rows="4"></textarea>
-                    </div>
                 </div>
 
-                <div class="actions" style="margin-top: 20px; text-align: center;">
-                    <button type="submit" id="actionBtn" class="btn btn-primary">Guardar</button>
+                <div class="actions">
+                    <button type="submit" id="actionBtn" class="action-btn">Guardar</button>
                 </div>
             </form>
-        </div>
+        </section>
     </main>
 
-    <script src="../assets/js/crudBook.js"></script>
+    <footer>
+        <p>© 2025 Book & Bugs - Panel de Administración</p>
+    </footer>
 </body>
-
 </html>
