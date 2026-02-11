@@ -14,18 +14,16 @@ ini_set('display_errors', 0);
 $commentDAO = new CommentDAO();
 $data = json_decode(file_get_contents("php://input"));
 
-// AHORA ES CONSISTENTE: Esperamos 'text' y 'rating', igual que en UpdateComment
 if (
     !empty($data->profileCode) &&
     !empty($data->isbn) &&
-    !empty($data->text) &&    // ANTES: $data->comment
-    !empty($data->rating)     // ANTES: Valoration o Rating
+    !empty($data->text) &&    
+    !empty($data->rating)     
 ) {
     $newComment = new Comment();
     $newComment->setProfileCode($data->profileCode);
     $newComment->setIsbn($data->isbn);
     
-    // Usamos 'text' consistentemente
     $newComment->setCommentText($data->text); 
     $newComment->setRating($data->rating);
     

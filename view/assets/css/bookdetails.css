@@ -1,8 +1,3 @@
-/* ======================================================
-   ESTILOS ESPECÍFICOS DE LA VISTA DETALLE DEL LIBRO
-   Archivo: view/assets/css/bookdetails.css
-   ====================================================== */
-
 /* 1. CONTENEDOR PRINCIPAL DEL LIBRO */
 .details-container {
     display: flex;
@@ -14,7 +9,6 @@
     border-radius: var(--border-radius, 8px);
     margin-bottom: 40px;
     max-width: 1200px;
-    /* Asegura el ancho máximo */
     margin-left: auto;
     margin-right: auto;
 }
@@ -141,12 +135,10 @@
     cursor: not-allowed;
 }
 
-/* ======================================================
-   2. SECCIÓN DE COMENTARIOS
-   ====================================================== */
+
+/* 2. SECCIÓN DE COMENTARIOS*/
 .comments-section {
     max-width: 1200px;
-    /* Igual que el contenedor del libro */
     margin: 0 auto;
     padding: 40px 20px;
     box-sizing: border-box;
@@ -231,7 +223,6 @@
 
 .btn-cancel {
     background-color: #6c757d;
-    /* Gris */
 }
 
 .btn-cancel:hover {
@@ -253,9 +244,7 @@
     font-weight: bold;
 }
 
-/* ======================================================
-   3. ESTILOS PARA "VER" LAS ESTRELLAS (EN LOS COMENTARIOS PUBLICADOS)
-   ====================================================== */
+/* 3. ESTILOS PARA "VER" LAS ESTRELLAS (EN LOS COMENTARIOS PUBLICADOS) */
 .star-rating {
     font-size: 1.2rem;
     color: #ccc;
@@ -275,7 +264,6 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    /* Fallback */
     display: inline-block;
 }
 
@@ -285,7 +273,6 @@
     padding: 20px;
     border-bottom: 1px solid #eee;
     position: relative;
-    /* Necesario para posicionar los botones de acción */
     margin-bottom: 10px;
 }
 
@@ -339,9 +326,7 @@
     color: #dc3545;
 }
 
-/* ======================================================
-   4. ESTILOS PARA "VOTAR" (SELECTOR DE MEDIAS ESTRELLAS)
-   ====================================================== */
+/* 4. ESTILOS PARA "VOTAR" (SELECTOR DE MEDIAS ESTRELLAS) */
 .rating-wrapper {
     display: flex;
     align-items: center;
@@ -351,7 +336,6 @@
 .star-selector {
     display: flex;
     flex-direction: row-reverse;
-    /* Inverso para colorear */
     position: relative;
 }
 
@@ -381,21 +365,18 @@
 }
 
 /* RECORTES DE ESTRELLA (Para simular mitades) */
-/* Mitad derecha (full en el HTML por el reverse) */
+/* Mitad derecha  */
 .star-selector label.full:before {
     direction: ltr;
     margin-left: -20px;
-    /* Desplazamos para ver la derecha */
 }
 
-/* Mitad izquierda (half en el HTML por el reverse) */
+/* Mitad izquierda*/
 .star-selector label.half:before {
     direction: ltr;
-    /* Se ve natural */
 }
 
 /* HOVER Y SELECCIÓN */
-/* Al pasar ratón o seleccionar, iluminamos la actual y las "siguientes" (que son anteriores visualmente) */
 .star-selector label:hover,
 .star-selector label:hover~label,
 .star-selector input:checked~label {
@@ -405,12 +386,9 @@
 
 .star-selector label:hover {
     transform: scale(1.1);
-    /* Pequeño pop al pasar ratón */
 }
 
-/* ======================================================
-   RESPONSIVE
-   ====================================================== */
+/*RESPONSIVE */
 @media (max-width: 768px) {
     .details-container {
         flex-direction: column;

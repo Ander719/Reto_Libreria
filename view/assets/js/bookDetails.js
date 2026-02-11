@@ -134,7 +134,6 @@ function rellenarVista(libro) {
             return;
         }
 
-        // --- NUEVA VALIDACIÓN PREVENTIVA DE STOCK ---
         const cantidad = parseInt(qtyInput.value);
         const stockDisponible = parseInt(libro.stock);
 
@@ -147,10 +146,9 @@ function rellenarVista(libro) {
         // Caso B: Pide más de lo que hay
         if (cantidad > stockDisponible) {
             showModal("Stock Insuficiente", `Solo quedan ${stockDisponible} unidades disponibles.`);
-            qtyInput.value = stockDisponible; // Le corregimos el valor automáticamente
-            return; // DETENEMOS AQUÍ. No sigue ejecutando.
+            qtyInput.value = stockDisponible;
+            return;
         }
-        // ---------------------------------------------
 
         // 2. Verificar Tarjeta (Solo si el stock es válido)
         let userCard;
@@ -219,13 +217,11 @@ async function submitComment(e) {
 
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
-    // --- CORRECCIÓN 100% CLEAN CODE ---
-    // Ya no enviamos datos duplicados. Solo lo estándar.
     const payload = {
         profileCode: getUserId(currentUser),
         isbn: isbn,
-        text: text,                      // Unificado: Tanto Add como Update esperan 'text'
-        rating: parseFloat(ratingInput), // Unificado: Tanto Add como Update esperan 'rating'
+        text: text,
+        rating: parseFloat(ratingInput),
         date: new Date().toISOString().slice(0, 10)
     };
 
