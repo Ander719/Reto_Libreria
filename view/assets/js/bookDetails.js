@@ -1,5 +1,5 @@
 import { currentUser, checkSession } from './session.js';
-import { loadHeader,loadFooter } from './header.js';
+import { loadHeader, loadFooter } from './header.js';
 let isEditing = false;
 
 // --- CONFIGURACIÓN DEL MODAL ---
@@ -424,6 +424,10 @@ async function comprarAhora(isbn, quantity, userId) {
 
         if (data.exito) {
             showModal("¡Compra realizada!", "Gracias por tu pedido.");
+
+            dialog.addEventListener('close', () => {
+                location.reload();
+            }, { once: true });
         } else {
             showModal("Error", data.error || "Fallo en la compra.");
         }
