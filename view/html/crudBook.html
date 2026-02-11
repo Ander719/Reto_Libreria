@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Libros</title>
+    <title>Gestión de Libros | Book & Bugs</title>
     <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png">
-    <link rel="stylesheet" href="../assets/css/crudBook.css">
+    
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/crudBook.css">
     
     <script type="module" src="../assets/js/crudBook.js"></script>
 </head>
 
 <body style="display: none;">
+
     <header class="main-header">
         <nav class="nav-container">
             <a href="main.html" class="logo-link">
                 <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" class="logo">
             </a>
-            <div class="welcome-text">Gestión de Inventario</div>
+            <div class="welcome-text">Panel de Administración</div>
             <ul class="nav-menu">
                 <li><a href="main.html" class="nav-link">Inicio</a></li>
                 <li><a href="bookOptions.html" class="nav-link">Volver</a></li>
@@ -29,10 +31,10 @@
         <h1 id="pageTitle" class="page-title">Gestión de Libros</h1>
 
         <section id="searchSection" class="search-section">
-            <label for="searchIsbn">Buscar Libro a Editar:</label>
+            <label for="searchIsbn">Seleccione el libro a editar:</label>
             <div class="search-group">
                 <select id="searchIsbn" class="search-select">
-                    <option value="">Cargando libros...</option>
+                    <option value="">Cargando catálogo...</option>
                 </select>
                 <button id="btnSearch" class="btn-search">Cargar Datos</button>
             </div>
@@ -42,9 +44,10 @@
         <section class="form-section">
             <form id="bookForm" enctype="multipart/form-data">
                 <div class="form-grid">
+                    
                     <div class="input-group">
                         <label for="isbn">ISBN (13 dígitos)</label>
-                        <input type="text" id="isbn" name="isbn" required placeholder="978..." maxlength="13">
+                        <input type="text" id="isbn" name="isbn" required placeholder="Ej: 9781234567890" maxlength="13">
                     </div>
                     
                     <div class="input-group">
@@ -69,22 +72,22 @@
 
                     <div class="input-group small">
                         <label for="pages">Páginas</label>
-                        <input type="number" id="pages" name="pages" required>
+                        <input type="number" id="pages" name="pages" required min="1">
                     </div>
 
                     <div class="input-group small">
                         <label for="stock">Stock</label>
-                        <input type="number" id="stock" name="stock" required>
+                        <input type="number" id="stock" name="stock" required min="0">
                     </div>
 
                     <div class="input-group small">
                         <label for="price">Precio (€)</label>
-                        <input type="number" step="0.01" id="price" name="price" required>
+                        <input type="number" step="0.01" id="price" name="price" required min="0">
                     </div>
 
                     <div class="input-group full-width">
                         <label for="synopsis">Sinopsis</label>
-                        <textarea id="synopsis" name="synopsis" rows="4" required></textarea>
+                        <textarea id="synopsis" name="synopsis" rows="5" required></textarea>
                     </div>
 
                     <div class="input-group full-width">
@@ -98,14 +101,32 @@
                 </div>
 
                 <div class="actions">
-                    <button type="submit" id="actionBtn" class="action-btn">Guardar</button>
+                    <button type="submit" id="actionBtn" class="action-btn">Guardar Libro</button>
                 </div>
             </form>
         </section>
     </main>
 
+    <dialog id="requirementsDialog" class="requirements-dialog">
+        <div class="dialog-header">
+            ⚠️ Atención: Datos Incorrectos
+        </div>
+        <div class="dialog-body">
+            <p>Por favor, revisa los siguientes requisitos antes de guardar:</p>
+            <ul class="requirements-list">
+                <li><strong>ISBN:</strong> Debe tener exactamente 13 números (sin guiones ni letras).</li>
+                <li><strong>Título y Autor:</strong> No pueden estar vacíos.</li>
+                <li><strong>Valores Numéricos:</strong> Precio, Páginas y Stock deben ser positivos.</li>
+                <li><strong>Sinopsis:</strong> Es obligatoria.</li>
+            </ul>
+        </div>
+        <div class="dialog-footer">
+            <button id="closeDialogBtn" class="btn-close-dialog" type="button">Entendido</button>
+        </div>
+    </dialog>
+
     <footer>
-        <p>© 2025 Book & Bugs - Panel de Administración</p>
+        <p>© 2025 Book & Bugs - Administración</p>
     </footer>
 </body>
 </html>

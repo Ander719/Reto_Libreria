@@ -2,28 +2,29 @@ import { checkSession } from './session.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 1. Verificación de Sesión
+        // --- 1. SEGURIDAD: VERIFICACIÓN DE SESIÓN Y ROL ---
+        
+        // Verificar Login
         const isLogged = await checkSession();
         if (!isLogged) {
             window.location.href = 'login.html';
             return; 
         }
 
-        // 2. Verificación de Rol (Admin)
+        // Verificar si es ADMIN
         const res = await fetch('../../api/GetProfile.php');
         const data = await res.json();
 
-        // Si NO es admin, redirigir inmediatamente
         if (!data.success || !data.user || data.user.role !== 'admin') {
-            alert("Acceso denegado. No eres administrador.");
+            alert("Acceso denegado. Se requieren permisos de administrador.");
             window.location.href = 'main.html';
             return;
         }
 
-        // 3. ¡ÉXITO! Eres admin, hacemos visible la página
+        // Si pasa las verificaciones, mostramos la página
         document.body.style.display = 'block'; 
 
-        // 4. Cargamos la lógica de la página
+        // --- 2. INICIAR LÓGICA DE LA PÁGINA ---
         initPageLogic();
 
     } catch (error) {
@@ -36,7 +37,7 @@ function initPageLogic() {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Referencias
+    // Referencias al DOM
     const pageTitle = document.getElementById('pageTitle');
     const searchSection = document.getElementById('searchSection');
     const actionBtn = document.getElementById('actionBtn');
@@ -46,11 +47,21 @@ function initPageLogic() {
     const form = document.getElementById('bookForm');
     const searchSelect = document.getElementById('searchIsbn'); 
     
-    // DropZone Refs
+    // Referencias Dialog
+    const reqDialog = document.getElementById('requirementsDialog');
+    const closeDialogBtn = document.getElementById('closeDialogBtn');
+
+    // Referencias DropZone
     const dropZone = document.getElementById("dropZone");
     const inputElement = document.getElementById("coverInput");
 
+    // Configuración Inicial
     initInterface();
+
+    // Evento cerrar Dialog
+    if (closeDialogBtn && reqDialog) {
+        closeDialogBtn.addEventListener('click', () => reqDialog.close());
+    }
 
     function initInterface() {
         if (mode === 'create') {
@@ -115,8 +126,21 @@ function initPageLogic() {
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
+            
             const isbnVal = isbnInput.value.trim();
-            if (isbnVal.length !== 13) return alert("El ISBN debe tener exactamente 13 caracteres.");
+
+            // VALIDACIÓN MEJORADA CON DIALOG
+            // Comprobamos longitud y si es numérico
+            const isNumeric = /^\d+$/.test(isbnVal);
+
+            if (isbnVal.length !== 13 || !isNumeric) {
+                if (reqDialog) {
+                    reqDialog.showModal(); // Mostramos el dialog nativo
+                } else {
+                    alert("El ISBN debe tener exactamente 13 dígitos numéricos.");
+                }
+                return; // Detenemos el envío
+            }
 
             const formData = new FormData(form);
             const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
@@ -170,6 +194,7 @@ function initPageLogic() {
         if (prompt) prompt.style.display = 'block';
     }
 
+    // --- LÓGICA DRAG & DROP ---
     if (dropZone && inputElement) {
         dropZone.addEventListener("click", () => inputElement.click());
         inputElement.addEventListener("change", () => {
