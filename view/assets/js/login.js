@@ -55,19 +55,20 @@ async function login(username, password) {
             body: JSON.stringify({ username, password }),
             credentials: 'include', // Importante para enviar/recibir cookies
         });
-        if (!response.ok) {
-            return {
-                success: false, error: data.error || `Error de conexión (${response.status})`
-            };
-        }
         const rawText = await response.text();
-
+        
         let data;
         try {
             data = JSON.parse(rawText);
         } catch (e) {
             console.error("Error al parsear JSON:", rawText);
-            return;
+            return { success: false, error: "Respuesta del servidor no es JSON válido." };
+        }
+        if (!response.ok) {
+            return { 
+                success: false, 
+                error: data.error || `Error del servidor (${response.status})` 
+            };
         }
         return data; // Si todo fue bien (200), devolvemos los datos tal cual
 
