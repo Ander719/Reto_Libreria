@@ -1,7 +1,7 @@
 import { checkSession, currentUser } from './session.js';
-import { loadHeader,loadFooter} from './header.js';
+import { loadHeader, loadFooter } from './header.js';
 
-document.addEventListener('DOMContentLoaded', async() => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log("Verificando sesión con el servidor...");
 
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
@@ -38,10 +38,15 @@ document.addEventListener('DOMContentLoaded', async() => {
 
 async function loadOrders(profileCode) {
     const container = document.getElementById('ordersContainer');
-    
+
     try {
         // Llamada a la API creada anteriormente
         const response = await fetch(`../../api/GetOrder.php?profileCode=${profileCode}`);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Error en el servidor");
+        }
+
         const orders = await response.json();
 
         if (orders.length === 0) {
@@ -61,7 +66,7 @@ async function loadOrders(profileCode) {
                 </div>
             </div>
         `).join('');
-        
+
     } catch (error) {
         console.error("Error al cargar el historial:", error);
         container.innerHTML = "<p>Error al cargar el historial de compras.</p>";

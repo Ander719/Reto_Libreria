@@ -70,15 +70,15 @@ function eliminarComentario(isbn, profileCode) {
                 profileCode: profileCode 
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message) });
+            }
+            return response.json();
+        })
         .then(result => {
-            // Verificamos si la operación fue exitosa según la respuesta del servidor
             if (result.success || result.message.includes("correctamente")) {
                 alert(result.message); 
-                
-                // RECARGA DINÁMICA: Volvemos a llamar a la función de carga.
-                // Esto limpia el tbody y vuelve a pedir los datos a la API,
-                // actualizando la tabla sin recargar la pestaña.
                 cargarComentarios(isbn); 
             } else {
                 alert('Error: ' + result.message);
