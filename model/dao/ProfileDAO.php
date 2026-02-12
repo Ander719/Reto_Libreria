@@ -33,7 +33,8 @@ class ProfileDAO
                     $row['name_'],
                     $row['surname'],
                     $row['gender'],
-                    $row['card_no']
+                    $row['card_no'],
+                    $row['direction']
                 );
             }
             // Si llegamos aquí, SQL corrió pero no devolvió nada
@@ -74,7 +75,8 @@ class ProfileDAO
                 $row['name_'],
                 $row['surname'],
                 $row['gender'],
-                $row['card_no']
+                $row['card_no'],
+                $row['direction']
             );
         }
         return null;
@@ -115,8 +117,7 @@ class ProfileDAO
 
     public function getUserById($id)
     {
-        $sql = "SELECT P.*, U.gender , U.card_no
-                   FROM profile_ P 
+        $sql = "SELECT * FROM profile_ P 
                    JOIN user_ U ON P.profile_code = U.profile_code 
                    WHERE P.profile_code = :id";
         $stmt = $this->conn->prepare($sql);
@@ -133,7 +134,8 @@ class ProfileDAO
                 $row['name_'],
                 $row['surname'],
                 $row['gender'],
-                $row['card_no']
+                $row['card_no'],
+                $row['direction']
             );
         }
         return null;
@@ -165,8 +167,7 @@ class ProfileDAO
 
     public function get_all_users() {
         // CORREGIDO: Todo en minúsculas
-        $query = "SELECT P.*, U.card_no, U.gender 
-                  FROM profile_ P 
+        $query = "SELECT * FROM profile_ P 
                   JOIN user_ U ON P.profile_code = U.profile_code";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -185,7 +186,7 @@ class ProfileDAO
     // 3. MODIFICAR DATOS (¡AQUÍ ESTABA EL FALLO!)
     // ==========================================
 
-    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code)
+    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code,$direction)
     {
         try {
             $this->conn->beginTransaction();
@@ -211,12 +212,14 @@ class ProfileDAO
             // 2. Actualizar tabla USER_ (Minúsculas: user_, gender, card_no)
             $query2 = "UPDATE user_ SET 
                         gender = :gender, 
-                        card_no = :card 
+                        card_no = :card,
+                        direction = :direction
                        WHERE profile_code = :code";
             
             $stmt2 = $this->conn->prepare($query2);
             $stmt2->bindParam(":gender", $gender);
             $stmt2->bindParam(":card", $card_no);
+            $stmt2->bindParam(":direction", $direction);
             $stmt2->bindParam(":code", $profile_code);
             $stmt2->execute();
 

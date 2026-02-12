@@ -29,7 +29,10 @@ export async function loadHeader(filter) {
     }
     //console.log(searchGroup);
     // navItems[0] es "Iniciar Sesión"
-    // navItems[1] es "Opciones", navItems[2] es "Cerrar Sesión", etc.
+    // navItems[1] es "Opciones"
+    // navItems[2] es "Cerrar Sesión"
+    // navItems[3] es "Panel Admin"
+    // navItems[4] es "Volver"
     if (currentUser) {
         if (currentUser.role === "admin") navItems[3].hidden = true;
         // --- MODO USUARIO LOGUEADO ---

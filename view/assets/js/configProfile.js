@@ -143,6 +143,7 @@ function fillProfileForm(u, prefix) {
     } else {
         fill('cardNumberUser', u.card_no);
         if (u.gender && getEl('genderUser')) getEl('genderUser').value = u.gender;
+        fill('directionUser', u.direction);
     }
 }
 
@@ -187,6 +188,13 @@ async function saveUserData(role) {
         
         const gender = getEl('genderUser');
         if (gender) formData.append('gender', gender.value);
+
+        const direction = getEl('directionUser').value.trim();
+        if(direction.length > 255) {
+            alert("La dirección debe tener como máximo 255 caracteres.");
+            return;
+        }
+        formData.append('direction', direction);
 
     } else {
         const accountNumberRaw = getEl('currentAccountAdmin').value.trim();

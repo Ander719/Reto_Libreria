@@ -48,7 +48,8 @@ if ($roleForm === 'admin') {
         exit;
     }
     $gender = $_POST['gender'] ?? 'Other';
-    $result = $controller->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card, $targetId);
+    $direction = $_POST['direction'] ?? '';
+    $result = $controller->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card, $targetId,$direction);
 }
 
 echo json_encode(['success' => $result, 'error' => $result ? null : 'Error en BD']);

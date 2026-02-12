@@ -152,17 +152,19 @@ function rellenarVista(libro) {
 
         // 2. Verificar Tarjeta (Solo si el stock es válido)
         let userCard;
+        let direction;
         try {
             const res = await fetch('../../api/GetProfile.php');
             const data = await res.json();
             if (data.success && data.user) {
                 const u = data.user;
                 userCard = u.card_no || u.CardNo || u.CARD_NO;
+                direction = u.direction || u.Direction || u.DIRECTION;
             }
         } catch (err) { console.error(err); }
 
-        if (!userCard || userCard.trim() === "") {
-            const irPerfil = await showConfirm("Sin tarjeta", "No tienes método de pago. ¿Ir al perfil?", "Ir al perfil", "Cancelar");
+        if ((!userCard || userCard.trim() === "") && (!direction || direction.trim() === "")){
+            const irPerfil = await showConfirm("Sin tarjeta o dirección", "No tienes método de pago o dirección. ¿Ir al perfil?", "Ir al perfil", "Cancelar");
             if (irPerfil) window.location.href = "configProfile.html";
             return;
         }

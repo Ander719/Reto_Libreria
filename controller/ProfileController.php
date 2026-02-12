@@ -116,9 +116,9 @@ class ProfileController
     }
     //public function modifyPassword($profile_code, $password) { return $this->ProfileDAO->modifyPassword($profile_code, $password); }
 
-    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code)
+    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code,$direction)
     {
-        return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code);
+        return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code,$direction);
     }
     public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
     {
