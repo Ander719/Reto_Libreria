@@ -2,8 +2,7 @@ import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter} from './header.js';
 
 document.addEventListener('DOMContentLoaded', async() => {
-    console.log("Verificando sesión con el servidor...");
-
+    
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
@@ -13,10 +12,7 @@ document.addEventListener('DOMContentLoaded', async() => {
         return;
     }
 
-    if (isLogged) {
-        console.log("Usuario logueado:", currentUser);
-    } else {
-        console.log("No hay sesión activa, redirigiendo...");
+    if (!isLogged) {
         window.location.href = 'login.html';
     }
     await loadHeader("deleteComment");
@@ -27,9 +23,7 @@ document.addEventListener('DOMContentLoaded', async() => {
 
     if (isbn) {
         cargarComentarios(isbn);
-    } else {
-        console.error("No se proporcionó un ISBN en la URL");
-    }
+    } 
 });
 
 function cargarComentarios(isbn) {
