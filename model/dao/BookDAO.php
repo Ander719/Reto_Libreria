@@ -64,31 +64,31 @@ class BookDAO {
         }
         return $list;
     }
-    // Dentro de BookDAO.php
-public function updateBook(Book $book) {
-    $query = "UPDATE BOOK_ SET 
-                title = :title, 
-                id_author = :author,
-                pages = :pages, 
-                stock = :stock, 
-                synopsis = :synopsis, 
-                price = :price, 
-                editorial = :editorial, 
-                cover = :cover 
-              WHERE isbn = :isbn";
 
-    $stmt = $this->conn->prepare($query);
-    return $stmt->execute([
-        ":title" => $book->getTitle(),
-        ":author" => $book->getAuthor(), 
-        ":pages" => $book->getPages(),
-        ":stock" => $book->getStock(),
-        ":synopsis" => $book->getSynopsis(),
-        ":price" => $book->getPrice(),
-        ":editorial" => $book->getEditorial(),
-        ":cover" => $book->getCover(),
-        ":isbn" => $book->getIsbn()
-    ]);
-}
+    public function updateBook(Book $book) {
+        $query = "UPDATE BOOK_ SET 
+                    title = :title, 
+                    id_author = :author,
+                    pages = :pages, 
+                    stock = :stock, 
+                    synopsis = :synopsis, 
+                    price = :price, 
+                    editorial = :editorial, 
+                    cover = :cover 
+                WHERE isbn = :isbn";
+
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([
+            ":title" => $book->getTitle(),
+            ":author" => $book->getAuthor(), 
+            ":pages" => $book->getPages(),
+            ":stock" => $book->getStock(),
+            ":synopsis" => $book->getSynopsis(),
+            ":price" => $book->getPrice(),
+            ":editorial" => $book->getEditorial(),
+            ":cover" => $book->getCover(),
+            ":isbn" => $book->getIsbn()
+        ]);
+    }
 }
 ?>

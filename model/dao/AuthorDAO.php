@@ -13,7 +13,7 @@ class AuthorDAO {
     }
 
     public function getOrCreateAuthorId($name, $surname) {
-        // 1. Verificar si existe
+        //verificamos si existe ese autor
         $query = "SELECT ID_AUTHOR FROM " . $this->table_name . " WHERE name_author = :name AND last_name = :surname LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":name", $name);
@@ -25,8 +25,7 @@ class AuthorDAO {
             return $row['ID_AUTHOR'];
         }
 
-        // 2. Si no existe, crear nuevo
-        // Obtenemos el ID máximo actual (si no usas AUTO_INCREMENT)
+        // si no existe, creamos uno nuevo
         $queryMax = "SELECT MAX(ID_AUTHOR) as max_id FROM " . $this->table_name;
         $stmtMax = $this->conn->prepare($queryMax);
         $stmtMax->execute();

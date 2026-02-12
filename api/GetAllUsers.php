@@ -6,14 +6,13 @@ session_start();
 $controller = new ProfileController();
 $users = $controller->get_all_users();
 
-if ($users) {
-    // Convertimos claves a minúsculas como en el original
-    $users = array_map(function($user) {
-        return array_change_key_case($user, CASE_LOWER);
-    }, $users);
+    if ($users) {
+        $users = array_map(function($user) {
+            return array_change_key_case($user, CASE_LOWER);
+        }, $users);
 
-    echo json_encode(['resultado' => $users]);
-} else {
-    echo json_encode(['resultado' => []]);
-}
+        echo json_encode(['resultado' => $users]);
+    } else {
+        echo json_encode(['resultado' => []]);
+    }
 ?>

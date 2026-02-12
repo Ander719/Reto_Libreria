@@ -37,26 +37,22 @@ class ProfileDAO
                     $row['direction']
                 );
             }
-            // Si llegamos aquí, SQL corrió pero no devolvió nada
+            
             return "ERROR_SILENCIOSO";
         } catch (PDOException $e) {
-            // ¡AQUÍ ESTÁ LA CLAVE!
             // El código 23000 es el estándar SQL para "Integrity Constraint Violation" (Duplicado)
             if ($e->getCode() == '23000') {
                 return "ERROR_DUPLICADO";
             }
-
-            // Cualquier otro error (conexión, etc)
             return "ERROR_BBDD: " . $e->getMessage();
         }
     }
-    // ==========================================
-    // 1. FUNCIONES DE LOGIN
-    // ==========================================
+
+   //login: busca por username y devuelve un objeto User o Admin dependiendo del tipo de perfil
 
     public function findUserByUsername($username)
     {
-        // 1. Buscamos SOLO por nombre
+        
         $sql = "SELECT * FROM profile_ p 
             JOIN user_ u ON p.profile_code = u.profile_code 
             WHERE p.user_name = :username";
@@ -84,7 +80,7 @@ class ProfileDAO
 
     public function findAdminByUsername($username)
     {
-        // JOIN con la tabla de admins
+        
         $sql = "SELECT * FROM profile_ p 
             JOIN admin_ a ON p.profile_code = a.profile_code 
             WHERE p.user_name = :username";
@@ -94,14 +90,12 @@ class ProfileDAO
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Retornamos una instancia de la clase Admin
-            // El constructor depende de tu clase Admin.php: 
-            // ($code, $email, $user, $pass, $tel, $name, $surname, $account)
+            
             return new Admin(
                 $row['profile_code'],
                 $row['email'],
                 $row['user_name'],
-                $row['pswd'], // El hash
+                $row['pswd'], 
                 $row['telephone'],
                 $row['name_'],
                 $row['surname'],
@@ -111,9 +105,7 @@ class ProfileDAO
         return null;
     }
 
-    // ==========================================
-    // 2. OBTENER DATOS
-    // ==========================================
+    //obtener los datioas
 
     public function getUserById($id)
     {
@@ -182,16 +174,12 @@ class ProfileDAO
         return $list;
     }
 
-    // ==========================================
-    // 3. MODIFICAR DATOS (¡AQUÍ ESTABA EL FALLO!)
-    // ==========================================
 
     public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code,$direction)
     {
         try {
             $this->conn->beginTransaction();
 
-            // 1. Actualizar tabla PROFILE_ (Minúsculas: profile_, email, user_name, telephone, name_, surname)
             $query1 = "UPDATE profile_ SET 
                         email = :email, 
                         user_name = :username, 
@@ -209,7 +197,6 @@ class ProfileDAO
             $stmt1->bindParam(":code", $profile_code);
             $stmt1->execute();
 
-            // 2. Actualizar tabla USER_ (Minúsculas: user_, gender, card_no)
             $query2 = "UPDATE user_ SET 
                         gender = :gender, 
                         card_no = :card,
@@ -254,7 +241,7 @@ class ProfileDAO
             $stmt1->bindParam(":code", $profile_code);
             $stmt1->execute();
 
-            // 2. Actualizar ADMIN_ (Minúsculas: admin_, current_account)
+       
             $query2 = "UPDATE admin_ SET 
                         current_account = :account 
                        WHERE profile_code = :code";
@@ -272,9 +259,8 @@ class ProfileDAO
         }
     }
 
-    // ==========================================
-    // 4. BORRAR Y CREAR
-    // ==========================================
+   // Eliminar usuario (solo perfil, el trigger se encarga de eliminar el detalle)
+
 
     public function delete_user($id) {
         // CORREGIDO: profile_ y profile_code

@@ -13,9 +13,9 @@ $current_account = $_GET['current_account'] ?? '';
 $controller = new ProfileController();
 $modify = $controller->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
 
-if ($modify) {
-    echo json_encode(['success' => true, 'message' => 'Admin modified correctly']);
-} else {
-    echo json_encode(['success' => false, 'error' => 'Error modifying the admin']);
-}
+    if ($modify) {
+        echo json_encode(['success' => true, 'message' => 'Admin modified correctly']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Error modifying the admin']);
+    }
 ?>

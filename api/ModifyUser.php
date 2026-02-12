@@ -3,10 +3,10 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 
-if (!isset($_SESSION['user'])) {
-    echo json_encode(['success' => false, 'error' => 'No has iniciado sesión']);
-    exit;
-}
+    if (!isset($_SESSION['user'])) {
+        echo json_encode(['success' => false, 'error' => 'No has iniciado sesión']);
+        exit;
+    }
 
 $userSession = $_SESSION['user'];
 $loggedUserId = $userSession['profile_code'];
@@ -14,10 +14,10 @@ $isAdmin = ($userSession['role'] === 'admin');
 $targetId = $_POST['target_id'] ?? $loggedUserId;
 $roleForm = $_POST['role'] ?? 'user';
 
-if ($targetId != $loggedUserId && !$isAdmin) {
-    echo json_encode(['success' => false, 'error' => 'Sin permisos']);
-    exit;
-}
+    if ($targetId != $loggedUserId && !$isAdmin) {
+        echo json_encode(['success' => false, 'error' => 'Sin permisos']);
+        exit;
+    }
 
 $telephone = trim($_POST['phone'] ?? '');
 $name = trim($_POST['name'] ?? '');
@@ -25,7 +25,6 @@ $surname = trim($_POST['surname'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $username = trim($_POST['username'] ?? '');
 
-// Validaciones básicas manteniendo lógica original
 if (!empty($telephone)) {
     if (strlen($telephone) !== 9 || !is_numeric($telephone)) {
         echo json_encode(['success' => false, 'error' => 'Teléfono inválido (debe tener 9 dígitos).']);

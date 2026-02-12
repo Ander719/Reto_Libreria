@@ -3,7 +3,7 @@ import { loadHeader, loadFooter } from './header.js';
 
 const appState = {
     allUsers: [],
-    myProfileCode: null // Almacena el ID del usuario logueado
+    myProfileCode: null
 };
 
 const getEl = (id) => document.getElementById(id);
@@ -42,7 +42,7 @@ function setupEventListeners() {
     if (closeUser) closeUser.onclick = () => closeModalAndReset('modifyUserPopupAdmin');
     if (closeAdmin) closeAdmin.onclick = () => closeModalAndReset('modifyAdminPopup');
 
-    // 4. Botón "Eliminar Cuenta" (Dentro del modal)
+    // configuracion para eliminar usuarios solo el admin puede ver el botón
     const deleteBtn = getEl('deleteBtn');
     if (deleteBtn) {
         deleteBtn.onclick = (e) => {
@@ -57,20 +57,19 @@ function setupEventListeners() {
         };
     }
 
-    // 5. Botones "Cambiar Contraseña"
+    // logica para cambiar la contraseña
     const changePwdBtn = getEl('changePwdBtn');
     const changePwdBtnAdmin = getEl('changePwdBtnAdmin');
 
     const openPasswordModal = (e) => {
         e.preventDefault();
 
-        // IMPORTANTE: Reseteamos el formulario para que aparezca vacío
         const verifyForm = getEl('verifyPasswordForm');
         if (verifyForm) verifyForm.reset();
 
         const dialog = getEl('verifyPasswordModal');
         if (dialog) {
-            // Usamos showModal() si está disponible (nativo), sino fallback
+
             if (typeof dialog.showModal === "function") {
                 dialog.showModal();
             } else {
@@ -155,7 +154,6 @@ async function saveUserData(role) {
         return;
     }
 
-    // Captura y limpieza de valores básicos
     const phoneRaw = getEl(`phone${suffix}`).value.trim();
     const name = getEl(`firstName${suffix}`).value.trim();
     const surname = getEl(`lastName${suffix}`).value.trim();
@@ -173,6 +171,10 @@ async function saveUserData(role) {
     let phoneClean = "";
     if (phoneRaw.length > 0) {
         phoneClean = phoneRaw.replace(/[\s-]/g, '');
+<<<<<<< HEAD
+=======
+        // Validamos que sean 9 dígitos
+>>>>>>> 8545e52b8a5863f0ea5e5ce839546d5c96935f59
         if (!/^\d{9}$/.test(phoneClean)) {
             alert("El teléfono debe tener 9 dígitos numéricos.");
             return;
@@ -190,9 +192,6 @@ async function saveUserData(role) {
 
     if (role === 'user') {
         const cardNumberRaw = getEl('cardNumberUser').value.trim();
-
-        // 2. RESTRICCIÓN: Limpiar guiones de la tarjeta para validar 16 dígitos
-        // Esto permite formatos como 1234-5678-1234-5678
         let cardNumberClean = "";
 
         if (cardNumberRaw.length > 0) {
@@ -203,7 +202,7 @@ async function saveUserData(role) {
             }
         }
 
-        // Enviamos el número limpio al servidor
+        //el servidor recive el numero limpito
         formData.append('cardNumber', cardNumberClean);
 
         const gender = getEl('genderUser');
@@ -294,7 +293,7 @@ async function loadUsersTable() {
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
 
-            // Asegúrate de usar 'u.name_' que es como viene de la base de datos
+         
             clone.querySelector('.col-username').textContent = u.user_name || "N/A";
             clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`.trim() || "Sin nombre";
             clone.querySelector('.col-email').textContent = u.email || "Sin email";
@@ -353,14 +352,10 @@ async function deleteUser(id) {
     } catch (err) { console.error(err); }
 }
 
-// ==========================================
-// 6. CONTRASEÑAS
-// ==========================================
 function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
 
-    // Manejar cierre manual de los dialogs
     const closePassBtns = document.querySelectorAll('.close-pass-btn, button[command="close"]');
     closePassBtns.forEach(btn => {
         btn.onclick = (e) => {
@@ -375,7 +370,7 @@ function setupPasswordLogic() {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
 
-            // Obtener username del usuario logueado para verificar
+            
             const resInit = await fetch('../../api/GetProfile.php');
             const dataInit = await resInit.json();
             const username = dataInit.user.user_name;
@@ -389,15 +384,15 @@ function setupPasswordLogic() {
                 const data = await res.json();
 
                 if (data.success) {
-                    // 1. Cerrar modal de verificación
+                   
                     const verifyModal = getEl('verifyPasswordModal');
                     if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
                     else toggleModal('verifyPasswordModal', false);
 
-                    // 2. Limpiar y Abrir modal de nueva contraseña
+                    
                     const changeModal = getEl('changePasswordModal');
                     if (changeModal) {
-                        // IMPORTANTE: Reseteamos campos para que no salga info vieja
+                       
                         if (changeForm) changeForm.reset();
 
                         if (typeof changeModal.showModal === 'function') changeModal.showModal();
@@ -418,7 +413,7 @@ function setupPasswordLogic() {
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
 
-            // Obtenemos a quién cambiarle la pass (Usuario logueado o Admin editando a otro)
+            
             const targetId = getEl('saveBtnUser').getAttribute('data-target-id') ||
                 getEl('saveBtnAdmin').getAttribute('data-target-id');
             if (newP.length < 4) return alert("La contraseña debe tener al menos 4 caracteres.");
