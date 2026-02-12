@@ -13,7 +13,6 @@ $controller = new CommentController();
 
 if (!empty($data->isbn) && !empty($data->profileCode)) {
 
-    // Iniciar sesión si no está iniciada
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -22,14 +21,23 @@ if (!empty($data->isbn) && !empty($data->profileCode)) {
         $response = $controller->deleteComment($data->isbn, $data->profileCode, $_SESSION['user']);
         
         http_response_code($response["code"]);
-        echo json_encode($response);
+        echo json_encode([
+            "success" => $response["success"],
+            "message" => $response["message"]
+        ]);
     } else {
         http_response_code(401);
-        echo json_encode(["message" => "Debes iniciar sesión."]);
+        echo json_encode([
+            "success" => false,
+            "message" => "Debes iniciar sesión."
+        ]);
     }
 
 } else {
     http_response_code(400);
-    echo json_encode(["message" => "Faltan datos."]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Faltan datos."
+    ]);
 }
 ?>

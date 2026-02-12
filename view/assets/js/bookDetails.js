@@ -241,20 +241,38 @@ async function submitComment(e) {
             body: JSON.stringify(payload)
         });
 
-        if (res.ok) {
+        console.log(`[${isEditing ? 'UPDATE' : 'ADD'}] HTTP Status:`, res.status);
+
+        const rawText = await res.text();
+
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (parseError) {
+            console.error("Error crítico: El servidor no devolvió JSON.", rawText);
+            msg.className = "msg-error";
+            msg.textContent = "Error técnico en el servidor.";
+            return;
+        }
+
+        if (res.ok && data.success) {
             msg.className = "msg-success";
-            msg.textContent = isEditing ? "Actualizado." : "Publicado.";
+            msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
             resetForm();
             loadComments(isbn);
             setTimeout(() => msg.textContent = "", 3000);
         } else {
-            const err = await res.json();
+            console.warn("Error de lógica de negocio:", data.message);
             msg.className = "msg-error";
-            msg.textContent = err.message || "Error.";
+            msg.textContent = data.message || "Error al procesar la solicitud.";
         }
-    } catch (e) { console.error(e); }
-}
 
+    } catch (e) {
+        console.error("Error de red (Fetch failed):", e);
+        msg.className = "msg-error";
+        msg.textContent = "Error de conexión. Inténtalo más tarde.";
+    }
+}
 async function loadComments(isbn) {
     const list = document.getElementById('commentsList');
     const myId = parseInt(getUserId(currentUser));
