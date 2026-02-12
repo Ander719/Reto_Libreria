@@ -45,7 +45,7 @@ class CommentDAO {
         $resultArray = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            //Instanciamos la Entidad (Cumplimiento estricto MVC)
+            //Instanciamos la Entidad
             $commentObj = new Comment();
             $commentObj->setProfileCode($row['profile_code']);
             $commentObj->setCommentText($row['comment_text']);
