@@ -19,36 +19,42 @@ if ($targetId != $loggedUserId && !$isAdmin) {
     exit;
 }
 
-$telephone = $_POST['phone'] ?? '';
-$name = $_POST['name'] ?? '';
-$surname = $_POST['surname'] ?? '';
-$email = $_POST['email'] ?? '';
-$username = $_POST['username'] ?? '';
+$telephone = trim($_POST['phone'] ?? '');
+$name = trim($_POST['name'] ?? '');
+$surname = trim($_POST['surname'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$username = trim($_POST['username'] ?? '');
 
 // Validaciones básicas manteniendo lógica original
-if (strlen($telephone) !== 9 || !is_numeric($telephone)) {
-    echo json_encode(['success' => false, 'error' => 'Teléfono inválido (9 dígitos)']);
-    exit;
+if (!empty($telephone)) {
+    if (strlen($telephone) !== 9 || !is_numeric($telephone)) {
+        echo json_encode(['success' => false, 'error' => 'Teléfono inválido (debe tener 9 dígitos).']);
+        exit;
+    }
 }
 
 $controller = new ProfileController();
 $result = false;
 
 if ($roleForm === 'admin') {
-    $acc = $_POST['accountNumber'] ?? '';
-    if (strlen($acc) !== 24) {
-        echo json_encode(['success' => false, 'error' => 'Cuenta inválida (24 caracteres)']);
-        exit;
+    $acc = trim($_POST['accountNumber'] ?? '');
+    if (!empty($acc)) {
+        if (strlen($acc) !== 24) {
+            echo json_encode(['success' => false, 'error' => 'Cuenta bancaria inválida (24 caracteres).']);
+            exit;
+        }
     }
     $result = $controller->modifyAdmin($email, $username, $telephone, $name, $surname, $acc, $targetId);
 } else {
-    $card = $_POST['cardNumber'] ?? '';
-    if (strlen($card) !== 16 || !is_numeric($card)) {
-        echo json_encode(['success' => false, 'error' => 'Tarjeta inválida (16 dígitos)']);
-        exit;
+    $card = trim($_POST['cardNumber'] ?? '');
+    if (!empty($card)) {
+        if (strlen($card) !== 16 || !is_numeric($card)) {
+            echo json_encode(['success' => false, 'error' => 'Tarjeta inválida (debe tener 16 dígitos).']);
+            exit;
+        }
     }
     $gender = $_POST['gender'] ?? 'Other';
-    $direction = $_POST['direction'] ?? '';
+    $direction = trim($_POST['direction'] ?? '');
     $result = $controller->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card, $targetId,$direction);
 }
 

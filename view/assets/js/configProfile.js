@@ -148,6 +148,12 @@ async function saveUserData(role) {
     const saveBtn = getEl(role === 'admin' ? 'saveBtnAdmin' : 'saveBtnUser');
     const targetId = saveBtn?.getAttribute('data-target-id');
     const modalId = role === 'admin' ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
+    const formId = role === 'admin' ? 'profileFormAdmin' : 'profileFormUser';
+    const form = document.getElementById(formId);
+    if (!form.checkValidity()) {
+        form.reportValidity(); 
+        return;
+    }
 
     // Captura y limpieza de valores básicos
     const phoneRaw = getEl(`phone${suffix}`).value.trim();
@@ -166,9 +172,7 @@ async function saveUserData(role) {
 
     let phoneClean = "";
     if (phoneRaw.length > 0) {
-        // Quitamos espacios y guiones para validar
         phoneClean = phoneRaw.replace(/[\s-]/g, '');
-        // Validamos que sean 9 dígitos numéricos
         if (!/^\d{9}$/.test(phoneClean)) {
             alert("El teléfono debe tener 9 dígitos numéricos.");
             return;
@@ -417,7 +421,7 @@ function setupPasswordLogic() {
             // Obtenemos a quién cambiarle la pass (Usuario logueado o Admin editando a otro)
             const targetId = getEl('saveBtnUser').getAttribute('data-target-id') ||
                 getEl('saveBtnAdmin').getAttribute('data-target-id');
-
+            if (newP.length < 4) return alert("La contraseña debe tener al menos 4 caracteres.");
             if (newP !== confP) return alert("Las contraseñas no coinciden.");
 
             try {

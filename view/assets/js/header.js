@@ -70,7 +70,6 @@ function showOnly(indices = []) {
 }
 export async function loadFooter(){
     const footerLinks = document.querySelectorAll("#footerLink li")
-    console.log(footerLinks);
     footerLinks[1].addEventListener("click",()=>{
         window.location.href="main.html";
     });

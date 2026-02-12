@@ -122,13 +122,14 @@ public function modifyUser($email, $username, $telephone, $name, $surname, $gend
     $username = htmlspecialchars(trim($username));
     $name = htmlspecialchars(trim($name));
     $surname = htmlspecialchars(trim($surname));
-    $direction = htmlspecialchars(trim($direction));
     $telephone = filter_var($telephone, FILTER_SANITIZE_NUMBER_INT);
+    $direction = htmlspecialchars(trim($direction));
 
     // Validación básica
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-    if (strlen($telephone) < 9) return false;
-    if (strlen($card_no) !== 16 || !is_numeric($card_no)) return false;
+    if (!empty($telephone) && strlen($telephone) < 9) return false;
+    if (!empty($card_no) && (strlen($card_no) !== 16 || !is_numeric($card_no))) return false;
+    if (empty($profile_code)) return false;
 
     return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction);
 }
@@ -144,7 +145,8 @@ public function modifyAdmin($email, $username, $telephone, $name, $surname, $cur
 
     // Validación
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-    if (strlen($current_account) < 20) return false; // Validación mínima de IBAN
+    if (empty($current_account) || strlen($current_account) < 20) return false;
+    if (empty($profile_code)) return false;
 
     return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
 }
