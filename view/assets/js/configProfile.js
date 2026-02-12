@@ -44,7 +44,7 @@ function setupEventListeners() {
 
     // configuracion para eliminar usuarios solo el admin puede ver el botón
     // Configuración para eliminar cuenta propia
-    const deleteBtn = getEl('deleteBtn');
+    /*const deleteBtn = getEl('deleteBtn');
     if (deleteBtn) {
         deleteBtn.onclick = (e) => {
             e.preventDefault();
@@ -59,6 +59,21 @@ function setupEventListeners() {
             } else {
                 alert("Error: No se ha podido identificar tu usuario para eliminarlo.");
                 console.error("Error: targetId es null/undefined");
+            }
+        };
+    }*/
+    const deleteBtn = getEl('deleteBtn');
+    if (deleteBtn) {
+        deleteBtn.onclick = (e) => {
+            e.preventDefault();
+
+            const targetId = getEl('saveBtnUser')?.getAttribute('data-target-id') ||
+                appState.myProfileCode;
+
+            if (targetId) {
+                deleteUser(targetId);
+            } else {
+                alert("Error: No se ha podido identificar el usuario para eliminarlo.");
             }
         };
     }
