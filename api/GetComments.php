@@ -1,14 +1,15 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: GET");
 
 require_once '../controller/CommentController.php';
 
-$commentDAO = new CommentController();
-$isbn = isset($_GET['isbn']) ? $_GET['isbn'] : "";
+$controller = new CommentController();
+$isbn = isset($_GET['isbn']) ? htmlspecialchars($_GET['isbn']) : "";
+
 if($isbn) {
-    $comments = $commentDAO->getCommentsByISBN($isbn);
-    echo json_encode($comments);
+    echo json_encode($controller->getCommentsByISBN($isbn));
 } else {
     echo json_encode([]);
 }
