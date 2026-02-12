@@ -225,6 +225,10 @@ async function submitComment(e) {
         return;
     }
 
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localDate = new Date(now.getTime() - offset).toISOString().slice(0, 19).replace('T', ' ');
+
     const url = isEditing ? '../../api/UpdateComment.php' : '../../api/AddComment.php';
 
     const payload = {
@@ -232,7 +236,7 @@ async function submitComment(e) {
         isbn: isbn,
         text: text,
         rating: parseFloat(ratingInput),
-        date: new Date().toISOString().slice(0, 10)
+        date: localDate
     };
 
     try {
