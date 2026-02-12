@@ -160,11 +160,21 @@ function rellenarVista(libro) {
                 const u = data.user;
                 userCard = u.card_no || u.CardNo || u.CARD_NO;
                 direction = u.direction || u.Direction || u.DIRECTION;
+                console.log(u);
             }
         } catch (err) { console.error(err); }
 
-        if ((!userCard || userCard.trim() === "") && (!direction || direction.trim() === "")){
-            const irPerfil = await showConfirm("Sin tarjeta o dirección", "No tienes método de pago o dirección. ¿Ir al perfil?", "Ir al perfil", "Cancelar");
+        // CORRECCIÓN: Usamos || (O) porque si falta UNA, ya no vale.
+        const faltaTarjeta = !userCard || String(userCard).trim() === "";
+        const faltaDireccion = !direction || String(direction).trim() === "";
+
+        if (faltaTarjeta || faltaDireccion) {
+            let msg = "Te faltan datos para comprar:";
+            if (faltaTarjeta) msg += "\n- Tarjeta";
+            if (faltaDireccion) msg += "\n- Dirección";
+            msg += "\n¿Ir al perfil a completarlos?";
+
+            const irPerfil = await showConfirm("Datos incompletos", msg, "Ir al perfil", "Cancelar");
             if (irPerfil) window.location.href = "configProfile.html";
             return;
         }
@@ -424,7 +434,7 @@ async function comprarAhora(isbn, quantity, userId) {
             showModal("¡Compra realizada!", "Gracias por tu pedido.");
 
             dialog.addEventListener('close', () => {
-                location.reload();
+                //location.reload();
             }, { once: true });
         } else {
             showModal("Error", data.error || "Fallo en la compra.");
