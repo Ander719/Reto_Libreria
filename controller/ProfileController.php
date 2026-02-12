@@ -118,7 +118,10 @@ class ProfileController
 public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction)
 {
     // Sanitización
-    $email = filter_var(trim($email), FILTER_SANITIZE_EMAIL);
+    $email = trim($email);
+    if (!empty($email)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+    }
     $username = htmlspecialchars(trim($username));
     $name = htmlspecialchars(trim($name));
     $surname = htmlspecialchars(trim($surname));
@@ -126,8 +129,7 @@ public function modifyUser($email, $username, $telephone, $name, $surname, $gend
     $direction = htmlspecialchars(trim($direction));
 
     // Validación básica
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-    if (!empty($telephone) && strlen($telephone) < 9) return false;
+    if (!empty($telephone) && strlen($telephone) !== 9) return false;
     if (!empty($card_no) && (strlen($card_no) !== 16 || !is_numeric($card_no))) return false;
     if (empty($profile_code)) return false;
 

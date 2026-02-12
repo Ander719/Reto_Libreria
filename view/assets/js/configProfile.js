@@ -230,6 +230,7 @@ async function saveUserData(role) {
         const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
         console.log("Status ModifyUser:", res.status);
         const text = await res.text();
+        console.log("Raw response ModifyUser:", text);
         let data;
         try {
             data = JSON.parse(text);
