@@ -18,13 +18,14 @@ $data = $controller->getProfile($userId, $userRole);
     if ($data) {
         unset($data['pswd']); 
         unset($data['password']); 
-
+        http_response_code(200);
         echo json_encode([
             "success" => true,
             "user" => $data,
             "role" => $userRole
         ]);
     } else {
+        http_response_code(404);
         echo json_encode(["success" => false, "error" => "Perfil no encontrado"]);
     }
 ?>

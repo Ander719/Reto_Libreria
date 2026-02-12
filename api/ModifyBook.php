@@ -3,6 +3,7 @@ header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
         echo json_encode(['exito' => false, 'error' => 'Método no permitido.']);
         exit;
     }
@@ -19,7 +20,6 @@ $editorial = $_POST['editorial'] ?? '';
 $oldCover = $_POST['cover'] ?? ''; 
 
 $finalCoverName = $oldCover;
-    //con este if sustituimos la portada antigua por la nueva, si se ha subido una nueva portada en caso de que se haya modificado
     if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = '../view/assets/img/covers/';
         $extension = strtolower(pathinfo($_FILES['coverFile']['name'], PATHINFO_EXTENSION));
@@ -35,10 +35,12 @@ $finalCoverName = $oldCover;
 
 $controller = new BookController();
 $result = $controller->modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $finalCoverName);
-// respuesta JSON
+
     if ($result) {
+        http_response_code(200);
         echo json_encode(['exito' => true, 'message' => 'Libro actualizado correctamente.']);
     } else {
+        http_response_code(500);
         echo json_encode(['exito' => false, 'error' => 'Error al actualizar el libro en la base de datos.']);
     }
 ?>

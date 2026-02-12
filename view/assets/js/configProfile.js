@@ -171,7 +171,6 @@ async function saveUserData(role) {
     let phoneClean = "";
     if (phoneRaw.length > 0) {
         phoneClean = phoneRaw.replace(/[\s-]/g, '');
-        // Validamos que sean 9 dígitos
         if (!/^\d{9}$/.test(phoneClean)) {
             alert("El teléfono debe tener 9 dígitos numéricos.");
             return;
