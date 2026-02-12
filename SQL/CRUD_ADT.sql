@@ -92,7 +92,7 @@ INSERT INTO user_ (profile_code, gender, card_no,direction) VALUES
 (4, 'Man', '3456-7890-1234-5678','mi casa');
 
 INSERT INTO admin_ (profile_code, current_account) VALUES
-(1, 'ES12-3456-7890-1234-5678');
+(1, 'ES12-3456-7890-1234-5678-1234');
 
 -- 3. Autores
 INSERT INTO author_ (id_author, name_author, last_name) VALUES
