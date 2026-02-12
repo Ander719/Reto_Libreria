@@ -7,6 +7,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 $idToDelete = $data['id'] ?? null;
 
     if (!$idToDelete) {
+        http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'No ID provided']);
         exit;
     }
@@ -15,12 +16,13 @@ $controller = new ProfileController();
 $result = $controller->delete_user($idToDelete);
 
     if ($result) {
-        
         if ($isSelfDelete) {
             session_destroy();
         }
+        http_response_code(200);
         echo json_encode(['success' => true, 'isSelfDelete' => $isSelfDelete]);
     } else {
+        http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Error al eliminar en la BD']);
     }
 ?>

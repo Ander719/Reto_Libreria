@@ -10,9 +10,10 @@ $users = $controller->get_all_users();
         $users = array_map(function($user) {
             return array_change_key_case($user, CASE_LOWER);
         }, $users);
-
+        http_response_code(200);
         echo json_encode(['resultado' => $users]);
     } else {
+        http_response_code(200);
         echo json_encode(['resultado' => []]);
     }
 ?>

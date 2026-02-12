@@ -3,6 +3,7 @@ header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
         echo json_encode(['exito' => false, 'error' => 'Método no permitido']);
         exit;
     }
@@ -31,5 +32,10 @@ $coverName = "default.jpg";
 $controller = new BookController();
 $response = $controller->createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName);
 
+if ($response) {
+    http_response_code(201);
+} else {
+    http_response_code(500);
+}
 echo json_encode(['exito' => $response, 'message' => $response ? 'Libro creado' : 'Error al guardar']);
 ?>
