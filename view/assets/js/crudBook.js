@@ -2,16 +2,13 @@ import { checkSession } from './session.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // --- 1. SEGURIDAD: VERIFICACIÓN DE SESIÓN Y ROL ---
-        
-        // Verificar Login
+
         const isLogged = await checkSession();
         if (!isLogged) {
             window.location.href = 'login.html';
             return; 
         }
 
-        // Verificar si es ADMIN
         const res = await fetch('../../api/GetProfile.php');
         const data = await res.json();
 
@@ -21,10 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Si pasa las verificaciones, mostramos la página
         document.body.style.display = 'block'; 
 
-        // --- 2. INICIAR LÓGICA DE LA PÁGINA ---
         initPageLogic();
 
     } catch (error) {
@@ -37,7 +32,6 @@ function initPageLogic() {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Referencias al DOM
     const pageTitle = document.getElementById('pageTitle');
     const searchSection = document.getElementById('searchSection');
     const actionBtn = document.getElementById('actionBtn');
@@ -47,22 +41,23 @@ function initPageLogic() {
     const form = document.getElementById('bookForm');
     const searchSelect = document.getElementById('searchIsbn'); 
     
-    // Referencias Dialog
+
     const reqDialog = document.getElementById('requirementsDialog');
     const closeDialogBtn = document.getElementById('closeDialogBtn');
 
-    // Referencias DropZone
+    // constates para Drag & Drop
     const dropZone = document.getElementById("dropZone");
     const inputElement = document.getElementById("coverInput");
 
-    // Configuración Inicial
+
     initInterface();
 
-    // Evento cerrar Dialog
+
     if (closeDialogBtn && reqDialog) {
         closeDialogBtn.addEventListener('click', () => reqDialog.close());
     }
 
+    //conffigura la interfaz según el modo
     function initInterface() {
         if (mode === 'create') {
             if(pageTitle) pageTitle.innerText = "Añadir Nuevo Libro";
@@ -129,17 +124,15 @@ function initPageLogic() {
             
             const isbnVal = isbnInput.value.trim();
 
-            // VALIDACIÓN MEJORADA CON DIALOG
-            // Comprobamos longitud y si es numérico
             const isNumeric = /^\d+$/.test(isbnVal);
 
             if (isbnVal.length !== 13 || !isNumeric) {
                 if (reqDialog) {
-                    reqDialog.showModal(); // Mostramos el dialog nativo
+                    reqDialog.showModal(); 
                 } else {
                     alert("El ISBN debe tener exactamente 13 dígitos numéricos.");
                 }
-                return; // Detenemos el envío
+                return; 
             }
 
             const formData = new FormData(form);
@@ -194,7 +187,6 @@ function initPageLogic() {
         if (prompt) prompt.style.display = 'block';
     }
 
-    // --- LÓGICA DRAG & DROP ---
     if (dropZone && inputElement) {
         dropZone.addEventListener("click", () => inputElement.click());
         inputElement.addEventListener("change", () => {

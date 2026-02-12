@@ -2,10 +2,10 @@
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['exito' => false, 'error' => 'Método no permitido.']);
-    exit;
-}
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['exito' => false, 'error' => 'Método no permitido.']);
+        exit;
+    }
 
 $isbn = $_POST['isbn'] ?? '';
 $title = $_POST['title'] ?? '';
@@ -19,26 +19,26 @@ $editorial = $_POST['editorial'] ?? '';
 $oldCover = $_POST['cover'] ?? ''; 
 
 $finalCoverName = $oldCover;
-
-if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
-    $uploadDir = '../view/assets/img/covers/';
-    $extension = strtolower(pathinfo($_FILES['coverFile']['name'], PATHINFO_EXTENSION));
-    $newFileName = 'cover_' . time() . '_' . rand(100, 999) . '.' . $extension;
-    
-    if (move_uploaded_file($_FILES['coverFile']['tmp_name'], $uploadDir . $newFileName)) {
-        $finalCoverName = $newFileName;
-        if ($oldCover && $oldCover !== 'default.jpg' && file_exists($uploadDir . $oldCover)) {
-            @unlink($uploadDir . $oldCover);
+    //con este if sustituimos la portada antigua por la nueva, si se ha subido una nueva portada en caso de que se haya modificado
+    if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../view/assets/img/covers/';
+        $extension = strtolower(pathinfo($_FILES['coverFile']['name'], PATHINFO_EXTENSION));
+        $newFileName = 'cover_' . time() . '_' . rand(100, 999) . '.' . $extension;
+        
+        if (move_uploaded_file($_FILES['coverFile']['tmp_name'], $uploadDir . $newFileName)) {
+            $finalCoverName = $newFileName;
+            if ($oldCover && $oldCover !== 'default.jpg' && file_exists($uploadDir . $oldCover)) {
+                @unlink($uploadDir . $oldCover);
+            }
         }
     }
-}
 
 $controller = new BookController();
 $result = $controller->modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $finalCoverName);
-
-if ($result) {
-    echo json_encode(['exito' => true, 'message' => 'Libro actualizado correctamente.']);
-} else {
-    echo json_encode(['exito' => false, 'error' => 'Error al actualizar el libro en la base de datos.']);
-}
+// respuesta JSON
+    if ($result) {
+        echo json_encode(['exito' => true, 'message' => 'Libro actualizado correctamente.']);
+    } else {
+        echo json_encode(['exito' => false, 'error' => 'Error al actualizar el libro en la base de datos.']);
+    }
 ?>

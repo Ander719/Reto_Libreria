@@ -97,12 +97,12 @@
     <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
   </footer>
 
+  //script para cargar header y footer, y verificar sesión de admin
   <script type="module">
     import { checkSession, currentUser, logout } from '../assets/js/session.js';
     import { loadHeader,loadFooter } from '../assets/js/header.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Verificar que sea admin
       await checkSession();
       if (!currentUser || currentUser.role !== 'admin') {
         window.location.href = 'main.html';
@@ -111,7 +111,6 @@
       await loadHeader("opcAdmin");
       await loadFooter();
 
-      // Configurar botón de cerrar sesión del header
       const btnLogoutNav = document.getElementById('btnLogoutNav');
       if (btnLogoutNav) {
         btnLogoutNav.addEventListener('click', (e) => {

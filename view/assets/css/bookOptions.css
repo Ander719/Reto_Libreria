@@ -1,15 +1,10 @@
-/* ======================================================
-   1. VARIABLES Y RESET
-   ====================================================== */
 :root {
   --primary-color: #101416;
   --primary-hover: #333333;
   --secondary-color: #ffffff;
   --background-color: #f4f4f4;
-  
-  /* Colores de Acción */
-  --btn-add-color: #28a745;    /* Verde */
-  --btn-edit-color: #ffc107;   /* Amarillo/Dorado */
+  --btn-add-color: #28a745;    
+  --btn-edit-color: #ffc107;  
   
   --border-radius: 12px;
   --font-family: "Segoe UI", sans-serif;
@@ -29,9 +24,6 @@ body, html {
   background-color: var(--background-color);
 }
 
-/* ======================================================
-   2. LAYOUT PRINCIPAL
-   ====================================================== */
 .books-page {
   padding: 20px;
   min-height: 100vh;
@@ -40,14 +32,13 @@ body, html {
   align-items: center;
 }
 
-/* Barra Superior */
 .books-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: white;
   padding: 15px 30px;
-  margin-bottom: 50px; /* Espacio antes de los botones */
+  margin-bottom: 50px; 
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-soft);
   width: 90%;
@@ -64,7 +55,6 @@ body, html {
   text-transform: uppercase;
 }
 
-/* Botón de Volver (Estilo simple) */
 .btn-back {
   text-decoration: none;
   color: var(--primary-color);
@@ -80,12 +70,9 @@ body, html {
   color: white;
 }
 
-/* ======================================================
-   3. BOTONES DE ACCIÓN (Añadir, Modificar, Borrar)
-   ====================================================== */
 .books-actions {
   display: flex;
-  flex-direction: column; /* Botones uno debajo del otro */
+  flex-direction: column; 
   gap: 20px;
   width: 100%;
   max-width: 500px;
@@ -109,12 +96,11 @@ body, html {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   overflow: hidden;
-  color: #555; /* Color texto por defecto */
+  color: #555;
 }
 
-/* Efecto Hover General */
 .book-btn:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
-  color: rgb(0, 0, 0); /* Texto blanco al pasar el ratón */
+  color: rgb(0, 0, 0); 
 }
