@@ -42,26 +42,6 @@ function setupEventListeners() {
     if (closeUser) closeUser.onclick = () => closeModalAndReset('modifyUserPopupAdmin');
     if (closeAdmin) closeAdmin.onclick = () => closeModalAndReset('modifyAdminPopup');
 
-    // configuracion para eliminar usuarios solo el admin puede ver el botón
-    // Configuración para eliminar cuenta propia
-    /*const deleteBtn = getEl('deleteBtn');
-    if (deleteBtn) {
-        deleteBtn.onclick = (e) => {
-            e.preventDefault();
-
-            // SOLUCIÓN: Usar la variable de estado global o buscar en ambos botones
-            const targetId = appState.myProfileCode ||
-                getEl('saveBtnUser')?.getAttribute('data-target-id') ||
-                getEl('saveBtnAdmin')?.getAttribute('data-target-id');
-
-            if (targetId) {
-                deleteUser(targetId);
-            } else {
-                alert("Error: No se ha podido identificar tu usuario para eliminarlo.");
-                console.error("Error: targetId es null/undefined");
-            }
-        };
-    }*/
     const deleteBtn = getEl('deleteBtn');
     if (deleteBtn) {
         deleteBtn.onclick = (e) => {
