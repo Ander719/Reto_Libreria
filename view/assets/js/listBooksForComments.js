@@ -4,7 +4,7 @@ import { loadHeader, loadFooter } from './header.js';
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Verificando sesión con el servidor...");
 
-    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
+    // Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
     
 
@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function fetchBooks() {
-    // La ruta sube dos niveles para llegar a la carpeta 'api' desde view/html/
     fetch('../../api/GetAllBooks.php')
         .then(response => response.json())
         .then(data => {
@@ -57,7 +56,6 @@ function fetchBooks() {
 }
 
 function verComentarios(isbn) {
-    // Redirige a la página de visualización pasando el ISBN por la URL
     window.location.href = `viewComments.html?isbn=${isbn}`;
 }
 window.verComentarios = verComentarios;

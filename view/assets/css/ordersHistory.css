@@ -8,7 +8,6 @@
     gap: 30px;
 }
 
-/* MENSAJES DE ESTADO (Carga, Error, Vacío) */
 .loading-msg, .error-msg, .no-orders {
     text-align: center;
     padding: 40px;
@@ -35,7 +34,6 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Cabecera del Pedido (ID, Fecha, Estado, Total) --- */
 .order-header {
     background-color: #f9f9f9;
     padding: 15px 25px;
@@ -69,7 +67,6 @@
     margin-top: 5px;
 }
 
-/* Badge de Estado */
 .status-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -139,7 +136,6 @@
     color: #444;
 }
 
-/* Botón pequeño "Ver Libro" */
 .btn-small {
     background-color: transparent;
     border: 1px solid #333;
@@ -176,6 +172,6 @@
     }
     
     .btn-small {
-        display: none; /* Opcional: Ocultar botón en móvil si falta espacio */
+        display: none;
     }
 }
