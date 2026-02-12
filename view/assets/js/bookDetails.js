@@ -368,19 +368,36 @@ window.deleteComment = async function (isbn, targetId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ isbn: isbn, profileCode: targetId })
         });
-        console.log("Status DeleteComment:", res.status);
-        if (res.ok) {
-            showModal("Éxito", "Eliminado.");
+
+        console.log("[DELETE] HTTP Status:", res.status);
+
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Error al leer respuesta:", text);
+            showModal("Error", "Error técnico en el servidor.");
+            return;
+        }
+
+        if (res.ok && data.success) {
+            showModal("Éxito", data.message || "Eliminado.");
+
             if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
                 setTimeout(() => location.reload(), 1000);
             } else {
                 loadComments(isbn);
             }
         } else {
-            showModal("Error", "No se pudo eliminar.");
+            showModal("Error", data.message || "No se pudo eliminar.");
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        showModal("Error", "Error de conexión.");
+    }
 };
+
 
 window.startEdit = function (text, rating) {
     isEditing = true;
