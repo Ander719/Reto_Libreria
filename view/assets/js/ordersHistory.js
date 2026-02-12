@@ -5,8 +5,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     //Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
+    if (!isLogged || currentUser.role === 'admin') {
+        // Si no hay sesión, no permitas que se ejecute loadOrders()
+        window.location.href = 'login.html';
+        return;
+    }
 
-  
     await loadHeader("configProfile");
     await loadFooter();
 
@@ -42,7 +46,7 @@ async function loadOrders() {
             return;
         }
 
-        
+
         container.innerHTML = orders.map(order => {
 
             // Libros dentro del pedido
@@ -63,7 +67,7 @@ async function loadOrders() {
                     <a href="bookDetails.html?isbn=${item.isbn}" class="btn-small">Ver Libro</a>
                 </div>
             `).join('');
-            
+
             return `
                 <div class="order-card">
                     <div class="order-header">
