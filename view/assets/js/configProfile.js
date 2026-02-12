@@ -43,16 +43,22 @@ function setupEventListeners() {
     if (closeAdmin) closeAdmin.onclick = () => closeModalAndReset('modifyAdminPopup');
 
     // configuracion para eliminar usuarios solo el admin puede ver el botón
+    // Configuración para eliminar cuenta propia
     const deleteBtn = getEl('deleteBtn');
     if (deleteBtn) {
         deleteBtn.onclick = (e) => {
             e.preventDefault();
-            // Obtenemos el ID del usuario que se está editando actualmente
-            const targetId = getEl('saveBtnUser').getAttribute('data-target-id');
+
+            // SOLUCIÓN: Usar la variable de estado global o buscar en ambos botones
+            const targetId = appState.myProfileCode ||
+                getEl('saveBtnUser')?.getAttribute('data-target-id') ||
+                getEl('saveBtnAdmin')?.getAttribute('data-target-id');
+
             if (targetId) {
                 deleteUser(targetId);
             } else {
-                console.error("Error: No se encontró el ID del usuario.");
+                alert("Error: No se ha podido identificar tu usuario para eliminarlo.");
+                console.error("Error: targetId es null/undefined");
             }
         };
     }
@@ -356,7 +362,7 @@ function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
 
-    const closePassBtns = document.querySelectorAll('.close-pass-btn, .deleteBtn[type="button"]');
+    const closePassBtns = document.querySelectorAll('.close-pass-btn, dialog .deleteBtn');
 
     closePassBtns.forEach(btn => {
         btn.onclick = (e) => {
