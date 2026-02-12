@@ -22,6 +22,7 @@ async function loadOrders() {
     container.innerHTML = '<p class="loading-msg">Cargando tu historial...</p>';
     try {
         const response = await fetch('../../api/GetOrder.php');
+        console.log("Status:", response.status);
         const text = await response.text();
         let orders = [];
         try {

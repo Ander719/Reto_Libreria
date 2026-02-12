@@ -105,6 +105,7 @@ function toggleModal(id, show) {
 async function loadMyProfile(isInit = false) {
     try {
         const res = await fetch('../../api/GetProfile.php');
+        console.log("Status GetProfile:", res.status);
         const data = await res.json();
 
         if (data.success && data.user) {
@@ -227,6 +228,7 @@ async function saveUserData(role) {
 
     try {
         const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
+        console.log("Status ModifyUser:", res.status);
         const text = await res.text();
         let data;
         try {
@@ -257,6 +259,7 @@ async function saveUserData(role) {
 async function initAdminPanel() {
     try {
         const res = await fetch('../../api/CheckSession.php');
+        console.log("Status CheckSession (Admin Panel):", res.status);
         const data = await res.json();
         if (data.success && data.user.role === 'admin') {
             const section = getEl('adminPanelSection');
@@ -273,6 +276,7 @@ async function loadUsersTable() {
 
     try {
         const res = await fetch('../../api/GetAllUsers.php');
+        console.log("Status GetAllUsers:", res.status);
         const data = await res.json();
 
         // CORRECCIÓN: La API puede devolver el array directamente o bajo la clave 'users'
@@ -324,7 +328,7 @@ async function deleteUser(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         });
-
+        console.log("Status DeleteUser:", res.status);
         let data;
         const contentType = res.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
@@ -383,6 +387,7 @@ function setupPasswordLogic() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password: pass })
                 });
+                console.log("Status VerifyPassword (Login API):", res.status);
                 const data = await res.json();
 
                 if (data.success) {
@@ -427,6 +432,7 @@ function setupPasswordLogic() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ profile_code: targetId, password: newP })
                 });
+                console.log("Status ModifyPassword:", res.status);
                 const data = await res.json();
                 if (data.success) {
                     alert("Contraseña actualizada con éxito.");

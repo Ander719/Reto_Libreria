@@ -1,4 +1,4 @@
-import { loadHeader,loadFooter } from './header.js';
+import { loadHeader, loadFooter } from './header.js';
 import { checkSession } from './session.js';
 
 init();
@@ -10,7 +10,7 @@ async function init() {
   await loadFooter()
 
   if (isLogged) {
-      window.location.replace("main.html");
+    window.location.replace("main.html");
     return;
   }
 }
@@ -38,7 +38,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
       body: JSON.stringify({ username, pswd1 }),
       credentials: "include",
     });
-
+    console.log("Status AddUser:", response.status);
     const rawText = await response.text();
 
     let data;

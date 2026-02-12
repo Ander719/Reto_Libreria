@@ -71,6 +71,7 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
 async function loadBookDetails(isbn) {
     try {
         const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
+        console.log("Status GetBook:", response.status);
         const text = await response.text();
         const data = JSON.parse(text);
 
@@ -153,6 +154,7 @@ function rellenarVista(libro) {
         let direction;
         try {
             const res = await fetch('../../api/GetProfile.php');
+            console.log("Status GetProfile:", res.status);
             const data = await res.json();
             if (data.success && data.user) {
                 const u = data.user;
@@ -240,6 +242,7 @@ async function submitComment(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
+        console.log("Status SubmitComment:", res.status);
 
         console.log(`[${isEditing ? 'UPDATE' : 'ADD'}] HTTP Status:`, res.status);
 
@@ -279,6 +282,7 @@ async function loadComments(isbn) {
 
     try {
         const res = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
+        console.log("Status GetComments:", res.status);
         const comments = await res.json();
         list.innerHTML = "";
         let myReview = null;
@@ -364,7 +368,7 @@ window.deleteComment = async function (isbn, targetId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ isbn: isbn, profileCode: targetId })
         });
-
+        console.log("Status DeleteComment:", res.status);
         if (res.ok) {
             showModal("Éxito", "Eliminado.");
             if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
@@ -435,7 +439,7 @@ async function comprarAhora(isbn, quantity, userId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ profileCode: userId, isbn, quantity })
         });
-
+        console.log("Status BuyNow:", res.status);
         const text = await res.text();
         let data;
         try { data = JSON.parse(text); }

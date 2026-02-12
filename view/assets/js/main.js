@@ -196,6 +196,7 @@ async function cargarLibrosDesdeBD() {
 
     try {
         const response = await fetch('../../api/GetAllBooks.php');
+        console.log("Status GetAllBooks:", response.status);
         const rawText = await response.text();
 
         let data;
