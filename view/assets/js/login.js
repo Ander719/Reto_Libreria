@@ -25,10 +25,10 @@ if (loginForm) {
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        console.log("Intentando login con:", username); // Debug
+        //console.log("Intentando login con:", username);
 
         let data = await login(username, password);
-        console.log("Respuesta servidor:", data); // Debug
+        //console.log("Respuesta servidor:", data);
 
         if (data.success) {
             dialogMessage.textContent = "Login exitoso. Redirigiendo...";

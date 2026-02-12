@@ -12,7 +12,6 @@ const confirmBtn = document.getElementById('confirmDialogBtn');
 let confirmResolver = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("Verificando sesión...");
     await checkSession();
     await loadHeader("bookDetails");
 

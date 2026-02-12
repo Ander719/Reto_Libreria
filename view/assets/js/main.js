@@ -195,7 +195,7 @@ function getEstrellasHTML(rating) {
 async function cargarLibrosDesdeBD() {
 
     try {
-        const response = await fetch('../../api/GetAllBooks.php'); // Tu nueva API
+        const response = await fetch('../../api/GetAllBooks.php');
         const rawText = await response.text();
 
         let data;
@@ -203,10 +203,10 @@ async function cargarLibrosDesdeBD() {
             data = JSON.parse(rawText);
         } catch (error) {
             console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
-            return; // Salimos de la función
+            return;
         }
 
-        console.log("Datos recibidos:", data);
+        //console.log("Datos recibidos:", data);
 
         if (data.success) {
             globalBooks = data.books; // Guardamos los libros globalmente si es necesario
