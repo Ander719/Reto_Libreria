@@ -102,7 +102,7 @@ class Book
         return [
             'isbn' => $this->isbn,
             'title' => $this->title,
-            'author' => $this->author->toArray(), // Asumiendo que $author es un objeto Author
+            'author' => $this->author->toArray(), 
             'pages' => $this->pages,
             'stock' => $this->stock,
             'synopsis' => $this->synopsis,
