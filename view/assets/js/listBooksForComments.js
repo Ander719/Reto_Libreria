@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
-    
+
 
     if (!isLogged || currentUser.role !== 'admin') {
         alert("Acceso denegado: Se requieren permisos de administrador.");
@@ -23,7 +23,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function fetchBooks() {
     fetch('../../api/GetAllBooks.php')
-        .then(response => response.json())
+        .then(async response => {
+            console.log("Status Code HTTP:", response.status);
+            return response.json();
+        })
         .then(data => {
             const tbody = document.getElementById('booksBody');
             if (!tbody) return;
@@ -47,6 +50,7 @@ function fetchBooks() {
                     tbody.appendChild(row);
                 });
             }
+
         })
         .catch(error => console.error('Error cargando libros:', error));
 }

@@ -6,10 +6,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isLogged = await checkSession();
         if (!isLogged) {
             window.location.href = 'login.html';
-            return; 
+            return;
         }
 
         const res = await fetch('../../api/GetProfile.php');
+        console.log("Status GetProfile (Admin Check):", res.status);
         const data = await res.json();
 
         if (!data.success || !data.user || data.user.role !== 'admin') {
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        document.body.style.display = 'block'; 
+        document.body.style.display = 'block';
 
         initPageLogic();
 
@@ -39,8 +40,8 @@ function initPageLogic() {
     const formInputs = document.querySelectorAll('#bookForm input:not(#isbn), #bookForm textarea');
     const msgSearch = document.getElementById('searchMessage');
     const form = document.getElementById('bookForm');
-    const searchSelect = document.getElementById('searchIsbn'); 
-    
+    const searchSelect = document.getElementById('searchIsbn');
+
 
     const reqDialog = document.getElementById('requirementsDialog');
     const closeDialogBtn = document.getElementById('closeDialogBtn');
@@ -60,32 +61,33 @@ function initPageLogic() {
     //conffigura la interfaz según el modo
     function initInterface() {
         if (mode === 'create') {
-            if(pageTitle) pageTitle.innerText = "Añadir Nuevo Libro";
-            if(searchSection) searchSection.style.display = "none"; 
-            if(actionBtn) actionBtn.innerText = "Crear Libro";
-            if(isbnInput) isbnInput.readOnly = false;
+            if (pageTitle) pageTitle.innerText = "Añadir Nuevo Libro";
+            if (searchSection) searchSection.style.display = "none";
+            if (actionBtn) actionBtn.innerText = "Crear Libro";
+            if (isbnInput) isbnInput.readOnly = false;
         } else if (mode === 'edit') {
-            if(pageTitle) pageTitle.innerText = "Editar Libro";
-            if(searchSection) searchSection.style.display = "block";
-            if(actionBtn) actionBtn.innerText = "Guardar Cambios";
-            if(isbnInput) isbnInput.readOnly = true; 
-            toggleForm(true); 
-            loadBooksToSelect(); 
+            if (pageTitle) pageTitle.innerText = "Editar Libro";
+            if (searchSection) searchSection.style.display = "block";
+            if (actionBtn) actionBtn.innerText = "Guardar Cambios";
+            if (isbnInput) isbnInput.readOnly = true;
+            toggleForm(true);
+            loadBooksToSelect();
         }
     }
 
     async function loadBooksToSelect() {
         try {
             const res = await fetch('../../api/GetAllBooks.php');
+            console.log("Status GetAllBooks (Select list):", res.status);
             const data = await res.json();
             const books = data.books || [];
-            
-            if(searchSelect) {
+
+            if (searchSelect) {
                 searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
                 if (Array.isArray(books)) {
                     books.forEach(book => {
                         const option = document.createElement('option');
-                        option.value = book.isbn; 
+                        option.value = book.isbn;
                         option.textContent = `${book.title} (${book.isbn})`;
                         searchSelect.appendChild(option);
                     });
@@ -100,19 +102,22 @@ function initPageLogic() {
             e.preventDefault();
             const isbnToSearch = searchSelect.value;
             if (!isbnToSearch) {
-                if(msgSearch) msgSearch.innerText = "Por favor, seleccione un libro.";
+                if (msgSearch) msgSearch.innerText = "Por favor, seleccione un libro.";
                 return;
             }
-            
+
             fetch(`../../api/GetBook.php?isbn=${isbnToSearch}`)
-                .then(res => res.json())
+                .then(res => {
+                    console.log("Status GetBook (Search):", res.status);
+                    return res.json();
+                })
                 .then(data => {
                     if (data.exito && data.libro) {
-                        fillForm(data.libro); 
-                        if(msgSearch) msgSearch.innerText = "";
+                        fillForm(data.libro);
+                        if (msgSearch) msgSearch.innerText = "";
                         toggleForm(false);
                     } else {
-                        if(msgSearch) msgSearch.innerText = "Error al cargar datos.";
+                        if (msgSearch) msgSearch.innerText = "Error al cargar datos.";
                     }
                 });
         });
@@ -121,45 +126,48 @@ function initPageLogic() {
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
             const isbnVal = isbnInput.value.trim();
 
             const isNumeric = /^\d+$/.test(isbnVal);
 
             if (isbnVal.length !== 13 || !isNumeric) {
                 if (reqDialog) {
-                    reqDialog.showModal(); 
+                    reqDialog.showModal();
                 } else {
                     alert("El ISBN debe tener exactamente 13 dígitos numéricos.");
                 }
-                return; 
+                return;
             }
 
             const formData = new FormData(form);
             const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
 
             fetch(url, { method: 'POST', body: formData })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.exito || data.success) {
-                        alert(data.message || "Operación exitosa");
-                        window.location.href = 'bookOptions.html'; 
-                    } else {
-                        alert("Error: " + data.error);
-                    }
+                .then(res => {
+                    console.log(`Status ${mode === 'create' ? 'AddBook' : 'ModifyBook'}:`, res.status);
+                    return res.json();
                 })
-                .catch(() => alert("Error de conexión."));
+                    .then(data => {
+                        if (data.exito || data.success) {
+                            alert(data.message || "Operación exitosa");
+                            window.location.href = 'bookOptions.html';
+                        } else {
+                            alert("Error: " + data.error);
+                        }
+                    })
+                    .catch(() => alert("Error de conexión."));
         });
     }
 
     function toggleForm(isDisabled) {
         formInputs.forEach(input => input.disabled = isDisabled);
-        if(actionBtn) actionBtn.disabled = isDisabled;
+        if (actionBtn) actionBtn.disabled = isDisabled;
     }
 
     function fillForm(data) {
-        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ""; };
-        
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ""; };
+
         setVal('isbn', data.isbn);
         setVal('title', data.title);
         setVal('pages', data.pages);
@@ -169,10 +177,10 @@ function initPageLogic() {
         setVal('synopsis', data.synopsis);
         setVal('authorName', data.name_author);
         setVal('authorSurname', data.last_name);
-        
+
         const coverName = data.cover;
-        setVal('cover', coverName); 
-        
+        setVal('cover', coverName);
+
         if (coverName && dropZone) {
             updateThumbnailVisual(dropZone, `../assets/img/covers/${coverName}`, coverName);
         } else if (dropZone) {

@@ -1,8 +1,8 @@
 import { checkSession, currentUser } from './session.js';
-import { loadHeader, loadFooter} from './header.js';
+import { loadHeader, loadFooter } from './header.js';
 
-document.addEventListener('DOMContentLoaded', async() => {
-    
+document.addEventListener('DOMContentLoaded', async () => {
+
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
@@ -23,16 +23,19 @@ document.addEventListener('DOMContentLoaded', async() => {
 
     if (isbn) {
         cargarComentarios(isbn);
-    } 
+    }
 });
 
 function cargarComentarios(isbn) {
     fetch(`../../api/GetComments.php?isbn=${isbn}`)
-        .then(response => response.json())
+        .then(async response => {
+            console.log("Status GetComments:", response.status);
+            return response.json();
+        })
         .then(data => {
             const tbody = document.getElementById('commentsBody');
             if (!tbody) return;
-            
+
             tbody.innerHTML = '';
 
             // El API devuelve un array directamente
@@ -65,29 +68,30 @@ function eliminarComentario(isbn, profileCode) {
         fetch('../../api/DeleteComment.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                isbn: isbn, 
-                profileCode: profileCode 
+            body: JSON.stringify({
+                isbn: isbn,
+                profileCode: profileCode
             })
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.message) });
-            }
-            return response.json();
-        })
-        .then(result => {
-            if (result.success || result.message.includes("correctamente")) {
-                alert(result.message); 
-                cargarComentarios(isbn); 
-            } else {
-                alert('Error: ' + result.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error al eliminar:', error);
-            alert('No se pudo eliminar el comentario.');
-        });
+            .then(response => {
+                console.log("Status DeleteComments:", response.status);
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message) });
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success || result.message.includes("correctamente")) {
+                    alert(result.message);
+                    cargarComentarios(isbn);
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar:', error);
+                alert('No se pudo eliminar el comentario.');
+            });
     }
 }
 window.eliminarComentario = eliminarComentario;
