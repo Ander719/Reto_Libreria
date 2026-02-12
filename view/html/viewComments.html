@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Comentarios</title>
+    <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/viewComments.css" />
     <script type="module" src="../assets/js/manageComments.js"></script>
@@ -36,17 +37,24 @@
         </nav>
     </header>
     <main class="container">
-        <table id="commentsTable" class="modern-table">
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Comentario</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody id="commentsBody">
-            </tbody>
-        </table>
+        <section class="comments-section">
+            <div id="bookInfo">
+            </div>
+
+            <div class="table-responsive">
+                <table id="commentsTable">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Comentario</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="commentsBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
     <footer>
         <div class="brand-col">

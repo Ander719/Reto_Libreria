@@ -69,3 +69,48 @@
 .delete-btn:hover {
     background-color: #c0392b;
 }
+.container {
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    height: auto !important; 
+    display: block !important;
+    min-height: calc(100vh - 250px); /* Empuja el footer hacia abajo */
+}
+
+/* El "corazón" del scroll */
+.table-responsive {
+    width: 100%;
+    max-height: 450px; /* Altura máxima antes de mostrar el scroll */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+/* Cabecera fija para no perder la referencia al hacer scroll */
+#commentsTable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #2c3e50;
+    color: white;
+    z-index: 5;
+    padding: 12px;
+}
+
+#commentsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#commentsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+/* Estilo opcional para las filas */
+#commentsTable tr:hover {
+    background-color: #fcfcfc;
+}
