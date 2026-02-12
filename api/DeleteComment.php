@@ -23,7 +23,7 @@ if (!empty($data->isbn) && !empty($data->profileCode)) {
         $response = $controller->deleteComment($data->isbn, $data->profileCode, $_SESSION['user']);
         
         http_response_code($response["code"]);
-        echo json_encode(["message" => $response["message"]]);
+        echo json_encode($response);
     } else {
         http_response_code(401);
         echo json_encode(["message" => "Debes iniciar sesión."]);

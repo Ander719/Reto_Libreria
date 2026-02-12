@@ -434,7 +434,7 @@ async function comprarAhora(isbn, quantity, userId) {
             showModal("¡Compra realizada!", "Gracias por tu pedido.");
 
             dialog.addEventListener('close', () => {
-                //location.reload();
+                location.reload();
             }, { once: true });
         } else {
             showModal("Error", data.error || "Fallo en la compra.");
