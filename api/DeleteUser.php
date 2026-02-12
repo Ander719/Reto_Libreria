@@ -10,12 +10,12 @@ if (!$idToDelete) {
     echo json_encode(['success' => false, 'error' => 'No ID provided']);
     exit;
 }
-
+$isSelfDelete = (isset($_SESSION['user']['profile_code']) && $_SESSION['user']['profile_code'] == $idToDelete);
 $controller = new ProfileController();
 $result = $controller->delete_user($idToDelete);
 
 if ($result) {
-    $isSelfDelete = (isset($_SESSION['user']['profile_code']) && $_SESSION['user']['profile_code'] == $idToDelete);
+    
     if ($isSelfDelete) {
         session_destroy();
     }

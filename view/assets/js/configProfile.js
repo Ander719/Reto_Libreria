@@ -1,7 +1,7 @@
 import { checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 
-const appState = { 
+const appState = {
     allUsers: [],
     myProfileCode: null // Almacena el ID del usuario logueado
 };
@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadHeader('configProfile');
     await loadFooter();
-    
-    await loadMyProfile(true); 
+
+    await loadMyProfile(true);
     setupEventListeners();
     initAdminPanel();
 });
@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 function setupEventListeners() {
     // 1. Botón "Ajustar mis datos" (Hero)
     const adjustBtn = getEl('adjustData');
-    if (adjustBtn) adjustBtn.onclick = (e) => { 
-        e.preventDefault(); 
-        loadMyProfile(); 
+    if (adjustBtn) adjustBtn.onclick = (e) => {
+        e.preventDefault();
+        loadMyProfile();
     };
 
     // 2. Botones de Guardar (Usuario y Admin)
@@ -66,7 +66,7 @@ function setupEventListeners() {
 
     const openPasswordModal = (e) => {
         e.preventDefault();
-        
+
         // IMPORTANTE: Reseteamos el formulario para que aparezca vacío
         const verifyForm = getEl('verifyPasswordForm');
         if (verifyForm) verifyForm.reset();
@@ -75,7 +75,7 @@ function setupEventListeners() {
         if (dialog) {
             // Usamos showModal() si está disponible (nativo), sino fallback
             if (typeof dialog.showModal === "function") {
-                dialog.showModal(); 
+                dialog.showModal();
             } else {
                 toggleModal('verifyPasswordModal', true);
             }
@@ -115,14 +115,14 @@ async function loadMyProfile(isInit = false) {
         if (data.success && data.user) {
             const u = data.user;
             const isAdmin = (data.role === 'admin');
-            
+
             if (isInit) appState.myProfileCode = u.profile_code;
 
             const prefix = isAdmin ? 'Admin' : 'User';
             const modalId = isAdmin ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
 
             fillProfileForm(u, prefix);
-            
+
             const saveBtn = getEl(isAdmin ? 'saveBtnAdmin' : 'saveBtnUser');
             if (saveBtn) saveBtn.setAttribute('data-target-id', u.profile_code);
 
@@ -184,7 +184,7 @@ async function saveUserData(role) {
             return;
         }
         formData.append('cardNumber', cardNumberClean);
-        
+
         const gender = getEl('genderUser');
         if (gender) formData.append('gender', gender.value);
 
@@ -203,19 +203,19 @@ async function saveUserData(role) {
     try {
         const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
         const data = await res.json();
-        
+
         if (data.success) {
             alert("Datos actualizados correctamente.");
             toggleModal(modalId, false);
-            resetTargetIds(); 
-            
+            resetTargetIds();
+
             if (getEl('adminPanelSection')?.style.display !== 'none') {
                 loadUsersTable();
             }
         } else {
             alert("Error: " + data.error);
         }
-    } catch (err) { 
+    } catch (err) {
         console.error("Error API:", err);
         alert("Error de conexión.");
     }
@@ -227,7 +227,7 @@ async function initAdminPanel() {
         const data = await res.json();
         if (data.success && data.user.role === 'admin') {
             const section = getEl('adminPanelSection');
-            if(section) section.style.display = 'flex';
+            if (section) section.style.display = 'flex';
             loadUsersTable();
         }
     } catch (err) { console.error(err); }
@@ -241,7 +241,7 @@ async function loadUsersTable() {
     try {
         const res = await fetch('../../api/GetAllUsers.php');
         const data = await res.json();
-        
+
         const users = Array.isArray(data) ? data : (data.users || data.resultado || []);
         appState.allUsers = users;
         tbody.innerHTML = '';
@@ -250,7 +250,7 @@ async function loadUsersTable() {
 
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
-            
+
             clone.querySelector('.col-username').textContent = u.user_name || "N/A";
             clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`.trim();
             clone.querySelector('.col-email').textContent = u.email || "Sin email";
@@ -269,7 +269,7 @@ async function loadUsersTable() {
 function prepareEditUser(index) {
     const u = appState.allUsers[index];
     if (!u) return;
-    
+
     fillProfileForm(u, 'User');
     getEl('saveBtnUser').setAttribute('data-target-id', u.profile_code);
     toggleModal('modifyUserPopupAdmin', true);
@@ -283,17 +283,22 @@ async function deleteUser(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         });
-        
+
         let data;
         const contentType = res.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
-             data = await res.json();
+            data = await res.json();
         } else {
-             const text = await res.text();
-             try { data = JSON.parse(text); } catch(e) { console.error(text); }
+            const text = await res.text();
+            try { data = JSON.parse(text); } catch (e) { console.error(text); }
         }
 
         if (data && data.success) {
+            if (data.isSelfDelete) {
+                alert("Tu cuenta ha sido eliminada correctamente.");
+                window.location.href = 'login.html';
+                return;
+            }
             alert("Usuario eliminado.");
             toggleModal('modifyUserPopupAdmin', false);
             loadUsersTable();
@@ -316,7 +321,7 @@ function setupPasswordLogic() {
         btn.onclick = (e) => {
             const dialog = btn.closest('dialog');
             if (dialog && typeof dialog.close === "function") dialog.close();
-            else if(dialog) dialog.style.display = 'none';
+            else if (dialog) dialog.style.display = 'none';
         };
     });
 
@@ -324,7 +329,7 @@ function setupPasswordLogic() {
         verifyForm.onsubmit = async (e) => {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
-            
+
             // Obtener username del usuario logueado para verificar
             const resInit = await fetch('../../api/GetProfile.php');
             const dataInit = await resInit.json();
@@ -341,14 +346,14 @@ function setupPasswordLogic() {
                 if (data.success) {
                     // 1. Cerrar modal de verificación
                     const verifyModal = getEl('verifyPasswordModal');
-                    if(verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
+                    if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
                     else toggleModal('verifyPasswordModal', false);
 
                     // 2. Limpiar y Abrir modal de nueva contraseña
                     const changeModal = getEl('changePasswordModal');
                     if (changeModal) {
                         // IMPORTANTE: Reseteamos campos para que no salga info vieja
-                        if(changeForm) changeForm.reset();
+                        if (changeForm) changeForm.reset();
 
                         if (typeof changeModal.showModal === 'function') changeModal.showModal();
                         else toggleModal('changePasswordModal', true);
@@ -356,7 +361,7 @@ function setupPasswordLogic() {
 
                 } else {
                     alert("Contraseña actual incorrecta.");
-                    getEl('verifyCurrentPassword').value = ''; 
+                    getEl('verifyCurrentPassword').value = '';
                 }
             } catch (err) { console.error(err); }
         };
@@ -367,13 +372,13 @@ function setupPasswordLogic() {
             e.preventDefault();
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
-            
+
             // Obtenemos a quién cambiarle la pass (Usuario logueado o Admin editando a otro)
-            const targetId = getEl('saveBtnUser').getAttribute('data-target-id') || 
-                             getEl('saveBtnAdmin').getAttribute('data-target-id');
+            const targetId = getEl('saveBtnUser').getAttribute('data-target-id') ||
+                getEl('saveBtnAdmin').getAttribute('data-target-id');
 
             if (newP !== confP) return alert("Las contraseñas no coinciden.");
-            
+
             try {
                 const res = await fetch('../../api/ModifyPassword.php', {
                     method: 'POST',
@@ -383,11 +388,11 @@ function setupPasswordLogic() {
                 const data = await res.json();
                 if (data.success) {
                     alert("Contraseña actualizada con éxito.");
-                    
+
                     const changeModal = getEl('changePasswordModal');
-                    if(changeModal && typeof changeModal.close === 'function') changeModal.close();
+                    if (changeModal && typeof changeModal.close === 'function') changeModal.close();
                     else toggleModal('changePasswordModal', false);
-                    
+
                     resetTargetIds();
                 } else {
                     alert("Error: " + data.error);
