@@ -16,7 +16,6 @@ class CommentDAO {
         
         $stmt = $this->conn->prepare($query);
 
-        // Limpieza de etiquetas HTML para seguridad
         $cleanText = htmlspecialchars(strip_tags($comment->getCommentText()));
 
         $stmt->bindValue(':profile', $comment->getProfileCode());
@@ -46,20 +45,20 @@ class CommentDAO {
         $resultArray = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            //Instanciamos la Entidad (Cumplimiento estricto MVC)
             $commentObj = new Comment();
-            
             $commentObj->setProfileCode($row['profile_code']);
             $commentObj->setCommentText($row['comment_text']);
             $commentObj->setRating($row['valoration']);
             $commentObj->setDateComment($row['date_comment']);
 
-            $resultArray[] = [
-                'profile_code' => $commentObj->getProfileCode(), 
-                'comment_text' => $commentObj->getCommentText(), 
-                'valoration'   => $commentObj->getRating(),      
-                'dateComent'   => $commentObj->getDateComment(), 
-                'user_name'    => $row['user_name']
-            ];
+            // Usamos toArray() para obtener los datos limpios
+            $data = $commentObj->toArray();
+            
+            // Añadimos el dato extra del JOIN (user_name) que no está en la entidad Comment
+            $data['user_name'] = $row['user_name'];
+
+            $resultArray[] = $data;
         }
         
         return $resultArray;
@@ -73,6 +72,7 @@ class CommentDAO {
                   
         $stmt = $this->conn->prepare($query);
         
+        // Saneamiento
         $cleanText = htmlspecialchars(strip_tags($comment->getCommentText()));
 
         $stmt->bindValue(':text',        $cleanText);
@@ -80,10 +80,7 @@ class CommentDAO {
         $stmt->bindValue(':isbn',        $comment->getIsbn());
         $stmt->bindValue(':profileCode', $comment->getProfileCode());
         
-        if($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function deleteComment($isbn, $profileCode) {
