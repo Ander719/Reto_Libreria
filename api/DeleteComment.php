@@ -19,7 +19,6 @@ if (!empty($data->isbn) && !empty($data->profileCode)) {
     }
 
     if (isset($_SESSION['user'])) {
-        // Pasamos el usuario de sesión al controlador para que él valide los permisos
         $response = $controller->deleteComment($data->isbn, $data->profileCode, $_SESSION['user']);
         
         http_response_code($response["code"]);

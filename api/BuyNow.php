@@ -10,7 +10,6 @@ $input = json_decode(file_get_contents('php://input'), true);
 if (!empty($input['profileCode']) && !empty($input['isbn']) && !empty($input['quantity'])) {
     
     $controller = new OrderController();
-    // Esta función la añadiste antes al controller.php
     $result = $controller->createDirectOrder(
         $input['profileCode'],
         $input['isbn'],
