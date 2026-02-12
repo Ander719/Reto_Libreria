@@ -11,20 +11,20 @@ class CommentController {
         $this->commentDAO = new CommentDAO();
     }
 
-    // --- LEER (GET) ---
+    // LEER
     public function getCommentsByISBN($isbn) {
         $cleanIsbn = trim(htmlspecialchars($isbn));
         return $this->commentDAO->getCommentsByISBN($cleanIsbn);
     }
 
-    // --- CREAR (POST) ---
+    // CREAR
     public function addComment($data) {
         // Validación de existencia de datos
         if (empty($data->profileCode) || empty($data->isbn) || empty($data->text) || empty($data->rating)) {
             return ["success" => false, "message" => "Datos incompletos.", "code" => 400];
         }
 
-        // 1. SANITIZACIÓN Y VALIDACIÓN
+        // SANITIZACIÓN Y VALIDACIÓN
         $cleanProfile = trim(htmlspecialchars($data->profileCode));
         $cleanIsbn    = trim(htmlspecialchars($data->isbn));
         $cleanText    = trim(htmlspecialchars($data->text)); // IMPORTANTE: Evita XSS
@@ -51,13 +51,13 @@ class CommentController {
         }
     }
 
-    // --- ACTUALIZAR (UPDATE) ---
+    // ACTUALIZAR 
     public function updateComment($data) {
         if (empty($data->isbn) || empty($data->profileCode) || empty($data->text) || empty($data->rating)) {
             return ["success" => false, "message" => "Faltan datos para actualizar.", "code" => 400];
         }
 
-        // 1. SANITIZACIÓN Y VALIDACIÓN
+        // SANITIZACIÓN Y VALIDACIÓN
         $cleanProfile = trim(htmlspecialchars($data->profileCode));
         $cleanIsbn    = trim(htmlspecialchars($data->isbn));
         $cleanText    = trim(htmlspecialchars($data->text));
@@ -80,7 +80,7 @@ class CommentController {
         }
     }
 
-    // --- BORRAR (DELETE) ---
+    // BORRAR
     public function deleteComment($isbn, $targetProfileCode, $currentUser) {
         // Sanitización
         $cleanIsbn = trim(htmlspecialchars($isbn));
