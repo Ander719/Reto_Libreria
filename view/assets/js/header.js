@@ -1,8 +1,6 @@
 import { currentUser, logout } from './session.js';
 
 export async function loadHeader(filter) {
-    console.log("Cargando header con filtro:", filter);
-    console.log("Usuario actual en header:", currentUser);
     if (currentUser) {
         const opcionesLink = document.getElementById('opcionesLink');
         if (currentUser.role === 'admin') {
@@ -69,7 +67,6 @@ function showOnly(indices = []) {
 }
 export async function loadFooter(){
     const footerLinks = document.querySelectorAll("#footerLink li")
-    console.log(footerLinks)
     footerLinks[1].addEventListener("click",()=>{
         window.location.href="main.html";
     });

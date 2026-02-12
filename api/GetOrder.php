@@ -1,16 +1,27 @@
 <?php
-include_once '../Config/Database.php';
 include_once '../model/dao/OrderDao.php';
 include_once '../Config/Session.php'; // Para verificar usuario
 
 header("Content-Type: application/json");
-$orderDao = new OrderDao();
-$profileCode = $_GET['profileCode'] ?? null;
 
-if ($profileCode) {
+if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
+    http_response_code(401);
+    echo json_encode(["success" => false, "error" => "No has iniciado sesión."]);
+    exit();
+}
+
+// 2. Obtener ID del usuario logueado
+$profileCode = $_SESSION['user']['profile_code'];
+
+// 3. Obtener Pedidos (Ya estructurados por OrderDao)
+try {
+    $orderDao = new OrderDao();
     $orders = $orderDao->getOrdersByProfile($profileCode);
-    echo json_encode($orders);
-} else {
-    http_response_code(400);
-    echo json_encode(["error" => "No profile code provided"]);
+
+    // Devolvemos el array directamente
+    echo json_encode($orders); // Esto será [ {id_order:..., items:[...]}, ... ]
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "error" => "Error al obtener pedidos: " . $e->getMessage()]);
 }

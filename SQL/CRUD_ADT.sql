@@ -59,6 +59,7 @@ CREATE TABLE content_ (
     id_order INT NOT NULL,
     isbn CHAR(13) NOT NULL,
     quantity INT,
+    price_moment float,
     PRIMARY KEY(id_order, isbn),
     FOREIGN KEY (id_order) REFERENCES order_(id_order) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (isbn) REFERENCES book_(isbn) ON UPDATE CASCADE ON DELETE CASCADE
@@ -122,11 +123,11 @@ INSERT INTO order_ (id_order, profile_code, date_buy, buyed) VALUES
 (103, 2, '2025-01-14', false); 
 
 -- 6. Contenido Pedidos
-INSERT INTO content_ (id_order, isbn, quantity) VALUES
-(101, '9780439139595', 1),
-(102, '9788420412146', 1),
-(102, '9780451524935', 2),
-(103, '9780307474728', 1);
+INSERT INTO content_ (id_order, isbn, quantity,price_moment) VALUES
+(101, '9780439139595', 1,20),
+(102, '9788420412146', 1,18),
+(102, '9780451524935', 2,10),
+(103, '9780307474728', 1,22);
 
 -- 7. Comentarios
 INSERT INTO comment_ (profile_code, isbn, comment_text, valoration, date_comment) VALUES

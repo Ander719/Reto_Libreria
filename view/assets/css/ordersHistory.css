@@ -1,89 +1,181 @@
-/* Estilos para el contenedor principal */
 #ordersContainer {
     max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    gap: 30px;
 }
 
-/* Tarjeta de cada pedido */
-.order-item {
+/* MENSAJES DE ESTADO (Carga, Error, Vacío) */
+.loading-msg, .error-msg, .no-orders {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.no-orders img {
+    width: 100px;
+    opacity: 0.6;
+    margin-bottom: 20px;
+}
+
+.order-card {
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     border: 1px solid #e0e0e0;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 25px;
+    overflow: hidden; /* Para que la cabecera respete el radio */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.order-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Imagen del libro */
-.order-item img {
-    width: 100px;
-    height: 140px;
+/* --- Cabecera del Pedido (ID, Fecha, Estado, Total) --- */
+.order-header {
+    background-color: #f9f9f9;
+    padding: 15px 25px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left .order-id {
+    display: block;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.header-left .order-date {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.order-total {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-top: 5px;
+}
+
+/* Badge de Estado */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.completed {
+    background-color: #e6fffa;
+    color: #00b894; /* Verde */
+}
+
+.status-badge.pending {
+    background-color: #fff8e1;
+    color: #ffa000; /* Naranja */
+}
+
+/* =========================================
+   CUERPO DEL PEDIDO (ITEMS)
+   ========================================= */
+.order-body {
+    padding: 10px 25px;
+}
+
+/* ITEM INDIVIDUAL (LIBRO) */
+.order-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+}
+
+.order-item:last-child {
+    border-bottom: none; /* Quitar línea al último */
+}
+
+.item-cover {
+    width: 70px;
+    height: 105px;
     object-fit: cover;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Detalles del texto */
-.order-details {
+.item-details {
     flex-grow: 1;
 }
 
-.order-details h4 {
-    margin: 0 0 10px 0;
+.item-title {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
     color: #333;
-    font-size: 1.25rem;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 5px;
 }
 
-.order-details p {
-    margin: 5px 0;
-    color: #666;
-    font-size: 0.95rem;
+.item-meta {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #777;
 }
 
-.order-details strong {
+.item-subtotal {
+    margin: 8px 0 0 0;
+    font-weight: 600;
     color: #444;
 }
 
-/* Estilo para el precio total resaltado */
-.order-details p:last-child {
-    font-size: 1.1rem;
-    color: #2c3e50;
-    font-weight: bold;
-    margin-top: 10px;
+/* Botón pequeño "Ver Libro" */
+.btn-small {
+    background-color: transparent;
+    border: 1px solid #333;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
 }
 
-/* Mensaje de historial vacío */
-#ordersContainer > p {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #888;
-    margin-top: 50px;
+.btn-small:hover {
+    background-color: #333;
+    color: #fff;
 }
 
-/* Responsividad para móviles */
 @media (max-width: 600px) {
-    .order-item {
+    .order-header {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        gap: 10px;
     }
     
-    .order-item img {
-        width: 120px;
-        height: auto;
+    .header-right {
+        text-align: left;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-item {
+        align-items: flex-start;
+    }
+    
+    .btn-small {
+        display: none; /* Opcional: Ocultar botón en móvil si falta espacio */
     }
 }
