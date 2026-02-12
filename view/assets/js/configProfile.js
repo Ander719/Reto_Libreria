@@ -357,7 +357,7 @@ function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
 
-    const closePassBtns = document.querySelectorAll('.close-pass-btn, .deleteBtn[type="button"]');
+    const closePassBtns = document.querySelectorAll('.close-pass-btn,dialog .deleteBtn');
 
     closePassBtns.forEach(btn => {
         btn.onclick = (e) => {
