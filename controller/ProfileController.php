@@ -10,18 +10,14 @@ class ProfileController
         $this->ProfileDAO = new ProfileDAO();
     }
 
-    // --- FUNCIONES DE USUARIO ---
     public function loginUser($username, $password)
     {
-        // 1. SANITIZACIÓN Y VALIDACIÓN (Rúbrica IL8.4)
+        // SANITIZACIÓN Y VALIDACIÓN
         $username = trim(htmlspecialchars($username));
 
         if (empty($username) || empty($password)) {
             return ["success" => false, "error" => "Datos vacíos", "status_code" => 400];
         }
-        // ---------------------------------------------------------
-        // PASO A: INTENTAR COMO ADMIN (Prioridad)
-        // ---------------------------------------------------------
         $admin = $this->ProfileDAO->findAdminByUsername($username);
 
         // Si encontramos un admin, verificamos SU contraseña
@@ -36,71 +32,66 @@ class ProfileController
             return ["success" => true, "role" => "admin" , "status_code" => 200];
         }
 
-        // ---------------------------------------------------------
-        // PASO B: INTENTAR COMO USUARIO NORMAL
-        // ---------------------------------------------------------
-        // (Asumiendo que renombramos el método anterior a findUserByUsername para ser claros)
-        $user = $this->ProfileDAO->findUserByUsername($username); // O findByUsername si lo dejaste así
+    //si no es admin, buscamos un user normal
+        $user = $this->ProfileDAO->findUserByUsername($username); 
 
         if ($user && password_verify($password, $user->getPswd())) {
             $_SESSION['user'] = [
-                'profile_code' => $user->getProfile_code(), // O getId(), revisa tu modelo User
+                'profile_code' => $user->getProfile_code(), 
                 'user_name' => $user->getUser_name(),
                 'role' => 'user'
             ];
             return ["success" => true, "role" => "user" , "status_code" => 200];
         }
 
-        // ---------------------------------------------------------
-        // PASO C: FALLO
-        // ---------------------------------------------------------
+    // Si no encontramos ni admin ni user, o la contraseña no coincide, devolvemos error genérico
         return ["success" => false, "error" => "Usuario o contraseña incorrectos", "status_code" => 401];
     }
 
     public function register($username, $password)
     {
-        // 1. Saneamiento (Rúbrica Seguridad)
+        // Saneamiento 
         $username = trim(htmlspecialchars($username));
 
-        // 2. Validación de contraseña
+        //  Validación de contraseña
         if (strlen($password) < 4) {
             return ["success" => false, "error" => "La contraseña debe tener al menos 4 caracteres"];
         }
 
-        // 3. ENCRIPTADO (Fundamental para password_verify)
+        // ENCRIPTADO (Fundamental para password_verify)
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        // 4. Llamada al DAO
+      
         // Pasamos el HASH, no la contraseña plana
         $resultado = $this->ProfileDAO->register($username, $passwordHash);
-        // CASO 1: ÉXITO (Es un objeto)
+
         if ($resultado instanceof User) {
-            // Iniciar sesión automáticamente tras registro (Opcional, pero recomendado)
+            // Iniciar sesión automáticamente tras registro
             if (session_status() === PHP_SESSION_NONE) session_start();
             $_SESSION['user'] = $resultado->toArray();
             return ["success" => true, "user" => $resultado->toArray()];
         }
 
-        // CASO 2: FALLOS ESPECÍFICOS
+       //  USUARIO DUPLICADO
         if ($resultado === "ERROR_DUPLICADO") {
             return ["success" => false, "error" => "Ese nombre de usuario ya está cogido."];
         }
 
-        // CASO 3: OTROS FALLOS
+        // otro error del sistema
         return ["success" => false, "error" => "Error del sistema: " . $resultado];
     }
 
     public function logout()
     {
-        // 1. Iniciamos sesión solo si no está iniciada (para tener acceso a ella)
+        //  Iniciamos sesión solo si no está iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // 2. Borramos las variables de sesión ($_SESSION['user'] = null)
+        //Borramos las variables de sesión ($_SESSION['user'] = null)
         session_unset();
 
-        // 3. Destruimos la sesión completamente en el servidor
+        // Destruimos la sesión completamente en el servidor
         session_destroy();
 
         return ["success" => true];
