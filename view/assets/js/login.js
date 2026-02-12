@@ -55,6 +55,7 @@ async function login(username, password) {
             body: JSON.stringify({ username, password }),
             credentials: 'include', // Importante para enviar/recibir cookies
         });
+        console.log("Status Code HTTP:", response.status);
         const rawText = await response.text();
         
         let data;

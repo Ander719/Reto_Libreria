@@ -1,3 +1,28 @@
+main {
+  padding: 40px 20px; /* Espacio general para que nada toque los bordes del navegador */
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Crea una separación base entre secciones */
+}
+.main-title {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 1.8rem;
+  color: #333;
+  
+  /* EL TRUCO PARA EL ESPACIADO: */
+  margin-top: 60px;    /* Espacio generoso con la sección anterior */
+  margin-bottom: 25px; /* Espacio con el contenido que tiene debajo */
+  
+  padding-left: 10px;
+  border-left: 5px solid #A2D2FF; /* Un detalle visual que combina con tus tarjetas */
+  line-height: 1.2;
+}
+#defaultContent .main-title:first-child,
+#searchSection .main-title:first-child {
+  margin-top: 10px;
+}
 /* --- main --- */
 /* Para que las estrellas sean doradas y estén en fila */
 .book-rating {
@@ -5,11 +30,6 @@
   margin: 10px 0;
   font-size: 1.2rem;
 }
-
-/* =========================================
-   ZONA NUEVA: LIBROS RECIENTES (Horizontal)
-   ========================================= */
-
 /* 1. El Contenedor Nuevo */
 .rating-books {
   /* Configuración */
@@ -29,9 +49,9 @@
   position: relative;
   height: calc(var(--card-height) + 20px);
   /* Altura justa + sombra */
-  margin-top: 2rem;
+  margin-top: 0;
+  margin-bottom: 20px;
   overflow: hidden;
-  /* Oculta lo que se sale por los lados */
 
   /* Máscara de desvanecimiento a los lados (Fade Effect) */
   mask-image: linear-gradient(to right,

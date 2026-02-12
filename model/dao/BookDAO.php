@@ -25,10 +25,7 @@ class BookDAO {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createBookWithAuthor($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName) {
-        $authorId = $this->AuthorDAO->getOrCreateAuthorId($authorName, $authorSurname);
-        if (!$authorId) return false;
-
+    public function createBookWithAuthor($isbn, $title, $pages, $stock, $synopsis, $price, $editorial, $coverName, $authorId) {
         $query = "INSERT INTO BOOK_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
                   VALUES (:isbn, :title, :author, :pages, :stock, :synopsis, :price, :editorial, :cover)";
         $stmt = $this->conn->prepare($query);

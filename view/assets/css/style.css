@@ -234,20 +234,38 @@ html {
 
 /* --- Diseño Responsivo (Móvil) --- */
 @media (max-width: 768px) {
+  /* 1. Forzamos el contenedor a ser columna */
   .nav-container {
     flex-direction: column;
     gap: 15px;
-    padding: 1rem;
+    padding: 1.5rem 1rem;
+    align-items: center;
   }
 
-  .search-group {
-    width: 100%;
-    max-width: 100%;
+  /* 2. Reordenamos los elementos */
+  .logo-link, .welcome-text {
+    order: 1; /* Logo y usuario arriba */
   }
 
   .nav-menu {
+    order: 2; /* Menú en medio */
+    flex-direction: column; /* Enlaces uno encima de otro */
+    gap: 12px;
     width: 100%;
     justify-content: center;
+  }
+
+  .search-group {
+    order: 3; /* Buscador abajo del todo */
+    width: 100%;
+    max-width: 100%;
+    margin-top: 10px;
+  }
+
+  /* 3. Ajuste de los enlaces en móvil */
+  .nav-link {
+    font-size: 1rem;
+    padding: 5px 0;
   }
 }
 

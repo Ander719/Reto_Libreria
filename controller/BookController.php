@@ -46,8 +46,12 @@ class BookController {
         if (empty($isbn) || empty($title) || empty($authorName)) {
             return false;
         }
+        $authorDAO = new AuthorDAO();
+        $authorId = $authorDAO->getOrCreateAuthorId($authorName, $authorSurname);
+        
+        if (!$authorId) return false;
 
-        return $this->BookDAO->createBookWithAuthor($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName);
+        return $this->BookDAO->createBookWithAuthor($isbn, $title, $pages, $stock, $synopsis, $price, $editorial, $coverName, $authorId);
     }
 
     public function modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $cover) {
