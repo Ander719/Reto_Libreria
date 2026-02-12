@@ -32,7 +32,7 @@ class CommentController {
         // Validar que rating es un entero
         $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
 
-        // Validar rango lógico (1 a 5 estrellas)
+        // Validar rango lógico
         if ($cleanRating === false || $cleanRating < 0 || $cleanRating > 5) {
             return ["success" => false, "message" => "La puntuación debe ser entre 0 y 5.", "code" => 400];
         }
@@ -82,7 +82,6 @@ class CommentController {
 
     // BORRAR
     public function deleteComment($isbn, $targetProfileCode, $currentUser) {
-        // Sanitización
         $cleanIsbn = trim(htmlspecialchars($isbn));
         $cleanTargetProfile = trim(htmlspecialchars($targetProfileCode));
 
@@ -108,14 +107,12 @@ class CommentController {
         }
     }
 
-    // Método Privado Auxiliar
     private function checkIfAdmin($profileCode) {
         $db = new Database();
         $conn = $db->getConnection();
         if ($conn) {
             $sql = "SELECT profile_code FROM admin_ WHERE profile_code = :id";
             $stmt = $conn->prepare($sql);
-            // profileCode ya debería venir limpio, pero la consulta preparada protege de inyección SQL
             $stmt->execute([':id' => $profileCode]);
             return ($stmt->fetch(PDO::FETCH_ASSOC)) ? true : false;
         }

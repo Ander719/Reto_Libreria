@@ -2,7 +2,7 @@ import { currentUser, checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 let isEditing = false;
 
-// --- CONFIGURACIÓN DEL MODAL ---
+// CONFIGURACIÓN MODAL
 const dialog = document.getElementById('myDialog');
 const dialogTitle = document.getElementById('dialogTitle');
 const dialogMessage = document.getElementById('dialogMessage');
@@ -68,7 +68,7 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
     return new Promise((resolve) => { confirmResolver = resolve; });
 }
 
-// --- LÓGICA DEL LIBRO ---
+// LÓGICA DEL LIBRO
 async function loadBookDetails(isbn) {
     try {
         const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
@@ -99,7 +99,7 @@ function rellenarVista(libro) {
     const btnCart = document.getElementById('addToCartBtn');
     const qtyInput = document.getElementById('qtyInput');
 
-    // SI ES ADMIN: Ocultar controles y salir (Esto es fácil de explicar y muy efectivo)
+    // SI ES ADMIN: Ocultar controles y salir
     if (currentUser && currentUser.role === 'admin') {
         btnCart.style.display = 'none';
         qtyInput.style.display = 'none';
@@ -128,7 +128,6 @@ function rellenarVista(libro) {
     btnCart.parentNode.replaceChild(newBtn, btnCart);
 
     newBtn.addEventListener('click', async () => {
-        // 1. Verificar Sesión
         if (!currentUser) {
             showModal("Atención", "Debes iniciar sesión para comprar.");
             return;
@@ -137,7 +136,7 @@ function rellenarVista(libro) {
         const cantidad = parseInt(qtyInput.value);
         const stockDisponible = parseInt(libro.stock);
 
-        // Caso A: Cantidad inválida (negativos o texto)
+        // Caso A: Cantidad inválida
         if (isNaN(cantidad) || cantidad <= 0) {
             showModal("Error", "Por favor introduce una cantidad válida.");
             return;
@@ -150,7 +149,7 @@ function rellenarVista(libro) {
             return;
         }
 
-        // 2. Verificar Tarjeta (Solo si el stock es válido)
+        //Verificar Tarjeta 
         let userCard;
         let direction;
         try {
@@ -164,7 +163,6 @@ function rellenarVista(libro) {
             }
         } catch (err) { console.error(err); }
 
-        // CORRECCIÓN: Usamos || (O) porque si falta UNA, ya no vale.
         const faltaTarjeta = !userCard || String(userCard).trim() === "";
         const faltaDireccion = !direction || String(direction).trim() === "";
 
@@ -179,20 +177,20 @@ function rellenarVista(libro) {
             return;
         }
 
-        // 3. Confirmación Final
+        // Confirmación
         if (await showConfirm("Confirmar", `¿Seguro que quieres comprar ${cantidad} unidad(es)?`)) {
             comprarAhora(libro.isbn, cantidad, getUserId(currentUser));
         }
     });
 }
 
-// --- COMENTARIOS ---
+// COMENTARIOS
 function handleCommentSection() {
     const container = document.getElementById('userActionContainer');
     const loginPrompt = document.getElementById('loginPrompt');
     const nameDisplay = document.getElementById('userNameDisplay');
 
-    // Lógica simple: Si no es usuario normal, ocultamos cosas
+    // Lógica simple: Si es admin ocultamos las cosas de comentarios
     if (currentUser && currentUser.role !== "admin") {
         container.hidden = false;
         loginPrompt.hidden = true;
@@ -288,7 +286,7 @@ async function loadComments(isbn) {
 
                 if (isMine) myReview = c;
 
-                // --- Lógica de botones (Simplificada pero legible) ---
+                // Lógica de botones
                 let btnHtml = "";
                 if (isMine || isAdmin) {
                     const safeText = (c.comment_text || "").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
@@ -316,7 +314,7 @@ async function loadComments(isbn) {
             list.innerHTML = "<p style='text-align:center'>Sin comentarios.</p>";
         }
 
-        // Gestión del formulario si ya comentó
+        // Gestión del formulario si el usuario ha comentado
         const container = document.getElementById('userActionContainer');
         const form = document.getElementById('commentForm');
         const msg = document.getElementById('msg-review-exists');
@@ -338,7 +336,7 @@ async function loadComments(isbn) {
     } catch (e) { console.error(e); }
 }
 
-// --- FUNCIONES GLOBALES ---
+//FUNCIONES GLOBALES
 
 window.deleteComment = async function (isbn, targetId) {
     if (!await showConfirm("Borrar", "¿Seguro que quieres borrar?")) return;
@@ -394,7 +392,7 @@ window.setRating = function (val) {
     if (txt) txt.innerText = val + "/5";
 };
 
-// --- UTILIDADES ---
+// UTILIDADES
 
 function resetForm() {
     isEditing = false;
