@@ -36,7 +36,7 @@ class Order {
     }
 
     public function toArray() {
-        // Convertimos cada objeto Content a array
+    
         $itemsArray = [];
         foreach ($this->contents as $contentObj) {
             $itemsArray[] = $contentObj->toArray();

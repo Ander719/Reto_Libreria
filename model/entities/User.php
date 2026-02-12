@@ -28,11 +28,11 @@ class User extends Profile {
 
     // Conversión a Array para JSON (Combina padre + hijo)
     public function toArray() {
-        $data = parent::toArray(); // Obtiene los datos básicos (Profile)
+        $data = parent::toArray(); 
         $data['gender'] = $this->gender;
         $data['card_no'] = $this->cardNumber;
         $data['direction'] = $this->direction;
-        $data['role'] = 'user'; // Útil para el frontend saber qué es
+        $data['role'] = 'user'; 
         return $data;
     }
 }
