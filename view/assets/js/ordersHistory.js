@@ -3,14 +3,13 @@ import { loadHeader, loadFooter } from './header.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
+    //Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
   
     await loadHeader("configProfile");
     await loadFooter();
 
-    // 4. Cargar historial
     loadOrders();
 });
 
@@ -24,7 +23,6 @@ async function loadOrders() {
         try {
             orders = JSON.parse(text);
         } catch (e) {
-            console.error("Respuesta no válida del servidor:", text);
             container.innerHTML = '<p class="error-msg">Error técnico en el servidor.</p>';
             return;
         }
@@ -34,7 +32,6 @@ async function loadOrders() {
             return;
         }
         if (!Array.isArray(orders) || orders.length === 0) {
-            // Clase CSS: no-orders
             container.innerHTML = `
                 <div class="no-orders">
                     <img src="../assets/img/book.svg" alt="Sin pedidos">
@@ -45,10 +42,10 @@ async function loadOrders() {
             return;
         }
 
-        // --- RENDERIZADO LIMPIO (USANDO CLASES CSS) ---
+        
         container.innerHTML = orders.map(order => {
 
-            // 1. HTML de los Items (Libros dentro del pedido)
+            // Libros dentro del pedido
             const itemsHtml = order.items.map(item => `
                 <div class="order-item">
                     <img src="../assets/img/covers/${item.cover}" alt="${item.title}" class="item-cover">
@@ -66,7 +63,7 @@ async function loadOrders() {
                     <a href="bookDetails.html?isbn=${item.isbn}" class="btn-small">Ver Libro</a>
                 </div>
             `).join('');
-            // 2. HTML de la Tarjeta de Pedido Completa
+            
             return `
                 <div class="order-card">
                     <div class="order-header">

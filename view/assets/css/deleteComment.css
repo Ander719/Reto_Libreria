@@ -1,4 +1,3 @@
-/* Estilos para la tabla de libros en la gestión de comentarios */
 h2 {
     color: #333;
     text-align: center;
@@ -7,12 +6,12 @@ h2 {
 
 #booksTable {
     width: 100%;
-    border-collapse: collapse; /* Cambiado a collapse para que los bordes se vean correctamente */
+    border-collapse: collapse;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-radius: 8px;
     overflow: hidden;
     margin-top: 20px;
-    border: 1px solid #ccc; /* Equivale al antiguo border="1" */
+    border: 1px solid #ccc; 
 }
 
 #booksTable th {
@@ -68,17 +67,17 @@ h2 {
     padding: 20px;
     max-width: 1000px;
     margin: 0 auto;
-    height: auto !important; /* Anula el 100vh del login */
-    display: block !important; /* Anula el flex si causa problemas */
-    min-height: calc(100vh - 200px); /* Asegura que el footer se mantenga abajo */
+    height: auto !important; 
+    display: block !important; 
+    min-height: calc(100vh - 200px); 
 }
 
 /* Estilos para el scroll de la tabla */
 .table-responsive {
     width: 100%;
-    max-height: 500px; /* Ajusta esta altura según prefieras */
-    overflow-y: auto;  /* Scroll vertical */
-    overflow-x: hidden; /* Evita scroll horizontal innecesario */
+    max-height: 500px; 
+    overflow-y: auto;  
+    overflow-x: hidden; 
     border: 1px solid #ccc;
     border-radius: 8px;
     margin-top: 20px;
@@ -96,5 +95,5 @@ h2 {
 #booksTable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0; /* Quitamos el margen superior para que el sticky funcione bien */
+    margin-top: 0; 
 }

@@ -1,12 +1,13 @@
 <?php
-// Sustituimos el DAO por el Controlador
 require_once '../controller/OrderController.php';
-require_once '../Config/Session.php'; 
+require_once '../Config/Session.php';
 
 header("Content-Type: application/json; charset=utf-8");
 
-// 1. Verificación de sesión
+// 1. Verificación de si usuario ha iniciado la sesion
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
+
+    // Indica que el cliente debe autenticarse para obtener la respuesta.
     http_response_code(401);
     echo json_encode(["success" => false, "error" => "No has iniciado sesión."]);
     exit();
@@ -15,17 +16,16 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
 $profileCode = $_SESSION['user']['profile_code'];
 
 try {
-    // 2. Usar el Controlador en lugar del DAO
     $orderController = new OrderController();
-    
-    // 3. Llamar al nuevo método del controlador que incluye validación
+
     $orders = $orderController->getOrdersByProfile($profileCode);
 
+    // AÑADIDO HTTP: 200 OK. La solicitud ha tenido éxito.
     http_response_code(200);
     echo json_encode($orders);
 
 } catch (Exception $e) {
+    // Indica un fallo en el servidor
     http_response_code(500);
-    // Es mejor no mostrar el mensaje exacto de la excepción en producción
     echo json_encode(["success" => false, "error" => "Error al obtener pedidos."]);
 }
