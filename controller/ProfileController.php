@@ -127,12 +127,12 @@ class ProfileController
 
     public function getProfile($id, $role) {
     
-    if ($role === 'admin') {
-        $data =$this->ProfileDAO->getAdminById($id);
-        return $data ? $data->toArray() : null;
-    } else {
-        $data =$this->ProfileDAO->getUserById($id);
-        return $data ? $data->toArray() : null;
+        if ($role === 'admin') {
+            $data =$this->ProfileDAO->getAdminById($id);
+            return $data ? $data->toArray() : null;
+        } else {
+            $data =$this->ProfileDAO->getUserById($id);
+            return $data ? $data->toArray() : null;
+        }
     }
-}
 }

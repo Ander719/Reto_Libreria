@@ -6,16 +6,8 @@ init();
 let globalBooks = [];
 
 async function init() {
-    console.log("Verificando sesión con el servidor...");
+    await checkSession();
 
-    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
-    const isLogged = await checkSession();
-
-    if (isLogged) {
-        console.log("Usuario logueado:", currentUser);
-    } else {
-        console.log("No hay sesión activa");
-    }
     await loadHeader("main");
     await loadFooter();
     await cargarLibrosDesdeBD();

@@ -30,11 +30,11 @@ class CommentController {
         $cleanText    = trim(htmlspecialchars($data->text)); // IMPORTANTE: Evita XSS
         
         // Validar que rating es un entero
-        $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_INT);
+        $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
 
         // Validar rango lógico (1 a 5 estrellas)
-        if ($cleanRating === false || $cleanRating < 1 || $cleanRating > 5) {
-            return ["success" => false, "message" => "La puntuación debe ser entre 1 y 5.", "code" => 400];
+        if ($cleanRating === false || $cleanRating < 0 || $cleanRating > 5) {
+            return ["success" => false, "message" => "La puntuación debe ser entre 0 y 5.", "code" => 400];
         }
 
         $newComment = new Comment();
@@ -61,9 +61,9 @@ class CommentController {
         $cleanProfile = trim(htmlspecialchars($data->profileCode));
         $cleanIsbn    = trim(htmlspecialchars($data->isbn));
         $cleanText    = trim(htmlspecialchars($data->text));
-        $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_INT);
+        $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
 
-        if ($cleanRating === false || $cleanRating < 1 || $cleanRating > 5) {
+        if ($cleanRating === false || $cleanRating < 0 || $cleanRating > 5) {
              return ["success" => false, "message" => "Valoración inválida.", "code" => 400];
         }
 

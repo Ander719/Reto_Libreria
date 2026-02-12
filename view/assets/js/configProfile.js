@@ -150,16 +150,29 @@ async function saveUserData(role) {
     const modalId = role === 'admin' ? 'modifyAdminPopup' : 'modifyUserPopupAdmin';
 
     // Captura y limpieza de valores básicos
-    const phone = getEl(`phone${suffix}`).value.trim();
+    const phoneRaw = getEl(`phone${suffix}`).value.trim();
     const name = getEl(`firstName${suffix}`).value.trim();
     const surname = getEl(`lastName${suffix}`).value.trim();
     const email = getEl(`email${suffix}`).value.trim();
     const username = getEl(`username${suffix}`).value.trim();
 
-    // 1. RESTRICCIÓN: Teléfono (9 números exactos)
-    if (phone.length !== 9 || isNaN(phone)) {
-        alert("El teléfono debe tener exactamente 9 números.");
-        return;
+    if (email.length > 0) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("El formato del email no es válido.");
+            return;
+        }
+    }
+
+    let phoneClean = "";
+    if (phoneRaw.length > 0) {
+        // Quitamos espacios y guiones para validar
+        phoneClean = phoneRaw.replace(/[\s-]/g, '');
+        // Validamos que sean 9 dígitos numéricos
+        if (!/^\d{9}$/.test(phoneClean)) {
+            alert("El teléfono debe tener 9 dígitos numéricos.");
+            return;
+        }
     }
 
     const formData = new FormData();
@@ -169,18 +182,21 @@ async function saveUserData(role) {
     formData.append('surname', surname);
     formData.append('email', email);
     formData.append('username', username);
-    formData.append('phone', phone);
+    formData.append('phone', phoneClean);
 
     if (role === 'user') {
         const cardNumberRaw = getEl('cardNumberUser').value.trim();
 
         // 2. RESTRICCIÓN: Limpiar guiones de la tarjeta para validar 16 dígitos
         // Esto permite formatos como 1234-5678-1234-5678
-        const cardNumberClean = cardNumberRaw.replace(/-/g, '');
+        let cardNumberClean = "";
 
-        if (cardNumberClean.length !== 16 || isNaN(cardNumberClean)) {
-            alert("El número de tarjeta debe tener exactamente 16 números (los guiones no cuentan).");
-            return;
+        if (cardNumberRaw.length > 0) {
+            cardNumberClean = cardNumberRaw.replace(/[-\s]/g, '');
+            if (!/^\d{16}$/.test(cardNumberClean)) {
+                alert("La tarjeta debe tener 16 dígitos.");
+                return;
+            }
         }
 
         // Enviamos el número limpio al servidor
@@ -190,28 +206,37 @@ async function saveUserData(role) {
         if (gender) formData.append('gender', gender.value);
 
         const direction = getEl('directionUser').value.trim();
-        if(direction.length > 255) {
-            alert("La dirección debe tener como máximo 255 caracteres.");
+        if (direction.length > 255) {
+            alert("La dirección es demasiado larga (máx 255).");
             return;
         }
         formData.append('direction', direction);
 
     } else {
         const accountNumberRaw = getEl('currentAccountAdmin').value.trim();
-        // Limpiar guiones y espacios de la cuenta bancaria (IBAN)
-        const accountNumberClean = accountNumberRaw.replace(/[-\s]/g, '');
+        let accountNumberClean = "";
 
-        // 2. Validación de Cuenta Bancaria (24 caracteres reales)
-        if (accountNumberClean.length !== 24) {
-            alert("La cuenta bancaria debe tener exactamente 24 caracteres (los guiones o espacios no cuentan).");
-            return;
+        if (accountNumberRaw.length > 0) {
+            accountNumberClean = accountNumberRaw.replace(/[-\s]/g, '');
+            if (accountNumberClean.length !== 24) {
+                alert("La cuenta bancaria debe tener 24 caracteres.");
+                return;
+            }
         }
         formData.append('accountNumber', accountNumberClean);
     }
 
     try {
         const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Respuesta servidor:", text);
+            alert("Error técnico en el servidor.");
+            return;
+        }
 
         if (data.success) {
             alert("Datos actualizados correctamente.");
