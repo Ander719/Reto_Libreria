@@ -114,16 +114,40 @@ class ProfileController
     {
         return $this->ProfileDAO->delete_user($id);
     }
-    //public function modifyPassword($profile_code, $password) { return $this->ProfileDAO->modifyPassword($profile_code, $password); }
 
-    public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code,$direction)
-    {
-        return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code,$direction);
-    }
-    public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
-    {
-        return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
-    }
+public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction)
+{
+    // Sanitización
+    $email = filter_var(trim($email), FILTER_SANITIZE_EMAIL);
+    $username = htmlspecialchars(trim($username));
+    $name = htmlspecialchars(trim($name));
+    $surname = htmlspecialchars(trim($surname));
+    $direction = htmlspecialchars(trim($direction));
+    $telephone = filter_var($telephone, FILTER_SANITIZE_NUMBER_INT);
+
+    // Validación básica
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+    if (strlen($telephone) < 9) return false;
+    if (strlen($card_no) !== 16 || !is_numeric($card_no)) return false;
+
+    return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction);
+}
+
+public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
+{
+    // Sanitización
+    $email = filter_var(trim($email), FILTER_SANITIZE_EMAIL);
+    $username = htmlspecialchars(trim($username));
+    $name = htmlspecialchars(trim($name));
+    $surname = htmlspecialchars(trim($surname));
+    $current_account = htmlspecialchars(trim($current_account));
+
+    // Validación
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+    if (strlen($current_account) < 20) return false; // Validación mínima de IBAN
+
+    return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
+}
 
     public function getProfile($id, $role) {
     
