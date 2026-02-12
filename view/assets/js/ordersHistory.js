@@ -2,18 +2,11 @@ import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("Verificando sesión con el servidor...");
 
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
-    if (isLogged) {
-        console.log("Usuario logueado:", currentUser);
-    } else {
-        console.log("No hay sesión activa, redirigiendo...");
-        window.location.href = 'login.html';
-    }
-
+  
     await loadHeader("configProfile");
     await loadFooter();
 

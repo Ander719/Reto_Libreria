@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', async() => {
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
+    if (!isLogged || isLogged.role !== 'admin') {
+        alert("Acceso denegado: Se requieren permisos de administrador.");
+        window.location.href = 'main.html';
+        return;
+    }
+
     if (isLogged) {
         console.log("Usuario logueado:", currentUser);
     } else {
