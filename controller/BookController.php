@@ -2,7 +2,6 @@
 // controller/BookController.php
 require_once '../model/entities/Book.php';
 require_once '../model/dao/BookDAO.php';
-// AÑADIDO: Necesario para modifyBook
 require_once '../model/dao/AuthorDAO.php'; 
 
 class BookController {
@@ -23,7 +22,7 @@ class BookController {
     }
 
     public function createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName) {
-        // 1. SANITIZACIÓN (Limpieza de código malicioso)
+        // SANITIZACIÓN 
         $isbn          = trim(htmlspecialchars($isbn));
         $title         = trim(htmlspecialchars($title));
         $authorName    = trim(htmlspecialchars($authorName));
@@ -32,14 +31,14 @@ class BookController {
         $editorial     = trim(htmlspecialchars($editorial));
         $coverName     = trim(htmlspecialchars($coverName));
 
-        // 2. VALIDACIÓN DE TIPOS (Asegurar números)
+        // VALIDACIÓN DE TIPOS 
         $pages = filter_var($pages, FILTER_VALIDATE_INT);
         $stock = filter_var($stock, FILTER_VALIDATE_INT);
         $price = filter_var($price, FILTER_VALIDATE_FLOAT);
 
-        // 3. VALIDACIÓN LÓGICA
+        // VALIDACIÓN LÓGICA
         if ($pages === false || $stock === false || $price === false) {
-             return false; // O lanzar una excepción según tu gestión de errores
+             return false; 
         }
 
         // Validación de campos obligatorios mínimos
@@ -55,7 +54,7 @@ class BookController {
     }
 
     public function modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $cover) {
-        // 1. SANITIZACIÓN
+        //  SANITIZACIÓN
         $isbn          = trim(htmlspecialchars($isbn));
         $title         = trim(htmlspecialchars($title));
         $authorName    = trim(htmlspecialchars($authorName));
@@ -64,7 +63,7 @@ class BookController {
         $editorial     = trim(htmlspecialchars($editorial));
         $cover         = trim(htmlspecialchars($cover));
 
-        // 2. VALIDACIÓN DE TIPOS
+        // VALIDACIÓN DE TIPOS
         $pages = filter_var($pages, FILTER_VALIDATE_INT);
         $stock = filter_var($stock, FILTER_VALIDATE_INT);
         $price = filter_var($price, FILTER_VALIDATE_FLOAT);
@@ -73,16 +72,16 @@ class BookController {
             return false;
         }
 
-        // 3. Obtenemos o creamos el ID del autor
+        //  Obtenemos o creamos el ID del autor
         $authorDAO = new AuthorDAO();
         $authorId = $authorDAO->getOrCreateAuthorId($authorName, $authorSurname);
         
         if (!$authorId) return false;
 
-        // 4. Creamos el objeto Book con el ID del autor
+        // Creamos el objeto Book con el ID del autor
         $book = new Book($title, $authorId, $isbn, $pages, $stock, $synopsis, $price, $editorial, $cover);
         
-        // 5. Llamamos al DAO
+       
         return $this->BookDAO->updateBook($book);
     }
 }
