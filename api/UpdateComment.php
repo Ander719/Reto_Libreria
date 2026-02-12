@@ -14,5 +14,7 @@ $controller = new CommentController();
 $response = $controller->updateComment($data);
 
 http_response_code($response["code"]);
-echo json_encode(["message" => $response["message"]]);
-?>
+echo json_encode([
+    "success" => $response["success"],
+    "message" => $response["message"]
+]);?>

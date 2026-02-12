@@ -1,4 +1,4 @@
-/* 1. CONTENEDOR PRINCIPAL DEL LIBRO */
+/* CONTENEDOR PRINCIPAL DEL LIBRO */
 .details-container {
     display: flex;
     flex-wrap: wrap;
@@ -83,7 +83,6 @@
     border: 1px solid #f5c6cb;
 }
 
-/* Metadatos (ISBN, Páginas...) */
 .meta-info {
     background-color: #f8f9fa;
     padding: 15px;
@@ -136,7 +135,7 @@
 }
 
 
-/* 2. SECCIÓN DE COMENTARIOS*/
+/*SECCIÓN DE COMENTARIOS*/
 .comments-section {
     max-width: 1200px;
     margin: 0 auto;
@@ -244,7 +243,7 @@
     font-weight: bold;
 }
 
-/* 3. ESTILOS PARA "VER" LAS ESTRELLAS (EN LOS COMENTARIOS PUBLICADOS) */
+/*ESTILOS PARA "VER" LAS ESTRELLAS  */
 .star-rating {
     font-size: 1.2rem;
     color: #ccc;
@@ -258,7 +257,7 @@
     color: #ffc107;
 }
 
-/* Media estrella (Mitad dorada / Mitad gris) */
+/* Media estrella  */
 .star-rating .half {
     background: linear-gradient(to right, #ffc107 50%, #ccc 50%);
     -webkit-background-clip: text;
@@ -298,7 +297,7 @@
     margin-top: 5px;
 }
 
-/* Botones de acción (Editar/Borrar) flotantes */
+/* Botones de acción flotantes */
 .comment-actions {
     position: absolute;
     top: 20px;
@@ -326,7 +325,7 @@
     color: #dc3545;
 }
 
-/* 4. ESTILOS PARA "VOTAR" (SELECTOR DE MEDIAS ESTRELLAS) */
+/* 4. ESTILOS PARA VOTAR */
 .rating-wrapper {
     display: flex;
     align-items: center;
@@ -345,11 +344,8 @@
 
 .star-selector label {
     width: 20px;
-    /* Ancho fijo para media estrella */
     overflow: hidden;
-    /* Ocultamos la otra mitad */
     font-size: 40px;
-    /* Tamaño grande */
     color: #ddd;
     cursor: pointer;
     line-height: 1;
@@ -364,14 +360,12 @@
     display: block;
 }
 
-/* RECORTES DE ESTRELLA (Para simular mitades) */
-/* Mitad derecha  */
+/* RECORTES DE ESTRELLA  */
 .star-selector label.full:before {
     direction: ltr;
     margin-left: -20px;
 }
 
-/* Mitad izquierda*/
 .star-selector label.half:before {
     direction: ltr;
 }

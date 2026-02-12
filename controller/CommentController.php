@@ -27,7 +27,7 @@ class CommentController {
         // SANITIZACIÓN Y VALIDACIÓN
         $cleanProfile = trim(htmlspecialchars($data->profileCode));
         $cleanIsbn    = trim(htmlspecialchars($data->isbn));
-        $cleanText    = trim(htmlspecialchars($data->text)); // IMPORTANTE: Evita XSS
+        $cleanText    = trim(htmlspecialchars($data->text));
         
         // Validar que rating es un entero
         $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
@@ -85,7 +85,6 @@ class CommentController {
         $cleanIsbn = trim(htmlspecialchars($isbn));
         $cleanTargetProfile = trim(htmlspecialchars($targetProfileCode));
 
-        // $currentUser viene de la sesión. Verificamos quién es.
         $loggedId = is_object($currentUser) ? ($currentUser->profile_code ?? $currentUser->profileCode) : ($currentUser['profile_code'] ?? $currentUser['profileCode']);
 
         if (!$loggedId) {
