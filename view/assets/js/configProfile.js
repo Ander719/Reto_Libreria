@@ -150,7 +150,7 @@ async function saveUserData(role) {
     const formId = role === 'admin' ? 'profileFormAdmin' : 'profileFormUser';
     const form = document.getElementById(formId);
     if (!form.checkValidity()) {
-        form.reportValidity(); 
+        form.reportValidity();
         return;
     }
 
@@ -290,7 +290,7 @@ async function loadUsersTable() {
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
 
-         
+
             clone.querySelector('.col-username').textContent = u.user_name || "N/A";
             clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`.trim() || "Sin nombre";
             clone.querySelector('.col-email').textContent = u.email || "Sin email";
@@ -353,12 +353,18 @@ function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
 
-    const closePassBtns = document.querySelectorAll('.close-pass-btn, button[command="close"]');
+    const closePassBtns = document.querySelectorAll('.close-pass-btn, .deleteBtn[type="button"]');
+
     closePassBtns.forEach(btn => {
         btn.onclick = (e) => {
             const dialog = btn.closest('dialog');
-            if (dialog && typeof dialog.close === "function") dialog.close();
-            else if (dialog) dialog.style.display = 'none';
+            if (dialog && dialog.open) {
+                if (typeof dialog.close === "function") {
+                    dialog.close();
+                } else {
+                    toggleModal(dialog.id, false);
+                }
+            }
         };
     });
 
@@ -367,7 +373,7 @@ function setupPasswordLogic() {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
 
-            
+
             const resInit = await fetch('../../api/GetProfile.php');
             const dataInit = await resInit.json();
             const username = dataInit.user.user_name;
@@ -381,15 +387,15 @@ function setupPasswordLogic() {
                 const data = await res.json();
 
                 if (data.success) {
-                   
+
                     const verifyModal = getEl('verifyPasswordModal');
                     if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
                     else toggleModal('verifyPasswordModal', false);
 
-                    
+
                     const changeModal = getEl('changePasswordModal');
                     if (changeModal) {
-                       
+
                         if (changeForm) changeForm.reset();
 
                         if (typeof changeModal.showModal === 'function') changeModal.showModal();
@@ -410,7 +416,7 @@ function setupPasswordLogic() {
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
 
-            
+
             const targetId = getEl('saveBtnUser').getAttribute('data-target-id') ||
                 getEl('saveBtnAdmin').getAttribute('data-target-id');
             if (newP.length < 4) return alert("La contraseña debe tener al menos 4 caracteres.");
