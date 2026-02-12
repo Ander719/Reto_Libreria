@@ -17,6 +17,7 @@ CREATE TABLE user_ (
     profile_code INT NOT NULL PRIMARY KEY,
     gender VARCHAR(10),
     card_no VARCHAR(50),
+    direction VARCHAR(255),
     FOREIGN KEY (profile_code) REFERENCES profile_(profile_code) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -85,10 +86,10 @@ INSERT INTO profile_ (profile_code, email, user_name, pswd, telephone, name_, su
 (4, 'carlos.lopez@email.com', 'carlosl', '$2y$10$batxaCdhUC7LYhE5YDVv8u7Rtn3ZfuehmLzHu7GWek7mUViODhVGy', 633445566, 'Carlos', 'López');
 
 -- 2. Usuarios y Admins
-INSERT INTO user_ (profile_code, gender, card_no) VALUES
-(2, 'Man', '1234-5678-9012-3456'),
-(3, 'Female', '2345-6789-0123-4567'),
-(4, 'Man', '3456-7890-1234-5678');
+INSERT INTO user_ (profile_code, gender, card_no,direction) VALUES
+(2, 'Man', '1234-5678-9012-3456','mi casa'),
+(3, 'Female', '2345-6789-0123-4567','mi casa'),
+(4, 'Man', '3456-7890-1234-5678','mi casa');
 
 INSERT INTO admin_ (profile_code, current_account) VALUES
 (1, 'ES12-3456-7890-1234-5678');
@@ -154,13 +155,12 @@ BEGIN
 
     -- 3. Insertamos en la tabla hija (USER)
     -- Por defecto creamos el usuario vacío (sin género ni tarjeta)
-    INSERT INTO user_ (profile_code, gender, card_no)
-    VALUES (v_new_profile_code, NULL, NULL);
+    INSERT INTO user_ (profile_code, gender, card_no,direction)
+    VALUES (v_new_profile_code, NULL, NULL,NULL);
     
     -- 4. Devolvemos los datos del usuario recién creado
     -- Esto es lo que tu PHP leerá en $stmt->fetch()
-    SELECT p.*, u.gender, u.card_no 
-    FROM profile_ p 
+    SELECT * FROM profile_ p 
     JOIN user_ u ON p.profile_code = u.profile_code 
     WHERE p.profile_code = v_new_profile_code;
 
