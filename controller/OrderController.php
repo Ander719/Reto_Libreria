@@ -22,12 +22,12 @@ class OrderController {
 }
 
     public function createDirectOrder($profileCode, $isbn, $quantity) {
-        // 1. Sanitización de entradas
+        // Sanitización de entradas
         $profileCode = filter_var($profileCode, FILTER_SANITIZE_NUMBER_INT);
         $isbn = htmlspecialchars(trim($isbn));
         $quantity = filter_var($quantity, FILTER_SANITIZE_NUMBER_INT);
 
-        // 2. Validación de reglas de negocio
+        // Validación de reglas de negocio
         if (empty($profileCode) || $profileCode <= 0) {
             return ["exito" => false, "error" => "Código de perfil no válido."];
         }

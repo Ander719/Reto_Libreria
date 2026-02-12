@@ -5,7 +5,6 @@ header("Access-Control-Allow-Methods: POST");
 
 require_once '../controller/CommentController.php';
 
-// Silenciar errores HTML para no romper el JSON
 error_reporting(0);
 ini_set('display_errors', 0);
 
