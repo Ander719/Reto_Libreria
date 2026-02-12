@@ -42,6 +42,46 @@ function setupEventListeners() {
     if (closeUser) closeUser.onclick = () => closeModalAndReset('modifyUserPopupAdmin');
     if (closeAdmin) closeAdmin.onclick = () => closeModalAndReset('modifyAdminPopup');
 
+    // 4. Botón "Eliminar Cuenta" (Dentro del modal)
+    const deleteBtn = getEl('deleteBtn');
+    if (deleteBtn) {
+        deleteBtn.onclick = (e) => {
+            e.preventDefault();
+            // Obtenemos el ID del usuario que se está editando actualmente
+            const targetId = getEl('saveBtnUser').getAttribute('data-target-id');
+            if (targetId) {
+                deleteUser(targetId);
+            } else {
+                console.error("Error: No se encontró el ID del usuario.");
+            }
+        };
+    }
+
+    // 5. Botones "Cambiar Contraseña"
+    const changePwdBtn = getEl('changePwdBtn');
+    const changePwdBtnAdmin = getEl('changePwdBtnAdmin');
+
+    const openPasswordModal = (e) => {
+        e.preventDefault();
+
+        // IMPORTANTE: Reseteamos el formulario para que aparezca vacío
+        const verifyForm = getEl('verifyPasswordForm');
+        if (verifyForm) verifyForm.reset();
+
+        const dialog = getEl('verifyPasswordModal');
+        if (dialog) {
+            // Usamos showModal() si está disponible (nativo), sino fallback
+            if (typeof dialog.showModal === "function") {
+                dialog.showModal();
+            } else {
+                toggleModal('verifyPasswordModal', true);
+            }
+        }
+    };
+
+    if (changePwdBtn) changePwdBtn.onclick = openPasswordModal;
+    if (changePwdBtnAdmin) changePwdBtnAdmin.onclick = openPasswordModal;
+
     setupPasswordLogic();
 }
 
@@ -176,9 +216,8 @@ async function saveUserData(role) {
         if (data.success) {
             alert("Datos actualizados correctamente.");
             toggleModal(modalId, false);
-            resetTargetIds(); // Restablece los IDs a tu propio perfil
+            resetTargetIds();
 
-            // Si el panel de administrador está visible, refrescamos la lista de usuarios
             if (getEl('adminPanelSection')?.style.display !== 'none') {
                 loadUsersTable();
             }
@@ -186,8 +225,8 @@ async function saveUserData(role) {
             alert("Error: " + data.error);
         }
     } catch (err) {
-        console.error("Error en la petición:", err);
-        alert("Error de conexión con el servidor.");
+        console.error("Error API:", err);
+        alert("Error de conexión.");
     }
 }
 
@@ -261,10 +300,22 @@ async function deleteUser(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         });
-        let rawtext = await res.text();
-        console.log("Raw response:", rawtext);
-        const data = await JSON.parse(rawtext);
-        if (data.success) {
+
+        let data;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            try { data = JSON.parse(text); } catch (e) { console.error(text); }
+        }
+
+        if (data && data.success) {
+            if (data.isSelfDelete) {
+                alert("Tu cuenta ha sido eliminada correctamente.");
+                window.location.href = 'login.html';
+                return;
+            }
             alert("Usuario eliminado.");
             loadUsersTable();
         } else {
@@ -280,11 +331,22 @@ function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
 
+    // Manejar cierre manual de los dialogs
+    const closePassBtns = document.querySelectorAll('.close-pass-btn, button[command="close"]');
+    closePassBtns.forEach(btn => {
+        btn.onclick = (e) => {
+            const dialog = btn.closest('dialog');
+            if (dialog && typeof dialog.close === "function") dialog.close();
+            else if (dialog) dialog.style.display = 'none';
+        };
+    });
+
     if (verifyForm) {
         verifyForm.onsubmit = async (e) => {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
-            // Usamos nuestro propio username para verificar
+
+            // Obtener username del usuario logueado para verificar
             const resInit = await fetch('../../api/GetProfile.php');
             const dataInit = await resInit.json();
             const username = dataInit.user.user_name;
@@ -298,10 +360,24 @@ function setupPasswordLogic() {
                 const data = await res.json();
 
                 if (data.success) {
-                    toggleModal('verifyPasswordModal', false);
-                    toggleModal('changePasswordModal', true);
+                    // 1. Cerrar modal de verificación
+                    const verifyModal = getEl('verifyPasswordModal');
+                    if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
+                    else toggleModal('verifyPasswordModal', false);
+
+                    // 2. Limpiar y Abrir modal de nueva contraseña
+                    const changeModal = getEl('changePasswordModal');
+                    if (changeModal) {
+                        // IMPORTANTE: Reseteamos campos para que no salga info vieja
+                        if (changeForm) changeForm.reset();
+
+                        if (typeof changeModal.showModal === 'function') changeModal.showModal();
+                        else toggleModal('changePasswordModal', true);
+                    }
+
                 } else {
                     alert("Contraseña actual incorrecta.");
+                    getEl('verifyCurrentPassword').value = '';
                 }
             } catch (err) { console.error(err); }
         };
@@ -313,7 +389,7 @@ function setupPasswordLogic() {
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
 
-            // El targetId debe ser el del usuario que estamos editando actualmente
+            // Obtenemos a quién cambiarle la pass (Usuario logueado o Admin editando a otro)
             const targetId = getEl('saveBtnUser').getAttribute('data-target-id') ||
                 getEl('saveBtnAdmin').getAttribute('data-target-id');
 
@@ -328,7 +404,11 @@ function setupPasswordLogic() {
                 const data = await res.json();
                 if (data.success) {
                     alert("Contraseña actualizada con éxito.");
-                    toggleModal('changePasswordModal', false);
+
+                    const changeModal = getEl('changePasswordModal');
+                    if (changeModal && typeof changeModal.close === 'function') changeModal.close();
+                    else toggleModal('changePasswordModal', false);
+
                     resetTargetIds();
                 } else {
                     alert("Error: " + data.error);

@@ -1,10 +1,4 @@
 /* Estilos para la tabla de libros en la gestión de comentarios */
-.container {
-    padding: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
 h2 {
     color: #333;
     text-align: center;
@@ -69,4 +63,38 @@ h2 {
 /* Estilo para ocultar el botón del diálogo por defecto */
 #confirmDialogBtn {
     display: none;
+}
+.container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    height: auto !important; /* Anula el 100vh del login */
+    display: block !important; /* Anula el flex si causa problemas */
+    min-height: calc(100vh - 200px); /* Asegura que el footer se mantenga abajo */
+}
+
+/* Estilos para el scroll de la tabla */
+.table-responsive {
+    width: 100%;
+    max-height: 500px; /* Ajusta esta altura según prefieras */
+    overflow-y: auto;  /* Scroll vertical */
+    overflow-x: hidden; /* Evita scroll horizontal innecesario */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Asegura que el encabezado se quede fijo mientras haces scroll */
+#booksTable thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #2c3e50; /* Color que ya tenías definido */
+}
+
+#booksTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0; /* Quitamos el margen superior para que el sticky funcione bien */
 }

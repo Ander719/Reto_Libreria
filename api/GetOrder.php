@@ -1,6 +1,6 @@
 <?php
 include_once '../model/dao/OrderDao.php';
-include_once '../Config/Session.php'; // Para verificar usuario
+include_once '../Config/Session.php'; 
 
 header("Content-Type: application/json");
 
@@ -18,8 +18,8 @@ try {
     $orderDao = new OrderDao();
     $orders = $orderDao->getOrdersByProfile($profileCode);
 
-    // Devolvemos el array directamente
-    echo json_encode($orders); // Esto será [ {id_order:..., items:[...]}, ... ]
+    http_response_code(200);
+    echo json_encode($orders);
 
 } catch (Exception $e) {
     http_response_code(500);
