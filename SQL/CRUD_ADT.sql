@@ -51,7 +51,7 @@ CREATE TABLE book_ (
 CREATE TABLE order_ (
     id_order INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     profile_code INT NOT NULL,
-    date_buy DATE,
+    date_buy DATETIME DEFAULT CURRENT_TIMESTAMP,
     buyed BOOLEAN,
     FOREIGN KEY (profile_code) REFERENCES profile_(profile_code) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -72,7 +72,7 @@ CREATE TABLE comment_ (
     isbn CHAR(13) NOT NULL,
     comment_text text,
     valoration FLOAT,
-    date_comment DATE,
+    date_comment DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(profile_code, isbn),
     FOREIGN KEY (isbn) REFERENCES book_(isbn) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (profile_code) REFERENCES profile_(profile_code) ON UPDATE CASCADE ON DELETE CASCADE
