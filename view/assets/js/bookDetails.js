@@ -160,7 +160,6 @@ function rellenarVista(libro) {
                 const u = data.user;
                 userCard = u.card_no || u.CardNo || u.CARD_NO;
                 direction = u.direction || u.Direction || u.DIRECTION;
-                console.log(u);
             }
         } catch (err) { console.error(err); }
 
