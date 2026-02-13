@@ -1,6 +1,3 @@
-/* ======================================================
-   1. VARIABLES GLOBALES (Configura tu tema aquí)
-   ====================================================== */
 :root {
   /* Colores */
   --primary-color: #101416;
@@ -22,10 +19,6 @@
   /* Relleno inputs/botones */
   --font-family: "Segoe UI", sans-serif;
 }
-
-/* ======================================================
-   2. RESET Y BASE
-   ====================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -452,6 +445,27 @@ dialog::backdrop {
   align-items: center;
   gap: 20px;
 }
+.modal-actions {
+    display: flex;
+    gap: 15px; /* Espacio entre botones */
+    justify-content: center; /* Centrados */
+    width: 100%;
+    margin-top: 15px;
+}
+.action-btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: var(--border-radius, 8px);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    
+    /* Color por defecto (Para el botón "Confirmar") */
+    background-color: var(--primary-color, #101416);
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
 
 #dialogMessage {
   font-size: 1.1rem;
@@ -462,7 +476,6 @@ dialog::backdrop {
 /* Botón OK (Secundario) dentro del Modal */
 .btn-secondary {
   background-color: var(--secondary-color);
-  color: white;
   border: none;
   padding: 10px 30px;
   border-radius: 8px;
