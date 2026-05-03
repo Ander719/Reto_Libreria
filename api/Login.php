@@ -49,6 +49,9 @@ if (!password_verify($password, $profile->getPswd())) {
     exit;
 }
 
+// Regeneramos el ID de sesión tras autenticación para mitigar session fixation.
+session_regenerate_id(true);
+
 $_SESSION['user'] = [
     'profile_code' => $profile->getProfile_code(),
     'user_name' => $profile->getUser_name(),

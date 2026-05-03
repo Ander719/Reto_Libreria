@@ -3,6 +3,8 @@ header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 require_once '../Config/Session.php';
 
+// Control de acceso: exige sesión válida para cualquier operación sensible.
+// El alta de libros queda restringida a administradores para proteger el catálogo.
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
     http_response_code(401);
     echo json_encode([
