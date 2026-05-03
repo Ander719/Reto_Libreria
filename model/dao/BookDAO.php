@@ -5,11 +5,11 @@ require_once __DIR__ . '/AuthorDAO.php';
 
 class BookDAO {
     private $conn;
-    private $AuthorDAO;
+    private $authorDAO;
 
     public function __construct($db) {
         $this->conn = $db;
-        $this->AuthorDAO = new AuthorDAO();
+        $this->authorDAO = new AuthorDAO($this->conn);
     }
 
     public function getBookByIsbn($isbn) {
@@ -23,7 +23,12 @@ class BookDAO {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createBookWithAuthor($isbn, $title, $pages, $stock, $synopsis, $price, $editorial, $coverName, $authorId) {
+    public function createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName) {
+        $authorId = $this->authorDAO->getOrCreateAuthorId($authorName, $authorSurname);
+        if (!$authorId) {
+            return false;
+        }
+
         $query = "INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
                   VALUES (:isbn, :title, :author, :pages, :stock, :synopsis, :price, :editorial, :cover)";
         $stmt = $this->conn->prepare($query);
@@ -60,7 +65,12 @@ class BookDAO {
         return $list;
     }
 
-    public function updateBook(Book $book) {
+    public function modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $cover) {
+        $authorId = $this->authorDAO->getOrCreateAuthorId($authorName, $authorSurname);
+        if (!$authorId) {
+            return false;
+        }
+
         $query = "UPDATE book_ SET 
                     title = :title, 
                     id_author = :author,
@@ -74,15 +84,15 @@ class BookDAO {
 
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([
-            ":title" => $book->getTitle(),
-            ":author" => $book->getAuthor(), 
-            ":pages" => $book->getPages(),
-            ":stock" => $book->getStock(),
-            ":synopsis" => $book->getSynopsis(),
-            ":price" => $book->getPrice(),
-            ":editorial" => $book->getEditorial(),
-            ":cover" => $book->getCover(),
-            ":isbn" => $book->getIsbn()
+            ":title" => $title,
+            ":author" => $authorId,
+            ":pages" => $pages,
+            ":stock" => $stock,
+            ":synopsis" => $synopsis,
+            ":price" => $price,
+            ":editorial" => $editorial,
+            ":cover" => $cover,
+            ":isbn" => $isbn
         ]);
     }
 }

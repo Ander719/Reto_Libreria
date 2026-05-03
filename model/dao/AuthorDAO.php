@@ -6,7 +6,12 @@ require_once dirname(__DIR__) . '/entities/Author.php';
 class AuthorDAO {
     private $conn;
 
-    public function __construct() {
+    public function __construct($db = null) {
+        if ($db !== null) {
+            $this->conn = $db;
+            return;
+        }
+
         $database = new Database();
         $this->conn = $database->getConnection();
     }
