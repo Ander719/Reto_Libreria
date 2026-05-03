@@ -209,9 +209,10 @@ async function cargarLibrosDesdeBD() {
 
         //console.log("Datos recibidos:", data);
 
-        if (data.success) {
-            globalBooks = data.books; // Guardamos los libros globalmente si es necesario
-            renderBooks(data.books);
+        if (data.status === "success") {
+            const books = data.data || [];
+            globalBooks = books; // Guardamos los libros globalmente si es necesario
+            renderBooks(books);
         } else {
             console.error("Error al cargar libros");
         }
@@ -263,7 +264,7 @@ function renderCard(libro, contenedor, template) {
     // Rellenamos los datos buscando por clase dentro del clon
     clone.querySelector('.book-title').textContent = libro.title;
     const author = libro.author.name + " " + libro.author.lastname;
-    clone.querySelector('.book-author').textContent = author.trim().isempty ? "Autor Desconocido" : author;
+    clone.querySelector('.book-author').textContent = author.trim() === "" ? "Autor Desconocido" : author;
     clone.querySelector('.book-price').textContent = `${libro.price}€`;
     clone.querySelector('.book-stock').textContent = `Stock: ${libro.stock}`;
 

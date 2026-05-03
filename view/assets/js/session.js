@@ -7,17 +7,18 @@ export async function checkSession() {
         // Importante: credentials: 'include' para enviar la cookie PHPSESSID
         const response = await fetch('../../api/CheckSession.php', { credentials: 'include' });
         console.log("Status CheckSession:", response.status);
-        if (!response.ok) throw new Error("Error server");
+        if (!response.ok) {
+            currentUser = null;
+            return false;
+        }
 
         const data = await response.json();
 
-        // --- CAMBIO AQUÍ: Usamos el estándar "success" ---
-        if (data.success && data.user) {
-            currentUser = data.user; // Guardamos los datos en la variable global
+        if (data.status === "success" && data.data && data.data.user) {
+            currentUser = data.data.user;
             return true;
         }
 
-        // Si success es false o no hay user
         currentUser = null;
         return false;
 
@@ -29,7 +30,7 @@ export async function checkSession() {
 }
 export async function logout() {
     try {
-        await fetch('../../api/Logout.php');
+        const response = await fetch('../../api/Logout.php');
         console.log("Status Logout:", response.status);
         // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
         location.reload(); // Recargamos la página para actualizar el estado 

@@ -48,7 +48,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
       throw new Error("Respuesta inválida del servidor: " + jsonError.message);
     }
 
-    if (data.success) {
+    if (data.status === "success") {
       parrafo.innerText = "Usuario creado con éxito.";
       parrafo.style.color = "green";
 
@@ -57,7 +57,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
       }, 1000);
     } else {
       // Mostramos el error que viene del controlador
-      parrafo.innerText = data.error || "Error al crear usuario";
+      parrafo.innerText = data.message || "Error al crear usuario";
       parrafo.style.color = "red";
     }
   } catch (error) {

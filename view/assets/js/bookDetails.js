@@ -75,8 +75,8 @@ async function loadBookDetails(isbn) {
         const text = await response.text();
         const data = JSON.parse(text);
 
-        if (data.exito) {
-            rellenarVista(data.libro);
+        if (data.status === "success" && data.data) {
+            rellenarVista(data.data);
         } else {
             document.querySelector('.details-info').innerHTML = "<h2>Libro no encontrado</h2>";
         }
@@ -156,8 +156,8 @@ function rellenarVista(libro) {
             const res = await fetch('../../api/GetProfile.php');
             console.log("Status GetProfile:", res.status);
             const data = await res.json();
-            if (data.success && data.user) {
-                const u = data.user;
+            if (data.status === "success" && data.data && data.data.user) {
+                const u = data.data.user;
                 userCard = u.card_no || u.CardNo || u.CARD_NO;
                 direction = u.direction || u.Direction || u.DIRECTION;
             }

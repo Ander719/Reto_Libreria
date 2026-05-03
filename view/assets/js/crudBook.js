@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log("Status GetProfile (Admin Check):", res.status);
         const data = await res.json();
 
-        if (!data.success || !data.user || data.user.role !== 'admin') {
+        if (!data.data || !data.data.user || data.data.role !== 'admin') {
             alert("Acceso denegado. Se requieren permisos de administrador.");
             window.location.href = 'main.html';
             return;
@@ -80,7 +80,7 @@ function initPageLogic() {
             const res = await fetch('../../api/GetAllBooks.php');
             console.log("Status GetAllBooks (Select list):", res.status);
             const data = await res.json();
-            const books = data.books || [];
+            const books = data.status === "success" ? (data.data || []) : [];
 
             if (searchSelect) {
                 searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
@@ -112,8 +112,8 @@ function initPageLogic() {
                     return res.json();
                 })
                 .then(data => {
-                    if (data.exito && data.libro) {
-                        fillForm(data.libro);
+                    if (data.status === "success" && data.data) {
+                        fillForm(data.data);
                         if (msgSearch) msgSearch.innerText = "";
                         toggleForm(false);
                     } else {
@@ -140,6 +140,22 @@ function initPageLogic() {
                 return;
             }
 
+            const selectedFile = inputElement && inputElement.files ? inputElement.files[0] : null;
+            if (selectedFile) {
+                const maxSize = 2 * 1024 * 1024;
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+                if (selectedFile.size >= maxSize) {
+                    alert('La imagen supera el tamaño máximo permitido (2MB).');
+                    return;
+                }
+
+                if (!allowedTypes.includes(selectedFile.type)) {
+                    alert('Formato de imagen no válido. Solo JPG, PNG o WEBP.');
+                    return;
+                }
+            }
+
             const formData = new FormData(form);
             const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
 
@@ -149,11 +165,11 @@ function initPageLogic() {
                     return res.json();
                 })
                     .then(data => {
-                        if (data.exito || data.success) {
+                        if (data.status === "success") {
                             alert(data.message || "Operación exitosa");
                             window.location.href = 'bookOptions.html';
                         } else {
-                            alert("Error: " + data.error);
+                            alert("Error: " + (data.message || "No se pudo completar la operación."));
                         }
                     })
                     .catch(() => alert("Error de conexión."));

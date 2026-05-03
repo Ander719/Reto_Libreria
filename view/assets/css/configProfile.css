@@ -242,6 +242,15 @@ dialog::backdrop {
   border-color: var(--primary-color);
 }
 
+.form-floating input:focus-visible,
+.form-floating select:focus-visible,
+.adjustData:focus-visible,
+.saveBtn:focus-visible,
+.deleteBtn:focus-visible {
+  outline: 2px solid #0056b3;
+  outline-offset: 2px;
+}
+
 .form-floating input:focus + label,
 .form-floating input:not(:placeholder-shown) + label,
 .form-floating select:focus + label,

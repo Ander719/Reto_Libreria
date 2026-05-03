@@ -114,9 +114,9 @@ async function loadMyProfile(isInit = false) {
         console.log("Status GetProfile:", res.status);
         const data = await res.json();
 
-        if (data.success && data.user) {
-            const u = data.user;
-            const isAdmin = (data.role === 'admin');
+        if (data.status === 'success' && data.data && data.data.user) {
+            const u = data.data.user;
+            const isAdmin = (data.data.role === 'admin');
 
             if (isInit) appState.myProfileCode = u.profile_code;
 
@@ -246,7 +246,7 @@ async function saveUserData(role) {
             return;
         }
 
-        if (data.success) {
+        if (data.status === 'success') {
             alert("Datos actualizados correctamente.");
             toggleModal(modalId, false);
             resetTargetIds();
@@ -255,7 +255,7 @@ async function saveUserData(role) {
                 loadUsersTable();
             }
         } else {
-            alert("Error: " + data.error);
+            alert("Error: " + (data.message || "No se pudo actualizar."));
         }
     } catch (err) {
         console.error("Error API:", err);
@@ -268,7 +268,7 @@ async function initAdminPanel() {
         const res = await fetch('../../api/CheckSession.php');
         console.log("Status CheckSession (Admin Panel):", res.status);
         const data = await res.json();
-        if (data.success && data.user.role === 'admin') {
+        if (data.status === 'success' && data.data && data.data.user && data.data.user.role === 'admin') {
             const section = getEl('adminPanelSection');
             if (section) section.style.display = 'flex';
             loadUsersTable();
@@ -345,7 +345,7 @@ async function deleteUser(id) {
             try { data = JSON.parse(text); } catch (e) { console.error(text); }
         }
 
-        if (data && data.success) {
+        if (data && data.status === 'success') {
             if (data.isSelfDelete) {
                 alert("Tu cuenta ha sido eliminada correctamente.");
                 window.location.href = 'login.html';
@@ -354,7 +354,7 @@ async function deleteUser(id) {
             alert("Usuario eliminado.");
             loadUsersTable();
         } else {
-            alert("Error: " + data.error);
+            alert("Error: " + (data.message || "No se pudo eliminar."));
         }
     } catch (err) { console.error(err); }
 }
@@ -386,7 +386,7 @@ function setupPasswordLogic() {
 
             const resInit = await fetch('../../api/GetProfile.php');
             const dataInit = await resInit.json();
-            const username = dataInit.user.user_name;
+            const username = dataInit.data.user.user_name;
 
             try {
                 const res = await fetch('../../api/Login.php', {
@@ -397,7 +397,7 @@ function setupPasswordLogic() {
                 console.log("Status VerifyPassword (Login API):", res.status);
                 const data = await res.json();
 
-                if (data.success) {
+                if (data.status === 'success') {
 
                     const verifyModal = getEl('verifyPasswordModal');
                     if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
@@ -441,7 +441,7 @@ function setupPasswordLogic() {
                 });
                 console.log("Status ModifyPassword:", res.status);
                 const data = await res.json();
-                if (data.success) {
+                if (data.status === 'success') {
                     alert("Contraseña actualizada con éxito.");
 
                     const changeModal = getEl('changePasswordModal');
@@ -450,7 +450,7 @@ function setupPasswordLogic() {
 
                     resetTargetIds();
                 } else {
-                    alert("Error: " + data.error);
+                    alert("Error: " + (data.message || "No se pudo actualizar la contraseña."));
                 }
             } catch (err) { console.error(err); }
         };

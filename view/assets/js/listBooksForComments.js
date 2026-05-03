@@ -33,8 +33,8 @@ function fetchBooks() {
 
             tbody.innerHTML = '';
 
-            if (data.success && data.books) {
-                data.books.forEach(book => {
+            if (data.status === "success" && Array.isArray(data.data)) {
+                data.data.forEach(book => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td style="text-align:center;">
