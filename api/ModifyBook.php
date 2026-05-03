@@ -1,6 +1,18 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
+require_once '../Config/Session.php';
+
+if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 401,
+        'message' => 'No autorizado.',
+        'data' => null
+    ]);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(400);

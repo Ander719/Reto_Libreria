@@ -1,13 +1,23 @@
 <?php
-session_start(); 
+require_once '../Config/Session.php';
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 
+if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 401,
+        'message' => 'No autorizado.',
+        'data' => null
+    ]);
+    exit;
+}
+
 $input = json_decode(file_get_contents('php://input'), true);
-$profile_code = $input['profile_code'] ?? '';
 $password = $input['password'] ?? '';
 
-if (empty($profile_code) || empty($password)) {
+if (empty($password)) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
@@ -18,7 +28,7 @@ if (empty($profile_code) || empty($password)) {
     exit;
 }
 
-$profile_code = trim(htmlspecialchars($profile_code));
+$profile_code = (string) $_SESSION['user']['profile_code'];
 $password = trim($password);
 
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
