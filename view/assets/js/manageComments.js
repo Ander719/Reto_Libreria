@@ -38,8 +38,7 @@ function cargarComentarios(isbn) {
 
             tbody.innerHTML = '';
 
-            // El API devuelve un array directamente
-            const comentarios = data;
+            const comentarios = data.data;
 
             if (!comentarios || comentarios.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" class="no-data">No hay comentarios para este libro.</td></tr>';
@@ -81,7 +80,7 @@ function eliminarComentario(isbn, profileCode) {
                 return response.json();
             })
             .then(result => {
-                if (result.success || result.message.includes("correctamente")) {
+                if (result.status === "success") {
                     alert(result.message);
                     cargarComentarios(isbn);
                 } else {

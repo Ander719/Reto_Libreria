@@ -24,18 +24,21 @@ async function loadOrders() {
         const response = await fetch('../../api/GetOrder.php');
         console.log("Status:", response.status);
         const text = await response.text();
-        let orders = [];
+        let payload = null;
         try {
-            orders = JSON.parse(text);
+            payload = JSON.parse(text);
         } catch (e) {
             container.innerHTML = '<p class="error-msg">Error técnico en el servidor.</p>';
             return;
         }
-        // Si devuelve un objeto de error {success:false...}
-        if (orders.error || orders.success === false) {
-            container.innerHTML = `<p class="error-msg">${orders.error || "Error desconocido."}</p>`;
+
+        if (!payload || payload.status !== 'success') {
+            container.innerHTML = `<p class="error-msg">${(payload && payload.message) || "Error desconocido."}</p>`;
             return;
         }
+
+        const orders = Array.isArray(payload.data) ? payload.data : [];
+
         if (!Array.isArray(orders) || orders.length === 0) {
             container.innerHTML = `
                 <div class="no-orders">

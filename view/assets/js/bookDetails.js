@@ -257,7 +257,7 @@ async function submitComment(e) {
             return;
         }
 
-        if (res.ok && data.success) {
+        if (res.ok && data.status === "success") {
             msg.className = "msg-success";
             msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
             resetForm();
@@ -282,7 +282,8 @@ async function loadComments(isbn) {
     try {
         const res = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
         console.log("Status GetComments:", res.status);
-        const comments = await res.json();
+        const response = await res.json();
+        const comments = response.status === "success" && Array.isArray(response.data) ? response.data : [];
         list.innerHTML = "";
         let myReview = null;
 
@@ -380,7 +381,7 @@ window.deleteComment = async function (isbn, targetId) {
             return;
         }
 
-        if (res.ok && data.success) {
+        if (res.ok && data.status === "success") {
             showModal("Éxito", data.message || "Eliminado.");
 
             if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
@@ -465,14 +466,14 @@ async function comprarAhora(isbn, quantity, userId) {
             return;
         }
 
-        if (data.exito) {
+        if (data.status === "success") {
             showModal("¡Compra realizada!", "Gracias por tu pedido.");
 
             dialog.addEventListener('close', () => {
                 location.reload();
             }, { once: true });
         } else {
-            showModal("Error", data.error || "Fallo en la compra.");
+            showModal("Error", data.message || "Fallo en la compra.");
         }
     } catch (e) {
         console.error(e);

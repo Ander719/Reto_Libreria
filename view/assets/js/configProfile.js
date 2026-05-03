@@ -286,8 +286,7 @@ async function loadUsersTable() {
         console.log("Status GetAllUsers:", res.status);
         const data = await res.json();
 
-        // CORRECCIÓN: La API puede devolver el array directamente o bajo la clave 'users'
-        const users = Array.isArray(data) ? data : (data.users || data.resultado || []);
+        const users = data.status === 'success' && Array.isArray(data.data) ? data.data : [];
 
         appState.allUsers = users;
         tbody.innerHTML = '';
@@ -346,11 +345,6 @@ async function deleteUser(id) {
         }
 
         if (data && data.status === 'success') {
-            if (data.isSelfDelete) {
-                alert("Tu cuenta ha sido eliminada correctamente.");
-                window.location.href = 'login.html';
-                return;
-            }
             alert("Usuario eliminado.");
             loadUsersTable();
         } else {
