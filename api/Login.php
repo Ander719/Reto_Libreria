@@ -22,19 +22,47 @@ if ($username === '' || $password === '') {
 }
 
 $controller = new ProfileController();
-$response = $controller->loginUser($username, $password);
+$identity = $controller->loginUser($username);
 
-$code = isset($response['status_code']) ? (int)$response['status_code'] : 500;
-$isSuccess = !empty($response['success']);
+if (!$identity || !isset($identity['profile']) || !isset($identity['role'])) {
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 401,
+        'message' => 'Usuario o contraseña incorrectos',
+        'data' => null
+    ]);
+    exit;
+}
 
-http_response_code($code);
+$profile = $identity['profile'];
+$role = $identity['role'];
+
+if (!password_verify($password, $profile->getPswd())) {
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 401,
+        'message' => 'Usuario o contraseña incorrectos',
+        'data' => null
+    ]);
+    exit;
+}
+
+$_SESSION['user'] = [
+    'profile_code' => $profile->getProfile_code(),
+    'user_name' => $profile->getUser_name(),
+    'role' => $role
+];
+
+http_response_code(200);
 echo json_encode([
-    'status' => $isSuccess ? 'success' : 'error',
-    'code' => $code,
-    'message' => $isSuccess ? 'Inicio de sesión correcto' : ($response['error'] ?? 'Error de autenticación'),
-    'data' => $isSuccess ? [
-        'role' => $response['role'] ?? null,
-        'user' => $_SESSION['user'] ?? null
-    ] : null
+    'status' => 'success',
+    'code' => 200,
+    'message' => 'Inicio de sesión correcto',
+    'data' => [
+        'role' => $role,
+        'user' => $_SESSION['user']
+    ]
 ]);
 ?>

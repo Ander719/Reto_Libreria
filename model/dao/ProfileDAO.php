@@ -103,6 +103,21 @@ class ProfileDAO
         return null;
     }
 
+    public function findLoginIdentityByUsername($username)
+    {
+        $admin = $this->findAdminByUsername($username);
+        if ($admin) {
+            return ['role' => 'admin', 'profile' => $admin];
+        }
+
+        $user = $this->findUserByUsername($username);
+        if ($user) {
+            return ['role' => 'user', 'profile' => $user];
+        }
+
+        return null;
+    }
+
     //obtener los datioas
 
     public function getUserById($id)
@@ -310,5 +325,10 @@ class ProfileDAO
         $stmt->bindParam(':id', $profileCode);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+    }
+
+    public function getProfileByRole($id, $role)
+    {
+        return $role === 'admin' ? $this->getAdminById($id) : $this->getUserById($id);
     }
 }

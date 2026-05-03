@@ -22,7 +22,7 @@ $profileCode = filter_var($input['profileCode'], FILTER_VALIDATE_INT);
 $isbn = trim(htmlspecialchars($input['isbn']));
 $quantity = filter_var($input['quantity'], FILTER_VALIDATE_INT);
 
-if ($profileCode === false || $quantity === false || empty($isbn)) {
+if ($profileCode === false || $quantity === false || empty($isbn) || $profileCode <= 0 || $quantity <= 0 || strlen($isbn) < 10) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',

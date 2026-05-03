@@ -17,6 +17,18 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
 }
 
 $profileCode = $_SESSION['user']['profile_code'];
+$profileCode = filter_var($profileCode, FILTER_VALIDATE_INT);
+
+if ($profileCode === false || $profileCode <= 0) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'Código de usuario no válido.',
+        'data' => null
+    ]);
+    exit;
+}
 
 try {
     $orderController = new OrderController();
