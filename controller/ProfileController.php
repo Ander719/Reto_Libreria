@@ -1,18 +1,21 @@
 <?php
+require_once '../Config/Database.php';
 require_once '../model/dao/ProfileDAO.php';
 
 class ProfileController
 {
-    private $ProfileDAO;
+    private $profileDAO;
 
     public function __construct()
     {
-        $this->ProfileDAO = new ProfileDAO();
+        $database = new Database();
+        $db = $database->getConnection();
+        $this->profileDAO = new ProfileDAO($db);
     }
 
     public function loginUser($username, $password)
     {
-        $admin = $this->ProfileDAO->findAdminByUsername($username);
+        $admin = $this->profileDAO->findAdminByUsername($username);
 
         // Si encontramos un admin, verificamos SU contraseña
         if ($admin && password_verify($password, $admin->getPswd())) {
@@ -27,7 +30,7 @@ class ProfileController
         }
 
     //si no es admin, buscamos un user normal
-        $user = $this->ProfileDAO->findUserByUsername($username); 
+        $user = $this->profileDAO->findUserByUsername($username); 
 
         if ($user && password_verify($password, $user->getPswd())) {
             $_SESSION['user'] = [
@@ -48,7 +51,7 @@ class ProfileController
 
       
         // Pasamos el HASH, no la contraseña plana
-        $resultado = $this->ProfileDAO->register($username, $passwordHash);
+        $resultado = $this->profileDAO->register($username, $passwordHash);
 
         if ($resultado instanceof User) {
             // Iniciar sesión automáticamente tras registro
@@ -84,34 +87,34 @@ class ProfileController
 
     public function get_all_users()
     {
-        return $this->ProfileDAO->get_all_users();
+        return $this->profileDAO->get_all_users();
     }
     public function delete_user($id)
     {
-        return $this->ProfileDAO->delete_user($id);
+        return $this->profileDAO->delete_user($id);
     }
 
 public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction)
 {
-    return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction);
+    return $this->profileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction);
 }
 
 public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
 {
-    return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
+    return $this->profileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
 }
 
     public function modifyPassword($profile_code, $passwordHash)
     {
-        return $this->ProfileDAO->modifyPassword($profile_code, $passwordHash);
+        return $this->profileDAO->modifyPassword($profile_code, $passwordHash);
     }
 
     public function getProfile($id, $role) {
     
         if ($role === 'admin') {
-            return $this->ProfileDAO->getAdminById($id);
+            return $this->profileDAO->getAdminById($id);
         } else {
-            return $this->ProfileDAO->getUserById($id);
+            return $this->profileDAO->getUserById($id);
         }
     }
 }

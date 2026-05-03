@@ -1,22 +1,25 @@
 <?php
 // controller/BookController.php
+require_once '../Config/Database.php';
 require_once '../model/entities/Book.php';
 require_once '../model/dao/BookDAO.php';
 require_once '../model/dao/AuthorDAO.php'; 
 
 class BookController {
-    private $BookDAO;
+    private $bookDAO;
 
     public function __construct() {
-        $this->BookDAO = new BookDAO();
+        $database = new Database();
+        $db = $database->getConnection();
+        $this->bookDAO = new BookDAO($db);
     }
     
     public function getBook($isbn) {
-        return $this->BookDAO->getBookByIsbn($isbn);
+        return $this->bookDAO->getBookByIsbn($isbn);
     }
 
     public function getAllBooks() {
-        return $this->BookDAO->getAllBooks();
+        return $this->bookDAO->getAllBooks();
     }
 
     public function createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName) {
@@ -25,7 +28,7 @@ class BookController {
         
         if (!$authorId) return false;
 
-        return $this->BookDAO->createBookWithAuthor($isbn, $title, $pages, $stock, $synopsis, $price, $editorial, $coverName, $authorId);
+        return $this->bookDAO->createBookWithAuthor($isbn, $title, $pages, $stock, $synopsis, $price, $editorial, $coverName, $authorId);
     }
 
     public function modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $cover) {
@@ -38,7 +41,7 @@ class BookController {
         $book = new Book($title, $authorId, $isbn, $pages, $stock, $synopsis, $price, $editorial, $cover);
         
        
-        return $this->BookDAO->updateBook($book);
+        return $this->bookDAO->updateBook($book);
     }
 }
 ?>

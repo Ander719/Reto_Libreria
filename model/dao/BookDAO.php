@@ -1,6 +1,5 @@
 <?php
 // model/dao/BookDAO.php
-require_once dirname(__DIR__, 2) . '/Config/Database.php';
 require_once dirname(__DIR__) . '/entities/Book.php';
 require_once __DIR__ . '/AuthorDAO.php';
 
@@ -8,9 +7,8 @@ class BookDAO {
     private $conn;
     private $AuthorDAO;
 
-    public function __construct() {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+    public function __construct($db) {
+        $this->conn = $db;
         $this->AuthorDAO = new AuthorDAO();
     }
 

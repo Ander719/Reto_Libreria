@@ -3,10 +3,12 @@ require_once '../Config/Database.php';
 require_once '../model/dao/OrderDao.php';
 
 class OrderController {
-    private $OrderDao;
+    private $orderDao;
 
     public function __construct() {
-        $this->OrderDao = new OrderDao();
+        $database = new Database();
+        $db = $database->getConnection();
+        $this->orderDao = new OrderDao($db);
     }
     public function getOrdersByProfile($profileCode) {
     // Sanitización: nos aseguramos de que sea un número entero
@@ -18,7 +20,7 @@ class OrderController {
     }
 
     // El controlador pide los datos al DAO
-    return $this->OrderDao->getOrdersByProfile($profileCode);
+    return $this->orderDao->getOrdersByProfile($profileCode);
 }
 
     public function createDirectOrder($profileCode, $isbn, $quantity) {
@@ -38,7 +40,7 @@ class OrderController {
             return ["exito" => false, "error" => "La cantidad debe ser mayor a cero."];
         }
 
-        return $this->OrderDao->createDirectOrder($profileCode, $isbn, $quantity);
+        return $this->orderDao->createDirectOrder($profileCode, $isbn, $quantity);
     }
 }
 ?>

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../Config/Database.php';
 require_once __DIR__ . '/../model/dao/CommentDAO.php';
 require_once __DIR__ . '/../model/dao/ProfileDAO.php';
 require_once __DIR__ . '/../model/entities/Comment.php';
@@ -9,8 +10,10 @@ class CommentController {
     private $profileDAO;
 
     public function __construct() {
-        $this->commentDAO = new CommentDAO();
-        $this->profileDAO = new ProfileDAO();
+        $database = new Database();
+        $db = $database->getConnection();
+        $this->commentDAO = new CommentDAO($db);
+        $this->profileDAO = new ProfileDAO($db);
     }
 
     // LEER

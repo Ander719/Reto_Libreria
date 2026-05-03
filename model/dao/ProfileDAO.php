@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__DIR__, 2) . '/Config/Database.php'; // Sube 2 niveles hasta la raíz y entra en Config
 require_once dirname(__DIR__) . '/entities/Admin.php';     // Sube 1 nivel hasta model y entra en entities
 require_once dirname(__DIR__) . '/entities/User.php';      // Aseguramos que User también esté disponible
 
@@ -7,10 +6,9 @@ class ProfileDAO
 {
     private $conn;
 
-    public function __construct()
+    public function __construct($db)
     {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = $db;
     }
     public function register($username, $password)
     {

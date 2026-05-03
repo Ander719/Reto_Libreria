@@ -1,5 +1,4 @@
 <?php
-require_once '../Config/Database.php';
 require_once '../model/entities/Order.php';
 //require_once '../model/entities/Content.php';
 
@@ -7,10 +6,9 @@ class OrderDao
 {
     private $conn;
 
-    public function __construct()
+    public function __construct($db)
     {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = $db;
     }
 
     public function createDirectOrder($profileCode, $isbn, $quantity)
