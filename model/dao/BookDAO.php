@@ -26,7 +26,7 @@ class BookDAO {
     }
 
     public function createBookWithAuthor($isbn, $title, $pages, $stock, $synopsis, $price, $editorial, $coverName, $authorId) {
-        $query = "INSERT INTO BOOK_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
+        $query = "INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
                   VALUES (:isbn, :title, :author, :pages, :stock, :synopsis, :price, :editorial, :cover)";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([
@@ -63,7 +63,7 @@ class BookDAO {
     }
 
     public function updateBook(Book $book) {
-        $query = "UPDATE BOOK_ SET 
+        $query = "UPDATE book_ SET 
                     title = :title, 
                     id_author = :author,
                     pages = :pages, 

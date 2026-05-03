@@ -6,10 +6,13 @@ header("Content-Type: application/json; charset=utf-8");
 
 // 1. Verificación de si usuario ha iniciado la sesion
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
-
-    // Indica que el cliente debe autenticarse para obtener la respuesta.
     http_response_code(401);
-    echo json_encode(["success" => false, "error" => "No has iniciado sesión."]);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 401,
+        'message' => 'No has iniciado sesión.',
+        'data' => null
+    ]);
     exit();
 }
 
@@ -20,12 +23,20 @@ try {
 
     $orders = $orderController->getOrdersByProfile($profileCode);
 
-    // AÑADIDO HTTP: 200 OK. La solicitud ha tenido éxito.
     http_response_code(200);
-    echo json_encode($orders);
+    echo json_encode([
+        'status' => 'success',
+        'code' => 200,
+        'message' => 'Pedidos obtenidos correctamente.',
+        'data' => $orders
+    ]);
 
 } catch (Exception $e) {
-    // Indica un fallo en el servidor
     http_response_code(500);
-    echo json_encode(["success" => false, "error" => "Error al obtener pedidos."]);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 500,
+        'message' => 'Error al obtener pedidos.',
+        'data' => null
+    ]);
 }

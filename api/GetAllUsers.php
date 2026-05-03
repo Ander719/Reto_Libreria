@@ -6,14 +6,17 @@ session_start();
 $controller = new ProfileController();
 $users = $controller->get_all_users();
 
-    if ($users) {
-        $users = array_map(function($user) {
-            return array_change_key_case($user, CASE_LOWER);
-        }, $users);
-        http_response_code(200);
-        echo json_encode(['resultado' => $users]);
-    } else {
-        http_response_code(200);
-        echo json_encode(['resultado' => []]);
-    }
+if ($users) {
+    $users = array_map(function ($userEntity) {
+        return $userEntity->toArray();
+    }, $users);
+}
+
+http_response_code(200);
+echo json_encode([
+    'status' => 'success',
+    'code' => 200,
+    'message' => 'Usuarios obtenidos correctamente.',
+    'data' => $users ?: []
+]);
 ?>

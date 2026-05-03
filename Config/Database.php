@@ -1,9 +1,9 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $db_name = "CRUD_ADT";
-    private $username = "root";
-    private $password = "abcd*1234"; // <--- TU CONTRASEÑA RESTAURADA
+    private $host = 'localhost';
+    private $db_name = 'crud_adt';
+    private $username = 'libreria_user';
+    private $password = 'TuPass123!';
     private $conn;
 
     public function getConnection() {
@@ -15,13 +15,17 @@ class Database {
                 $this->password
             );
             $this->conn->exec("set names utf8");
-            // Esto permite ver errores de SQL si ocurren
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            // IMPORTANTE: Si falla, detenemos todo y mostramos el error
-            // Si quitamos esto, el resto de la web fallará silenciosamente
-            header("Content-Type: application/json");
-            die(json_encode(["error" => "Error de conexión BD: " . $e->getMessage()]));
+            error_log('Error de conexión BD: ' . $e->getMessage());
+            http_response_code(500);
+            header('Content-Type: application/json; charset=utf-8');
+            die(json_encode([
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'Error interno de conexión a la base de datos',
+                'data' => null
+            ]));
         }
         return $this->conn;
     }

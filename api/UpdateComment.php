@@ -4,6 +4,7 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
 require_once '../controller/CommentController.php';
+require_once '../model/entities/Comment.php';
 
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -11,10 +12,46 @@ ini_set('display_errors', 0);
 $data = json_decode(file_get_contents("php://input"));
 $controller = new CommentController();
 
-$response = $controller->updateComment($data);
+if (empty($data->profileCode) || empty($data->isbn) || empty($data->text) || !isset($data->rating)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'Faltan datos para actualizar.',
+        'data' => null
+    ]);
+    exit;
+}
 
-http_response_code($response["code"]);
+$profileCode = trim(htmlspecialchars((string)$data->profileCode));
+$isbn = trim(htmlspecialchars((string)$data->isbn));
+$text = trim(htmlspecialchars((string)$data->text));
+$rating = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
+
+if ($profileCode === '' || $isbn === '' || $text === '' || $rating === false || $rating < 0 || $rating > 5) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'Datos de comentario no válidos.',
+        'data' => null
+    ]);
+    exit;
+}
+
+$comment = new Comment();
+$comment->setProfileCode($profileCode);
+$comment->setIsbn($isbn);
+$comment->setCommentText($text);
+$comment->setRating($rating);
+
+$updated = $controller->updateComment($comment);
+
+http_response_code($updated ? 200 : 503);
 echo json_encode([
-    "success" => $response["success"],
-    "message" => $response["message"]
-]);?>
+    'status' => $updated ? 'success' : 'error',
+    'code' => $updated ? 200 : 503,
+    'message' => $updated ? 'Comentario actualizado.' : 'No se pudo actualizar o no hubo cambios.',
+    'data' => null
+]);
+?>

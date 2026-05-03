@@ -6,11 +6,27 @@ header("Access-Control-Allow-Methods: GET");
 require_once '../controller/CommentController.php';
 
 $controller = new CommentController();
-$isbn = isset($_GET['isbn']) ? htmlspecialchars($_GET['isbn']) : "";
+$isbn = isset($_GET['isbn']) ? trim(htmlspecialchars($_GET['isbn'])) : "";
 
-if($isbn) {
-    echo json_encode($controller->getCommentsByISBN($isbn));
+if ($isbn) {
+    $comments = $controller->getCommentsByISBN($isbn);
+    $data = array_map(function ($commentEntity) {
+        return $commentEntity->toArray();
+    }, $comments);
+    http_response_code(200);
+    echo json_encode([
+        'status' => 'success',
+        'code' => 200,
+        'message' => 'Comentarios obtenidos correctamente.',
+        'data' => $data
+    ]);
 } else {
-    echo json_encode([]);
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'ISBN no proporcionado.',
+        'data' => []
+    ]);
 }
 ?>

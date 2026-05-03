@@ -28,7 +28,8 @@ class CommentDAO {
     }
 
     public function getCommentsByISBN($isbn) {
-        $query = "SELECT c.profile_code, 
+        $query = "SELECT c.profile_code,
+                         c.Isbn,
                          c.comment_text, 
                          c.valoration, 
                          c.date_comment, 
@@ -42,26 +43,23 @@ class CommentDAO {
         $stmt->bindParam(':isbn', $isbn);
         $stmt->execute();
         
-        $resultArray = [];
+        $resultList = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             //Instanciamos la Entidad
             $commentObj = new Comment();
             $commentObj->setProfileCode($row['profile_code']);
+            $commentObj->setIsbn($row['Isbn']);
             $commentObj->setCommentText($row['comment_text']);
             $commentObj->setRating($row['valoration']);
             $commentObj->setDateComment($row['date_comment']);
 
             // Usamos toArray() para obtener los datos limpios
-            $data = $commentObj->toArray();
-            
-            // Añadimos el dato extra del JOIN (user_name) que no está en la entidad Comment
-            $data['user_name'] = $row['user_name'];
-
-            $resultArray[] = $data;
+            $commentObj->setUserName($row['user_name']);
+            $resultList[] = $commentObj;
         }
         
-        return $resultArray;
+        return $resultList;
     }
 
     public function updateComment(Comment $comment) {

@@ -6,6 +6,7 @@ class Comment {
     private $commentText;
     private $rating;
     private $dateComment;
+    private $userName;
 
     public function __construct() {}
 
@@ -51,6 +52,14 @@ class Comment {
         $this->dateComment = $dateComment;
     }
 
+    public function getUserName() {
+        return $this->userName;
+    }
+
+    public function setUserName($userName) {
+        $this->userName = $userName;
+    }
+
 
     public function toArray() {
         return [
@@ -58,7 +67,8 @@ class Comment {
             "isbn"         => $this->isbn,       
             "comment_text" => $this->commentText,
             "valoration"   => $this->rating,     
-            "dateComent"   => $this->dateComment  
+            "dateComent"   => $this->dateComment,
+            "user_name"    => $this->userName
         ];
     }
 }

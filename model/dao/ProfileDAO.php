@@ -159,7 +159,6 @@ class ProfileDAO
 
     public function get_all_users()
     {
-        // CORREGIDO: Todo en minúsculas
         $query = "SELECT * FROM profile_ P 
                   JOIN user_ U ON P.profile_code = U.profile_code";
         $stmt = $this->conn->prepare($query);
@@ -169,8 +168,18 @@ class ProfileDAO
         $list = [];
 
         foreach ($rows as $row) {
-            $row['ROLE_TYPE'] = 'user';
-            $list[] = $row;
+            $list[] = new User(
+                $row['profile_code'],
+                $row['email'],
+                $row['user_name'],
+                $row['pswd'],
+                $row['telephone'],
+                $row['name_'],
+                $row['surname'],
+                $row['gender'],
+                $row['card_no'],
+                $row['direction']
+            );
         }
         return $list;
     }
@@ -294,5 +303,14 @@ class ProfileDAO
         $stmt->bindParam(":password", $password);
         $stmt->bindParam(":code", $profile_code);
         return $stmt->execute();
+    }
+
+    public function isAdminByProfileCode($profileCode)
+    {
+        $query = "SELECT profile_code FROM admin_ WHERE profile_code = :id LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $profileCode);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
     }
 }

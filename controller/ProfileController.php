@@ -12,12 +12,6 @@ class ProfileController
 
     public function loginUser($username, $password)
     {
-        // SANITIZACIÓN Y VALIDACIÓN
-        $username = trim(htmlspecialchars($username));
-
-        if (empty($username) || empty($password)) {
-            return ["success" => false, "error" => "Datos vacíos", "status_code" => 400];
-        }
         $admin = $this->ProfileDAO->findAdminByUsername($username);
 
         // Si encontramos un admin, verificamos SU contraseña
@@ -50,15 +44,6 @@ class ProfileController
 
     public function register($username, $password)
     {
-        // Saneamiento 
-        $username = trim(htmlspecialchars($username));
-
-        //  Validación de contraseña
-        if (strlen($password) < 4) {
-            return ["success" => false, "error" => "La contraseña debe tener al menos 4 caracteres"];
-        }
-
-        // ENCRIPTADO (Fundamental para password_verify)
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
       
@@ -108,50 +93,25 @@ class ProfileController
 
 public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction)
 {
-    // Sanitización
-    $email = trim($email);
-    if (!empty($email)) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-    }
-    $username = htmlspecialchars(trim($username));
-    $name = htmlspecialchars(trim($name));
-    $surname = htmlspecialchars(trim($surname));
-    $telephone = filter_var($telephone, FILTER_SANITIZE_NUMBER_INT);
-    $direction = htmlspecialchars(trim($direction));
-
-    // Validación básica
-    if (!empty($telephone) && strlen($telephone) !== 9) return false;
-    if (!empty($card_no) && (strlen($card_no) !== 16 || !is_numeric($card_no))) return false;
-    if (empty($profile_code)) return false;
-
     return $this->ProfileDAO->modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction);
 }
 
 public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
 {
-    // Sanitización
-    $email = filter_var(trim($email), FILTER_SANITIZE_EMAIL);
-    $username = htmlspecialchars(trim($username));
-    $name = htmlspecialchars(trim($name));
-    $surname = htmlspecialchars(trim($surname));
-    $current_account = htmlspecialchars(trim($current_account));
-
-    // Validación
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-    if (empty($current_account) || strlen($current_account) < 20) return false;
-    if (empty($profile_code)) return false;
-
     return $this->ProfileDAO->modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code);
 }
+
+    public function modifyPassword($profile_code, $passwordHash)
+    {
+        return $this->ProfileDAO->modifyPassword($profile_code, $passwordHash);
+    }
 
     public function getProfile($id, $role) {
     
         if ($role === 'admin') {
-            $data =$this->ProfileDAO->getAdminById($id);
-            return $data ? $data->toArray() : null;
+            return $this->ProfileDAO->getAdminById($id);
         } else {
-            $data =$this->ProfileDAO->getUserById($id);
-            return $data ? $data->toArray() : null;
+            return $this->ProfileDAO->getUserById($id);
         }
     }
 }
