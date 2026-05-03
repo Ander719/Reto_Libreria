@@ -4,10 +4,22 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
 require_once '../controller/OrderController.php';
+require_once '../Config/Session.php';
+
+if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 401,
+        'message' => 'No autorizado.',
+        'data' => null
+    ]);
+    exit;
+}
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-if (empty($input['profileCode']) || empty($input['isbn']) || empty($input['quantity'])) {
+if (empty($input['isbn']) || empty($input['quantity'])) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
@@ -18,7 +30,7 @@ if (empty($input['profileCode']) || empty($input['isbn']) || empty($input['quant
     exit;
 }
 
-$profileCode = filter_var($input['profileCode'], FILTER_VALIDATE_INT);
+$profileCode = filter_var($_SESSION['user']['profile_code'], FILTER_VALIDATE_INT);
 $isbn = trim(htmlspecialchars($input['isbn']));
 $quantity = filter_var($input['quantity'], FILTER_VALIDATE_INT);
 

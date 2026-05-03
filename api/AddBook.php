@@ -14,6 +14,17 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
     exit;
 }
 
+if (!isset($_SESSION['user']['role']) || $_SESSION['user']['role'] !== 'admin') {
+    http_response_code(403);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 403,
+        'message' => 'Acceso restringido a administradores.',
+        'data' => null
+    ]);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(400);
     echo json_encode([
