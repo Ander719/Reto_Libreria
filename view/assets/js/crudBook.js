@@ -6,16 +6,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const isLogged = await checkSession();
         if (!isLogged) {
-            window.location.href = 'login.html';
+            window.location.replace('login.html');
             return;
         }
 
         const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
-        console.log("Status GetProfile (Admin Check):", data.code);
+        console.log("Respuesta GetProfile (Admin Check):", data);
 
         if (!data.data || !data.data.user || data.data.role !== 'admin') {
-            alert("Acceso denegado. Se requieren permisos de administrador.");
-            window.location.href = 'main.html';
+            window.location.replace('main.html');
             return;
         }
 
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error("Error de seguridad:", error);
-        window.location.href = 'login.html';
+        window.location.replace('login.html');
     }
 });
 
@@ -78,7 +77,7 @@ function initPageLogic() {
     async function loadBooksToSelect() {
         try {
             const data = await apiFetch('../../api/GetAllBooks.php');
-            console.log("Status GetAllBooks (Select list):", data.code);
+            console.log("Respuesta GetAllBooks (Select list):", data);
             const books = data.data || [];
 
             if (searchSelect) {
@@ -107,7 +106,7 @@ function initPageLogic() {
 
             try {
                 const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbnToSearch)}`);
-                console.log("Status GetBook (Search):", data.code);
+                console.log("Respuesta GetBook (Search):", data);
                 fillForm(data.data);
                 if (msgSearch) msgSearch.innerText = "";
                 toggleForm(false);
@@ -156,7 +155,7 @@ function initPageLogic() {
 
             try {
                 const data = await apiFetch(url, { method: 'POST', body: formData, credentials: 'include' });
-                console.log(`Status ${mode === 'create' ? 'AddBook' : 'ModifyBook'}:`, data.code);
+                console.log(`Respuesta ${mode === 'create' ? 'AddBook' : 'ModifyBook'}:`, data);
                 alert(data.message || "Operación exitosa");
                 window.location.href = 'bookOptions.html';
             } catch (error) {

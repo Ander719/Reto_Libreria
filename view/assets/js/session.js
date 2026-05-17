@@ -12,7 +12,7 @@ export async function checkSession() {
         });
 
         if (data.status.toLowerCase() === "success" && data.data && data.data.user) {
-            console.log("Status CheckSession:", data.code);
+            console.log("Respuesta CheckSession:", data);
             currentUser = data.data.user;
             return true;
         }
@@ -29,7 +29,7 @@ export async function checkSession() {
 export async function logout() {
     try {
         const response = await apiFetch('../../api/Logout.php', { method: 'POST', credentials: 'include' });
-        console.log("Status Logout:", response.code);
+        console.log("Respuesta Logout:", response);
         // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
         location.reload(); // Recargamos la página para actualizar el estado 
     } catch (error) {

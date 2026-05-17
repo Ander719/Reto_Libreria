@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function fetchBooks() {
     try {
         const data = await apiFetch('../../api/GetAllBooks.php');
-        console.log("Status GetAllBooks:", data.code);
+        console.log("Respuesta GetAllBooks:", data);
         const tbody = document.getElementById('booksBody');
         if (!tbody) return;
 

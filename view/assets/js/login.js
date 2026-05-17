@@ -56,7 +56,7 @@ async function login(username, password) {
             body: JSON.stringify({ username, password }),
             credentials: 'include', // Importante para enviar/recibir cookies
         });
-        console.log("Status Login:", data.code);
+        console.log("Respuesta Login:", data);
         return data; // Si todo fue bien (200), devolvemos los datos tal cual
 
     } catch (error) {

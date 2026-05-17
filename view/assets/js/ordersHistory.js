@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isLogged = await checkSession();
     if (!isLogged || currentUser.role === 'admin') {
         // Si no hay sesión, no permitas que se ejecute loadOrders()
-        window.location.href = 'login.html';
+        window.location.replace('login.html');
         return;
     }
 
@@ -23,7 +23,7 @@ async function loadOrders() {
     container.innerHTML = '<p class="loading-msg">Cargando tu historial...</p>';
     try {
         const payload = await apiFetch('../../api/GetOrder.php', { credentials: 'include' });
-        console.log("Status GetOrder:", payload.code);
+        console.log("Respuesta GetOrder:", payload);
 
         const orders = Array.isArray(payload.data) ? payload.data : [];
 

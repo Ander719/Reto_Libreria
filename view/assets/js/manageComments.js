@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function cargarComentarios(isbn) {
     try {
         const data = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`);
-        console.log("Status GetComments:", data.code);
+        console.log("Respuesta GetComments:", data);
         const tbody = document.getElementById('commentsBody');
         if (!tbody) return;
 
@@ -73,7 +73,7 @@ async function eliminarComentario(isbn, profileCode) {
                 }),
                 credentials: 'include'
             });
-            console.log("Status DeleteComments:", result.code);
+            console.log("Respuesta DeleteComments:", result);
             alert(result.message);
             cargarComentarios(isbn);
         } catch (error) {

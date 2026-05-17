@@ -39,7 +39,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
       body: JSON.stringify({ username, pswd1 }),
       credentials: "include",
     });
-    console.log("Status AddUser:", data.code);
+    console.log("Respuesta AddUser:", data);
 
     if (data.status === "success") {
       parrafo.innerText = "Usuario creado con éxito.";

@@ -72,7 +72,7 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
 async function loadBookDetails(isbn) {
     try {
         const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbn)}`);
-        console.log("Status GetBook:", data.code);
+        console.log("Respuesta GetBook:", data);
 
         if (data.status === "success" && data.data) {
             rellenarVista(data.data);
@@ -153,7 +153,7 @@ function rellenarVista(libro) {
         let direction;
         try {
             const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
-            console.log("Status GetProfile:", data.code);
+            console.log("Respuesta GetProfile:", data);
             if (data.status === "success" && data.data && data.data.user) {
                 const u = data.data.user;
                 userCard = u.has_card;
@@ -240,7 +240,7 @@ async function submitComment(e) {
             body: JSON.stringify(payload),
             credentials: 'include'
         });
-        console.log("Status SubmitComment:", data.code);
+        console.log("Respuesta SubmitComment:", data);
 
         msg.className = "msg-success";
         msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
@@ -260,7 +260,7 @@ async function loadComments(isbn) {
 
     try {
         const response = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`);
-        console.log("Status GetComments:", response.code);
+        console.log("Respuesta GetComments:", response);
         const comments = response.status === "success" && Array.isArray(response.data) ? response.data : [];
         list.innerHTML = "";
         let myReview = null;
@@ -348,7 +348,7 @@ window.deleteComment = async function (isbn, targetId) {
             credentials: 'include'
         });
 
-        console.log("[DELETE] HTTP Status:", data.code);
+        console.log("Respuesta DeleteComment:", data);
         showModal("Éxito", data.message || "Eliminado.");
 
         if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
@@ -421,7 +421,7 @@ async function comprarAhora(isbn, quantity, userId) {
             body: JSON.stringify({ profileCode: userId, isbn, quantity }),
             credentials: 'include'
         });
-        console.log("Status BuyNow:", data.code);
+        console.log("Respuesta BuyNow:", data);
 
         showModal("¡Compra realizada!", "Gracias por tu pedido.");
 

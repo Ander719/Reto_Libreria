@@ -16,7 +16,7 @@ const fill = (id, value) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     const isLogged = await checkSession();
-    if (!isLogged) return window.location.href = 'login.html';
+    if (!isLogged) return window.location.replace('login.html');
 
     await loadHeader('configProfile');
     await loadFooter();
@@ -112,7 +112,7 @@ function toggleModal(id, show) {
 async function loadMyProfile(isInit = false) {
     try {
         const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
-        console.log("Status GetProfile:", data.code);
+        console.log("Respuesta GetProfile:", data);
 
         if (data.status === 'success' && data.data && data.data.user) {
             const u = data.data.user;
@@ -236,7 +236,7 @@ async function saveUserData(role) {
 
     try {
         const data = await apiFetch('../../api/ModifyUser.php', { method: 'POST', body: formData, credentials: 'include' });
-        console.log("Status ModifyUser:", data.code);
+        console.log("Respuesta ModifyUser:", data);
 
         alert("Datos actualizados correctamente.");
         toggleModal(modalId, false);
@@ -254,7 +254,7 @@ async function saveUserData(role) {
 async function initAdminPanel() {
     try {
         const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
-        console.log("Status CheckSession (Admin Panel):", data.code);
+        console.log("Respuesta CheckSession (Admin Panel):", data);
         if (data.status === 'success' && data.data && data.data.user && data.data.user.role === 'admin') {
             const section = getEl('adminPanelSection');
             if (section) section.style.display = 'flex';
@@ -270,7 +270,7 @@ async function loadUsersTable() {
 
     try {
         const data = await apiFetch('../../api/GetAllUsers.php', { credentials: 'include' });
-        console.log("Status GetAllUsers:", data.code);
+        console.log("Respuesta GetAllUsers:", data);
 
         const users = data.status === 'success' && Array.isArray(data.data) ? data.data : [];
 
@@ -321,7 +321,7 @@ async function deleteUser(id) {
             body: JSON.stringify({ id: id }),
             credentials: 'include'
         });
-        console.log("Status DeleteUser:", data.code);
+        console.log("Respuesta DeleteUser:", data);
 
         alert("Usuario eliminado.");
         loadUsersTable();
@@ -366,7 +366,7 @@ function setupPasswordLogic() {
                     body: JSON.stringify({ username, password: pass }),
                     credentials: 'include'
                 });
-                console.log("Status VerifyPassword (Login API):", data.code);
+                console.log("Respuesta VerifyPassword (Login API):", data);
 
                 const verifyModal = getEl('verifyPasswordModal');
                 if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
@@ -408,7 +408,7 @@ function setupPasswordLogic() {
                     body: JSON.stringify({ profile_code: targetId, password: newP }),
                     credentials: 'include'
                 });
-                console.log("Status ModifyPassword:", data.code);
+                console.log("Respuesta ModifyPassword:", data);
                 alert("Contraseña actualizada con éxito.");
 
                 const changeModal = getEl('changePasswordModal');
