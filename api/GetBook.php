@@ -2,7 +2,7 @@
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
-$isbn = $_GET['isbn'] ?? '';
+$isbn = trim(htmlspecialchars($_GET['isbn'] ?? ''));
 
 if (empty($isbn)) {
     http_response_code(400);
@@ -19,12 +19,16 @@ $controller = new BookController();
 $libro = $controller->getBook($isbn);
 
 if ($libro) {
+    $bookData = $libro->toArray();
+    $bookData['name_author'] = $bookData['author']['name'] ?? '';
+    $bookData['last_name'] = $bookData['author']['lastname'] ?? '';
+
     http_response_code(200);
     echo json_encode([
         'status' => 'success',
         'code' => 200,
         'message' => 'Libro encontrado',
-        'data' => $libro
+        'data' => $bookData
     ]);
 } else {
     http_response_code(404);

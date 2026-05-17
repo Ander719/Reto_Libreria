@@ -20,7 +20,23 @@ class BookDAO {
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":isbn", $isbn);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return false;
+        }
+
+        return new Book(
+            $row['title'],
+            new Author($row['id_author'], $row['name_author'], $row['last_name']),
+            $row['isbn'],
+            $row['pages'],
+            $row['stock'],
+            $row['synopsis'],
+            $row['price'],
+            $row['editorial'],
+            $row['cover']
+        );
     }
 
     public function createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName) {
