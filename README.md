@@ -56,6 +56,23 @@ Reglas aplicadas:
 - Los errores devuelven preferentemente `data: null`.
 - Los endpoints declaran `Content-Type: application/json; charset=utf-8`.
 - No se devuelven trazas, SQL ni detalles sensibles al cliente.
+- Todos los endpoints siguen el orden: `header()` antes que `require_once`.
+
+## Convenciones de Codigo
+
+### Orden en API (`api/*.php`)
+
+```
+<?php
+header('Content-Type: application/json; charset=utf-8');
+require_once '../controller/...';
+require_once '../Config/Session.php';  // si aplica
+if ($_SERVER['REQUEST_METHOD'] !== ...)
+```
+
+- El `header()` va siempre inmediatamente despues de `<?php`, antes de cualquier `require_once`.
+- No se usan `Access-Control-Allow-Origin` ni CORS (mismo origen).
+- `Config/Session.php` ya emite cache-busting headers; no se duplican en los endpoints.
 
 ## Metodos HTTP
 
@@ -120,8 +137,11 @@ Reglas aplicadas:
 
 - No se usan cadenas `fetch().then().then()` en los JS de la aplicacion.
 - Las llamadas usan `async/await` y `try/catch`.
+- `apiFetch()` acepta un parametro `allowedStatuses` para manejar ciertos codigos HTTP sin lanzar error (ej. `401` en `checkSession`).
 - `apiFetch()` valida JSON, `response.ok`, `status` y que `code` coincida con el HTTP status.
 - Las llamadas de sesion/autenticacion usan `credentials: 'include'` cuando corresponde.
+- Todos los `console.log()` muestran el objeto JSON completo (`data`), no solo `data.code`.
+- Las redirecciones por acceso bloqueado usan `window.location.replace()`; las de navegacion normal usan `window.location.href`.
 
 ## Responsabilidades Por Capa
 
@@ -212,9 +232,14 @@ curl -s -i -X GET http://localhost/Reto_Libreria/api/Login.php
 ## Estado Actual
 
 - Arquitectura MVC alineada con la rubrica academica.
-- Contrato JSON estandar aplicado en endpoints revisados.
+- Contrato JSON estandar aplicado en todos los endpoints.
 - Fetch del frontend centralizado y sin cadenas `.then()` fuera del helper.
 - Validacion server-side reforzada en endpoints JSON y operaciones sensibles.
 - Metodos HTTP restringidos a `GET` y `POST` con errores `405` cuando corresponde.
 - `GetBook.php` obtiene entidad desde DAO y serializa en API.
+- Todos los endpoints PHP siguen el mismo orden: `header()` > `require_once` > validacion metodo.
+- Sin cabeceras CORS en endpoints (mismo origen).
+- `console.log()` homogeneizado para mostrar JSON completo en todos los JS.
+- Redirecciones de bloqueo unificadas con `window.location.replace()`.
+- Sesion sin duplicacion de cache-busting headers (los gestiona `Config/Session.php`).
 - Quedan como criterio de mantenimiento futuro revisar progresivamente endpoints no tocados antes de nuevas funcionalidades.
