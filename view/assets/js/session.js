@@ -6,10 +6,13 @@ export let currentUser = null;
 // 2. Exportamos la función actualizada
 export async function checkSession() {
     try {
-        const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
-        console.log("Status CheckSession:", data.code);
+        const data = await apiFetch('../../api/CheckSession.php', {
+            credentials: 'include',
+            allowedStatuses: [401]
+        });
 
-        if (data.status === "success" && data.data && data.data.user) {
+        if (data.status.toLowerCase() === "success" && data.data && data.data.user) {
+            console.log("Status CheckSession:", data.code);
             currentUser = data.data.user;
             return true;
         }
@@ -18,7 +21,7 @@ export async function checkSession() {
         return false;
 
     } catch (error) {
-        console.error("Error comprobando sesión:", error);
+        console.error("Fallo crítico real comprobando sesión:", error);
         currentUser = null;
         return false;
     }

@@ -1,5 +1,7 @@
 export async function apiFetch(url, options = {}) {
-    const response = await fetch(url, options);
+    const { allowedStatuses = [], ...fetchOptions } = options;
+
+    const response = await fetch(url, fetchOptions);
     const text = await response.text();
 
     let payload;
@@ -15,10 +17,16 @@ export async function apiFetch(url, options = {}) {
     }
 
     if (payload.code !== response.status) {
-        throw new Error(payload.message || 'El código HTTP no coincide con la respuesta.');
+        throw new Error(payload.message || 'El código HTTP no coincide con la respuesta del servidor.');
     }
 
-    if (!response.ok || payload.status !== 'success') {
+    if (allowedStatuses.includes(response.status)) {
+        return payload;
+    }
+
+    const isServerSuccess = payload.status && payload.status.toLowerCase() === 'success';
+
+    if (!response.ok || !isServerSuccess) {
         throw new Error(payload.message || `Error HTTP ${response.status}`);
     }
 
