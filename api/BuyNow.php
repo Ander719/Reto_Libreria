@@ -1,7 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header('Content-Type: application/json; charset=utf-8');
 
 require_once '../controller/OrderController.php';
 require_once '../Config/Session.php';

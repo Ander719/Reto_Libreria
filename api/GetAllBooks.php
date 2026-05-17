@@ -1,5 +1,5 @@
 <?php
-header("Content-Type: application/json; charset=utf-8");
+header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {

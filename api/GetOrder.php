@@ -1,8 +1,7 @@
 <?php
+header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/OrderController.php';
 require_once '../Config/Session.php';
-
-header("Content-Type: application/json; charset=utf-8");
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
