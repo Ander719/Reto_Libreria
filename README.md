@@ -57,6 +57,55 @@ Reglas aplicadas:
 - Los endpoints declaran `Content-Type: application/json; charset=utf-8`.
 - No se devuelven trazas, SQL ni detalles sensibles al cliente.
 
+## Metodos HTTP
+
+El proyecto mantiene una convencion simple y compatible con PHP academico:
+
+- `GET` para lecturas.
+- `POST` para acciones que crean, modifican, eliminan o ejecutan operaciones.
+- No se usan `PUT`, `PATCH` ni `DELETE` para evitar complejidad innecesaria con `$_POST`, `FormData` y subida de archivos.
+
+Los endpoints validan explicitamente el metodo recibido. Si no corresponde, responden:
+
+```json
+{
+  "status": "error",
+  "code": 405,
+  "message": "Método no permitido.",
+  "data": null
+}
+```
+
+Endpoints de lectura con `GET`:
+
+```text
+GetAllBooks.php
+GetBook.php
+GetComments.php
+GetAllUsers.php
+GetProfile.php
+GetOrder.php
+CheckSession.php
+```
+
+Endpoints de accion con `POST`:
+
+```text
+Login.php
+Logout.php
+AddUser.php
+ModifyUser.php
+ModifyAdmin.php
+ModifyPassword.php
+DeleteUser.php
+AddBook.php
+ModifyBook.php
+AddComment.php
+UpdateComment.php
+DeleteComment.php
+BuyNow.php
+```
+
 ## Frontend JS
 
 Los `fetch` del frontend se centralizan en `view/assets/js/apiClient.js` mediante `apiFetch()`.
@@ -153,11 +202,19 @@ Smoke test de sesion:
 curl -s -i http://localhost/Reto_Libreria/api/CheckSession.php
 ```
 
+Smoke test de metodo incorrecto:
+
+```bash
+curl -s -i -X POST http://localhost/Reto_Libreria/api/GetAllBooks.php
+curl -s -i -X GET http://localhost/Reto_Libreria/api/Login.php
+```
+
 ## Estado Actual
 
 - Arquitectura MVC alineada con la rubrica academica.
 - Contrato JSON estandar aplicado en endpoints revisados.
 - Fetch del frontend centralizado y sin cadenas `.then()` fuera del helper.
 - Validacion server-side reforzada en endpoints JSON y operaciones sensibles.
+- Metodos HTTP restringidos a `GET` y `POST` con errores `405` cuando corresponde.
 - `GetBook.php` obtiene entidad desde DAO y serializa en API.
 - Quedan como criterio de mantenimiento futuro revisar progresivamente endpoints no tocados antes de nuevas funcionalidades.
