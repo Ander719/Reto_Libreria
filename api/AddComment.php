@@ -7,11 +7,19 @@ require_once '../controller/CommentController.php';
 require_once '../model/entities/Comment.php';
 require_once '../Config/Session.php';
 
-error_reporting(0);
-ini_set('display_errors', 0);
-
 $data = json_decode(file_get_contents("php://input"));
 $controller = new CommentController();
+
+if (!is_object($data)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'JSON no válido.',
+        'data' => null
+    ]);
+    exit;
+}
 
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
     http_response_code(401);

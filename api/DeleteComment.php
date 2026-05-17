@@ -6,11 +6,19 @@ header("Access-Control-Allow-Methods: POST");
 require_once '../controller/CommentController.php';
 require_once '../Config/Session.php';
 
-error_reporting(0);
-ini_set('display_errors', 0);
-
 $data = json_decode(file_get_contents("php://input"));
 $commentController = new CommentController();
+
+if (!is_object($data)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'JSON no válido.',
+        'data' => null
+    ]);
+    exit;
+}
 
 if (!empty($data->isbn)) {
     $isbn = trim(htmlspecialchars((string)$data->isbn));
@@ -26,9 +34,12 @@ if (!empty($data->isbn)) {
         exit;
     }
 
-    $profileCode = (string) $_SESSION['user']['profile_code'];
+    $sessionProfileCode = filter_var($_SESSION['user']['profile_code'], FILTER_VALIDATE_INT);
+    $targetProfileCode = filter_var($data->profileCode ?? null, FILTER_VALIDATE_INT);
+    $isAdmin = isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin';
+    $profileCode = $isAdmin && $targetProfileCode !== false ? $targetProfileCode : $sessionProfileCode;
 
-    if ($isbn === '' || $profileCode === '') {
+    if ($isbn === '' || $profileCode === false || $profileCode <= 0) {
         http_response_code(400);
         echo json_encode([
             'status' => 'error',

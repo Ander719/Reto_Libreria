@@ -71,6 +71,17 @@ if (empty($isbn) || empty($title) || empty($authorName) || $pages === false || $
 }
 
 $finalCoverName = $oldCover;
+if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] !== UPLOAD_ERR_NO_FILE && $_FILES['coverFile']['error'] !== UPLOAD_ERR_OK) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'Error al subir el archivo',
+        'data' => null
+    ]);
+    exit;
+}
+
 if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
     $maxSize = 2 * 1024 * 1024;
     $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];

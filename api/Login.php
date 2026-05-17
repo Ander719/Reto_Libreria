@@ -4,6 +4,17 @@ require_once '../controller/ProfileController.php';
 require_once '../Config/Session.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
+if (!is_array($data)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'JSON no válido',
+        'data' => null
+    ]);
+    exit;
+}
+
 $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 

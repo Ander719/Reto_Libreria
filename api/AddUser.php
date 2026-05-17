@@ -4,6 +4,17 @@ require_once '../Config/Session.php';
 header('Content-Type: application/json; charset=utf-8');
 
 $input = json_decode(file_get_contents('php://input'), true);
+if (!is_array($input)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'JSON no válido',
+        'data' => null
+    ]);
+    exit;
+}
+
 $username = $input['username'] ?? '';
 $pswd = $input['pswd1'] ?? '';
 

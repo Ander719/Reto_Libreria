@@ -15,6 +15,17 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
+if (!is_array($input)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'JSON no válido',
+        'data' => null
+    ]);
+    exit;
+}
+
 $password = $input['password'] ?? '';
 
 if (empty($password)) {

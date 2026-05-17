@@ -15,9 +15,20 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
 }
 
 $data = json_decode(file_get_contents("php://input"), true);
-$idToDelete = $data['id'] ?? null;
+if (!is_array($data)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'JSON no válido.',
+        'data' => null
+    ]);
+    exit;
+}
 
-if (!$idToDelete) {
+$idToDelete = filter_var($data['id'] ?? null, FILTER_VALIDATE_INT);
+
+if ($idToDelete === false || $idToDelete <= 0) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
@@ -27,7 +38,22 @@ if (!$idToDelete) {
     ]);
     exit;
 }
-$isSelfDelete = (isset($_SESSION['user']['profile_code']) && $_SESSION['user']['profile_code'] == $idToDelete);
+
+$sessionProfileCode = filter_var($_SESSION['user']['profile_code'], FILTER_VALIDATE_INT);
+$isSelfDelete = ($sessionProfileCode !== false && $sessionProfileCode === $idToDelete);
+$isAdmin = isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin';
+
+if (!$isSelfDelete && !$isAdmin) {
+    http_response_code(403);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 403,
+        'message' => 'No tienes permisos para eliminar este usuario.',
+        'data' => null
+    ]);
+    exit;
+}
+
 $controller = new ProfileController();
 $result = $controller->delete_user($idToDelete);
 
