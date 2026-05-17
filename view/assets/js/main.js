@@ -1,5 +1,6 @@
 import { checkSession, currentUser } from './session.js';
 import { loadHeader,loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 init();
 
@@ -195,27 +196,14 @@ function getEstrellasHTML(rating) {
 async function cargarLibrosDesdeBD() {
 
     try {
-        const response = await fetch('../../api/GetAllBooks.php');
-        console.log("Status GetAllBooks:", response.status);
-        const rawText = await response.text();
-
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (error) {
-            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
-            return;
-        }
+        const data = await apiFetch('../../api/GetAllBooks.php');
+        console.log("Status GetAllBooks:", data.code);
 
         //console.log("Datos recibidos:", data);
 
-        if (data.status === "success") {
-            const books = data.data || [];
-            globalBooks = books; // Guardamos los libros globalmente si es necesario
-            renderBooks(books);
-        } else {
-            console.error("Error al cargar libros");
-        }
+        const books = data.data || [];
+        globalBooks = books; // Guardamos los libros globalmente si es necesario
+        renderBooks(books);
     } catch (error) {
         console.error("Error:", error);
     }

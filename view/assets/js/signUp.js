@@ -1,5 +1,6 @@
 import { loadHeader, loadFooter } from './header.js';
 import { checkSession } from './session.js';
+import { apiFetch } from './apiClient.js';
 
 init();
 
@@ -30,7 +31,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
   }
 
   try {
-    const response = await fetch("../../api/AddUser.php", {
+    const data = await apiFetch("../../api/AddUser.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -38,15 +39,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
       body: JSON.stringify({ username, pswd1 }),
       credentials: "include",
     });
-    console.log("Status AddUser:", response.status);
-    const rawText = await response.text();
-
-    let data;
-    try {
-      data = JSON.parse(response.ok ? rawText : "{}");
-    } catch (jsonError) {
-      throw new Error("Respuesta inválida del servidor: " + jsonError.message);
-    }
+    console.log("Status AddUser:", data.code);
 
     if (data.status === "success") {
       parrafo.innerText = "Usuario creado con éxito.";
@@ -62,7 +55,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
     }
   } catch (error) {
     console.error(error);
-    parrafo.innerText = "Error de conexión o servidor.";
+    parrafo.innerText = error.message || "Error de conexión o servidor.";
     parrafo.style.color = "red";
   }
 });

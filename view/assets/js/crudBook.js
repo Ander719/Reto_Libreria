@@ -1,4 +1,5 @@
 import { checkSession } from './session.js';
+import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -9,9 +10,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const res = await fetch('../../api/GetProfile.php');
-        console.log("Status GetProfile (Admin Check):", res.status);
-        const data = await res.json();
+        const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
+        console.log("Status GetProfile (Admin Check):", data.code);
 
         if (!data.data || !data.data.user || data.data.role !== 'admin') {
             alert("Acceso denegado. Se requieren permisos de administrador.");
@@ -77,10 +77,9 @@ function initPageLogic() {
 
     async function loadBooksToSelect() {
         try {
-            const res = await fetch('../../api/GetAllBooks.php');
-            console.log("Status GetAllBooks (Select list):", res.status);
-            const data = await res.json();
-            const books = data.status === "success" ? (data.data || []) : [];
+            const data = await apiFetch('../../api/GetAllBooks.php');
+            console.log("Status GetAllBooks (Select list):", data.code);
+            const books = data.data || [];
 
             if (searchSelect) {
                 searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
@@ -98,7 +97,7 @@ function initPageLogic() {
 
     const btnSearch = document.getElementById('btnSearch');
     if (btnSearch) {
-        btnSearch.addEventListener('click', (e) => {
+        btnSearch.addEventListener('click', async (e) => {
             e.preventDefault();
             const isbnToSearch = searchSelect.value;
             if (!isbnToSearch) {
@@ -106,25 +105,21 @@ function initPageLogic() {
                 return;
             }
 
-            fetch(`../../api/GetBook.php?isbn=${isbnToSearch}`)
-                .then(res => {
-                    console.log("Status GetBook (Search):", res.status);
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.status === "success" && data.data) {
-                        fillForm(data.data);
-                        if (msgSearch) msgSearch.innerText = "";
-                        toggleForm(false);
-                    } else {
-                        if (msgSearch) msgSearch.innerText = "Error al cargar datos.";
-                    }
-                });
+            try {
+                const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbnToSearch)}`);
+                console.log("Status GetBook (Search):", data.code);
+                fillForm(data.data);
+                if (msgSearch) msgSearch.innerText = "";
+                toggleForm(false);
+            } catch (error) {
+                console.error(error);
+                if (msgSearch) msgSearch.innerText = error.message || "Error al cargar datos.";
+            }
         });
     }
 
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const isbnVal = isbnInput.value.trim();
@@ -159,20 +154,15 @@ function initPageLogic() {
             const formData = new FormData(form);
             const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
 
-            fetch(url, { method: 'POST', body: formData })
-                .then(res => {
-                    console.log(`Status ${mode === 'create' ? 'AddBook' : 'ModifyBook'}:`, res.status);
-                    return res.json();
-                })
-                    .then(data => {
-                        if (data.status === "success") {
-                            alert(data.message || "Operación exitosa");
-                            window.location.href = 'bookOptions.html';
-                        } else {
-                            alert("Error: " + (data.message || "No se pudo completar la operación."));
-                        }
-                    })
-                    .catch(() => alert("Error de conexión."));
+            try {
+                const data = await apiFetch(url, { method: 'POST', body: formData, credentials: 'include' });
+                console.log(`Status ${mode === 'create' ? 'AddBook' : 'ModifyBook'}:`, data.code);
+                alert(data.message || "Operación exitosa");
+                window.location.href = 'bookOptions.html';
+            } catch (error) {
+                console.error(error);
+                alert("Error: " + (error.message || "No se pudo completar la operación."));
+            }
         });
     }
 

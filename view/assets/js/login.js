@@ -1,5 +1,6 @@
 import { checkSession } from "./session.js";
 import { loadHeader, loadFooter } from "./header.js"
+import { apiFetch } from "./apiClient.js";
 
 init();
 
@@ -49,32 +50,17 @@ if (loginForm) {
 
 async function login(username, password) {
     try {
-        const response = await fetch(`../../api/Login.php`, {
+        const data = await apiFetch(`../../api/Login.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
             credentials: 'include', // Importante para enviar/recibir cookies
         });
-        console.log("Status Login:", response.status);
-        const rawText = await response.text();
-        
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            console.error("Error al parsear JSON:", rawText);
-            return { status: "error", message: "Respuesta del servidor no es JSON válido." };
-        }
-        if (!response.ok) {
-            return { 
-                status: "error", 
-                message: data.message || `Error del servidor (${response.status})` 
-            };
-        }
+        console.log("Status Login:", data.code);
         return data; // Si todo fue bien (200), devolvemos los datos tal cual
 
     } catch (error) {
         console.error("Error en fetch:", error);
-        return { status: "error", message: "Fallo de red o servidor caído." };
+        return { status: "error", message: error.message || "Fallo de red o servidor caído." };
     }
 }

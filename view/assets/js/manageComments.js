@@ -1,5 +1,6 @@
 import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -26,71 +27,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-function cargarComentarios(isbn) {
-    fetch(`../../api/GetComments.php?isbn=${isbn}`)
-        .then(async response => {
-            console.log("Status GetComments:", response.status);
-            return response.json();
-        })
-        .then(data => {
-            const tbody = document.getElementById('commentsBody');
-            if (!tbody) return;
+async function cargarComentarios(isbn) {
+    try {
+        const data = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`);
+        console.log("Status GetComments:", data.code);
+        const tbody = document.getElementById('commentsBody');
+        if (!tbody) return;
 
-            tbody.innerHTML = '';
+        tbody.innerHTML = '';
 
-            const comentarios = data.data;
+        const comentarios = Array.isArray(data.data) ? data.data : [];
 
-            if (!comentarios || comentarios.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="no-data">No hay comentarios para este libro.</td></tr>';
-                return;
-            }
+        if (comentarios.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="no-data">No hay comentarios para este libro.</td></tr>';
+            return;
+        }
 
-            comentarios.forEach(comment => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="user-cell">${comment.user_name}</td>
-                    <td class="text-cell">${comment.comment_text}</td>
-                    <td>
-                        <button class="delete-btn" onclick="eliminarComentario('${isbn}', '${comment.profile_code}')">
-                            Eliminar
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        })
-        .catch(error => console.error('Error al obtener comentarios:', error));
+        comentarios.forEach(comment => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="user-cell">${comment.user_name}</td>
+                <td class="text-cell">${comment.comment_text}</td>
+                <td>
+                    <button class="delete-btn" onclick="eliminarComentario('${isbn}', '${comment.profile_code}')">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error al obtener comentarios:', error);
+    }
 }
 
-function eliminarComentario(isbn, profileCode) {
+async function eliminarComentario(isbn, profileCode) {
     if (confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
-        fetch('../../api/DeleteComment.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                isbn: isbn,
-                profileCode: profileCode
-            })
-        })
-            .then(response => {
-                console.log("Status DeleteComments:", response.status);
-                if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.message) });
-                }
-                return response.json();
-            })
-            .then(result => {
-                if (result.status === "success") {
-                    alert(result.message);
-                    cargarComentarios(isbn);
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error al eliminar:', error);
-                alert('No se pudo eliminar el comentario.');
+        try {
+            const result = await apiFetch('../../api/DeleteComment.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    isbn: isbn,
+                    profileCode: profileCode
+                }),
+                credentials: 'include'
             });
+            console.log("Status DeleteComments:", result.code);
+            alert(result.message);
+            cargarComentarios(isbn);
+        } catch (error) {
+            console.error('Error al eliminar:', error);
+            alert(error.message || 'No se pudo eliminar el comentario.');
+        }
     }
 }
 window.eliminarComentario = eliminarComentario;

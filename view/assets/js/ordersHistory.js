@@ -1,5 +1,6 @@
 import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -21,21 +22,8 @@ async function loadOrders() {
     const container = document.getElementById('ordersContainer');
     container.innerHTML = '<p class="loading-msg">Cargando tu historial...</p>';
     try {
-        const response = await fetch('../../api/GetOrder.php');
-        console.log("Status:", response.status);
-        const text = await response.text();
-        let payload = null;
-        try {
-            payload = JSON.parse(text);
-        } catch (e) {
-            container.innerHTML = '<p class="error-msg">Error técnico en el servidor.</p>';
-            return;
-        }
-
-        if (!payload || payload.status !== 'success') {
-            container.innerHTML = `<p class="error-msg">${(payload && payload.message) || "Error desconocido."}</p>`;
-            return;
-        }
+        const payload = await apiFetch('../../api/GetOrder.php', { credentials: 'include' });
+        console.log("Status GetOrder:", payload.code);
 
         const orders = Array.isArray(payload.data) ? payload.data : [];
 

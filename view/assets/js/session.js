@@ -1,18 +1,13 @@
+import { apiFetch } from './apiClient.js';
+
 // 1. Exportamos la variable
 export let currentUser = null;
 
 // 2. Exportamos la función actualizada
 export async function checkSession() {
     try {
-        // Importante: credentials: 'include' para enviar la cookie PHPSESSID
-        const response = await fetch('../../api/CheckSession.php', { credentials: 'include' });
-        console.log("Status CheckSession:", response.status);
-        if (!response.ok) {
-            currentUser = null;
-            return false;
-        }
-
-        const data = await response.json();
+        const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
+        console.log("Status CheckSession:", data.code);
 
         if (data.status === "success" && data.data && data.data.user) {
             currentUser = data.data.user;
@@ -30,8 +25,8 @@ export async function checkSession() {
 }
 export async function logout() {
     try {
-        const response = await fetch('../../api/Logout.php');
-        console.log("Status Logout:", response.status);
+        const response = await apiFetch('../../api/Logout.php', { credentials: 'include' });
+        console.log("Status Logout:", response.code);
         // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
         location.reload(); // Recargamos la página para actualizar el estado 
     } catch (error) {

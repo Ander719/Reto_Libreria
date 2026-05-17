@@ -1,5 +1,6 @@
 import { checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 const appState = {
     allUsers: [],
@@ -110,9 +111,8 @@ function toggleModal(id, show) {
 
 async function loadMyProfile(isInit = false) {
     try {
-        const res = await fetch('../../api/GetProfile.php');
-        console.log("Status GetProfile:", res.status);
-        const data = await res.json();
+        const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
+        console.log("Status GetProfile:", data.code);
 
         if (data.status === 'success' && data.data && data.data.user) {
             const u = data.data.user;
@@ -233,41 +233,26 @@ async function saveUserData(role) {
     }
 
     try {
-        const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
-        console.log("Status ModifyUser:", res.status);
-        const text = await res.text();
+        const data = await apiFetch('../../api/ModifyUser.php', { method: 'POST', body: formData, credentials: 'include' });
+        console.log("Status ModifyUser:", data.code);
 
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Respuesta servidor:", text);
-            alert("Error técnico en el servidor.");
-            return;
-        }
+        alert("Datos actualizados correctamente.");
+        toggleModal(modalId, false);
+        resetTargetIds();
 
-        if (data.status === 'success') {
-            alert("Datos actualizados correctamente.");
-            toggleModal(modalId, false);
-            resetTargetIds();
-
-            if (getEl('adminPanelSection')?.style.display !== 'none') {
-                loadUsersTable();
-            }
-        } else {
-            alert("Error: " + (data.message || "No se pudo actualizar."));
+        if (getEl('adminPanelSection')?.style.display !== 'none') {
+            loadUsersTable();
         }
     } catch (err) {
         console.error("Error API:", err);
-        alert("Error de conexión.");
+        alert(err.message || "Error de conexión.");
     }
 }
 
 async function initAdminPanel() {
     try {
-        const res = await fetch('../../api/CheckSession.php');
-        console.log("Status CheckSession (Admin Panel):", res.status);
-        const data = await res.json();
+        const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
+        console.log("Status CheckSession (Admin Panel):", data.code);
         if (data.status === 'success' && data.data && data.data.user && data.data.user.role === 'admin') {
             const section = getEl('adminPanelSection');
             if (section) section.style.display = 'flex';
@@ -282,9 +267,8 @@ async function loadUsersTable() {
     if (!tbody || !template) return;
 
     try {
-        const res = await fetch('../../api/GetAllUsers.php');
-        console.log("Status GetAllUsers:", res.status);
-        const data = await res.json();
+        const data = await apiFetch('../../api/GetAllUsers.php', { credentials: 'include' });
+        console.log("Status GetAllUsers:", data.code);
 
         const users = data.status === 'success' && Array.isArray(data.data) ? data.data : [];
 
@@ -329,28 +313,20 @@ function prepareEditUser(index) {
 async function deleteUser(id) {
     if (!confirm("¿Eliminar usuario?")) return;
     try {
-        const res = await fetch('../../api/DeleteUser.php', {
+        const data = await apiFetch('../../api/DeleteUser.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            body: JSON.stringify({ id: id }),
+            credentials: 'include'
         });
-        console.log("Status DeleteUser:", res.status);
-        let data;
-        const contentType = res.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            data = await res.json();
-        } else {
-            const text = await res.text();
-            try { data = JSON.parse(text); } catch (e) { console.error(text); }
-        }
+        console.log("Status DeleteUser:", data.code);
 
-        if (data && data.status === 'success') {
-            alert("Usuario eliminado.");
-            loadUsersTable();
-        } else {
-            alert("Error: " + (data.message || "No se pudo eliminar."));
-        }
-    } catch (err) { console.error(err); }
+        alert("Usuario eliminado.");
+        loadUsersTable();
+    } catch (err) {
+        console.error(err);
+        alert(err.message || "No se pudo eliminar.");
+    }
 }
 
 function setupPasswordLogic() {
@@ -378,40 +354,36 @@ function setupPasswordLogic() {
             const pass = getEl('verifyCurrentPassword').value;
 
 
-            const resInit = await fetch('../../api/GetProfile.php');
-            const dataInit = await resInit.json();
-            const username = dataInit.data.user.user_name;
-
             try {
-                const res = await fetch('../../api/Login.php', {
+                const dataInit = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
+                const username = dataInit.data.user.user_name;
+
+                const data = await apiFetch('../../api/Login.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password: pass })
+                    body: JSON.stringify({ username, password: pass }),
+                    credentials: 'include'
                 });
-                console.log("Status VerifyPassword (Login API):", res.status);
-                const data = await res.json();
+                console.log("Status VerifyPassword (Login API):", data.code);
 
-                if (data.status === 'success') {
-
-                    const verifyModal = getEl('verifyPasswordModal');
-                    if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
-                    else toggleModal('verifyPasswordModal', false);
+                const verifyModal = getEl('verifyPasswordModal');
+                if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
+                else toggleModal('verifyPasswordModal', false);
 
 
-                    const changeModal = getEl('changePasswordModal');
-                    if (changeModal) {
+                const changeModal = getEl('changePasswordModal');
+                if (changeModal) {
 
-                        if (changeForm) changeForm.reset();
+                    if (changeForm) changeForm.reset();
 
-                        if (typeof changeModal.showModal === 'function') changeModal.showModal();
-                        else toggleModal('changePasswordModal', true);
-                    }
-
-                } else {
-                    alert("Contraseña actual incorrecta.");
-                    getEl('verifyCurrentPassword').value = '';
+                    if (typeof changeModal.showModal === 'function') changeModal.showModal();
+                    else toggleModal('changePasswordModal', true);
                 }
-            } catch (err) { console.error(err); }
+            } catch (err) {
+                console.error(err);
+                alert("Contraseña actual incorrecta.");
+                getEl('verifyCurrentPassword').value = '';
+            }
         };
     }
 
@@ -428,25 +400,24 @@ function setupPasswordLogic() {
             if (newP !== confP) return alert("Las contraseñas no coinciden.");
 
             try {
-                const res = await fetch('../../api/ModifyPassword.php', {
+                const data = await apiFetch('../../api/ModifyPassword.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile_code: targetId, password: newP })
+                    body: JSON.stringify({ profile_code: targetId, password: newP }),
+                    credentials: 'include'
                 });
-                console.log("Status ModifyPassword:", res.status);
-                const data = await res.json();
-                if (data.status === 'success') {
-                    alert("Contraseña actualizada con éxito.");
+                console.log("Status ModifyPassword:", data.code);
+                alert("Contraseña actualizada con éxito.");
 
-                    const changeModal = getEl('changePasswordModal');
-                    if (changeModal && typeof changeModal.close === 'function') changeModal.close();
-                    else toggleModal('changePasswordModal', false);
+                const changeModal = getEl('changePasswordModal');
+                if (changeModal && typeof changeModal.close === 'function') changeModal.close();
+                else toggleModal('changePasswordModal', false);
 
-                    resetTargetIds();
-                } else {
-                    alert("Error: " + (data.message || "No se pudo actualizar la contraseña."));
-                }
-            } catch (err) { console.error(err); }
+                resetTargetIds();
+            } catch (err) {
+                console.error(err);
+                alert("Error: " + (err.message || "No se pudo actualizar la contraseña."));
+            }
         };
     }
 }

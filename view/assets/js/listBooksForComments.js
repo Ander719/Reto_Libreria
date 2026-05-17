@@ -1,5 +1,6 @@
 import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -21,38 +22,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchBooks();
 });
 
-function fetchBooks() {
-    fetch('../../api/GetAllBooks.php')
-        .then(async response => {
-            console.log("Status Code HTTP:", response.status);
-            return response.json();
-        })
-        .then(data => {
-            const tbody = document.getElementById('booksBody');
-            if (!tbody) return;
+async function fetchBooks() {
+    try {
+        const data = await apiFetch('../../api/GetAllBooks.php');
+        console.log("Status GetAllBooks:", data.code);
+        const tbody = document.getElementById('booksBody');
+        if (!tbody) return;
 
-            tbody.innerHTML = '';
+        tbody.innerHTML = '';
 
-            if (data.status === "success" && Array.isArray(data.data)) {
-                data.data.forEach(book => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="text-align:center;">
-                            <img src="../assets/img/covers/${book.cover}" class="book-cover-img" width="50" alt="Portada">
-                        </td>
-                        <td>${book.title}</td>
-                        <td style="text-align:center;">
-                            <button class="view-comments-btn" onclick="verComentarios('${book.isbn}')">
-                                Ver Comentarios
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
-
-        })
-        .catch(error => console.error('Error cargando libros:', error));
+        if (Array.isArray(data.data)) {
+            data.data.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="text-align:center;">
+                        <img src="../assets/img/covers/${book.cover}" class="book-cover-img" width="50" alt="Portada">
+                    </td>
+                    <td>${book.title}</td>
+                    <td style="text-align:center;">
+                        <button class="view-comments-btn" onclick="verComentarios('${book.isbn}')">
+                            Ver Comentarios
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando libros:', error);
+    }
 }
 
 function verComentarios(isbn) {

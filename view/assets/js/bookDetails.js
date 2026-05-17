@@ -1,5 +1,6 @@
 import { currentUser, checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 let isEditing = false;
 
 // CONFIGURACIÓN MODAL
@@ -70,10 +71,8 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
 // LÓGICA DEL LIBRO
 async function loadBookDetails(isbn) {
     try {
-        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
-        console.log("Status GetBook:", response.status);
-        const text = await response.text();
-        const data = JSON.parse(text);
+        const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbn)}`);
+        console.log("Status GetBook:", data.code);
 
         if (data.status === "success" && data.data) {
             rellenarVista(data.data);
@@ -153,9 +152,8 @@ function rellenarVista(libro) {
         let userCard;
         let direction;
         try {
-            const res = await fetch('../../api/GetProfile.php');
-            console.log("Status GetProfile:", res.status);
-            const data = await res.json();
+            const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
+            console.log("Status GetProfile:", data.code);
             if (data.status === "success" && data.data && data.data.user) {
                 const u = data.data.user;
                 userCard = u.card_no || u.CardNo || u.CARD_NO;
@@ -236,43 +234,24 @@ async function submitComment(e) {
     };
 
     try {
-        const res = await fetch(url, {
+        const data = await apiFetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            credentials: 'include'
         });
-        console.log("Status SubmitComment:", res.status);
+        console.log("Status SubmitComment:", data.code);
 
-        console.log(`[${isEditing ? 'UPDATE' : 'ADD'}] HTTP Status:`, res.status);
-
-        const rawText = await res.text();
-
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (parseError) {
-            console.error("Error crítico: El servidor no devolvió JSON.", rawText);
-            msg.className = "msg-error";
-            msg.textContent = "Error técnico en el servidor.";
-            return;
-        }
-
-        if (res.ok && data.status === "success") {
-            msg.className = "msg-success";
-            msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
-            resetForm();
-            loadComments(isbn);
-            setTimeout(() => msg.textContent = "", 3000);
-        } else {
-            console.warn("Error de lógica de negocio:", data.message);
-            msg.className = "msg-error";
-            msg.textContent = data.message || "Error al procesar la solicitud.";
-        }
+        msg.className = "msg-success";
+        msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
+        resetForm();
+        loadComments(isbn);
+        setTimeout(() => msg.textContent = "", 3000);
 
     } catch (e) {
         console.error("Error de red (Fetch failed):", e);
         msg.className = "msg-error";
-        msg.textContent = "Error de conexión. Inténtalo más tarde.";
+        msg.textContent = e.message || "Error de conexión. Inténtalo más tarde.";
     }
 }
 async function loadComments(isbn) {
@@ -280,9 +259,8 @@ async function loadComments(isbn) {
     const myId = parseInt(getUserId(currentUser));
 
     try {
-        const res = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
-        console.log("Status GetComments:", res.status);
-        const response = await res.json();
+        const response = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`);
+        console.log("Status GetComments:", response.code);
         const comments = response.status === "success" && Array.isArray(response.data) ? response.data : [];
         list.innerHTML = "";
         let myReview = null;
@@ -363,38 +341,24 @@ window.deleteComment = async function (isbn, targetId) {
     if (!await showConfirm("Borrar", "¿Seguro que quieres borrar?")) return;
 
     try {
-        const res = await fetch('../../api/DeleteComment.php', {
+        const data = await apiFetch('../../api/DeleteComment.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isbn: isbn, profileCode: targetId })
+            body: JSON.stringify({ isbn: isbn, profileCode: targetId }),
+            credentials: 'include'
         });
 
-        console.log("[DELETE] HTTP Status:", res.status);
+        console.log("[DELETE] HTTP Status:", data.code);
+        showModal("Éxito", data.message || "Eliminado.");
 
-        const text = await res.text();
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Error al leer respuesta:", text);
-            showModal("Error", "Error técnico en el servidor.");
-            return;
-        }
-
-        if (res.ok && data.status === "success") {
-            showModal("Éxito", data.message || "Eliminado.");
-
-            if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                loadComments(isbn);
-            }
+        if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
+            setTimeout(() => location.reload(), 1000);
         } else {
-            showModal("Error", data.message || "No se pudo eliminar.");
+            loadComments(isbn);
         }
     } catch (e) {
         console.error(e);
-        showModal("Error", "Error de conexión.");
+        showModal("Error", e.message || "Error de conexión.");
     }
 };
 
@@ -451,33 +415,22 @@ function resetForm() {
 
 async function comprarAhora(isbn, quantity, userId) {
     try {
-        const res = await fetch('../../api/BuyNow.php', {
+        const data = await apiFetch('../../api/BuyNow.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ profileCode: userId, isbn, quantity })
+            body: JSON.stringify({ profileCode: userId, isbn, quantity }),
+            credentials: 'include'
         });
-        console.log("Status BuyNow:", res.status);
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); }
-        catch (e) {
-            console.error("Respuesta inválida:", text);
-            showModal("Error", "Error inesperado del servidor.");
-            return;
-        }
+        console.log("Status BuyNow:", data.code);
 
-        if (data.status === "success") {
-            showModal("¡Compra realizada!", "Gracias por tu pedido.");
+        showModal("¡Compra realizada!", "Gracias por tu pedido.");
 
-            dialog.addEventListener('close', () => {
-                location.reload();
-            }, { once: true });
-        } else {
-            showModal("Error", data.message || "Fallo en la compra.");
-        }
+        dialog.addEventListener('close', () => {
+            location.reload();
+        }, { once: true });
     } catch (e) {
         console.error(e);
-        showModal("Error", "Error de conexión.");
+        showModal("Error", e.message || "Error de conexión.");
     }
 }
 
