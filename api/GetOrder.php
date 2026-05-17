@@ -4,6 +4,17 @@ require_once '../Config/Session.php';
 
 header("Content-Type: application/json; charset=utf-8");
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 // 1. Verificación de si usuario ha iniciado la sesion
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
     http_response_code(401);

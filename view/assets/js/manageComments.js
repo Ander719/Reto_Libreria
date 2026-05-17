@@ -7,14 +7,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
     const isLogged = await checkSession();
 
-    if (!isLogged || currentUser.role !== 'admin') {
-        alert("Acceso denegado: Se requieren permisos de administrador.");
-        window.location.href = 'main.html';
+    if (!isLogged) {
+        window.location.replace('login.html');
         return;
     }
 
-    if (!isLogged) {
-        window.location.href = 'login.html';
+    if (currentUser.role !== 'admin') {
+        window.location.replace('main.html');
+        return;
     }
     await loadHeader("deleteComment");
     await loadFooter();

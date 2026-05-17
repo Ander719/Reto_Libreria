@@ -28,7 +28,7 @@ export async function checkSession() {
 }
 export async function logout() {
     try {
-        const response = await apiFetch('../../api/Logout.php', { credentials: 'include' });
+        const response = await apiFetch('../../api/Logout.php', { method: 'POST', credentials: 'include' });
         console.log("Status Logout:", response.code);
         // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
         location.reload(); // Recargamos la página para actualizar el estado 

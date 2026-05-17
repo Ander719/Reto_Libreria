@@ -7,6 +7,17 @@ header("Pragma: no-cache");
 
 header("Content-Type: application/json; charset=utf-8");
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 if (isset($_SESSION['user'])) {
     http_response_code(200);
     echo json_encode([

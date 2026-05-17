@@ -30,9 +30,8 @@ class User extends Profile {
     public function toArray() {
         $data = parent::toArray(); 
         $data['gender'] = $this->gender;
-        $data['card_no'] = $this->cardNumber;
+        $data['has_card'] = !empty($this->cardNumber);
         $data['direction'] = $this->direction;
-        $data['role'] = 'user'; 
         return $data;
     }
 }

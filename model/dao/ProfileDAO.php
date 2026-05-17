@@ -227,15 +227,24 @@ class ProfileDAO
             $stmt1->bindParam(":code", $profile_code);
             $stmt1->execute();
 
-            $query2 = "UPDATE user_ SET 
-                        gender = :gender, 
-                        card_no = :card,
-                        direction = :direction
-                       WHERE profile_code = :code";
+            if ($card_no !== null) {
+                $query2 = "UPDATE user_ SET 
+                            gender = :gender, 
+                            card_no = :card,
+                            direction = :direction
+                           WHERE profile_code = :code";
+            } else {
+                $query2 = "UPDATE user_ SET 
+                            gender = :gender, 
+                            direction = :direction
+                           WHERE profile_code = :code";
+            }
 
             $stmt2 = $this->conn->prepare($query2);
             $stmt2->bindParam(":gender", $gender);
-            $stmt2->bindParam(":card", $card_no);
+            if ($card_no !== null) {
+                $stmt2->bindParam(":card", $card_no);
+            }
             $stmt2->bindParam(":direction", $direction);
             $stmt2->bindParam(":code", $profile_code);
             $stmt2->execute();

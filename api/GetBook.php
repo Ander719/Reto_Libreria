@@ -2,6 +2,17 @@
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 $isbn = trim(htmlspecialchars($_GET['isbn'] ?? ''));
 
 if (empty($isbn)) {
@@ -10,6 +21,17 @@ if (empty($isbn)) {
         'status' => 'error',
         'code' => 400,
         'message' => 'ISBN no proporcionado',
+        'data' => null
+    ]);
+    exit;
+}
+
+if (!preg_match('/^\d{13}$/', $isbn)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'ISBN no válido',
         'data' => null
     ]);
     exit;

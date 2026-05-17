@@ -143,7 +143,7 @@ function fillProfileForm(u, prefix) {
     if (prefix === 'Admin') {
         fill('currentAccountAdmin', u.current_account);
     } else {
-        fill('cardNumberUser', u.card_no);
+        fill('cardNumberUser', '');
         if (u.gender && getEl('genderUser')) getEl('genderUser').value = u.gender;
         fill('directionUser', u.direction);
     }
@@ -205,8 +205,10 @@ async function saveUserData(role) {
             }
         }
 
-        //el servidor recive el numero limpito
-        formData.append('cardNumber', cardNumberClean);
+        // Si se deja vacia, el servidor conserva la tarjeta existente.
+        if (cardNumberClean !== "") {
+            formData.append('cardNumber', cardNumberClean);
+        }
 
         const gender = getEl('genderUser');
         if (gender) formData.append('gender', gender.value);

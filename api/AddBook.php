@@ -5,6 +5,17 @@ require_once '../Config/Session.php';
 
 // Control de acceso: exige sesión válida para cualquier operación sensible.
 // El alta de libros queda restringida a administradores para proteger el catálogo.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
     http_response_code(401);
     echo json_encode([
@@ -22,17 +33,6 @@ if (!isset($_SESSION['user']['role']) || $_SESSION['user']['role'] !== 'admin') 
         'status' => 'error',
         'code' => 403,
         'message' => 'Acceso restringido a administradores.',
-        'data' => null
-    ]);
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(400);
-    echo json_encode([
-        'status' => 'error',
-        'code' => 400,
-        'message' => 'Método no permitido',
         'data' => null
     ]);
     exit;

@@ -3,6 +3,12 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'code' => 405, 'message' => 'Método no permitido.', 'data' => null]);
+    exit;
+}
+
     if (!isset($_SESSION['user'])) {
         http_response_code(401);
         echo json_encode(['status' => 'error', 'code' => 401, 'message' => 'No has iniciado sesión', 'data' => null]);
@@ -63,8 +69,8 @@ if ($roleForm === 'admin') {
     }
     $result = $controller->modifyAdmin($email, $username, $telephone, $name, $surname, $acc, $targetId);
 } else {
-    $card = trim($_POST['cardNumber'] ?? '');
-    if (!empty($card)) {
+    $card = isset($_POST['cardNumber']) ? trim($_POST['cardNumber']) : null;
+    if ($card !== null && $card !== '') {
         if (strlen($card) !== 16 || !is_numeric($card)) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'code' => 400, 'message' => 'Tarjeta inválida (debe tener 16 dígitos).', 'data' => null]);

@@ -20,7 +20,6 @@ class Admin extends Profile {
     public function toArray() {
         $data = parent::toArray();
         $data['current_account'] = $this->currentAccount;
-        $data['role'] = 'admin';
         return $data;
     }
 }

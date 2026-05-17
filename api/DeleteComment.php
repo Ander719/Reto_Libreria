@@ -6,6 +6,17 @@ header("Access-Control-Allow-Methods: POST");
 require_once '../controller/CommentController.php';
 require_once '../Config/Session.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 $data = json_decode(file_get_contents("php://input"));
 $commentController = new CommentController();
 

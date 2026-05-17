@@ -2,6 +2,17 @@
 header("Content-Type: application/json; charset=utf-8");
 require_once '../controller/BookController.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 $controller = new BookController();
 $books = $controller->getAllBooks();
 

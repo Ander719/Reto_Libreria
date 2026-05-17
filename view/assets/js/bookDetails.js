@@ -156,7 +156,7 @@ function rellenarVista(libro) {
             console.log("Status GetProfile:", data.code);
             if (data.status === "success" && data.data && data.data.user) {
                 const u = data.data.user;
-                userCard = u.card_no || u.CardNo || u.CARD_NO;
+                userCard = u.has_card;
                 direction = u.direction || u.Direction || u.DIRECTION;
             }
         } catch (err) { console.error(err); }

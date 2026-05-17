@@ -6,6 +6,17 @@ header("Access-Control-Allow-Methods: POST");
 require_once '../controller/OrderController.php';
 require_once '../Config/Session.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 405,
+        'message' => 'Método no permitido.',
+        'data' => null
+    ]);
+    exit;
+}
+
 // Esta validación bloquea compras anónimas y exige identidad autenticada.
 // Solo usamos el profile_code de sesión para impedir suplantación desde el payload.
 if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
