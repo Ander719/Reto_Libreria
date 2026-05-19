@@ -99,10 +99,16 @@ class Book
     }
     public function toArray()
     {
+        // Si el autor es un objeto (viene del DAO), usamos su toArray()
+        // Si es un ID (viene de la API), lo devolvemos tal cual para no romper el flujo
+        $authorData = is_object($this->author) && method_exists($this->author, 'toArray') 
+            ? $this->author->toArray() 
+            : $this->author;
+
         return [
             'isbn' => $this->isbn,
             'title' => $this->title,
-            'author' => $this->author->toArray(), 
+            'author' => $authorData, 
             'pages' => $this->pages,
             'stock' => $this->stock,
             'synopsis' => $this->synopsis,

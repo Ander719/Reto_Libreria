@@ -1,4 +1,5 @@
 <?php
+// model/dao/ProfileDAO.php — Capa de acceso a datos para perfiles de usuario y admin (usa PDO con sentencias preparadas)
 require_once dirname(__DIR__, 2) . '/Config/Database.php'; // Sube 2 niveles hasta la raíz y entra en Config
 require_once dirname(__DIR__) . '/entities/Admin.php';     // Sube 1 nivel hasta model y entra en entities
 require_once dirname(__DIR__) . '/entities/User.php';      // Aseguramos que User también esté disponible
@@ -7,11 +8,15 @@ class ProfileDAO
 {
     private $conn;
 
-    public function __construct()
+    public function __construct($db)
     {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = $db;
     }
+
+    /**
+     * Registra un nuevo usuario usando procedimiento almacenado.
+     * Usa sentencia preparada con bindParam para prevenir inyección SQL.
+     */
     public function register($username, $password)
     {
         try {
@@ -44,138 +49,179 @@ class ProfileDAO
             if ($e->getCode() == '23000') {
                 return "ERROR_DUPLICADO";
             }
+            error_log("Error en ProfileDAO::register: " . $e->getMessage());
             return "ERROR_BBDD: " . $e->getMessage();
         }
     }
 
-    //login: busca por username y devuelve un objeto User o Admin dependiendo del tipo de perfil
-
+    /**
+     * Busca un usuario por su nombre de usuario.
+     * Usa sentencia preparada con bindParam.
+     */
     public function findUserByUsername($username)
     {
+        try {
+            $sql = "SELECT * FROM profile_ p 
+                JOIN user_ u ON p.profile_code = u.profile_code 
+                WHERE p.user_name = :username";
 
-        $sql = "SELECT * FROM profile_ p 
-            JOIN user_ u ON p.profile_code = u.profile_code 
-            WHERE p.user_name = :username";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":username", $username);
+            $stmt->execute();
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":username", $username);
-        $stmt->execute();
-
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new User(
-                $row['profile_code'],
-                $row['email'],
-                $row['user_name'],
-                $row['pswd'],
-                $row['telephone'],
-                $row['name_'],
-                $row['surname'],
-                $row['gender'],
-                $row['card_no'],
-                $row['direction']
-            );
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                return new User(
+                    $row['profile_code'],
+                    $row['email'],
+                    $row['user_name'],
+                    $row['pswd'],
+                    $row['telephone'],
+                    $row['name_'],
+                    $row['surname'],
+                    $row['gender'],
+                    $row['card_no'],
+                    $row['direction']
+                );
+            }
+            return null;
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::findUserByUsername: " . $e->getMessage());
+            return null;
         }
-        return null;
     }
 
+    /**
+     * Busca un administrador por su nombre de usuario.
+     * Usa sentencia preparada con bindParam.
+     */
     public function findAdminByUsername($username)
     {
+        try {
+            $sql = "SELECT * FROM profile_ p 
+                JOIN admin_ a ON p.profile_code = a.profile_code 
+                WHERE p.user_name = :username";
 
-        $sql = "SELECT * FROM profile_ p 
-            JOIN admin_ a ON p.profile_code = a.profile_code 
-            WHERE p.user_name = :username";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":username", $username);
+            $stmt->execute();
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":username", $username);
-        $stmt->execute();
-
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-            return new Admin(
-                $row['profile_code'],
-                $row['email'],
-                $row['user_name'],
-                $row['pswd'],
-                $row['telephone'],
-                $row['name_'],
-                $row['surname'],
-                $row['current_account']
-            );
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                return new Admin(
+                    $row['profile_code'],
+                    $row['email'],
+                    $row['user_name'],
+                    $row['pswd'],
+                    $row['telephone'],
+                    $row['name_'],
+                    $row['surname'],
+                    $row['current_account']
+                );
+            }
+            return null;
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::findAdminByUsername: " . $e->getMessage());
+            return null;
         }
-        return null;
     }
 
-    //obtener los datioas
-
+    /**
+     * Obtiene un usuario por su ID (profile_code).
+     * Usa sentencia preparada con bindParam.
+     */
     public function getUserById($id)
     {
-        $sql = "SELECT * FROM profile_ P 
-                   JOIN user_ U ON P.profile_code = U.profile_code 
-                   WHERE P.profile_code = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
+        try {
+            $sql = "SELECT * FROM profile_ P 
+                       JOIN user_ U ON P.profile_code = U.profile_code 
+                       WHERE P.profile_code = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
 
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new User(
-                $row['profile_code'],
-                $row['email'],
-                $row['user_name'],
-                $row['pswd'],
-                $row['telephone'],
-                $row['name_'],
-                $row['surname'],
-                $row['gender'],
-                $row['card_no'],
-                $row['direction']
-            );
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                return new User(
+                    $row['profile_code'],
+                    $row['email'],
+                    $row['user_name'],
+                    $row['pswd'],
+                    $row['telephone'],
+                    $row['name_'],
+                    $row['surname'],
+                    $row['gender'],
+                    $row['card_no'],
+                    $row['direction']
+                );
+            }
+            return null;
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::getUserById: " . $e->getMessage());
+            return null;
         }
-        return null;
     }
+
+    /**
+     * Obtiene un administrador por su ID (profile_code).
+     * Usa sentencia preparada con bindParam.
+     */
     public function getAdminById($id)
     {
-        $qAdmin = "SELECT P.*, A.current_account 
-                   FROM profile_ P 
-                   JOIN admin_ A ON P.profile_code = A.profile_code 
-                   WHERE P.profile_code = :id";
-        $stmt = $this->conn->prepare($qAdmin);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
+        try {
+            $qAdmin = "SELECT P.*, A.current_account 
+                       FROM profile_ P 
+                       JOIN admin_ A ON P.profile_code = A.profile_code 
+                       WHERE P.profile_code = :id";
+            $stmt = $this->conn->prepare($qAdmin);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
 
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Admin(
-                $row['profile_code'],
-                $row['email'],
-                $row['user_name'],
-                $row['pswd'], // El hash
-                $row['telephone'],
-                $row['name_'],
-                $row['surname'],
-                $row['current_account']
-            );
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                return new Admin(
+                    $row['profile_code'],
+                    $row['email'],
+                    $row['user_name'],
+                    $row['pswd'],
+                    $row['telephone'],
+                    $row['name_'],
+                    $row['surname'],
+                    $row['current_account']
+                );
+            }
+            return null;
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::getAdminById: " . $e->getMessage());
+            return null;
         }
-        return null;
     }
 
+    /**
+     * Obtiene todos los usuarios (no admins) del sistema.
+     */
     public function get_all_users()
     {
-        // CORREGIDO: Todo en minúsculas
-        $query = "SELECT * FROM profile_ P 
-                  JOIN user_ U ON P.profile_code = U.profile_code";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
+        try {
+            $query = "SELECT * FROM profile_ P 
+                      JOIN user_ U ON P.profile_code = U.profile_code";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
 
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $list = [];
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $list = [];
 
-        foreach ($rows as $row) {
-            $row['ROLE_TYPE'] = 'user';
-            $list[] = $row;
+            foreach ($rows as $row) {
+                $row['ROLE_TYPE'] = 'user';
+                $list[] = $row;
+            }
+            return $list;
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::get_all_users: " . $e->getMessage());
+            return [];
         }
-        return $list;
     }
 
-
+    /**
+     * Modifica los datos de un usuario (perfil + datos específicos de user_).
+     * Usa transacción para garantizar atomicidad. Sentencias preparadas con bindParam.
+     */
     public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction)
     {
         try {
@@ -221,25 +267,27 @@ class ProfileDAO
             $this->conn->commit();
             return true;
         } catch (Exception $e) {
-            error_log("Error en modifyUser: " . $e->getMessage());
+            error_log("Error en ProfileDAO::modifyUser: " . $e->getMessage());
             $this->conn->rollBack();
             return false;
         }
     }
 
+    /**
+     * Modifica los datos de un administrador (perfil + datos específicos de admin_).
+     * Usa transacción para garantizar atomicidad. Sentencias preparadas con bindParam.
+     */
     public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
     {
-
         try {
             $this->conn->beginTransaction();
             $name = !empty($name) ? $name : null;
             $surname = !empty($surname) ? $surname : null;
-            $gender = !empty($gender) ? $gender : null;
             $email = !empty($email) ? $email : null;
             $telephone = !empty($telephone) ? $telephone : null;
             $current_account = !empty($current_account) ? $current_account : null;
 
-            // 1. Actualizar PROFILE_
+            // 1. Actualizar perfil base (profile_)
             $query1 = "UPDATE profile_ SET 
                         email = :email, 
                         user_name = :username, 
@@ -257,7 +305,7 @@ class ProfileDAO
             $stmt1->bindParam(":code", $profile_code);
             $stmt1->execute();
 
-
+            // 2. Actualizar datos específicos del admin (admin_)
             $query2 = "UPDATE admin_ SET 
                         current_account = :account 
                        WHERE profile_code = :code";
@@ -270,29 +318,44 @@ class ProfileDAO
             $this->conn->commit();
             return true;
         } catch (Exception $e) {
+            error_log("Error en ProfileDAO::modifyAdmin: " . $e->getMessage());
             $this->conn->rollBack();
             return false;
         }
     }
 
-    // Eliminar usuario (solo perfil, el trigger se encarga de eliminar el detalle)
-
-
+    /**
+     * Elimina un usuario por su profile_code.
+     * Usa sentencia preparada con bindParam. El trigger de BD se encarga de eliminar el detalle.
+     */
     public function delete_user($id)
     {
-        // CORREGIDO: profile_ y profile_code
-        $query = "DELETE FROM profile_ WHERE profile_code = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $id);
-        return $stmt->execute();
+        try {
+            $query = "DELETE FROM profile_ WHERE profile_code = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $id);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::delete_user: " . $e->getMessage());
+            return false;
+        }
     }
 
+    /**
+     * Modifica la contraseña de un usuario.
+     * Usa sentencia preparada con bindParam. Recibe el hash ya generado por el controller.
+     */
     public function modifyPassword($profile_code, $password)
     {
-        $query = "UPDATE profile_ SET pswd = :password WHERE profile_code = :code";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":password", $password);
-        $stmt->bindParam(":code", $profile_code);
-        return $stmt->execute();
+        try {
+            $query = "UPDATE profile_ SET pswd = :password WHERE profile_code = :code";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":password", $password);
+            $stmt->bindParam(":code", $profile_code);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::modifyPassword: " . $e->getMessage());
+            return false;
+        }
     }
 }

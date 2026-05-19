@@ -1,5 +1,6 @@
 import { currentUser, checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 let isEditing = false;
 
 // CONFIGURACIÓN MODAL
@@ -23,8 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => window.location.href = "main.html", 2000);
         return;
     }
-    // Cargar el header
-    await loadHeader("bookDetails");
+
     await loadFooter();
 
     loadBookDetails(isbn);
@@ -70,13 +70,11 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
 // LÓGICA DEL LIBRO
 async function loadBookDetails(isbn) {
     try {
-        const response = await fetch(`../../api/GetBook.php?isbn=${isbn}`);
-        console.log("Status GetBook:", response.status);
-        const text = await response.text();
-        const data = JSON.parse(text);
+        const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbn)}`, { credentials: 'include' });
+        console.log("Respuesta GetBook:", data);
 
-        if (data.exito) {
-            rellenarVista(data.libro);
+        if (data.status === "success" && data.data) {
+            rellenarVista(data.data);
         } else {
             document.querySelector('.details-info').innerHTML = "<h2>Libro no encontrado</h2>";
         }
@@ -153,13 +151,12 @@ function rellenarVista(libro) {
         let userCard;
         let direction;
         try {
-            const res = await fetch('../../api/GetProfile.php');
-            console.log("Status GetProfile:", res.status);
-            const data = await res.json();
-            if (data.success && data.user) {
-                const u = data.user;
-                userCard = u.card_no || u.CardNo || u.CARD_NO;
-                direction = u.direction || u.Direction || u.DIRECTION;
+            const data = await apiFetch(`../../api/GetProfile.php?id=${getUserId(currentUser)}`, { credentials: 'include' });
+            console.log("Respuesta GetProfile:", data);
+            if (data.status === "success" && data.data) {
+                const u = data.data;
+                userCard = u.card_no;
+                direction = u.direction;
             }
         } catch (err) { console.error(err); }
 
@@ -240,43 +237,24 @@ async function submitComment(e) {
     };
 
     try {
-        const res = await fetch(url, {
+        const data = await apiFetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            credentials: 'include'
         });
-        console.log("Status SubmitComment:", res.status);
+        console.log("Respuesta SubmitComment:", data);
 
-        console.log(`[${isEditing ? 'UPDATE' : 'ADD'}] HTTP Status:`, res.status);
-
-        const rawText = await res.text();
-
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (parseError) {
-            console.error("Error crítico: El servidor no devolvió JSON.", rawText);
-            msg.className = "msg-error";
-            msg.textContent = "Error técnico en el servidor.";
-            return;
-        }
-
-        if (res.ok && data.success) {
-            msg.className = "msg-success";
-            msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
-            resetForm();
-            loadComments(isbn);
-            setTimeout(() => msg.textContent = "", 3000);
-        } else {
-            console.warn("Error de lógica de negocio:", data.message);
-            msg.className = "msg-error";
-            msg.textContent = data.message || "Error al procesar la solicitud.";
-        }
+        msg.className = "msg-success";
+        msg.textContent = isEditing ? "Actualizado correctamente." : "Publicado correctamente.";
+        resetForm();
+        loadComments(isbn);
+        setTimeout(() => msg.textContent = "", 3000);
 
     } catch (e) {
         console.error("Error de red (Fetch failed):", e);
         msg.className = "msg-error";
-        msg.textContent = "Error de conexión. Inténtalo más tarde.";
+        msg.textContent = e.message || "Error de conexión. Inténtalo más tarde.";
     }
 }
 async function loadComments(isbn) {
@@ -284,9 +262,10 @@ async function loadComments(isbn) {
     const myId = parseInt(getUserId(currentUser));
 
     try {
-        const res = await fetch(`../../api/GetComments.php?isbn=${isbn}`);
-        console.log("Status GetComments:", res.status);
-        const comments = await res.json();
+        const response = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`, { credentials: 'include' });
+        console.log("Respuesta GetComments:", response);
+        const commentsData = response.data && response.data.comments ? response.data.comments : [];
+        const comments = Array.isArray(commentsData) ? commentsData : [];
         list.innerHTML = "";
         let myReview = null;
 
@@ -313,7 +292,9 @@ async function loadComments(isbn) {
                 // Lógica de botones
                 let btnHtml = "";
                 if (isMine || isAdmin) {
-                    const safeText = (c.comment_text || "").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+                const safeText = (c.comment_text || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const safeName = (c.user_name || "Usuario").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const safeDate = (c.date_comment || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                     if (isMine) {
                         btnHtml += `<button onclick="startEdit('${safeText}', ${c.valoration})" class="btn-icon">✏️</button>`;
@@ -326,8 +307,8 @@ async function loadComments(isbn) {
                 item.innerHTML = `
                     ${btnHtml}
                     <div class="comment-header">
-                        <strong>${c.user_name || "Usuario"}</strong>
-                        <span class="comment-date">${c.dateComent || ""}</span>
+                        <strong>${safeName}</strong>
+                        <span class="comment-date">${safeDate}</span>
                     </div>
                     <div class="star-rating">${getStarHtml(parseFloat(c.valoration))}</div>
                     <p class="comment-text">${c.comment_text || ""}</p>
@@ -366,38 +347,24 @@ window.deleteComment = async function (isbn, targetId) {
     if (!await showConfirm("Borrar", "¿Seguro que quieres borrar?")) return;
 
     try {
-        const res = await fetch('../../api/DeleteComment.php', {
+        const data = await apiFetch('../../api/DeleteComment.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isbn: isbn, profileCode: targetId })
+            body: JSON.stringify({ isbn: isbn, profileCode: targetId }),
+            credentials: 'include'
         });
 
-        console.log("[DELETE] HTTP Status:", res.status);
+        console.log("Respuesta DeleteComment:", data);
+        showModal("Éxito", data.message || "Eliminado.");
 
-        const text = await res.text();
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Error al leer respuesta:", text);
-            showModal("Error", "Error técnico en el servidor.");
-            return;
-        }
-
-        if (res.ok && data.success) {
-            showModal("Éxito", data.message || "Eliminado.");
-
-            if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                loadComments(isbn);
-            }
+        if (parseInt(targetId) === parseInt(getUserId(currentUser))) {
+            setTimeout(() => location.reload(), 1000);
         } else {
-            showModal("Error", data.message || "No se pudo eliminar.");
+            loadComments(isbn);
         }
     } catch (e) {
         console.error(e);
-        showModal("Error", "Error de conexión.");
+        showModal("Error", e.message || "Error de conexión.");
     }
 };
 
@@ -454,33 +421,22 @@ function resetForm() {
 
 async function comprarAhora(isbn, quantity, userId) {
     try {
-        const res = await fetch('../../api/BuyNow.php', {
+        const data = await apiFetch('../../api/BuyNow.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ profileCode: userId, isbn, quantity })
+            body: JSON.stringify({ profileCode: userId, isbn, quantity }),
+            credentials: 'include'
         });
-        console.log("Status BuyNow:", res.status);
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); }
-        catch (e) {
-            console.error("Respuesta inválida:", text);
-            showModal("Error", "Error inesperado del servidor.");
-            return;
-        }
+        console.log("Respuesta BuyNow:", data);
 
-        if (data.exito) {
-            showModal("¡Compra realizada!", "Gracias por tu pedido.");
+        showModal("¡Compra realizada!", "Gracias por tu pedido.");
 
-            dialog.addEventListener('close', () => {
-                location.reload();
-            }, { once: true });
-        } else {
-            showModal("Error", data.error || "Fallo en la compra.");
-        }
+        dialog.addEventListener('close', () => {
+            location.reload();
+        }, { once: true });
     } catch (e) {
         console.error(e);
-        showModal("Error", "Error de conexión.");
+        showModal("Error", e.message || "Error de conexión.");
     }
 }
 

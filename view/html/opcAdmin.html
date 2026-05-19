@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de administración de Book & Bugs para gestionar libros y comentarios." />
+  <title>Book & Bugs - Panel de Administración</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
-  <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png" />
   <link rel="stylesheet" href="../assets/css/opcAdmin.css" />
-  <title>Panel de Administración</title>
-</head>
+  <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png" />
 
 <body>
   <header class="main-header">
@@ -105,7 +105,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await checkSession();
       if (!currentUser || currentUser.role !== 'admin') {
-        window.location.href = 'main.html';
+        window.location.href = 'login.html';
         return;
       }
       await loadHeader("opcAdmin");

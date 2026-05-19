@@ -1,4 +1,5 @@
-import { checkSession } from './session.js';
+import { checkSession, currentUser } from './session.js';
+import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -9,13 +10,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const res = await fetch('../../api/GetProfile.php');
-        console.log("Status GetProfile (Admin Check):", res.status);
-        const data = await res.json();
+        const data = await apiFetch(`../../api/GetProfile.php?profileCode=${currentUser.profile_code}`, { credentials: 'include' });
+        console.log("Respuesta GetProfile (Admin Check):", data);
 
-        if (!data.success || !data.user || data.user.role !== 'admin') {
+        if (data.status !== 'success' || !data.data || !data.data.user || data.data.user.role !== 'admin') {
             alert("Acceso denegado. Se requieren permisos de administrador.");
-            window.location.href = 'main.html';
+            window.location.href = 'login.html';
             return;
         }
 
@@ -77,10 +77,9 @@ function initPageLogic() {
 
     async function loadBooksToSelect() {
         try {
-            const res = await fetch('../../api/GetAllBooks.php');
-            console.log("Status GetAllBooks (Select list):", res.status);
-            const data = await res.json();
-            const books = data.books || [];
+            const data = await apiFetch('../../api/GetAllBooks.php', { credentials: 'include' });
+            console.log("Respuesta GetAllBooks (Select list):", data);
+            const books = data.data && data.data.books ? data.data.books : [];
 
             if (searchSelect) {
                 searchSelect.innerHTML = '<option value="">-- Seleccione un libro --</option>';
@@ -98,7 +97,7 @@ function initPageLogic() {
 
     const btnSearch = document.getElementById('btnSearch');
     if (btnSearch) {
-        btnSearch.addEventListener('click', (e) => {
+        btnSearch.addEventListener('click', async (e) => {
             e.preventDefault();
             const isbnToSearch = searchSelect.value;
             if (!isbnToSearch) {
@@ -106,29 +105,28 @@ function initPageLogic() {
                 return;
             }
 
-            fetch(`../../api/GetBook.php?isbn=${isbnToSearch}`)
-                .then(res => {
-                    console.log("Status GetBook (Search):", res.status);
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.exito && data.libro) {
-                        fillForm(data.libro);
-                        if (msgSearch) msgSearch.innerText = "";
-                        toggleForm(false);
-                    } else {
-                        if (msgSearch) msgSearch.innerText = "Error al cargar datos.";
-                    }
-                });
+            try {
+                const data = await apiFetch(`../../api/GetBook.php?isbn=${isbnToSearch}`, { credentials: 'include' });
+                console.log("Respuesta GetBook (Search):", data);
+                const bookData = data.data && data.data.book ? data.data.book : data.data;
+                if (data.status === 'success' && bookData) {
+                    fillForm(bookData);
+                    if (msgSearch) msgSearch.innerText = "";
+                    toggleForm(false);
+                } else {
+                    if (msgSearch) msgSearch.innerText = data.message || "Error al cargar datos.";
+                }
+            } catch (err) {
+                if (msgSearch) msgSearch.innerText = "Error de conexión con el servidor.";
+            }
         });
     }
 
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const isbnVal = isbnInput.value.trim();
-
             const isNumeric = /^\d+$/.test(isbnVal);
 
             if (isbnVal.length !== 13 || !isNumeric) {
@@ -143,20 +141,18 @@ function initPageLogic() {
             const formData = new FormData(form);
             const url = mode === 'create' ? '../../api/AddBook.php' : '../../api/ModifyBook.php';
 
-            fetch(url, { method: 'POST', body: formData })
-                .then(res => {
-                    console.log(`Status ${mode === 'create' ? 'AddBook' : 'ModifyBook'}:`, res.status);
-                    return res.json();
-                })
-                    .then(data => {
-                        if (data.exito || data.success) {
-                            alert(data.message || "Operación exitosa");
-                            window.location.href = 'bookOptions.html';
-                        } else {
-                            alert("Error: " + data.error);
-                        }
-                    })
-                    .catch(() => alert("Error de conexión."));
+            try {
+                const data = await apiFetch(url, { method: 'POST', body: formData });
+                console.log("Respuesta BookOperation:", data);
+                if (data.status === 'success') {
+                    alert(data.message || "Operación exitosa");
+                    window.location.href = 'bookOptions.html';
+                } else {
+                    alert("Error: " + (data.message || "No se pudo procesar la solicitud"));
+                }
+            } catch (err) {
+                alert("Error de conexión con el servidor.");
+            }
         });
     }
 

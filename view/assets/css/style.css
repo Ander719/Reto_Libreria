@@ -32,6 +32,12 @@ html {
   font-family: "Segoe UI", sans-serif;
 }
 
+/* Focus styles for accessibility */
+:focus-visible {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+}
+
 /* --- Estilos del Header Principal --- */
 .main-header {
   background-color: #ffffff;
@@ -437,6 +443,7 @@ dialog {
   text-align: center;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  animation: modalFadeIn 0.3s ease-out forwards;
 }
 
 dialog::backdrop {
@@ -491,12 +498,24 @@ dialog::backdrop {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: var(--transition);
+  transition: var(--transition, all 0.3s ease);
 }
 
 .btn-secondary:hover {
   background-color: #5a6268;
   transform: scale(1.05);
+}
+
+/* Definición de la Animación */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .btn-cancel {

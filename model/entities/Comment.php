@@ -58,7 +58,7 @@ class Comment {
             "isbn"         => $this->isbn,       
             "comment_text" => $this->commentText,
             "valoration"   => $this->rating,     
-            "dateComent"   => $this->dateComment  
+            "date_comment" => $this->dateComment  
         ];
     }
 }

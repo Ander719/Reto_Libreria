@@ -36,13 +36,13 @@
             'profile_code' => $this->profile_code,
             'email' => $this->email,
             'user_name' => $this->user_name,
-            'pswd' => $this->pswd, // experimental para debug
             'telephone' => $this->telephone,
             'name_' => $this->name_,
             'surname' => $this->surname
         ];
     }
     
+    public abstract function getRole();
     public abstract function __toString();   
 }
 ?>

@@ -34,19 +34,19 @@ export async function loadHeader(filter) {
     // navItems[3] es "Panel Admin"
     // navItems[4] es "Volver"
     if (currentUser) {
-        if (currentUser.role === "admin") navItems[3].hidden = true;
+        if (currentUser.role === "admin" && navItems[3]) navItems[3].hidden = true;
         // --- MODO USUARIO LOGUEADO ---
         welcomeText.textContent = `${currentUser.user_name}`;
 
         // Ocultamos "Iniciar Sesión"
-        navItems[0].hidden = true;
+        if (navItems[0]) navItems[0].hidden = true;
 
         // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
-            if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment") && index === 3) item.hidden = true;
-            if (filter === "configProfile" && index === 1) item.hidden = true;
-            if (filter === "main" && index === 4) item.hidden = true;
+            if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment") && index === 3 && navItems[3]) item.hidden = true;
+            if (filter === "configProfile" && index === 1 && navItems[1]) item.hidden = true;
+            if (filter === "main" && index === 4 && navItems[4]) item.hidden = true;
         });
 
     } else {

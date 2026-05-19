@@ -59,27 +59,42 @@ body, html {
   background: var(--white);
   padding: 40px;
   border-radius: var(--border-radius);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.loginForm:hover {
+    transform: translateY(-5px);
 }
 
 .loginForm h2 {
   text-align: center;
   margin-bottom: 25px;
   color: var(--primary-color);
+  font-weight: 800;
 }
 
 .loginForm label {
   display: block;
   margin-top: 15px;
   font-weight: bold;
+  color: #555;
 }
 
 .loginForm input {
   width: 100%;
   padding: 12px;
   margin-top: 5px;
-  border: 1px solid #ccc;
+  border: 2px solid #eee;
   border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.loginForm input:focus {
+    border-color: var(--primary-color);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(16, 20, 22, 0.05);
 }
 
 /* Botón Principal (Log In / Sign Up) */

@@ -1,121 +1,34 @@
 <?php
+// CommentController.php — Controlador para la gestión de comentarios y reseñas
+// Actúa como un puente ciego entre la API y la capa de acceso a datos (DAO)
 require_once __DIR__ . '/../model/dao/CommentDAO.php';
-require_once __DIR__ . '/../model/entities/Comment.php';
-require_once __DIR__ . '/../Config/Database.php';
 
 class CommentController {
 
     private $commentDAO;
 
-    public function __construct() {
-        $this->commentDAO = new CommentDAO();
+    public function __construct($db) {
+        $this->commentDAO = new CommentDAO($db);
     }
 
-    // LEER
+    // Solicita al DAO los comentarios asociados a un libro mediante su ISBN
     public function getCommentsByISBN($isbn) {
-        $cleanIsbn = trim(htmlspecialchars($isbn));
-        return $this->commentDAO->getCommentsByISBN($cleanIsbn);
+        return $this->commentDAO->getCommentsByISBN($isbn);
     }
 
-    // CREAR
-    public function addComment($data) {
-        // Validación de existencia de datos
-        if (empty($data->profileCode) || empty($data->isbn) || empty($data->text) || empty($data->rating)) {
-            return ["success" => false, "message" => "Datos incompletos.", "code" => 400];
-        }
-
-        // SANITIZACIÓN Y VALIDACIÓN
-        $cleanProfile = trim(htmlspecialchars($data->profileCode));
-        $cleanIsbn    = trim(htmlspecialchars($data->isbn));
-        $cleanText    = trim(htmlspecialchars($data->text));
-        
-        // Validar que rating es un entero
-        $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
-
-        // Validar rango lógico
-        if ($cleanRating === false || $cleanRating < 0 || $cleanRating > 5) {
-            return ["success" => false, "message" => "La puntuación debe ser entre 0 y 5.", "code" => 400];
-        }
-
-        $newComment = new Comment();
-        $newComment->setProfileCode($cleanProfile);
-        $newComment->setIsbn($cleanIsbn);
-        $newComment->setCommentText($cleanText); 
-        $newComment->setRating($cleanRating);
-        $newComment->setDateComment($data->date ?? date('Y-m-d'));
-
-        if ($this->commentDAO->createComment($newComment)) {
-            return ["success" => true, "message" => "Comentario publicado correctamente.", "code" => 201];
-        } else {
-            return ["success" => false, "message" => "Error al guardar el comentario.", "code" => 503];
-        }
+    // Delegamos la creación de un nuevo comentario al DAO
+    public function addComment($comment) {
+        return $this->commentDAO->createComment($comment);
     }
 
-    // ACTUALIZAR 
-    public function updateComment($data) {
-        if (empty($data->isbn) || empty($data->profileCode) || empty($data->text) || empty($data->rating)) {
-            return ["success" => false, "message" => "Faltan datos para actualizar.", "code" => 400];
-        }
-
-        // SANITIZACIÓN Y VALIDACIÓN
-        $cleanProfile = trim(htmlspecialchars($data->profileCode));
-        $cleanIsbn    = trim(htmlspecialchars($data->isbn));
-        $cleanText    = trim(htmlspecialchars($data->text));
-        $cleanRating  = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
-
-        if ($cleanRating === false || $cleanRating < 0 || $cleanRating > 5) {
-             return ["success" => false, "message" => "Valoración inválida.", "code" => 400];
-        }
-
-        $commentToUpdate = new Comment();
-        $commentToUpdate->setIsbn($cleanIsbn);
-        $commentToUpdate->setProfileCode($cleanProfile);
-        $commentToUpdate->setCommentText($cleanText);
-        $commentToUpdate->setRating($cleanRating);
-
-        if ($this->commentDAO->updateComment($commentToUpdate)) {
-            return ["success" => true, "message" => "Comentario actualizado.", "code" => 200];
-        } else {
-            return ["success" => false, "message" => "No se pudo actualizar o no hubo cambios.", "code" => 503];
-        }
+    // Delegamos la actualización de un comentario existente al DAO
+    public function updateComment($comment) {
+        return $this->commentDAO->updateComment($comment);
     }
 
-    // BORRAR
-    public function deleteComment($isbn, $targetProfileCode, $currentUser) {
-        $cleanIsbn = trim(htmlspecialchars($isbn));
-        $cleanTargetProfile = trim(htmlspecialchars($targetProfileCode));
-
-        $loggedId = is_object($currentUser) ? ($currentUser->profile_code ?? $currentUser->profileCode) : ($currentUser['profile_code'] ?? $currentUser['profileCode']);
-
-        if (!$loggedId) {
-            return ["success" => false, "message" => "Usuario no identificado.", "code" => 401];
-        }
-
-        // Verificar si es ADMIN
-        $isAdmin = $this->checkIfAdmin($loggedId);
-
-        // Permisos: Solo el dueño o el admin pueden borrar
-        if ($loggedId == $cleanTargetProfile || $isAdmin) {
-            if ($this->commentDAO->deleteComment($cleanIsbn, $cleanTargetProfile)) {
-                return ["success" => true, "message" => "Comentario eliminado.", "code" => 200];
-            } else {
-                return ["success" => false, "message" => "Error en BBDD al eliminar.", "code" => 503];
-            }
-        } else {
-            return ["success" => false, "message" => "No tienes permisos para borrar este comentario.", "code" => 403];
-        }
-    }
-
-    private function checkIfAdmin($profileCode) {
-        $db = new Database();
-        $conn = $db->getConnection();
-        if ($conn) {
-            $sql = "SELECT profile_code FROM admin_ WHERE profile_code = :id";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([':id' => $profileCode]);
-            return ($stmt->fetch(PDO::FETCH_ASSOC)) ? true : false;
-        }
-        return false;
+    // Solicita al DAO la eliminación de un comentario específico
+    public function deleteComment($isbn, $profileCode) {
+        return $this->commentDAO->deleteComment($isbn, $profileCode);
     }
 }
 ?>

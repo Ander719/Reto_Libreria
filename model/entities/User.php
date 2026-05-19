@@ -16,6 +16,7 @@ class User extends Profile {
     public function getGender() { return $this->gender; }
     public function getCardNumber() { return $this->cardNumber; }
     public function getDirection() { return $this->direction; }
+    public function getRole() { return 'user'; }
 
     // Setters
     public function setGender($gender) { $this->gender = $gender; }

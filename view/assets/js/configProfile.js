@@ -1,5 +1,6 @@
-import { checkSession } from './session.js';
+import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 const appState = {
     allUsers: [],
@@ -105,13 +106,15 @@ function toggleModal(id, show) {
 
 async function loadMyProfile(isInit = false) {
     try {
-        const res = await fetch('../../api/GetProfile.php');
-        console.log("Status GetProfile:", res.status);
-        const data = await res.json();
+        const profileId = appState.myProfileCode || (currentUser ? currentUser.profile_code : null);
+        if (!profileId && !isInit) return;
 
-        if (data.success && data.user) {
-            const u = data.user;
-            const isAdmin = (data.role === 'admin');
+        const data = await apiFetch(`../../api/GetProfile.php?id=${profileId}`, { credentials: 'include' });
+        console.log("Respuesta GetProfile:", data);
+
+        if (data.status === 'success' && data.data) {
+            const u = data.data;
+            const isAdmin = (u.role === 'admin');
 
             if (isInit) appState.myProfileCode = u.profile_code;
 
@@ -180,6 +183,7 @@ async function saveUserData(role) {
     }
 
     const formData = new FormData();
+    formData.append('action', 'modify');
     formData.append('target_id', targetId);
     formData.append('role', role);
     formData.append('name', name);
@@ -200,17 +204,12 @@ async function saveUserData(role) {
             }
         }
 
-        //el servidor recive el numero limpito
         formData.append('cardNumber', cardNumberClean);
 
         const gender = getEl('genderUser');
         if (gender) formData.append('gender', gender.value);
 
         const direction = getEl('directionUser').value.trim();
-        if (direction.length > 255) {
-            alert("La dirección es demasiado larga (máx 255).");
-            return;
-        }
         formData.append('direction', direction);
 
     } else {
@@ -219,8 +218,8 @@ async function saveUserData(role) {
 
         if (accountNumberRaw.length > 0) {
             accountNumberClean = accountNumberRaw.replace(/[-\s]/g, '');
-            if (accountNumberClean.length !== 24) {
-                alert("La cuenta bancaria debe tener 24 caracteres.");
+            if (accountNumberClean.length < 20) {
+                alert("El número de cuenta no tiene el formato correcto.");
                 return;
             }
         }
@@ -228,21 +227,11 @@ async function saveUserData(role) {
     }
 
     try {
-        const res = await fetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
-        console.log("Status ModifyUser:", res.status);
-        const text = await res.text();
+        const data = await apiFetch('../../api/ModifyUser.php', { method: 'POST', body: formData });
+        console.log("Respuesta ModifyUser:", data);
 
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Respuesta servidor:", text);
-            alert("Error técnico en el servidor.");
-            return;
-        }
-
-        if (data.success) {
-            alert("Datos actualizados correctamente.");
+        if (data.status === 'success') {
+            alert(data.message || "Datos actualizados correctamente.");
             toggleModal(modalId, false);
             resetTargetIds();
 
@@ -250,20 +239,19 @@ async function saveUserData(role) {
                 loadUsersTable();
             }
         } else {
-            alert("Error: " + data.error);
+            alert("Error: " + data.message);
         }
     } catch (err) {
         console.error("Error API:", err);
-        alert("Error de conexión.");
+        alert("Error de conexión con el servidor.");
     }
 }
 
 async function initAdminPanel() {
     try {
-        const res = await fetch('../../api/CheckSession.php');
-        console.log("Status CheckSession (Admin Panel):", res.status);
-        const data = await res.json();
-        if (data.success && data.user.role === 'admin') {
+        const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
+        console.log("Respuesta CheckSession (Admin Panel):", data);
+        if (data.status === 'success' && data.data && data.data.user && data.data.user.role === 'admin') {
             const section = getEl('adminPanelSection');
             if (section) section.style.display = 'flex';
             loadUsersTable();
@@ -277,25 +265,20 @@ async function loadUsersTable() {
     if (!tbody || !template) return;
 
     try {
-        const res = await fetch('../../api/GetAllUsers.php');
-        console.log("Status GetAllUsers:", res.status);
-        const data = await res.json();
-
-        // CORRECCIÓN: La API puede devolver el array directamente o bajo la clave 'users'
-        const users = Array.isArray(data) ? data : (data.users || data.resultado || []);
+        const data = await apiFetch('../../api/GetAllUsers.php', { credentials: 'include' });
+        console.log("Respuesta GetAllUsers:", data);
+        const users = data.data && data.data.users ? data.data.users : [];
 
         appState.allUsers = users;
         tbody.innerHTML = '';
 
         if (users.length === 0) {
-            console.warn("No se encontraron usuarios o el formato de respuesta es incorrecto.");
+            console.warn("No se encontraron usuarios en la respuesta del servidor.");
             return;
         }
 
         users.forEach((u, index) => {
             const clone = template.content.cloneNode(true);
-
-
             clone.querySelector('.col-username').textContent = u.user_name || "N/A";
             clone.querySelector('.col-fullname').textContent = `${u.name_ || ""} ${u.surname || ""}`.trim() || "Sin nombre";
             clone.querySelector('.col-email').textContent = u.email || "Sin email";
@@ -323,35 +306,28 @@ function prepareEditUser(index) {
 }
 
 async function deleteUser(id) {
-    if (!confirm("¿Eliminar usuario?")) return;
+    if (!confirm("¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.")) return;
     try {
-        const res = await fetch('../../api/DeleteUser.php', {
+        const data = await apiFetch('../../api/DeleteUser.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            body: JSON.stringify({ id: id }),
+            credentials: 'include'
         });
-        console.log("Status DeleteUser:", res.status);
-        let data;
-        const contentType = res.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            data = await res.json();
-        } else {
-            const text = await res.text();
-            try { data = JSON.parse(text); } catch (e) { console.error(text); }
-        }
+        console.log("Respuesta DeleteUser:", data);
 
-        if (data && data.success) {
-            if (data.isSelfDelete) {
+        if (data.status === 'success') {
+            if (data.data && data.data.isSelfDelete) {
                 alert("Tu cuenta ha sido eliminada correctamente.");
                 window.location.href = 'login.html';
                 return;
             }
-            alert("Usuario eliminado.");
+            alert(data.message || "Usuario eliminado.");
             loadUsersTable();
         } else {
-            alert("Error: " + data.error);
+            alert("Error: " + data.message);
         }
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error("Error al eliminar usuario:", err); }
 }
 
 function setupPasswordLogic() {
@@ -378,38 +354,34 @@ function setupPasswordLogic() {
             e.preventDefault();
             const pass = getEl('verifyCurrentPassword').value;
 
-
-            const resInit = await fetch('../../api/GetProfile.php');
-            const dataInit = await resInit.json();
-            const username = dataInit.user.user_name;
+            const dataInit = await apiFetch(`../../api/GetProfile.php?profileCode=${appState.myProfileCode}`, { credentials: 'include' });
+            console.log("Respuesta GetProfile (Verify):", dataInit);
+            
+            if (dataInit.status !== 'success') return alert("Error al verificar identidad.");
+            const username = dataInit.data.user.user_name || dataInit.data.user_name;
 
             try {
-                const res = await fetch('../../api/Login.php', {
+                const data = await apiFetch('../../api/Login.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password: pass })
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(pass)}`,
+                    credentials: 'include'
                 });
-                console.log("Status VerifyPassword (Login API):", res.status);
-                const data = await res.json();
+                console.log("Respuesta Login (Verify):", data);
 
-                if (data.success) {
-
+                if (data.status === 'success') {
                     const verifyModal = getEl('verifyPasswordModal');
                     if (verifyModal && typeof verifyModal.close === 'function') verifyModal.close();
                     else toggleModal('verifyPasswordModal', false);
 
-
                     const changeModal = getEl('changePasswordModal');
                     if (changeModal) {
-
                         if (changeForm) changeForm.reset();
-
                         if (typeof changeModal.showModal === 'function') changeModal.showModal();
                         else toggleModal('changePasswordModal', true);
                     }
-
                 } else {
-                    alert("Contraseña actual incorrecta.");
+                    alert("La contraseña actual es incorrecta.");
                     getEl('verifyCurrentPassword').value = '';
                 }
             } catch (err) { console.error(err); }
@@ -422,21 +394,23 @@ function setupPasswordLogic() {
             const newP = getEl('newPassword').value;
             const confP = getEl('confirmNewPassword').value;
 
+            const targetId = getEl('saveBtnUser')?.getAttribute('data-target-id') ||
+                getEl('saveBtnAdmin')?.getAttribute('data-target-id');
 
-            const targetId = getEl('saveBtnUser').getAttribute('data-target-id') ||
-                getEl('saveBtnAdmin').getAttribute('data-target-id');
-            if (newP.length < 4) return alert("La contraseña debe tener al menos 4 caracteres.");
-            if (newP !== confP) return alert("Las contraseñas no coinciden.");
+            if (!targetId) return alert("Error: No se pudo identificar el usuario para cambiar la contraseña.");
+            
+            if (newP.length < 8) return alert("La contraseña debe tener al menos 8 caracteres.");
+            if (newP !== confP) return alert("Las contraseñas nuevas no coinciden.");
 
             try {
-                const res = await fetch('../../api/ModifyPassword.php', {
+                const data = await apiFetch('../../api/ModifyPassword.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile_code: targetId, password: newP })
+                    body: JSON.stringify({ profile_code: targetId, password: newP }),
+                    credentials: 'include'
                 });
-                console.log("Status ModifyPassword:", res.status);
-                const data = await res.json();
-                if (data.success) {
+                console.log("Respuesta ModifyPassword:", data);
+                if (data.status === 'success') {
                     alert("Contraseña actualizada con éxito.");
 
                     const changeModal = getEl('changePasswordModal');
@@ -445,7 +419,7 @@ function setupPasswordLogic() {
 
                     resetTargetIds();
                 } else {
-                    alert("Error: " + data.error);
+                    alert("Error: " + data.message);
                 }
             } catch (err) { console.error(err); }
         };

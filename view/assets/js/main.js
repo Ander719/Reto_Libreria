@@ -1,5 +1,6 @@
 import { checkSession, currentUser } from './session.js';
 import { loadHeader,loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 init();
 
@@ -131,7 +132,7 @@ function performSearch(term) {
         const isbn = book.isbn.toLowerCase();
         // Cuidado con author, verifica si es objeto o string en tu JSON final
         // Si tu JSON devuelve author: {name: '...', lastname: '...'}
-        const authorName = (book.author.name + " " + book.author.lastname).toLowerCase();
+        const authorName = book.author ? (book.author.name + " " + book.author.lastname).toLowerCase() : "";
 
         return title.includes(term) || isbn.includes(term) || authorName.includes(term);
     });
@@ -195,25 +196,14 @@ function getEstrellasHTML(rating) {
 async function cargarLibrosDesdeBD() {
 
     try {
-        const response = await fetch('../../api/GetAllBooks.php');
-        console.log("Status GetAllBooks:", response.status);
-        const rawText = await response.text();
+        const data = await apiFetch('../../api/GetAllBooks.php');
+        console.log("Respuesta GetAllBooks:", data);
 
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (error) {
-            console.error("❌ El servidor no devolvió JSON. Devolvió esto:\n", rawText);
-            return;
-        }
-
-        //console.log("Datos recibidos:", data);
-
-        if (data.success) {
-            globalBooks = data.books; // Guardamos los libros globalmente si es necesario
-            renderBooks(data.books);
+        if (data.status === 'success' && data.data && data.data.books) {
+            globalBooks = data.data.books; 
+            renderBooks(data.data.books);
         } else {
-            console.error("Error al cargar libros");
+            console.error("Error al cargar libros:", data.message);
         }
     } catch (error) {
         console.error("Error:", error);
@@ -263,7 +253,7 @@ function renderCard(libro, contenedor, template) {
     // Rellenamos los datos buscando por clase dentro del clon
     clone.querySelector('.book-title').textContent = libro.title;
     const author = libro.author.name + " " + libro.author.lastname;
-    clone.querySelector('.book-author').textContent = author.trim().isempty ? "Autor Desconocido" : author;
+    clone.querySelector('.book-author').textContent = (author && author.trim()) ? author : "Autor Desconocido";
     clone.querySelector('.book-price').textContent = `${libro.price}€`;
     clone.querySelector('.book-stock').textContent = `Stock: ${libro.stock}`;
 

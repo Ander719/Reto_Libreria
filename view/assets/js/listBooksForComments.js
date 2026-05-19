@@ -1,5 +1,6 @@
 import { checkSession, currentUser } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
+import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -9,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!isLogged || currentUser.role !== 'admin') {
         alert("Acceso denegado: Se requieren permisos de administrador.");
-        window.location.href = 'main.html';
+        window.location.href = 'login.html';
         return;
     }
 
@@ -21,38 +22,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchBooks();
 });
 
-function fetchBooks() {
-    fetch('../../api/GetAllBooks.php')
-        .then(async response => {
-            console.log("Status Code HTTP:", response.status);
-            return response.json();
-        })
-        .then(data => {
-            const tbody = document.getElementById('booksBody');
-            if (!tbody) return;
+async function fetchBooks() {
+    try {
+        const data = await apiFetch('../../api/GetAllBooks.php', { credentials: 'include' });
+        console.log("Respuesta GetAllBooks:", data);
+        const tbody = document.getElementById('booksBody');
+        if (!tbody) return;
 
-            tbody.innerHTML = '';
+        tbody.innerHTML = '';
 
-            if (data.success && data.books) {
-                data.books.forEach(book => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="text-align:center;">
-                            <img src="../assets/img/covers/${book.cover}" class="book-cover-img" width="50" alt="Portada">
-                        </td>
-                        <td>${book.title}</td>
-                        <td style="text-align:center;">
-                            <button class="view-comments-btn" onclick="verComentarios('${book.isbn}')">
-                                Ver Comentarios
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
+        const books = data.data && data.data.books ? data.data.books : [];
 
-        })
-        .catch(error => console.error('Error cargando libros:', error));
+        if (Array.isArray(books)) {
+            books.forEach(book => {
+                const row = document.createElement('tr');
+                const safeCover = (book.cover || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+                const safeTitle = (book.title || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const safeIsbn = (book.isbn || "").replace(/'/g, "&#39;");
+                row.innerHTML = `
+                    <td style="text-align:center;">
+                        <img src="../assets/img/covers/${safeCover}" class="book-cover-img" width="50" alt="Portada">
+                    </td>
+                    <td>${safeTitle}</td>
+                    <td style="text-align:center;">
+                        <button class="view-comments-btn" onclick="verComentarios('${safeIsbn}')">
+                            Ver Comentarios
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando libros:', error);
+    }
 }
 
 function verComentarios(isbn) {

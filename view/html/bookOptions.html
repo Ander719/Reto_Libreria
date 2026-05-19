@@ -3,7 +3,9 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Gestión de Libros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel de gestión de libros para administradores de Book & Bugs." />
+  <title>Book & Bugs - Gestión de Libros</title>
   <link rel="icon" type="image/png" href="../assets/img/Book&Bugs_Logo.png" />
   <link rel="stylesheet" href="../assets/css/bookOptions.css">
   <link rel="stylesheet" href="../assets/css/style.css">
@@ -82,7 +84,7 @@
             // Verificar que sea admin
             await checkSession();
             if (!currentUser || currentUser.role !== 'admin') {
-                window.location.href = 'main.html';
+                window.location.href = 'login.html';
                 return;
             }
             const btnLogoutNav = document.getElementById('btnLogoutNav');

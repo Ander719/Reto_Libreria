@@ -1,5 +1,6 @@
 import { checkSession } from "./session.js";
 import { loadHeader, loadFooter } from "./header.js"
+import { apiFetch } from "./apiClient.js";
 
 init();
 
@@ -30,18 +31,18 @@ if (loginForm) {
         let data = await login(username, password);
         //console.log("Respuesta servidor:", data);
 
-        if (data.success) {
+        if (data.status === 'success') {
             dialogMessage.textContent = "Login exitoso. Redirigiendo...";
             dialog.showModal();
 
             setTimeout(() => {
-                //volver a a la pagina anterior desde la que vino el usuario
+                // Volver a la página anterior desde la que vino el usuario o al inicio
                 const previousPage = document.referrer || 'main.html';
                 window.location.href = previousPage;
             }, 500);
         } else {
-            // Mostramos el error en el diálogo
-            dialogMessage.textContent = data.error || "Error desconocido durante el login.";
+            // Mostramos el mensaje de error estandarizado de la API
+            dialogMessage.textContent = data.message || "Error desconocido durante el login.";
             dialog.showModal();
         }
     });
@@ -49,32 +50,17 @@ if (loginForm) {
 
 async function login(username, password) {
     try {
-        const response = await fetch(`../../api/Login.php`, {
+        const data = await apiFetch(`../../api/Login.php`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-            credentials: 'include', // Importante para enviar/recibir cookies
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+            credentials: 'include'
         });
-        console.log("Status Login:", response.status);
-        const rawText = await response.text();
-        
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            console.error("Error al parsear JSON:", rawText);
-            return { success: false, error: "Respuesta del servidor no es JSON válido." };
-        }
-        if (!response.ok) {
-            return { 
-                success: false, 
-                error: data.error || `Error del servidor (${response.status})` 
-            };
-        }
-        return data; // Si todo fue bien (200), devolvemos los datos tal cual
+        console.log("Respuesta Login:", data);
+        return data;
 
     } catch (error) {
         console.error("Error en fetch:", error);
-        return { success: false, error: "Fallo de red o servidor caído." };
+        return { status: "error", message: error.message || "Fallo de conexión con el servidor." };
     }
 }

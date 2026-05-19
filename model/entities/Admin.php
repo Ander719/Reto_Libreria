@@ -12,6 +12,7 @@ class Admin extends Profile {
     // Getters y Setters
     public function getCurrentAccount() { return $this->currentAccount; }
     public function setCurrentAccount($currentAccount) { $this->currentAccount = $currentAccount; }
+    public function getRole() { return 'admin'; }
     
     public function __toString() {
         return "Admin: " . parent::mostrar() . " - Current Account: " . $this->currentAccount;

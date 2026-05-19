@@ -1,40 +1,38 @@
+import { apiFetch } from './apiClient.js';
+
 // 1. Exportamos la variable
 export let currentUser = null;
 
 // 2. Exportamos la función actualizada
 export async function checkSession() {
     try {
-        // Importante: credentials: 'include' para enviar la cookie PHPSESSID
-        const response = await fetch('../../api/CheckSession.php', { credentials: 'include' });
-        console.log("Status CheckSession:", response.status);
-        if (!response.ok) throw new Error("Error server");
+        const data = await apiFetch('../../api/CheckSession.php', {
+            credentials: 'include',
+            allowedStatuses: [401]
+        });
+        console.log("Respuesta CheckSession:", data);
 
-        const data = await response.json();
-
-        // --- CAMBIO AQUÍ: Usamos el estándar "success" ---
-        if (data.success && data.user) {
-            currentUser = data.user; // Guardamos los datos en la variable global
+        if (data.status.toLowerCase() === "success" && data.data && data.data.user) {
+            currentUser = data.data.user;
             return true;
         }
 
-        // Si success es false o no hay user
         currentUser = null;
         return false;
 
     } catch (error) {
-        console.error("Error comprobando sesión:", error);
+        console.error("Fallo crítico real comprobando sesión:", error);
         currentUser = null;
         return false;
     }
 }
 export async function logout() {
     try {
-        await fetch('../../api/Logout.php');
-        console.log("Status Logout:", response.status);
-        // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
-        location.reload(); // Recargamos la página para actualizar el estado 
+        const response = await apiFetch('../../api/Logout.php', { method: 'POST', credentials: 'include' });
+        console.log("Respuesta Logout:", response);
+        location.reload();
     } catch (error) {
         console.error("Error al cerrar sesión:", error);
-        location.reload(); 
+        location.reload();
     }
 }

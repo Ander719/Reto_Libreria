@@ -215,9 +215,9 @@ main {
 }
 
 .book-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
   /* Se levanta un poco al pasar el ratón */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* --- La Imagen --- */
