@@ -2,16 +2,16 @@
 
 Proyecto academico PHP/MySQL con arquitectura MVC, endpoints REST JSON y frontend HTML/CSS/JS.
 
-## Rama `main` vs Rama `alex`
+## `entregado` vs `correccion`
 
-Este documento describe el estado de la rama `alex`, que contiene las correcciones y
-estandarizaciones aplicadas sobre la base inicial de `main`. A continuacion se detallan
-los problemas detectados en `main`, los cambios realizados y las razones academicas
-detras de cada decision.
+Este documento describe el estado de `correccion`, que contiene las correcciones y
+estandarizaciones aplicadas sobre la base inicial de `entregado`. A continuacion se
+detallan los problemas detectados en `entregado`, los cambios realizados y las razones
+academicas detras de cada decision.
 
 ---
 
-## Problemas Detectados En `main`
+## Problemas Detectados En `entregado`
 
 ### Arquitectura Y Separacion De Capas
 
@@ -47,7 +47,7 @@ detras de cada decision.
 
 ---
 
-## Cambios Aplicados En `alex`
+## Cambios Aplicados En `correccion`
 
 ### API: Contrato JSON Estandar
 
@@ -118,11 +118,46 @@ Simplificacion academica compatible con `$_POST` y `FormData`:
   duplican en los endpoints.
 - Los controladores reciben la conexion PDO por inyeccion de dependencia.
 
+### Comentarios Y Documentacion Del Codigo
+
+- Se añadieron comentarios PHPDoc en clases, metodos y funciones relevantes para
+  dejar claro que recibe cada bloque, que devuelve y que responsabilidad tiene.
+- Se documentaron consultas SQL con `JOIN`, procedimientos almacenados y
+  transacciones donde la logica no era evidente a simple vista.
+- En JavaScript se añadieron comentarios JSDoc en funciones con llamadas API,
+  manipulacion dinamica del DOM, eventos principales y estado compartido.
+- En HTML se marcaron secciones grandes como cabecera, formularios, tablas,
+  modales y footer, sin comentar etiquetas sueltas.
+- En CSS se añadieron titulos de bloque para ubicar rapido estilos de layout,
+  tablas, formularios, tarjetas, modales y responsive.
+- Los comentarios se revisaron para que fueran tecnicos pero naturales, evitando
+  frases obvias o repetitivas.
+
 ---
 
-## Tabla Resumen: `main` vs `alex`
+## Archivos Tocados Y Motivo
 
-| Aspecto | Estado en `main` | Estado en `alex` |
+| Ruta | Motivo del cambio |
+|------|-------------------|
+| `api/*.php` | Normalizar contrato JSON, validar metodos HTTP, controlar sesion/rol, sanear entradas y documentar el objetivo de cada endpoint. |
+| `controller/*.php` | Mantener controladores como capa de paso entre API y DAO, sin SQL ni lectura directa de `$_GET`/`$_POST`; se añadieron PHPDoc de parametros y retornos. |
+| `model/dao/*.php` | Concentrar consultas SQL, prepared statements, transacciones y `JOIN`; se documentaron consultas complejas y retornos especiales como `NO_STOCK`. |
+| `model/entities/*.php` | Añadir `toArray()` seguro para respuestas API, evitar exponer contraseñas o tarjetas completas y documentar la estructura que consume el frontend. |
+| `Config/Database.php` | Centralizar la conexion PDO y ocultar detalles tecnicos de errores de base de datos al cliente. |
+| `Config/Session.php` | Unificar el arranque de sesion y los parametros de cookie usados por los endpoints. |
+| `view/assets/js/apiClient.js` | Centralizar `fetch`, validacion del contrato JSON y tratamiento de errores HTTP. |
+| `view/assets/js/session.js` y `header.js` | Compartir estado de usuario, cierre de sesion y comportamiento comun de cabecera/footer. |
+| `view/assets/js/*.js` | Migrar llamadas a `async/await`, mejorar manejo de errores, documentar listeners principales y explicar manipulacion dinamica del DOM. |
+| `view/html/*.html` | Añadir comentarios de secciones principales y mantener plantillas o contenedores dinamicos faciles de localizar. |
+| `view/assets/css/*.css` | Organizar estilos por bloques para facilitar mantenimiento visual y localizar componentes concretos. |
+| `SQL/CRUD_ADT.sql` | Documentar procedimientos almacenados y consultas con agregaciones usadas por el catalogo. |
+| `README.md` | Dejar constancia de los problemas encontrados, cambios aplicados, archivos afectados y comprobaciones realizadas. |
+
+---
+
+## Tabla Resumen: `entregado` vs `correccion`
+
+| Aspecto | Estado en `entregado` | Estado en `correccion` |
 |---------|------------------|-------------------|
 | Contrato JSON | Inconsistente entre endpoints | Unico: `{status, code, message, data}` |
 | Codigos HTTP | A veces `200` en errores | `400`, `404`, `405`, `500` segun corresponda |
@@ -135,12 +170,13 @@ Simplificacion academica compatible con `$_POST` y `FormData`:
 | Subida de portadas | Solo extension | Extension + MIME real con `finfo` |
 | Fetch del frontend | `.then().then()` duplicado en cada JS | `apiFetch()` centralizado con `async/await` |
 | `console.log()` | Fragmentos sueltos | JSON completo de la respuesta |
+| Comentarios de codigo | Escasos o demasiado informales | PHPDoc/JSDoc y comentarios selectivos por secciones |
 
 ---
 
 ## Como Se Verifica
 
-`alex` ha pasado las siguientes comprobaciones:
+`correccion` ha pasado las siguientes comprobaciones:
 
 - PHP lint completo sin errores sintacticos.
 - Endpoints GET responden correctamente con contrato estandar.
