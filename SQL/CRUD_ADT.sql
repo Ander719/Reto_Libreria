@@ -169,6 +169,7 @@ END //
 -- Procedimiento: Obtener Todos los Libros
 CREATE PROCEDURE GetAllBooks()
 BEGIN
+    -- LEFT JOIN mantiene libros sin comentarios y calcula rating 0 con IFNULL.
     SELECT b.*, 
            a.name_author, 
            a.last_name, 
@@ -182,6 +183,7 @@ END //
 -- Procedimiento: Obtener Libro por ISBN
 CREATE PROCEDURE GetBookByISBN(IN p_isbn CHAR(13))
 BEGIN
+    -- Misma agregacion que el catalogo, limitada al ISBN solicitado por la API.
     SELECT b.*, 
            a.name_author, 
            a.last_name, 
