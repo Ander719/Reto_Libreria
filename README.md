@@ -152,6 +152,52 @@ Simplificacion academica compatible con `$_POST` y `FormData`:
 
 ---
 
+## Ramas De Trabajo Activas
+
+Junto a `alex`, existen dos ramas locales con cambios en curso que aun no se han
+fusionado con `main` ni con `alex`.
+
+### `feature/front-side`
+
+Rama dedicada a la homogeneizacion del frontend visual y la maquetacion HTML:
+
+- Migracion de cadenas HTML construidas con `innerHTML` a plantillas `<template>`
+  con `textContent`, eliminando riesgos de XSS.
+- Centralizacion de cuadros de dialogo nativos (`alert()` y `confirm()`) en un
+  unico componente `<dialog id="globalDialog">` compartido entre todas las
+  paginas, con una API unificada (`alertModal()`, `confirmModal()`).
+- Unificacion de la paleta de colores en un solo bloque `:root` dentro de
+  `style.css`, eliminando 5 bloques `:root` duplicados en CSS de pagina y
+  utilizando nombres semanticos (`--interactive-primary`, `--bg-page`,
+  `--text-primary`, etc.).
+- Eliminacion de codigo CSS muerto (selectores definidos dos veces, resets
+  universales repetidos en cada archivo de pagina).
+- Correccion del orden de carga de CSS para que `style.css` (global) cargue
+  siempre primero y los estilos de pagina especifica despues.
+- Migracion de eventos `onclick`/`onsubmit` en HTML a `addEventListener` en JS.
+
+Estado actual: completada a nivel de codigo, pendiente de revision visual.
+
+### `feature/centralizacion`
+
+Rama dedicada a la centralizacion de los endpoints API:
+
+- Creacion de 5 endpoints unificados (`api/Book.php`, `api/Auth.php`,
+  `api/User.php`, `api/Comment.php`, `api/Order.php`) que reemplazan los 20
+  archivos individuales (`GetAllBooks.php`, `AddBook.php`, `Login.php`, etc.),
+  simplificando el mantenimiento y reduciendo la duplicacion de logica de
+  validacion, sesion y respuesta JSON.
+- Migracion de todas las llamadas del frontend JS para consumir estos endpoints
+  centralizados en vez de los archivos individuales.
+- Componentizacion del header y footer como funciones JS reutilizables,
+  inyectadas desde `header.js` y `footer.js`, eliminando la repeticion del mismo
+  marcado HTML en las 11 paginas del proyecto.
+
+Estado actual: completada en la rama, pendiente de recepcion de cambios con
+`alex` y pruebas de regresion.
+
+---
+
 ## Notas Para La Defensa
 
 - La rama `main` representa el estado inicial del proyecto, sin las correcciones
@@ -159,6 +205,6 @@ Simplificacion academica compatible con `$_POST` y `FormData`:
 - Cada decision de cambio esta motivada por los criterios de la rubrica:
   separacion de capas, contrato REST, validacion en API, seguridad y
   mantenibilidad del frontend.
-- Queda como trabajo futuro la revision de los modulos de estilo CSS y la
-  homogeneizacion completa del frontend visual, abordados en una rama separada
-  (`feature/front-side`).
+- `feature/front-side` y `feature/centralizacion` son ramas locales que aun no
+  se han fusionado con `alex`; su contenido se mostrara en la defensa como
+  trabajo complementario.
