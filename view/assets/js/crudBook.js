@@ -4,6 +4,7 @@ import { apiFetch } from './apiClient.js';
 document.addEventListener('DOMContentLoaded', async () => {
     try {
 
+        // No mostramos el formulario hasta confirmar que es admin.
         const isLogged = await checkSession();
         if (!isLogged) {
             window.location.replace('login.html');
@@ -28,6 +29,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+/**
+ * Prepara el formulario segun mode=create o mode=edit.
+ *
+ * @returns {void}
+ */
 function initPageLogic() {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
@@ -45,7 +51,6 @@ function initPageLogic() {
     const reqDialog = document.getElementById('requirementsDialog');
     const closeDialogBtn = document.getElementById('closeDialogBtn');
 
-    // constates para Drag & Drop
     const dropZone = document.getElementById("dropZone");
     const inputElement = document.getElementById("coverInput");
 
@@ -57,7 +62,11 @@ function initPageLogic() {
         closeDialogBtn.addEventListener('click', () => reqDialog.close());
     }
 
-    //conffigura la interfaz según el modo
+    /**
+     * Cambia textos y campos segun si se crea o se edita.
+     *
+     * @returns {void}
+     */
     function initInterface() {
         if (mode === 'create') {
             if (pageTitle) pageTitle.innerText = "Añadir Nuevo Libro";
@@ -74,6 +83,11 @@ function initPageLogic() {
         }
     }
 
+    /**
+     * Llena el selector de libros del modo edicion.
+     *
+     * @returns {Promise<void>}
+     */
     async function loadBooksToSelect() {
         try {
             const data = await apiFetch('../../api/GetAllBooks.php');
@@ -118,6 +132,7 @@ function initPageLogic() {
     }
 
     if (form) {
+        // Antes de enviar se revisan ISBN e imagen; luego se elige alta o modificacion.
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -165,11 +180,23 @@ function initPageLogic() {
         });
     }
 
+    /**
+     * Bloquea el formulario hasta elegir libro en modo edicion.
+     *
+     * @param {boolean} isDisabled Estado de bloqueo.
+     * @returns {void}
+     */
     function toggleForm(isDisabled) {
         formInputs.forEach(input => input.disabled = isDisabled);
         if (actionBtn) actionBtn.disabled = isDisabled;
     }
 
+    /**
+     * Copia los datos del libro recibido al formulario.
+     *
+     * @param {object} data Libro recibido desde GetBook.php.
+     * @returns {void}
+     */
     function fillForm(data) {
         const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ""; };
 
@@ -193,6 +220,11 @@ function initPageLogic() {
         }
     }
 
+    /**
+     * Quita la miniatura de portada.
+     *
+     * @returns {void}
+     */
     function resetDropZone() {
         const prompt = dropZone.querySelector(".drop-zone__prompt");
         const thumb = dropZone.querySelector(".drop-zone__thumb");
@@ -201,6 +233,7 @@ function initPageLogic() {
     }
 
     if (dropZone && inputElement) {
+        // El drop actualiza el input file y la miniatura a la vez.
         dropZone.addEventListener("click", () => inputElement.click());
         inputElement.addEventListener("change", () => {
             if (inputElement.files.length) updateThumbnailFile(dropZone, inputElement.files[0]);
@@ -218,6 +251,13 @@ function initPageLogic() {
         });
     }
 
+    /**
+     * Lee una imagen local para mostrar miniatura.
+     *
+     * @param {HTMLElement} dropZoneElement Zona visual de subida.
+     * @param {File} file Archivo seleccionado.
+     * @returns {void}
+     */
     function updateThumbnailFile(dropZoneElement, file) {
         if (file.type.startsWith("image/")) {
             const reader = new FileReader();
@@ -226,6 +266,14 @@ function initPageLogic() {
         }
     }
 
+    /**
+     * Pinta la miniatura desde una URL o desde un archivo local.
+     *
+     * @param {HTMLElement} dropZoneElement Zona visual de subida.
+     * @param {string} url URL o data URL de la imagen.
+     * @param {string} label Nombre mostrado en la miniatura.
+     * @returns {void}
+     */
     function updateThumbnailVisual(dropZoneElement, url, label) {
         let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
         const prompt = dropZoneElement.querySelector(".drop-zone__prompt");

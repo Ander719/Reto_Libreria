@@ -4,7 +4,7 @@ import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Esto ejecutará el fetch a PHP. Si devuelve true, currentUser ya tendrá datos.
+    // Moderacion de comentarios: solo admins.
     const isLogged = await checkSession();
 
     if (!isLogged) {
@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+/**
+ * Carga comentarios y los pinta en la tabla.
+ *
+ * @param {string} isbn ISBN del libro seleccionado.
+ * @returns {Promise<void>}
+ */
 async function cargarComentarios(isbn) {
     try {
         const data = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`);
@@ -61,6 +67,13 @@ async function cargarComentarios(isbn) {
     }
 }
 
+/**
+ * Borra un comentario despues de pedir confirmacion.
+ *
+ * @param {string} isbn ISBN comentado.
+ * @param {number|string} profileCode Perfil propietario del comentario.
+ * @returns {Promise<void>}
+ */
 async function eliminarComentario(isbn, profileCode) {
     if (confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
         try {
@@ -82,5 +95,7 @@ async function eliminarComentario(isbn, profileCode) {
         }
     }
 }
+
+// Las filas usan onclick inline, por eso se expone en window.
 window.eliminarComentario = eliminarComentario;
 window.cargarComentarios = cargarComentarios;

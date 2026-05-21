@@ -4,6 +4,11 @@ import { apiFetch } from './apiClient.js';
 
 init();
 
+/**
+ * Carga registro y evita que un usuario logueado vuelva a registrarse.
+ *
+ * @returns {Promise<void>}
+ */
 async function init() {
   const isLogged = await checkSession();
 
@@ -16,6 +21,7 @@ async function init() {
   }
 }
 
+// Comprueba que las dos contrasenas coincidan antes de pedir el alta.
 document.getElementById("signupForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -49,7 +55,6 @@ document.getElementById("signupForm").addEventListener("submit", async function 
         window.location.href = "main.html";
       }, 1000);
     } else {
-      // Mostramos el error que viene del controlador
       parrafo.innerText = data.message || "Error al crear usuario";
       parrafo.style.color = "red";
     }

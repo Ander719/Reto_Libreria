@@ -4,10 +4,9 @@ import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    //Si devuelve true, currentUser ya tendrá datos.
+    // El historial solo tiene sentido para usuarios compradores.
     const isLogged = await checkSession();
     if (!isLogged || currentUser.role === 'admin') {
-        // Si no hay sesión, no permitas que se ejecute loadOrders()
         window.location.replace('login.html');
         return;
     }
@@ -18,6 +17,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadOrders();
 });
 
+/**
+ * Carga y pinta los pedidos del usuario actual.
+ *
+ * @returns {Promise<void>}
+ */
 async function loadOrders() {
     const container = document.getElementById('ordersContainer');
     container.innerHTML = '<p class="loading-msg">Cargando tu historial...</p>';
@@ -41,7 +45,7 @@ async function loadOrders() {
 
         container.innerHTML = orders.map(order => {
 
-            // Libros dentro del pedido
+            // OrderDao ya agrupa los libros dentro de cada pedido.
             const itemsHtml = order.items.map(item => `
                 <div class="order-item">
                     <img src="../assets/img/covers/${item.cover}" alt="${item.title}" class="item-cover">

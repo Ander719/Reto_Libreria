@@ -10,6 +10,7 @@
 </head>
 
 <body>
+  <!-- Inicio: cabecera comun -->
   <header class="main-header">
     <nav class="nav-container">
       <a href="main.html" class="logo-link">
@@ -35,6 +36,8 @@
       </ul>
     </nav>
   </header>
+  <!-- Fin: cabecera comun -->
+  <!-- Inicio: opciones de libros -->
   <main class="books-page">
 
 
@@ -45,6 +48,8 @@
     </div>
 
   </main>
+  <!-- Fin: opciones de libros -->
+  <!-- Inicio: footer comun -->
   <footer>
     <div class="brand-col">
       <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
@@ -74,6 +79,8 @@
     </div>
     <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
   </footer>
+  <!-- Fin: footer comun -->
+  <!-- Inicio: comprobacion de admin -->
 <script type="module">
         import { checkSession, currentUser, logout } from '../assets/js/session.js';
         import { loadHeader,loadFooter } from '../assets/js/header.js';
@@ -96,6 +103,7 @@
             await loadFooter();
         });
     </script>
+  <!-- Fin: comprobacion de admin -->
 </body>
 
 </html>

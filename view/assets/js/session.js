@@ -1,9 +1,17 @@
 import { apiFetch } from './apiClient.js';
 
-// 1. Exportamos la variable
+/**
+ * Usuario actual cargado desde CheckSession.php.
+ *
+ * @type {object|null}
+ */
 export let currentUser = null;
 
-// 2. Exportamos la función actualizada
+/**
+ * Comprueba si hay sesion y actualiza currentUser.
+ *
+ * @returns {Promise<boolean>} True si existe una sesion valida.
+ */
 export async function checkSession() {
     try {
         const data = await apiFetch('../../api/CheckSession.php', {
@@ -26,12 +34,18 @@ export async function checkSession() {
         return false;
     }
 }
+
+/**
+ * Cierra sesion y recarga para que la cabecera no quede desfasada.
+ *
+ * @returns {Promise<void>}
+ */
 export async function logout() {
     try {
         const response = await apiFetch('../../api/Logout.php', { method: 'POST', credentials: 'include' });
         console.log("Respuesta Logout:", response);
-        // No necesitamos comprobar respuesta, si falla la red, redirigimos igual por seguridad
-        location.reload(); // Recargamos la página para actualizar el estado 
+        // Aunque falle la peticion, la UI se recarga para no dejar estado autenticado obsoleto.
+        location.reload();
     } catch (error) {
         console.error("Error al cerrar sesión:", error);
         location.reload(); 

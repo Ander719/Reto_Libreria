@@ -14,6 +14,7 @@
 </head>
 
 <body>
+  <!-- Inicio: cabecera con buscador -->
   <header class="main-header">
     <nav class="nav-container">
       <a href="main.html" class="logo-link">
@@ -39,7 +40,9 @@
       </ul>
     </nav>
   </header>
+  <!-- Fin: cabecera con buscador -->
   <main>
+    <!-- Inicio: resultados de busqueda -->
     <div id="searchSection" hidden>
       <h2 class="main-title">Resultados de la búsqueda</h2>
       <div class="search-books" id="searchResultsContainer"></div>
@@ -47,6 +50,8 @@
         <p>No se encontraron resultados.</p>
       </div>
     </div>
+    <!-- Fin: resultados de busqueda -->
+    <!-- Inicio: catalogo de portada -->
     <div id="defaultContent">
       <h1 class="main-title">Mejor Valorados</h1>
       <div class="rating-books" id="ratingBooksContainer">
@@ -57,7 +62,9 @@
         <!-- Los productos se cargarán aquí dinámicamente -->
       </div>
     </div>
+    <!-- Fin: catalogo de portada -->
   </main>
+  <!-- Inicio: template de tarjeta usado por main.js -->
   <template id="book-card-template">
     <div class="book-card">
       <img src="" alt="Book Cover" class="book-image-card">
@@ -70,6 +77,8 @@
       <p class="book-stock"></p>
     </div>
   </template>
+  <!-- Fin: template de tarjeta usado por main.js -->
+  <!-- Inicio: footer comun -->
   <footer>
     <div class="brand-col">
       <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
@@ -99,6 +108,7 @@
     </div>
     <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
   </footer>
+  <!-- Fin: footer comun -->
 </body>
 
 </html>

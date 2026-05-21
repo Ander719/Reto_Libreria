@@ -1,9 +1,10 @@
 import { currentUser, checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 import { apiFetch } from './apiClient.js';
+
+/** @type {boolean} True cuando el formulario esta editando una resena ya publicada. */
 let isEditing = false;
 
-// CONFIGURACIÓN MODAL
 const dialog = document.getElementById('myDialog');
 const dialogTitle = document.getElementById('dialogTitle');
 const dialogMessage = document.getElementById('dialogMessage');
@@ -24,7 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => window.location.href = "main.html", 2000);
         return;
     }
-    // Cargar el header
     await loadHeader("bookDetails");
     await loadFooter();
 
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadComments(isbn);
 });
 
-// Configuración de botones del modal
+// El mismo dialog sirve para avisos y confirmaciones; confirmResolver marca el modo confirm.
 if (closeBtn) {
     closeBtn.addEventListener('click', () => {
         dialog.close();
@@ -48,6 +48,13 @@ if (confirmBtn) {
     });
 }
 
+/**
+ * Muestra un aviso simple.
+ *
+ * @param {string} titulo Titulo del dialog.
+ * @param {string} mensaje Mensaje mostrado.
+ * @returns {void}
+ */
 function showModal(titulo, mensaje) {
     dialogTitle.innerText = titulo;
     dialogMessage.innerText = mensaje;
@@ -57,6 +64,15 @@ function showModal(titulo, mensaje) {
     dialog.showModal();
 }
 
+/**
+ * Pide confirmacion y devuelve la decision del usuario.
+ *
+ * @param {string} titulo Titulo del dialog.
+ * @param {string} mensaje Mensaje mostrado.
+ * @param {string} [textoConfirmar="Confirmar"] Texto del boton positivo.
+ * @param {string} [textoCancelar="Cancelar"] Texto del boton negativo.
+ * @returns {Promise<boolean>} Resultado de la decision del usuario.
+ */
 function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancelar = "Cancelar") {
     dialogTitle.innerText = titulo;
     dialogMessage.innerText = mensaje;
@@ -68,7 +84,12 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
     return new Promise((resolve) => { confirmResolver = resolve; });
 }
 
-// LÓGICA DEL LIBRO
+/**
+ * Pide a la API los datos del libro seleccionado.
+ *
+ * @param {string} isbn ISBN recibido desde la URL.
+ * @returns {Promise<void>}
+ */
 async function loadBookDetails(isbn) {
     try {
         const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbn)}`);
@@ -82,6 +103,12 @@ async function loadBookDetails(isbn) {
     } catch (error) { console.error("Error:", error); }
 }
 
+/**
+ * Pinta el libro y deja el boton de compra listo si procede.
+ *
+ * @param {object} libro Libro serializado por GetBook.php.
+ * @returns {void}
+ */
 function rellenarVista(libro) {
     document.getElementById('bookTitle').textContent = libro.title || "Título Desconocido";
     document.getElementById('bookAuthor').textContent = (libro.name_author || "") + " " + (libro.last_name || "");
@@ -98,7 +125,7 @@ function rellenarVista(libro) {
     const btnCart = document.getElementById('addToCartBtn');
     const qtyInput = document.getElementById('qtyInput');
 
-    // SI ES ADMIN: Ocultar controles y salir
+    // El admin puede ver la ficha, pero no compra libros.
     if (currentUser && currentUser.role === 'admin') {
         btnCart.style.display = 'none';
         qtyInput.style.display = 'none';
@@ -122,7 +149,7 @@ function rellenarVista(libro) {
         btnCart.textContent = "Agotado";
         qtyInput.disabled = true;
     }
-    // Configuración del botón de compra
+    // Clonar el boton evita listeners duplicados si se vuelve a pintar el libro.
     const newBtn = btnCart.cloneNode(true);
     btnCart.parentNode.replaceChild(newBtn, btnCart);
 
@@ -135,20 +162,18 @@ function rellenarVista(libro) {
         const cantidad = parseInt(qtyInput.value);
         const stockDisponible = parseInt(libro.stock);
 
-        // Caso A: Cantidad inválida
         if (isNaN(cantidad) || cantidad <= 0) {
             showModal("Error", "Por favor introduce una cantidad válida.");
             return;
         }
 
-        // Caso B: Pide más de lo que hay
         if (cantidad > stockDisponible) {
             showModal("Stock Insuficiente", `Solo quedan ${stockDisponible} unidades disponibles.`);
             qtyInput.value = stockDisponible;
             return;
         }
 
-        //Verificar Tarjeta 
+        // Sin tarjeta o direccion no dejamos cerrar la compra.
         let userCard;
         let direction;
         try {
@@ -175,20 +200,22 @@ function rellenarVista(libro) {
             return;
         }
 
-        // Confirmación
         if (await showConfirm("Confirmar", `¿Seguro que quieres comprar ${cantidad} unidad(es)?`)) {
             comprarAhora(libro.isbn, cantidad, getUserId(currentUser));
         }
     });
 }
 
-// COMENTARIOS
+/**
+ * Muestra u oculta el formulario de resenas segun la sesion.
+ *
+ * @returns {void}
+ */
 function handleCommentSection() {
     const container = document.getElementById('userActionContainer');
     const loginPrompt = document.getElementById('loginPrompt');
     const nameDisplay = document.getElementById('userNameDisplay');
 
-    // Lógica simple: Si es admin ocultamos las cosas de comentarios
     if (currentUser && currentUser.role !== "admin") {
         container.hidden = false;
         loginPrompt.hidden = true;
@@ -210,6 +237,12 @@ function handleCommentSection() {
     }
 }
 
+/**
+ * Publica una resena nueva o guarda la edicion de la existente.
+ *
+ * @param {SubmitEvent} e Evento del formulario.
+ * @returns {Promise<void>}
+ */
 async function submitComment(e) {
     e.preventDefault();
     const ratingInput = document.getElementById('ratingScore').value;
@@ -254,6 +287,13 @@ async function submitComment(e) {
         msg.textContent = e.message || "Error de conexión. Inténtalo más tarde.";
     }
 }
+
+/**
+ * Carga resenas y coloca primero la del usuario actual.
+ *
+ * @param {string} isbn ISBN del libro.
+ * @returns {Promise<void>}
+ */
 async function loadComments(isbn) {
     const list = document.getElementById('commentsList');
     const myId = parseInt(getUserId(currentUser));
@@ -265,7 +305,7 @@ async function loadComments(isbn) {
         list.innerHTML = "";
         let myReview = null;
 
-        // Ordenamos comentarios
+        // La propia va arriba; normalmente es la que el usuario quiere revisar.
         if (myId && comments.length > 0) {
             comments.sort((a, b) => {
                 const idA = parseInt(a.profile_code || a.PROFILE_CODE);
@@ -285,9 +325,9 @@ async function loadComments(isbn) {
 
                 if (isMine) myReview = c;
 
-                // Lógica de botones
                 let btnHtml = "";
                 if (isMine || isAdmin) {
+                    // Va dentro de onclick, asi que se escapan comillas y saltos de linea.
                     const safeText = (c.comment_text || "").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
 
                     if (isMine) {
@@ -313,7 +353,7 @@ async function loadComments(isbn) {
             list.innerHTML = "<p style='text-align:center'>Sin comentarios.</p>";
         }
 
-        // Gestión del formulario si el usuario ha comentado
+        // Un usuario solo puede tener una resena por libro.
         const container = document.getElementById('userActionContainer');
         const form = document.getElementById('commentForm');
         const msg = document.getElementById('msg-review-exists');
@@ -335,7 +375,7 @@ async function loadComments(isbn) {
     } catch (e) { console.error(e); }
 }
 
-//FUNCIONES GLOBALES
+// Estos handlers quedan en window porque los botones se generan con onclick inline.
 
 window.deleteComment = async function (isbn, targetId) {
     if (!await showConfirm("Borrar", "¿Seguro que quieres borrar?")) return;
@@ -363,6 +403,13 @@ window.deleteComment = async function (isbn, targetId) {
 };
 
 
+/**
+ * Pasa una resena al formulario de edicion.
+ *
+ * @param {string} text Texto actual de la resena.
+ * @param {number} rating Valoracion actual.
+ * @returns {void}
+ */
 window.startEdit = function (text, rating) {
     isEditing = true;
     const form = document.getElementById('commentForm');
@@ -384,6 +431,12 @@ window.startEdit = function (text, rating) {
     container.scrollIntoView({ behavior: 'smooth' });
 };
 
+/**
+ * Mantiene sincronizados radios, input oculto y texto de estrellas.
+ *
+ * @param {number} val Valoracion seleccionada.
+ * @returns {void}
+ */
 window.setRating = function (val) {
     document.getElementById('ratingScore').value = val;
     const id = 'st' + val.toString().replace('.', '');
@@ -394,8 +447,11 @@ window.setRating = function (val) {
     if (txt) txt.innerText = val + "/5";
 };
 
-// UTILIDADES
-
+/**
+ * Devuelve el formulario al modo de nueva resena.
+ *
+ * @returns {void}
+ */
 function resetForm() {
     isEditing = false;
     document.getElementById('commentBody').value = "";
@@ -413,6 +469,14 @@ function resetForm() {
     }
 }
 
+/**
+ * Llama a la API para cerrar la compra.
+ *
+ * @param {string} isbn ISBN comprado.
+ * @param {number} quantity Cantidad comprada.
+ * @param {number|string|null} userId Codigo de perfil comprador.
+ * @returns {Promise<void>}
+ */
 async function comprarAhora(isbn, quantity, userId) {
     try {
         const data = await apiFetch('../../api/BuyNow.php', {
@@ -434,10 +498,22 @@ async function comprarAhora(isbn, quantity, userId) {
     }
 }
 
+/**
+ * Saca el codigo de perfil del usuario actual.
+ *
+ * @param {object|null} user Usuario actual.
+ * @returns {number|string|null} Codigo de perfil o null.
+ */
 export function getUserId(user) {
     return user ? user.profile_code : null;
 }
 
+/**
+ * Genera estrellas HTML para mostrar valoraciones guardadas.
+ *
+ * @param {number} rating Valoracion numerica.
+ * @returns {string} HTML con estrellas completas, medias y vacias.
+ */
 function getStarHtml(rating) {
     let html = '';
     const full = Math.floor(rating);

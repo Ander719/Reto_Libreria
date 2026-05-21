@@ -4,7 +4,7 @@ import { apiFetch } from './apiClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Si devuelve true, currentUser ya tendrá datos.
+    // Esta pantalla es solo para admins.
     const isLogged = await checkSession();
 
 
@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchBooks();
 });
 
+/**
+ * Lista libros para elegir cuales comentarios revisar.
+ *
+ * @returns {Promise<void>}
+ */
 async function fetchBooks() {
     try {
         const data = await apiFetch('../../api/GetAllBooks.php');
@@ -53,7 +58,15 @@ async function fetchBooks() {
     }
 }
 
+/**
+ * Abre la vista de comentarios del libro elegido.
+ *
+ * @param {string} isbn ISBN seleccionado.
+ * @returns {void}
+ */
 function verComentarios(isbn) {
     window.location.href = `viewComments.html?isbn=${isbn}`;
 }
+
+// Las filas usan onclick inline, por eso se expone en window.
 window.verComentarios = verComentarios;

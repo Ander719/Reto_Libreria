@@ -11,6 +11,7 @@
 </head>
 
 <body>
+  <!-- Inicio: cabecera comun -->
   <header class="main-header">
     <nav class="nav-container">
       <a href="main.html" class="logo-link">
@@ -36,7 +37,9 @@
       </ul>
     </nav>
   </header>
+  <!-- Fin: cabecera comun -->
 
+  <!-- Inicio: accesos del panel admin -->
   <main class="admin-main">
     <div class="admin-actions">
 
@@ -66,7 +69,9 @@
 
     </div>
   </main>
+  <!-- Fin: accesos del panel admin -->
 
+  <!-- Inicio: footer comun -->
   <footer>
     <div class="brand-col">
       <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
@@ -96,8 +101,9 @@
     </div>
     <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
   </footer>
+  <!-- Fin: footer comun -->
 
-  //script para cargar header y footer, y verificar sesión de admin
+  <!-- Inicio: comprobacion de admin -->
   <script type="module">
     import { checkSession, currentUser, logout } from '../assets/js/session.js';
     import { loadHeader,loadFooter } from '../assets/js/header.js';
@@ -120,6 +126,7 @@
       }
     });
   </script>
+  <!-- Fin: comprobacion de admin -->
 </body>
 
 </html>

@@ -1,5 +1,11 @@
 import { currentUser, logout } from './session.js';
 
+/**
+ * Ajusta la cabecera segun quien haya iniciado sesion y la pagina actual.
+ *
+ * @param {'main'|'configProfile'|'opcAdmin'|'deleteComment'|'logInSignUp'} filter Modo visual de la cabecera.
+ * @returns {Promise<void>}
+ */
 export async function loadHeader(filter) {
     if (currentUser) {
         const opcionesLink = document.getElementById('opcionesLink');
@@ -11,8 +17,8 @@ export async function loadHeader(filter) {
     }
     document.querySelector('.nav-menu').addEventListener('click', (event) => {
         if (event.target && event.target.id === 'btnLogout') {
-            event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
-            logout(); // Llamar a la función de logout
+            event.preventDefault();
+            logout();
         }
         if (event.target && event.target.textContent === 'volver') {
             event.preventDefault();
@@ -20,28 +26,19 @@ export async function loadHeader(filter) {
         }
     });
 
-    // Seleccionamos los elementos del DOM
     const welcomeText = document.querySelector('.welcome-text');
     const navItems = document.querySelectorAll('.nav-menu li');
     const searchGroup = document.querySelector('.search-group')
     if (filter !== "main") {
         searchGroup.style.display = "none";
     }
-    //console.log(searchGroup);
-    // navItems[0] es "Iniciar Sesión"
-    // navItems[1] es "Opciones"
-    // navItems[2] es "Cerrar Sesión"
-    // navItems[3] es "Panel Admin"
-    // navItems[4] es "Volver"
+    // El menu depende del orden fijo de los <li> definidos en cada pagina HTML.
     if (currentUser) {
         if (currentUser.role === "admin") navItems[3].hidden = true;
-        // --- MODO USUARIO LOGUEADO ---
         welcomeText.textContent = `${currentUser.user_name}`;
 
-        // Ocultamos "Iniciar Sesión"
         navItems[0].hidden = true;
 
-        // Mostramos el resto de opciones (quitamos el atributo hidden)
         navItems.forEach((item, index) => {
             if (index === 1) item.hidden = false;
             if ((filter === "main" || filter === "opcAdmin" || filter === "deleteComment") && index === 3) item.hidden = true;
@@ -50,24 +47,34 @@ export async function loadHeader(filter) {
         });
 
     } else {
-        // --- MODO VISITANTE ---
         welcomeText.textContent = "Bienvenido";
 
-        // Por defecto solo mostramos "Iniciar Sesión"
         showOnly([0]);
 
         if (filter === "logInSignUp") {
-            // Mostramos solo el item 4
             showOnly([4]);
         }
     }
 }
+
+/**
+ * Muestra solo algunos enlaces del menu.
+ *
+ * @param {number[]} [indices=[]] Indices visibles dentro de .nav-menu li.
+ * @returns {void}
+ */
 function showOnly(indices = []) {
     const navItems = document.querySelectorAll('.nav-menu li');
     navItems.forEach((item, index) => {
         item.hidden = !indices.includes(index);
     });
 }
+
+/**
+ * Enlaza las opciones clicables del footer.
+ *
+ * @returns {Promise<void>}
+ */
 export async function loadFooter(){
     const footerLinks = document.querySelectorAll("#footerLink li")
     footerLinks[1].addEventListener("click",()=>{

@@ -4,6 +4,11 @@ import { apiFetch } from "./apiClient.js";
 
 init();
 
+/**
+ * Carga la pagina de login y redirige si ya hay sesion.
+ *
+ * @returns {Promise<void>}
+ */
 async function init() {
     const isLogged = await checkSession();
 
@@ -12,7 +17,7 @@ async function init() {
 
     if (isLogged) {
         window.location.replace("main.html");
-        return; // Detenemos la ejecución del script
+        return;
     }
 }
 const dialog = document.getElementById("statusDialog");
@@ -20,44 +25,47 @@ const dialogMessage = document.getElementById("dialogMessage");
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
+    // Al entrar bien, vuelve a la pagina desde la que venia el usuario.
     loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        //console.log("Intentando login con:", username);
-
         let data = await login(username, password);
-        //console.log("Respuesta servidor:", data);
 
         if (data.status === "success") {
             dialogMessage.textContent = "Login exitoso. Redirigiendo...";
             dialog.showModal();
 
             setTimeout(() => {
-                //volver a a la pagina anterior desde la que vino el usuario
                 const previousPage = document.referrer || 'main.html';
                 window.location.href = previousPage;
             }, 500);
         } else {
-            // Mostramos el error en el diálogo
             dialogMessage.textContent = data.message || "Error desconocido durante el login.";
             dialog.showModal();
         }
     });
 }
 
+/**
+ * Envia usuario y contrasena al login manteniendo cookies de sesion.
+ *
+ * @param {string} username Nombre de usuario.
+ * @param {string} password Contrasena en claro enviada por HTTPS/local al servidor.
+ * @returns {Promise<{status: string, message?: string, data?: any}>} Resultado del login.
+ */
 async function login(username, password) {
     try {
         const data = await apiFetch(`../../api/Login.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
-            credentials: 'include', // Importante para enviar/recibir cookies
+            credentials: 'include',
         });
         console.log("Respuesta Login:", data);
-        return data; // Si todo fue bien (200), devolvemos los datos tal cual
+        return data;
 
     } catch (error) {
         console.error("Error en fetch:", error);

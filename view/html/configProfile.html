@@ -13,6 +13,7 @@
 </head>
 
 <body>
+  <!-- Inicio: cabecera comun -->
   <header class="main-header">
     <nav class="nav-container">
       <a href="main.html" class="logo-link">
@@ -38,8 +39,10 @@
       </ul>
     </nav>
   </header>
+  <!-- Fin: cabecera comun -->
 
   <main class="mainHome">
+    <!-- Inicio: bloque de perfil propio -->
     <section class="hero-section">
       <img src="../assets/img/mountainHorizontal.jpg" alt="Photo of mountains" class="mainPic" />
 
@@ -50,7 +53,9 @@
         </div>
       </aside>
     </section>
+    <!-- Fin: bloque de perfil propio -->
 
+    <!-- Inicio: tabla de usuarios para admin -->
     <div id="adminPanelSection" class="adminPanelSection">
       <div class="adminPanelContainer">
         <div class="panelHeader">
@@ -83,7 +88,9 @@
         </template>
       </div>
     </div>
+    <!-- Fin: tabla de usuarios para admin -->
 
+    <!-- Inicio: modal para editar usuario -->
     <div id="modifyUserPopupAdmin" class="modal-overlay">
       <div class="popupCard">
         <button type="button" class="close-card-btn" id="closeUserModal">×</button>
@@ -125,7 +132,9 @@
         </form>
       </div>
     </div>
+    <!-- Fin: modal para editar usuario -->
 
+    <!-- Inicio: modal para editar administrador -->
     <div id="modifyAdminPopup" class="modal-overlay">
       <div class="popupCard">
         <button type="button" class="close-card-btn" id="closeAdminModal">×</button>
@@ -158,7 +167,9 @@
         </form>
       </div>
     </div>
+    <!-- Fin: modal para editar administrador -->
 
+    <!-- Inicio: cambio de contrasena -->
     <dialog id="verifyPasswordModal" class="changePasswordModal modal-dialog small-modal" closedby="any">
       <button type="button" class="close-pass-btn">×</button>
       <h2>Control de Seguridad</h2>
@@ -192,8 +203,10 @@
         </div>
       </form>
     </dialog>
+    <!-- Fin: cambio de contrasena -->
   </main>
 
+  <!-- Inicio: footer comun -->
   <footer>
     <div class="brand-col">
       <img src="../assets/img/Book&Bugs_Logo.png" alt="Logo" width="100">
@@ -225,6 +238,7 @@
     </div>
     <p class="copyright">© 2025 [PH]. Todos los derechos reservados</p>
   </footer>
+  <!-- Fin: footer comun -->
 </body>
 
 </html>
