@@ -1,245 +1,164 @@
-# Reto Libreria
+# Reto Libreria — Documentacion Para El Profesorado
 
 Proyecto academico PHP/MySQL con arquitectura MVC, endpoints REST JSON y frontend HTML/CSS/JS.
 
-## Estructura
+## Rama `main` vs Rama `alex`
 
-```text
-view/html/              Paginas HTML
-view/assets/js/         JavaScript del cliente
-view/assets/css/        Estilos
-api/                    Endpoints PHP con respuesta JSON
-controller/             Controladores puente
-model/dao/              DAO con SQL y PDO
-model/entities/         Entidades y toArray()
-Config/                 Sesion y conexion a base de datos
-SQL/CRUD_ADT.sql        Script de base de datos
-```
+Este documento describe el estado de la rama `alex`, que contiene las correcciones y
+estandarizaciones aplicadas sobre la base inicial de `main`. A continuacion se detallan
+los problemas detectados en `main`, los cambios realizados y las razones academicas
+detras de cada decision.
 
-## Flujo MVC
+---
 
-```text
-view/html + view/assets/js
-  -> api/*.php
-  -> controller/*.php
-  -> model/dao/*.php
-  -> MySQL
-```
+## Problemas Detectados En `main`
 
-La respuesta vuelve en sentido inverso:
+### Arquitectura Y Separacion De Capas
 
-```text
-MySQL
-  -> model/dao/*.php
-  -> controller/*.php
-  -> api/*.php con JSON estandar
-  -> view/assets/js renderiza DOM
-```
+- Algunos endpoints contenian logica de negocio y SQL mezclados, sin delegar
+  correctamente al controlador y DAO.
+- Controladores llegaban a leer variables HTTP globales (`$_POST`, `$_GET`),
+  responsabilidad que corresponde exclusivamente a la capa API.
+- Algunas entidades no tenian metodo `toArray()`, obligando a la API a construir
+  arrays manualmente y arriesgando exponer datos sensibles.
 
-## Contrato JSON
+### Contrato JSON
 
-Los endpoints deben responder con este formato:
+- No todos los endpoints respondian con el mismo formato.
+- Distintas claves segun el endpoint (`exito`, `mensaje`, `data` directa).
+- Codigos HTTP no siempre coincidian con el estado real de la respuesta.
+- Errores de validacion llegaban como `200 OK` en vez de `400 Bad Request`.
+
+### Seguridad
+
+- La validacion de sesion y rol se replicaba de forma inconsistente entre endpoints.
+- Algunas respuestas podian filtrar la contraseña hasheada del usuario.
+- La subida de archivos (portadas) no validaba el MIME real, solo la extension.
+- No se regeneraba el ID de sesion tras login correcto.
+
+### Frontend
+
+- Las llamadas `fetch()` usaban cadenas `.then().then()` sin manejo de errores
+  centralizado.
+- No habia un helper comun para llamadas API, duplicando logica de parseo,
+  validacion de respuesta y tratamiento de errores en cada archivo JS.
+- Los `console.log()` mostraban fragmentos sueltos del objeto respuesta en vez del
+  JSON completo, dificultando la depuracion.
+
+---
+
+## Cambios Aplicados En `alex`
+
+### API: Contrato JSON Estandar
+
+Todos los endpoints siguen esta estructura unica:
 
 ```json
 {
   "status": "success|error",
   "code": 200,
-  "message": "Mensaje claro",
+  "message": "Descripcion legible",
   "data": {}
 }
 ```
 
-Reglas aplicadas:
+- El campo `code` coincide con `http_response_code()`.
+- Errores de validacion: `400`.
+- Recurso no encontrado: `404`.
+- Metodo HTTP incorrecto: `405`.
+- Error interno del servidor: `500` sin detalles tecnicos.
 
-- `code` coincide con `http_response_code(...)`.
-- `status` usa `success` o `error`.
-- Los errores devuelven preferentemente `data: null`.
-- Los endpoints declaran `Content-Type: application/json; charset=utf-8`.
-- No se devuelven trazas, SQL ni detalles sensibles al cliente.
-- Todos los endpoints siguen el orden: `header()` antes que `require_once`.
+### Metodos HTTP
 
-## Convenciones de Codigo
+Simplificacion academica compatible con `$_POST` y `FormData`:
 
-### Orden en API (`api/*.php`)
+- `GET` para lectura (lista libros, detalle, comentarios, perfil, sesion, etc.).
+- `POST` para cualquier accion que cree, modifique, elimine o ejecute (login,
+  registro, compra, subida de portada, etc.).
+- Los endpoints rechazan metodos no soportados con `405`.
 
-```
-<?php
-header('Content-Type: application/json; charset=utf-8');
-require_once '../controller/...';
-require_once '../Config/Session.php';  // si aplica
-if ($_SERVER['REQUEST_METHOD'] !== ...)
-```
+### MVC: Responsabilidades Claras
 
-- El `header()` va siempre inmediatamente despues de `<?php`, antes de cualquier `require_once`.
-- No se usan `Access-Control-Allow-Origin` ni CORS (mismo origen).
-- `Config/Session.php` ya emite cache-busting headers; no se duplican en los endpoints.
+| Capa | Que hace | Que NO hace |
+|------|----------|-------------|
+| `api/*.php` | Lee input, valida, sanea, verifica sesion/rol, decide HTTP status, serializa con `toArray()` | No ejecuta SQL, no imprime HTML |
+| `controller/` | Orquesta llamadas al DAO, recibe entidades | No lee `$_GET`/`$_POST`, no imprime JSON, no contiene SQL |
+| `model/dao/` | Contiene el SQL, usa PDO + prepared statements | No imprime, no decide logica de negocio |
+| `model/entities/` | Encapsula datos, expone `toArray()` | No conoce SQL ni HTTP |
 
-## Metodos HTTP
+### Seguridad
 
-El proyecto mantiene una convencion simple y compatible con PHP academico:
+- Login con `password_verify()` y registro con `password_hash()`.
+- Regeneracion del ID de sesion tras login correcto.
+- Endpoints sensibles validan sesion activa y rol del usuario.
+- `Profile::toArray()` excluye el campo `pswd` de la respuesta.
+- Subida de portadas: validacion de tamaño maximo, extension y MIME real con
+  `finfo`.
+- JSON mal formado en el body → `400` con contrato estandar.
+- No se exponen trazas, SQL ni detalles internos al cliente.
 
-- `GET` para lecturas.
-- `POST` para acciones que crean, modifican, eliminan o ejecutan operaciones.
-- No se usan `PUT`, `PATCH` ni `DELETE` para evitar complejidad innecesaria con `$_POST`, `FormData` y subida de archivos.
+### Frontend: Centralizacion De Llamadas API
 
-Los endpoints validan explicitamente el metodo recibido. Si no corresponde, responden:
+- Se creo `view/assets/js/apiClient.js` con la funcion `apiFetch()`.
+- Todas las llamadas usan `async/await` + `try/catch`.
+- `apiFetch()` valida JSON, `response.ok`, el campo `status` y que `code`
+  coincida con el HTTP status.
+- Parametro `allowedStatuses` para manejar casos como `401` sin lanzar error
+  (necesario en `checkSession`).
+- Los `console.log()` muestran el JSON completo de la respuesta.
+- Las redirecciones por bloqueo usan `window.location.replace()`; las de
+  navegacion normal usan `window.location.href`.
 
-```json
-{
-  "status": "error",
-  "code": 405,
-  "message": "Método no permitido.",
-  "data": null
-}
-```
+### Homogeneidad Interna
 
-Endpoints de lectura con `GET`:
+- Todos los endpoints siguen el mismo orden interno:
+  `header()` → `require_once` → validacion metodo → logica.
+- Sin cabeceras CORS innecesarias (mismo origen).
+- `Config/Session.php` gestiona los cache-busting headers una sola vez; no se
+  duplican en los endpoints.
+- Los controladores reciben la conexion PDO por inyeccion de dependencia.
 
-```text
-GetAllBooks.php
-GetBook.php
-GetComments.php
-GetAllUsers.php
-GetProfile.php
-GetOrder.php
-CheckSession.php
-```
+---
 
-Endpoints de accion con `POST`:
+## Tabla Resumen: `main` vs `alex`
 
-```text
-Login.php
-Logout.php
-AddUser.php
-ModifyUser.php
-ModifyAdmin.php
-ModifyPassword.php
-DeleteUser.php
-AddBook.php
-ModifyBook.php
-AddComment.php
-UpdateComment.php
-DeleteComment.php
-BuyNow.php
-```
+| Aspecto | Estado en `main` | Estado en `alex` |
+|---------|------------------|-------------------|
+| Contrato JSON | Inconsistente entre endpoints | Unico: `{status, code, message, data}` |
+| Codigos HTTP | A veces `200` en errores | `400`, `404`, `405`, `500` segun corresponda |
+| Separacion MVC | Logica mezclada en algunos endpoints | API valida, controller orquesta, DAO tiene SQL |
+| Entidades `toArray()` | Faltante en varias entidades | Implementado en todas |
+| Inyeccion SQL | Sin prepared statements en puntos concretos | Todas las consultas con PDO preparado |
+| Manejo de sesion | Disperso y con algunas omisiones | Validacion explicita en endpoints sensibles |
+| Regenerar session ID | No se hacia | Se hace tras login correcto |
+| Filtracion de password | Podia aparecer en respuestas API | Excluida en `toArray()` |
+| Subida de portadas | Solo extension | Extension + MIME real con `finfo` |
+| Fetch del frontend | `.then().then()` duplicado en cada JS | `apiFetch()` centralizado con `async/await` |
+| `console.log()` | Fragmentos sueltos | JSON completo de la respuesta |
 
-## Frontend JS
+---
 
-Los `fetch` del frontend se centralizan en `view/assets/js/apiClient.js` mediante `apiFetch()`.
+## Como Se Verifica
 
-```js
-import { apiFetch } from './apiClient.js';
+`alex` ha pasado las siguientes comprobaciones:
 
-const response = await apiFetch('../../api/GetAllBooks.php');
-```
+- PHP lint completo sin errores sintacticos.
+- Endpoints GET responden correctamente con contrato estandar.
+- Endpoints POST con JSON invalido devuelven `400`.
+- Endpoints GET llamados con POST devuelven `405`.
+- Endpoints POST llamados con GET devuelven `405`.
+- La sesion se mantiene o rechaza segun corresponda.
+- Los datos sensibles (password hasheada) no aparecen en respuestas.
 
-Reglas aplicadas:
+---
 
-- No se usan cadenas `fetch().then().then()` en los JS de la aplicacion.
-- Las llamadas usan `async/await` y `try/catch`.
-- `apiFetch()` acepta un parametro `allowedStatuses` para manejar ciertos codigos HTTP sin lanzar error (ej. `401` en `checkSession`).
-- `apiFetch()` valida JSON, `response.ok`, `status` y que `code` coincida con el HTTP status.
-- Las llamadas de sesion/autenticacion usan `credentials: 'include'` cuando corresponde.
-- Todos los `console.log()` muestran el objeto JSON completo (`data`), no solo `data.code`.
-- Las redirecciones por acceso bloqueado usan `window.location.replace()`; las de navegacion normal usan `window.location.href`.
+## Notas Para La Defensa
 
-## Responsabilidades Por Capa
-
-API (`api/`):
-
-- Lee `$_GET`, `$_POST`, JSON body o archivos.
-- Valida y sanea datos de entrada.
-- Comprueba sesion y permisos.
-- Decide codigo HTTP.
-- Convierte entidades a array antes de `json_encode()`.
-
-Controller (`controller/`):
-
-- Orquesta llamadas.
-- No lee variables HTTP globales.
-- No imprime JSON.
-- No contiene SQL.
-
-DAO (`model/dao/`):
-
-- Contiene el SQL.
-- Usa PDO y prepared statements.
-- Devuelve entidades cuando aplica.
-
-Entities (`model/entities/`):
-
-- Encapsulan datos.
-- Exponen `toArray()` para serializacion.
-- No exponen hashes de contrasena en respuestas API.
-
-## Seguridad Aplicada
-
-- Login con `password_verify()`.
-- Registro/cambio de contrasena con `password_hash()`.
-- Regeneracion de ID de sesion tras login correcto.
-- Endpoints sensibles validan sesion y rol.
-- `DeleteUser.php` permite borrar solo si es el propio usuario o un admin.
-- `ModifyAdmin.php` exige rol admin.
-- JSON invalido devuelve `400` con contrato estandar.
-- Subida de portadas valida tamano, extension y MIME real con `finfo`.
-- `Profile::toArray()` no serializa `pswd`.
-
-## Comandos De Verificacion
-
-Lint de PHP modificado o endpoint concreto:
-
-```bash
-php -l api/GetBook.php
-```
-
-Lint completo PHP:
-
-```bash
-find . -name "*.php" -not -path "./.git/*" -print0 | xargs -0 -n1 php -l
-```
-
-Comprobacion sintactica JS:
-
-```bash
-node --check view/assets/js/apiClient.js
-```
-
-Smoke test de endpoint publico:
-
-```bash
-curl -s -i http://localhost/Reto_Libreria/api/GetAllBooks.php
-```
-
-Smoke test con parametros:
-
-```bash
-curl -s -i "http://localhost/Reto_Libreria/api/GetBook.php?isbn=9780451524935"
-```
-
-Smoke test de sesion:
-
-```bash
-curl -s -i http://localhost/Reto_Libreria/api/CheckSession.php
-```
-
-Smoke test de metodo incorrecto:
-
-```bash
-curl -s -i -X POST http://localhost/Reto_Libreria/api/GetAllBooks.php
-curl -s -i -X GET http://localhost/Reto_Libreria/api/Login.php
-```
-
-## Estado Actual
-
-- Arquitectura MVC alineada con la rubrica academica.
-- Contrato JSON estandar aplicado en todos los endpoints.
-- Fetch del frontend centralizado y sin cadenas `.then()` fuera del helper.
-- Validacion server-side reforzada en endpoints JSON y operaciones sensibles.
-- Metodos HTTP restringidos a `GET` y `POST` con errores `405` cuando corresponde.
-- `GetBook.php` obtiene entidad desde DAO y serializa en API.
-- Todos los endpoints PHP siguen el mismo orden: `header()` > `require_once` > validacion metodo.
-- Sin cabeceras CORS en endpoints (mismo origen).
-- `console.log()` homogeneizado para mostrar JSON completo en todos los JS.
-- Redirecciones de bloqueo unificadas con `window.location.replace()`.
-- Sesion sin duplicacion de cache-busting headers (los gestiona `Config/Session.php`).
-- Quedan como criterio de mantenimiento futuro revisar progresivamente endpoints no tocados antes de nuevas funcionalidades.
+- La rama `main` representa el estado inicial del proyecto, sin las correcciones
+  solicitadas. La rama `alex` contiene el codigo estabilizado.
+- Cada decision de cambio esta motivada por los criterios de la rubrica:
+  separacion de capas, contrato REST, validacion en API, seguridad y
+  mantenibilidad del frontend.
+- Queda como trabajo futuro la revision de los modulos de estilo CSS y la
+  homogeneizacion completa del frontend visual, abordados en una rama separada
+  (`feature/front-side`).
