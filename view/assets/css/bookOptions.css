@@ -1,3 +1,4 @@
+/* Variables de gestion de libros */
 :root {
   --primary-color: #101416;
   --primary-hover: #333333;
@@ -12,6 +13,7 @@
   --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
+/* Base */
 * {
   margin: 0;
   padding: 0;
@@ -24,6 +26,7 @@ body, html {
   background-color: var(--background-color);
 }
 
+/* Layout de opciones */
 .books-page {
   padding: 20px;
   min-height: 100vh;
@@ -32,6 +35,7 @@ body, html {
   align-items: center;
 }
 
+/* Topbar antigua, no aparece en el HTML actual */
 .books-topbar {
   display: flex;
   justify-content: space-between;
@@ -78,6 +82,7 @@ body, html {
   max-width: 500px;
 }
 
+/* Botones de gestion */
 .book-btn {
   display: flex;
   justify-content: center;

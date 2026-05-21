@@ -1,3 +1,4 @@
+/* Variables de perfil */
 :root {
   --primary-color: #101416;
   --primary-hover: #333333;
@@ -10,6 +11,7 @@
   --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* Base y botones compartidos */
 * {
   margin: 0;
   padding: 0;
@@ -30,6 +32,7 @@ body, html {
   transition: background-color 0.2s ease;
 }
 
+/* Bloque principal de perfil */
 .mainHome {
   position: relative;
 }

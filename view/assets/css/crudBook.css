@@ -1,3 +1,4 @@
+/* Variables del formulario de libros */
 :root {
   --primary-color: #28a745;
   --primary-hover: #218838;
@@ -12,6 +13,7 @@
   --shadow-lg: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
+/* Layout principal */
 .main-content {
   max-width: 950px;
   margin: 40px auto;
@@ -27,6 +29,7 @@
   font-weight: 600;
 }
 
+/* Selector de libro en modo edicion */
 .search-section {
   background: var(--light-gray);
   padding: 25px;
@@ -72,6 +75,7 @@
   font-size: 0.9rem;
 }
 
+/* Formulario de libro */
 .form-section {
   background: #fff;
   padding: 40px;

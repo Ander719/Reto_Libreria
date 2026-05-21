@@ -1,3 +1,4 @@
+/* Tabla de libros */
 h2 {
     color: #333;
     text-align: center;
@@ -35,14 +36,14 @@ h2 {
     background-color: #f9f9f9;
 }
 
-/* Estilo para la imagen de la portada */
+/* Portada dentro de tabla */
 .book-cover-img {
     width: 50px;
     height: auto;
     border-radius: 4px;
 }
 
-/* Estilo para el botón de ver comentarios (Azul) */
+/* Boton para revisar comentarios */
 .view-comments-btn {
     background-color: #3498db;
     color: white;
@@ -59,7 +60,7 @@ h2 {
     transform: scale(1.05);
 }
 
-/* Estilo para ocultar el botón del diálogo por defecto */
+/* Dialog de confirmacion */
 #confirmDialogBtn {
     display: none;
 }
@@ -72,7 +73,7 @@ h2 {
     min-height: calc(100vh - 200px); 
 }
 
-/* Estilos para el scroll de la tabla */
+/* Scroll de tabla */
 .table-responsive {
     width: 100%;
     max-height: 500px; 

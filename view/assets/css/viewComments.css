@@ -1,4 +1,4 @@
-/* Reto_Libreria/view/assets/css/viewComments.css */
+/* Gestion de comentarios */
 
 .container {
     padding: 40px 20px;
@@ -6,13 +6,14 @@
     margin: 0 auto;
 }
 
+/* Tabla de comentarios */
 .modern-table {
     width: 100%;
-    border-collapse: collapse; /* Elimina el doble borde */
+    border-collapse: collapse;
     background-color: white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     border-radius: 10px;
-    overflow: hidden; /* Para que el radio afecte a las esquinas */
+    overflow: hidden;
 }
 
 .modern-table thead {
@@ -36,7 +37,7 @@
     background-color: #f8f9fa; /* Efecto al pasar el ratón */
 }
 
-/* Celdas específicas */
+/* Celdas con formato propio */
 .user-cell {
     font-weight: bold;
     color: #3498db;
@@ -54,7 +55,7 @@
     color: #888;
 }
 
-/* Botón de eliminar dentro de la tabla */
+/* Boton de borrado */
 .delete-btn {
     background-color: #e74c3c;
     color: white;

@@ -1,3 +1,4 @@
+/* Portada */
 main {
   padding: 40px 20px; /* Espacio general para que nada toque los bordes del navegador */
   max-width: 1300px;
@@ -23,14 +24,13 @@ main {
 #searchSection .main-title:first-child {
   margin-top: 10px;
 }
-/* --- main --- */
-/* Para que las estrellas sean doradas y estén en fila */
+/* Valoraciones */
 .book-rating {
   color: #FFD700;
   margin: 10px 0;
   font-size: 1.2rem;
 }
-/* 1. El Contenedor Nuevo */
+/* Carrusel de mejor valorados */
 .rating-books {
   /* Configuración */
   --card-width: 380px;
@@ -53,7 +53,7 @@ main {
   margin-bottom: 20px;
   overflow: hidden;
 
-  /* Máscara de desvanecimiento a los lados (Fade Effect) */
+  /* La mascara crea un fade lateral sin modificar las tarjetas generadas por JS. */
   mask-image: linear-gradient(to right,
       rgba(0, 0, 0, 0),
       rgba(0, 0, 0, 1) 10%,
@@ -108,7 +108,7 @@ main {
   }
 }
 
-/* Fórmula: (Duración / Cantidad) * (Cantidad - Índice) * -1 */
+/* El delay escalonado reparte las tarjetas de forma uniforme en el carrusel infinito. */
 #ratingBooksContainer .book-card:nth-child(1) {
   animation-delay: calc(var(--duration) / var(--quantity) * (var(--quantity) - 1) * -1);
 }
@@ -183,7 +183,7 @@ main {
   display: none;
 }
 
-/* Para que los productos se vean en rejilla (Grid) */
+/* Grid de catalogo y resultados */
 .rng-books,
 .search-books {
   display: grid;
@@ -193,7 +193,7 @@ main {
   padding: 2rem 5%;
 }
 
-/* --- La Tarjeta (Book Card) --- */
+/* Tarjeta de libro */
 .book-card {
   background-color: #fff;
   border-radius: 12px;
@@ -203,7 +203,7 @@ main {
   /* Sombra suave */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-  /* MAGIA PARA LA UNIFORMIDAD: */
+  /* subgrid alinea titulo, rating, precio y stock entre tarjetas de la misma fila. */
   display: grid;
   grid-template-columns: subgrid;
   grid-row: span 6;
