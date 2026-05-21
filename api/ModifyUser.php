@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -21,7 +21,7 @@ if (!isset($_SESSION['user'])) {
         'code' => 401,
         'message' => 'No has iniciado sesión',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -38,7 +38,7 @@ if ($targetId != $loggedUserId && !$isAdmin) {
         'code' => 403,
         'message' => 'Sin permisos',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -57,7 +57,7 @@ if (!empty($telephone) && (strlen($telephone) !== 9 || !is_numeric($telephone)))
         'code' => 400,
         'message' => 'Teléfono inválido (debe tener 9 dígitos).',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -68,7 +68,7 @@ if ($targetId === false || empty($username) || empty($name) || empty($surname)) 
         'code' => 400,
         'message' => 'Datos obligatorios inválidos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -79,7 +79,7 @@ if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         'code' => 400,
         'message' => 'Formato de email inválido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -95,7 +95,7 @@ if ($roleForm === 'admin') {
             'code' => 400,
             'message' => 'Cuenta bancaria inválida (24 caracteres).',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -109,7 +109,7 @@ if ($roleForm === 'admin') {
             'code' => 400,
             'message' => 'Tarjeta inválida (debe tener 16 dígitos).',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -125,7 +125,7 @@ if ($result) {
         'code' => 200,
         'message' => 'Usuario actualizado correctamente',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(500);
     echo json_encode([
@@ -133,6 +133,6 @@ if ($result) {
         'code' => 500,
         'message' => 'Error en BD',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

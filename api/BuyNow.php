@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -24,7 +24,7 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
         'code' => 401,
         'message' => 'No autorizado.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -37,7 +37,7 @@ if (!is_array($input)) {
         'code' => 400,
         'message' => 'JSON no válido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -48,7 +48,7 @@ if (empty($input['isbn']) || empty($input['quantity'])) {
         'code' => 400,
         'message' => 'Datos incompletos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -56,14 +56,25 @@ $profileCode = filter_var($_SESSION['user']['profile_code'], FILTER_VALIDATE_INT
 $isbn = trim(htmlspecialchars($input['isbn']));
 $quantity = filter_var($input['quantity'], FILTER_VALIDATE_INT);
 
-if ($profileCode === false || $quantity === false || empty($isbn) || $profileCode <= 0 || $quantity <= 0 || strlen($isbn) < 10) {
+if (!preg_match('/^\d{13}$/', $isbn)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'El ISBN debe tener 13 dígitos.',
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+if ($profileCode === false || $quantity === false || empty($isbn) || $profileCode <= 0 || $quantity <= 0) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
         'code' => 400,
         'message' => 'Datos de entrada no válidos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -77,7 +88,7 @@ if ($result === true) {
         'code' => 200,
         'message' => 'Compra realizada con éxito.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } elseif ($result === 'NO_STOCK') {
     http_response_code(400);
     echo json_encode([
@@ -85,7 +96,7 @@ if ($result === true) {
         'code' => 400,
         'message' => 'No hay suficiente stock.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(500);
     echo json_encode([
@@ -93,6 +104,6 @@ if ($result === true) {
         'code' => 500,
         'message' => 'No se pudo procesar la compra.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

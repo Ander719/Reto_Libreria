@@ -9,8 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         'status' => 'error',
         'code' => 405,
         'message' => 'Método no permitido.',
-        'data' => []
-    ]);
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -24,8 +24,8 @@ if ($isbn) {
             'status' => 'error',
             'code' => 400,
             'message' => 'ISBN no válido.',
-            'data' => []
-        ]);
+            'data' => null
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -39,14 +39,14 @@ if ($isbn) {
         'code' => 200,
         'message' => 'Comentarios obtenidos correctamente.',
         'data' => $data
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
         'code' => 400,
         'message' => 'ISBN no proporcionado.',
-        'data' => []
-    ]);
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -21,7 +21,7 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
         'code' => 401,
         'message' => 'No autorizado.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -32,7 +32,7 @@ if (!isset($_SESSION['user']['role']) || $_SESSION['user']['role'] !== 'admin') 
         'code' => 403,
         'message' => 'Acceso restringido a administradores.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -58,7 +58,7 @@ if ($profile_code === false || $profile_code <= 0 || empty($email) || empty($use
         'code' => 400,
         'message' => 'Faltan parámetros obligatorios',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -69,7 +69,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         'code' => 400,
         'message' => 'Email no válido',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -83,7 +83,7 @@ if ($modify) {
         'code' => 200,
         'message' => 'Admin modificado correctamente',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(500);
     echo json_encode([
@@ -91,6 +91,6 @@ if ($modify) {
         'code' => 500,
         'message' => 'Error al modificar el admin',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

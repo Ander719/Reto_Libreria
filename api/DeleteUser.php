@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -21,7 +21,7 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
         'code' => 401,
         'message' => 'No autorizado.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -33,7 +33,7 @@ if (!is_array($data)) {
         'code' => 400,
         'message' => 'JSON no válido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -46,7 +46,7 @@ if ($idToDelete === false || $idToDelete <= 0) {
         'code' => 400,
         'message' => 'No se ha proporcionado un ID válido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -61,7 +61,7 @@ if (!$isSelfDelete && !$isAdmin) {
         'code' => 403,
         'message' => 'No tienes permisos para eliminar este usuario.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -78,7 +78,7 @@ if ($result) {
         'code' => 200,
         'message' => 'Usuario eliminado correctamente.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(500);
     echo json_encode([
@@ -86,6 +86,6 @@ if ($result) {
         'code' => 500,
         'message' => 'Error al eliminar en la base de datos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

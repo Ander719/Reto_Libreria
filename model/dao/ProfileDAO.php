@@ -42,7 +42,8 @@ class ProfileDAO
             if ($e->getCode() == '23000') {
                 return "ERROR_DUPLICADO";
             }
-            return "ERROR_BBDD: " . $e->getMessage();
+            error_log("Error en ProfileDAO::register: " . $e->getMessage());
+            return "ERROR_BBDD";
         }
     }
 

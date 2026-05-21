@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -23,7 +23,7 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
         'code' => 401,
         'message' => 'No autorizado.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -34,7 +34,7 @@ if (!isset($_SESSION['user']['role']) || $_SESSION['user']['role'] !== 'admin') 
         'code' => 403,
         'message' => 'Acceso restringido a administradores.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -60,6 +60,17 @@ $pages = filter_var($pages, FILTER_VALIDATE_INT);
 $stock = filter_var($stock, FILTER_VALIDATE_INT);
 $price = filter_var($price, FILTER_VALIDATE_FLOAT);
 
+if (!preg_match('/^\d{13}$/', $isbn)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'El ISBN debe tener 13 dígitos.',
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 if (empty($isbn) || empty($title) || empty($authorName) || $pages === false || $stock === false || $price === false) {
     http_response_code(400);
     echo json_encode([
@@ -67,7 +78,7 @@ if (empty($isbn) || empty($title) || empty($authorName) || $pages === false || $
         'code' => 400,
         'message' => 'Datos de entrada no válidos',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -78,7 +89,7 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] !== UPLOAD_ERR_
         'code' => 400,
         'message' => 'Error al subir el archivo',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -94,9 +105,6 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_
 
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $realMimeType = $finfo ? finfo_file($finfo, $tmpPath) : false;
-    if ($finfo) {
-        finfo_close($finfo);
-    }
 
     if (
         $fileSize <= 0 ||
@@ -110,7 +118,7 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_
             'code' => 400,
             'message' => 'Archivo no válido o muy grande',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -136,7 +144,7 @@ if ($response) {
             'isbn' => $isbn,
             'cover' => $coverName
         ]
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(500);
     echo json_encode([
@@ -144,6 +152,6 @@ if ($response) {
         'code' => 500,
         'message' => 'Error al guardar',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

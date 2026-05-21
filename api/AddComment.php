@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -26,7 +26,7 @@ if (!is_object($data)) {
         'code' => 400,
         'message' => 'JSON no válido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -37,7 +37,7 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user']['profile_code'])) {
         'code' => 401,
         'message' => 'No autorizado.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -48,7 +48,7 @@ if (empty($data->isbn) || empty($data->text) || !isset($data->rating)) {
         'code' => 400,
         'message' => 'Datos incompletos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -65,7 +65,7 @@ if ($profileCode === '' || $isbn === '' || $text === '' || $rating === false || 
         'code' => 400,
         'message' => 'Datos de comentario no válidos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -78,10 +78,10 @@ $comment->setDateComment($date);
 
 $created = $controller->addComment($comment);
 
-http_response_code($created ? 201 : 503);
+http_response_code($created ? 201 : 500);
 echo json_encode([
     'status' => $created ? 'success' : 'error',
-    'code' => $created ? 201 : 503,
+    'code' => $created ? 201 : 500,
     'message' => $created ? 'Comentario publicado correctamente.' : 'Error al guardar el comentario.',
     'data' => null
 ]);

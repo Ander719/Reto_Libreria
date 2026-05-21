@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -22,7 +22,7 @@ if (!is_array($input)) {
         'code' => 400,
         'message' => 'JSON no válido',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -40,18 +40,18 @@ if (empty($username) || empty($pswd)) {
         'code' => 400,
         'message' => 'Faltan datos',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
-if (strlen($pswd) < 4) {
+if (strlen($pswd) < 8) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
         'code' => 400,
-        'message' => 'La contraseña debe tener al menos 4 caracteres',
+        'message' => 'La contraseña debe tener al menos 8 caracteres',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -78,7 +78,7 @@ if ($result instanceof User) {
         'data' => [
             'user' => $userData
         ]
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -89,7 +89,7 @@ if ($result === 'ERROR_DUPLICADO') {
         'code' => 400,
         'message' => 'Ese nombre de usuario ya está cogido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 

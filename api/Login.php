@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -22,7 +22,7 @@ if (!is_array($data)) {
         'code' => 400,
         'message' => 'JSON no válido',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -39,7 +39,7 @@ if ($username === '' || $password === '') {
         'code' => 400,
         'message' => 'Datos vacíos',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -53,7 +53,7 @@ if (!$identity || !isset($identity['profile']) || !isset($identity['role'])) {
         'code' => 401,
         'message' => 'Usuario o contraseña incorrectos',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -67,7 +67,7 @@ if (!password_verify($password, $profile->getPswd())) {
         'code' => 401,
         'message' => 'Usuario o contraseña incorrectos',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 

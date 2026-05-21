@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -22,7 +22,7 @@ if (empty($isbn)) {
         'code' => 400,
         'message' => 'ISBN no proporcionado',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -33,7 +33,7 @@ if (!preg_match('/^\d{13}$/', $isbn)) {
         'code' => 400,
         'message' => 'ISBN no válido',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -51,7 +51,7 @@ if ($libro) {
         'code' => 200,
         'message' => 'Libro encontrado',
         'data' => $bookData
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
     http_response_code(404);
     echo json_encode([
@@ -59,6 +59,6 @@ if ($libro) {
         'code' => 404,
         'message' => 'Libro no encontrado',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

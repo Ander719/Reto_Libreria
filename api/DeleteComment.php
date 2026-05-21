@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'code' => 405,
         'message' => 'Método no permitido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -25,7 +25,7 @@ if (!is_object($data)) {
         'code' => 400,
         'message' => 'JSON no válido.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
@@ -39,7 +39,7 @@ if (!empty($data->isbn)) {
             'code' => 401,
             'message' => 'Debes iniciar sesión.',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -55,7 +55,7 @@ if (!empty($data->isbn)) {
             'code' => 400,
             'message' => 'Faltan datos.',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -67,15 +67,15 @@ if (!empty($data->isbn)) {
             'code' => 200,
             'message' => 'Comentario eliminado.',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     } else {
-        http_response_code(503);
+        http_response_code(500);
         echo json_encode([
             'status' => 'error',
-            'code' => 503,
+            'code' => 500,
             'message' => 'Error en BBDD al eliminar.',
             'data' => null
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
 } else {
@@ -85,6 +85,6 @@ if (!empty($data->isbn)) {
         'code' => 400,
         'message' => 'Faltan datos.',
         'data' => null
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>
