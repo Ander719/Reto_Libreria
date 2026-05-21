@@ -1,4 +1,5 @@
 <?php
+// Compra directa. El comprador sale de la sesion, no del JSON enviado por el navegador.
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../controller/OrderController.php';
@@ -81,6 +82,7 @@ if ($profileCode === false || $quantity === false || empty($isbn) || $profileCod
 $controller = new OrderController();
 $result = $controller->createDirectOrder($profileCode, $isbn, $quantity);
 
+// El DAO distingue falta de stock de errores tecnicos para devolver el HTTP adecuado.
 if ($result === true) {
     http_response_code(200);
     echo json_encode([

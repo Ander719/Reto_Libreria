@@ -1,4 +1,5 @@
 <?php
+// Actualiza la resena ya existente de un usuario para un libro.
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../controller/CommentController.php';

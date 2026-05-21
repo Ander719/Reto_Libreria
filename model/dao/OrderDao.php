@@ -2,21 +2,36 @@
 require_once '../model/entities/Order.php';
 //require_once '../model/entities/Content.php';
 
+/**
+ * Consultas y escrituras de pedidos.
+ */
 class OrderDao
 {
     private $conn;
 
+    /**
+     * @param PDO $db Conexion PDO reutilizada por el DAO.
+     */
     public function __construct($db)
     {
         $this->conn = $db;
     }
 
+    /**
+     * Compra directa: crea pedido, linea y descuenta stock.
+     *
+     * @param int $profileCode Perfil comprador.
+     * @param string $isbn ISBN comprado.
+     * @param int $quantity Cantidad solicitada.
+     * @return true|'NO_STOCK'|false Resultado de la operacion.
+     */
     public function createDirectOrder($profileCode, $isbn, $quantity)
     {
         try {
-            // 1. Iniciar Transacción
+            // Pedido, linea y stock van juntos o no se guarda nada.
             $this->conn->beginTransaction();
 
+            // FOR UPDATE bloquea el libro mientras se revisa el stock.
             $stmtCheck = $this->conn->prepare("SELECT stock, price FROM book_ WHERE isbn = :isbn FOR UPDATE");
             $stmtCheck->bindParam(':isbn', $isbn);
             $stmtCheck->execute();
@@ -24,13 +39,12 @@ class OrderDao
 
 
             if (!$book || $book['stock'] < $quantity) {
-                $this->conn->rollBack(); // Cancelamos transacción
-                return "NO_STOCK";       // Devolvemos un código de error específico
+                $this->conn->rollBack();
+                return "NO_STOCK";
             }
 
             $currentPrice = $book['price'];
-            // 2. Insertar el Pedido (ORDER_)
-            // buyed = 1 (true) porque es compra directa
+            // buyed = 1 porque este flujo confirma la compra en el mismo paso.
             $queryOrder = "INSERT INTO order_ (profile_code, date_buy, buyed) VALUES (:profile, NOW(), 1)";
             $stmtOrder = $this->conn->prepare($queryOrder);
             $stmtOrder->bindParam(':profile', $profileCode);
@@ -38,10 +52,8 @@ class OrderDao
 
 
 
-            // 3. Obtener el ID del pedido recién creado
             $orderId = $this->conn->lastInsertId();
 
-            // 4. Insertar el Contenido (CONTENT_)
             $queryContent = "INSERT INTO content_ (id_order, isbn, quantity, price_moment) VALUES (:orderId, :isbn, :qty, :price)";
             $stmtContent = $this->conn->prepare($queryContent);
             $stmtContent->bindParam(':orderId', $orderId);
@@ -50,27 +62,30 @@ class OrderDao
             $stmtContent->bindParam(':price', $currentPrice);
             $stmtContent->execute();
 
-            // 5. Restar Stock del Libro (Opcional pero recomendable)
             $queryStock = "UPDATE book_ SET stock = stock - :qty WHERE isbn = :isbn";
             $stmtStock = $this->conn->prepare($queryStock);
             $stmtStock->bindParam(':qty', $quantity);
             $stmtStock->bindParam(':isbn', $isbn);
             $stmtStock->execute();
 
-            // 6. Confirmar Transacción
             $this->conn->commit();
             return true;
         } catch (Exception $e) {
-            // Si algo falla, deshacemos todo
+            // Si algo rompe, se deshace tambien el stock.
             $this->conn->rollBack();
-            // Puedes guardar el error en un log si quieres: error_log($e->getMessage());
             return false;
         }
     }
 
-    // Historial Compras
+    /**
+     * Monta el historial agrupando las filas del JOIN por pedido.
+     *
+     * @param int $profileCode Perfil comprador.
+     * @return array<int, array<string, mixed>> Pedidos serializados con items.
+     */
     public function getOrdersByProfile($profileCode)
     {
+        // La consulta ya trae portada y titulo para no hacer otro fetch por cada item.
         $query = "SELECT o.id_order, o.date_buy, c.isbn, c.quantity, c.price_moment, b.title, b.price, b.cover 
               FROM order_ o
               JOIN content_ c ON o.id_order = c.id_order
@@ -87,7 +102,6 @@ class OrderDao
         foreach ($rawRows as $row) {
             $orderId = $row['id_order'];
 
-            // 1. Instanciar Order
             if (!isset($ordersMap[$orderId])) {
                 $ordersMap[$orderId] = new Order(
                     $row['id_order'],
@@ -97,25 +111,21 @@ class OrderDao
                 );
             }
 
-            // 2. Instanciar Content (Con el precio histórico)
             $contentObj = new Content(
                 $orderId,
                 $row['isbn'],
                 $row['quantity'],
-                $row['price_moment'] // <--- USAMOS EL HISTÓRICO
+                $row['price_moment']
             );
 
-            // 3. Inyectar detalles visuales del libro
             $contentObj->setBookDetails(
                 $row['title'],
                 $row['cover']
             );
 
-            // 4. Añadir al Order
             $ordersMap[$orderId]->addContent($contentObj);
         }
 
-        // Convertir a JSON
         $finalList = [];
         foreach ($ordersMap as $orderObj) {
             $finalList[] = $orderObj->toArray();

@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * Conexion PDO usada por los endpoints de la aplicacion.
+ */
 class Database {
     private $host = 'localhost';
     private $db_name = 'crud_adt';
@@ -6,6 +10,11 @@ class Database {
     private $password = 'TuPass123!';
     private $conn;
 
+    /**
+     * Abre la conexion y deja PDO en modo excepcion.
+     *
+     * @return PDO Conexion activa con la base de datos.
+     */
     public function getConnection() {
         $this->conn = null;
         try {
@@ -16,6 +25,7 @@ class Database {
             );
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
+            // La API no debe exponer detalles tecnicos de conexion al cliente.
             error_log('Error de conexión BD: ' . $e->getMessage());
             http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');

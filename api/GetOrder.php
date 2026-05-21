@@ -1,4 +1,5 @@
 <?php
+// Historial de compras del usuario conectado.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/OrderController.php';
 require_once '../Config/Session.php';

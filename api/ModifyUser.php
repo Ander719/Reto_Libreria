@@ -1,4 +1,5 @@
 <?php
+// Edicion de perfil. Un usuario cambia sus datos; un admin puede editar otros perfiles.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../Config/Session.php';
 require_once '../controller/ProfileController.php';

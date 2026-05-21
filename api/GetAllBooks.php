@@ -1,4 +1,5 @@
 <?php
+// Catalogo completo para portada, buscador y selectores de administracion.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 

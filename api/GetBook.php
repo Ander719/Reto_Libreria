@@ -1,4 +1,5 @@
 <?php
+// Detalle de libro. Mantiene algunos campos planos porque el frontend los usa asi.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 

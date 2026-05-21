@@ -1,4 +1,5 @@
 <?php
+// Login unico para usuarios y admins. Primero resuelve el rol y luego verifica el hash.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 require_once '../Config/Session.php';
@@ -46,6 +47,7 @@ if ($username === '' || $password === '') {
 $controller = new ProfileController();
 $identity = $controller->loginUser($username);
 
+// loginUser devuelve una identidad compuesta para tratar usuarios y admins con el mismo flujo.
 if (!$identity || !isset($identity['profile']) || !isset($identity['role'])) {
     http_response_code(401);
     echo json_encode([

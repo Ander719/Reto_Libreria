@@ -1,4 +1,5 @@
 <?php
+// Guarda una resena del usuario conectado para el libro indicado.
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../controller/CommentController.php';

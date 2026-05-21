@@ -1,4 +1,5 @@
 <?php
+// Edicion de libros desde el panel admin. Si llega portada nueva, sustituye la anterior.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/BookController.php';
 require_once '../Config/Session.php';
@@ -94,6 +95,7 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] !== UPLOAD_ERR_
 }
 
 if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_OK) {
+    // La portada anterior se conserva si no hay archivo nuevo y se elimina si se reemplaza.
     $maxSize = 2 * 1024 * 1024;
     $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
     $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];

@@ -1,4 +1,5 @@
 <?php
+// Resenas de un libro, ya preparadas para pintarlas en detalle y moderacion.
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../controller/CommentController.php';

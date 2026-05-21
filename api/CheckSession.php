@@ -1,4 +1,5 @@
 <?php
+// Pequeña comprobacion para saber si el navegador mantiene una sesion valida.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../Config/Session.php';
 

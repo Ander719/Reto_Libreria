@@ -3,9 +3,17 @@
 require_once dirname(__DIR__, 2) . '/Config/Database.php'; 
 require_once dirname(__DIR__) . '/entities/Author.php';
 
+/**
+ * DAO responsable de reutilizar o crear autores del catalogo.
+ */
 class AuthorDAO {
     private $conn;
 
+    /**
+     * Permite usar una conexion inyectada o crear una propia si se invoca de forma aislada.
+     *
+     * @param PDO|null $db Conexion PDO opcional.
+     */
     public function __construct($db = null) {
         if ($db !== null) {
             $this->conn = $db;
@@ -16,8 +24,14 @@ class AuthorDAO {
         $this->conn = $database->getConnection();
     }
 
+    /**
+     * Busca un autor por nombre y apellido; si no existe, lo inserta y devuelve su ID.
+     *
+     * @param string $name Nombre del autor.
+     * @param string $surname Apellido del autor.
+     * @return int|false ID del autor o false si falla la insercion.
+     */
     public function getOrCreateAuthorId($name, $surname) {
-        //verificamos si existe ese autor
         $query = "SELECT ID_AUTHOR FROM author_ WHERE name_author = :name AND last_name = :surname LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":name", $name);
@@ -29,7 +43,7 @@ class AuthorDAO {
             return $row['ID_AUTHOR'];
         }
 
-        // si no existe, creamos uno nuevo
+        // La tabla no usa AUTO_INCREMENT; se calcula el siguiente ID antes de insertar.
         $queryMax = "SELECT MAX(ID_AUTHOR) as max_id FROM author_";
         $stmtMax = $this->conn->prepare($queryMax);
         $stmtMax->execute();

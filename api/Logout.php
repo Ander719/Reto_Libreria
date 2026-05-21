@@ -1,5 +1,5 @@
 <?php
-// api/Logout.php
+// Cierre de sesion del usuario actual.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../Config/Session.php';
 

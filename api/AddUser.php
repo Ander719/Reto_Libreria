@@ -1,4 +1,5 @@
 <?php
+// Registro basico: solo se crea usuario normal y la contrasena ya viaja hasheada al DAO.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 require_once '../Config/Session.php';

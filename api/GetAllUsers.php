@@ -1,4 +1,5 @@
 <?php
+// Lista de usuarios que se pinta en el panel de administracion.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 require_once '../Config/Session.php';

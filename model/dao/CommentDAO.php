@@ -1,13 +1,25 @@
 <?php
 require_once '../model/entities/Comment.php';
 
+/**
+ * Consultas y escrituras de resenas.
+ */
 class CommentDAO {
     private $conn;
 
+    /**
+     * @param PDO $db Conexion PDO reutilizada por el DAO.
+     */
     public function __construct($db) {
         $this->conn = $db;
     }
 
+    /**
+     * Inserta una resena saneando el texto antes de guardarlo.
+     *
+     * @param Comment $comment Comentario validado en la API.
+     * @return bool True si se inserta correctamente.
+     */
     public function createComment(Comment $comment) {
         $query = "INSERT INTO comment_ (profile_code, Isbn, comment_text, valoration, date_comment) 
                   VALUES (:profile, :isbn, :text, :rating, :date)";
@@ -25,7 +37,14 @@ class CommentDAO {
         return $stmt->execute();
     }
 
+    /**
+     * Trae las resenas de un libro con el nombre visible del usuario.
+     *
+     * @param string $isbn ISBN del libro.
+     * @return Comment[] Lista de entidades Comment.
+     */
     public function getCommentsByISBN($isbn) {
+        // Solo necesitamos user_name de profile_; el resto del perfil no se expone.
         $query = "SELECT c.profile_code,
                          c.Isbn,
                          c.comment_text, 
@@ -44,7 +63,6 @@ class CommentDAO {
         $resultList = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            //Instanciamos la Entidad
             $commentObj = new Comment();
             $commentObj->setProfileCode($row['profile_code']);
             $commentObj->setIsbn($row['Isbn']);
@@ -52,7 +70,6 @@ class CommentDAO {
             $commentObj->setRating($row['valoration']);
             $commentObj->setDateComment($row['date_comment']);
 
-            // Usamos toArray() para obtener los datos limpios
             $commentObj->setUserName($row['user_name']);
             $resultList[] = $commentObj;
         }
@@ -60,6 +77,12 @@ class CommentDAO {
         return $resultList;
     }
 
+    /**
+     * Actualiza una resena usando ISBN y perfil como clave.
+     *
+     * @param Comment $comment Entidad con claves y datos nuevos.
+     * @return bool True si la sentencia se ejecuta correctamente.
+     */
     public function updateComment(Comment $comment) {
         $query = "UPDATE comment_ 
                   SET comment_text = :text, 
@@ -68,7 +91,7 @@ class CommentDAO {
                   
         $stmt = $this->conn->prepare($query);
         
-        // Saneamiento
+        // El texto se sanea tambien en actualizacion para evitar HTML persistente.
         $cleanText = htmlspecialchars(strip_tags($comment->getCommentText()));
 
         $stmt->bindValue(':text',        $cleanText);
@@ -79,6 +102,13 @@ class CommentDAO {
         return $stmt->execute();
     }
 
+    /**
+     * Borra una resena y comprueba que existia.
+     *
+     * @param string $isbn ISBN comentado.
+     * @param int $profileCode Perfil propietario del comentario.
+     * @return bool True solo si se elimina al menos una fila.
+     */
     public function deleteComment($isbn, $profileCode) {
         $query = "DELETE FROM comment_ WHERE Isbn = :isbn AND profile_code = :profileCode";
         $stmt = $this->conn->prepare($query);

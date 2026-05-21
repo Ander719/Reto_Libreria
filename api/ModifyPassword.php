@@ -1,4 +1,5 @@
 <?php
+// Cambio de contrasena del perfil conectado.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 require_once '../Config/Session.php';

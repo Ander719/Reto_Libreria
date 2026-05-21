@@ -1,4 +1,5 @@
 <?php
+// Borrado de resenas: el usuario borra la suya; un admin puede moderar las de otros.
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../controller/CommentController.php';

@@ -1,4 +1,5 @@
 <?php
+// Perfil del usuario actual, resuelto desde la sesion.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../Config/Session.php';
 require_once '../controller/ProfileController.php';

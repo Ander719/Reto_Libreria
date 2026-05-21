@@ -1,4 +1,5 @@
 <?php
+// Actualizacion de datos especificos de un perfil admin.
 header('Content-Type: application/json; charset=utf-8');
 require_once '../controller/ProfileController.php';
 require_once '../Config/Session.php';
