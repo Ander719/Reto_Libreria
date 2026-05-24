@@ -108,8 +108,6 @@ Se añadio documentacion dentro del codigo, pero sin comentar cada linea.
 - Comentarios cortos en HTML para marcar bloques grandes: cabecera, formularios, tablas, modales y footer.
 - Titulos de bloque en CSS para encontrar antes cada zona del diseño.
 
-Despues se repasaron los comentarios para que no sonaran artificiales ni demasiado repetitivos.
-
 ---
 
 ## Archivos tocados y motivo
@@ -152,7 +150,6 @@ Despues se repasaron los comentarios para que no sonaran artificiales ni demasia
 
 ## Comprobaciones realizadas
 
-- `php -l` completo sin errores sintacticos.
 - Endpoints GET revisados con contrato JSON comun.
 - Endpoints POST con JSON invalido devuelven `400`.
 - Endpoints llamados con metodo incorrecto devuelven `405`.
