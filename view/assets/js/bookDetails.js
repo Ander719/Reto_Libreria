@@ -2,7 +2,7 @@ import { currentUser, checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 import { apiFetch } from './apiClient.js';
 
-/** @type {boolean} True cuando el formulario esta editando una resena ya publicada. */
+// True cuando el formulario esta editando una resena ya publicada
 let isEditing = false;
 
 const dialog = document.getElementById('myDialog');
@@ -48,13 +48,7 @@ if (confirmBtn) {
     });
 }
 
-/**
- * Muestra un aviso simple.
- *
- * @param {string} titulo Titulo del dialog.
- * @param {string} mensaje Mensaje mostrado.
- * @returns {void}
- */
+// Muestra un aviso simple en el dialog
 function showModal(titulo, mensaje) {
     dialogTitle.innerText = titulo;
     dialogMessage.innerText = mensaje;
@@ -64,15 +58,7 @@ function showModal(titulo, mensaje) {
     dialog.showModal();
 }
 
-/**
- * Pide confirmacion y devuelve la decision del usuario.
- *
- * @param {string} titulo Titulo del dialog.
- * @param {string} mensaje Mensaje mostrado.
- * @param {string} [textoConfirmar="Confirmar"] Texto del boton positivo.
- * @param {string} [textoCancelar="Cancelar"] Texto del boton negativo.
- * @returns {Promise<boolean>} Resultado de la decision del usuario.
- */
+// Pide confirmacion y devuelve la decision del usuario
 function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancelar = "Cancelar") {
     dialogTitle.innerText = titulo;
     dialogMessage.innerText = mensaje;
@@ -84,12 +70,7 @@ function showConfirm(titulo, mensaje, textoConfirmar = "Confirmar", textoCancela
     return new Promise((resolve) => { confirmResolver = resolve; });
 }
 
-/**
- * Pide a la API los datos del libro seleccionado.
- *
- * @param {string} isbn ISBN recibido desde la URL.
- * @returns {Promise<void>}
- */
+// Pide a la API los datos del libro seleccionado
 async function loadBookDetails(isbn) {
     try {
         const data = await apiFetch(`../../api/GetBook.php?isbn=${encodeURIComponent(isbn)}`);
@@ -103,12 +84,7 @@ async function loadBookDetails(isbn) {
     } catch (error) { console.error("Error:", error); }
 }
 
-/**
- * Pinta el libro y deja el boton de compra listo si procede.
- *
- * @param {object} libro Libro serializado por GetBook.php.
- * @returns {void}
- */
+// Pinta el libro y deja el boton de compra listo si procede
 function rellenarVista(libro) {
     document.getElementById('bookTitle').textContent = libro.title || "Título Desconocido";
     document.getElementById('bookAuthor').textContent = (libro.name_author || "") + " " + (libro.last_name || "");
@@ -206,11 +182,7 @@ function rellenarVista(libro) {
     });
 }
 
-/**
- * Muestra u oculta el formulario de resenas segun la sesion.
- *
- * @returns {void}
- */
+// Muestra u oculta el formulario de resenas segun la sesion
 function handleCommentSection() {
     const container = document.getElementById('userActionContainer');
     const loginPrompt = document.getElementById('loginPrompt');
@@ -237,12 +209,7 @@ function handleCommentSection() {
     }
 }
 
-/**
- * Publica una resena nueva o guarda la edicion de la existente.
- *
- * @param {SubmitEvent} e Evento del formulario.
- * @returns {Promise<void>}
- */
+// Publica una resena nueva o guarda la edicion de la existente
 async function submitComment(e) {
     e.preventDefault();
     const ratingInput = document.getElementById('ratingScore').value;
@@ -288,12 +255,7 @@ async function submitComment(e) {
     }
 }
 
-/**
- * Carga resenas y coloca primero la del usuario actual.
- *
- * @param {string} isbn ISBN del libro.
- * @returns {Promise<void>}
- */
+// Carga resenas y coloca primero la del usuario actual
 async function loadComments(isbn) {
     const list = document.getElementById('commentsList');
     const myId = parseInt(getUserId(currentUser));
@@ -403,13 +365,7 @@ window.deleteComment = async function (isbn, targetId) {
 };
 
 
-/**
- * Pasa una resena al formulario de edicion.
- *
- * @param {string} text Texto actual de la resena.
- * @param {number} rating Valoracion actual.
- * @returns {void}
- */
+// Pasa una resena al formulario de edicion
 window.startEdit = function (text, rating) {
     isEditing = true;
     const form = document.getElementById('commentForm');
@@ -431,12 +387,7 @@ window.startEdit = function (text, rating) {
     container.scrollIntoView({ behavior: 'smooth' });
 };
 
-/**
- * Mantiene sincronizados radios, input oculto y texto de estrellas.
- *
- * @param {number} val Valoracion seleccionada.
- * @returns {void}
- */
+// Mantiene sincronizados radios, input oculto y texto de estrellas
 window.setRating = function (val) {
     document.getElementById('ratingScore').value = val;
     const id = 'st' + val.toString().replace('.', '');
@@ -447,11 +398,7 @@ window.setRating = function (val) {
     if (txt) txt.innerText = val + "/5";
 };
 
-/**
- * Devuelve el formulario al modo de nueva resena.
- *
- * @returns {void}
- */
+// Devuelve el formulario al modo de nueva resena
 function resetForm() {
     isEditing = false;
     document.getElementById('commentBody').value = "";
@@ -469,14 +416,7 @@ function resetForm() {
     }
 }
 
-/**
- * Llama a la API para cerrar la compra.
- *
- * @param {string} isbn ISBN comprado.
- * @param {number} quantity Cantidad comprada.
- * @param {number|string|null} userId Codigo de perfil comprador.
- * @returns {Promise<void>}
- */
+// Llama a la API para cerrar la compra
 async function comprarAhora(isbn, quantity, userId) {
     try {
         const data = await apiFetch('../../api/BuyNow.php', {
@@ -498,22 +438,12 @@ async function comprarAhora(isbn, quantity, userId) {
     }
 }
 
-/**
- * Saca el codigo de perfil del usuario actual.
- *
- * @param {object|null} user Usuario actual.
- * @returns {number|string|null} Codigo de perfil o null.
- */
+// Saca el codigo de perfil del usuario actual
 export function getUserId(user) {
     return user ? user.profile_code : null;
 }
 
-/**
- * Genera estrellas HTML para mostrar valoraciones guardadas.
- *
- * @param {number} rating Valoracion numerica.
- * @returns {string} HTML con estrellas completas, medias y vacias.
- */
+// Genera estrellas HTML para mostrar valoraciones guardadas
 function getStarHtml(rating) {
     let html = '';
     const full = Math.floor(rating);

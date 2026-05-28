@@ -27,12 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/**
- * Carga comentarios y los pinta en la tabla.
- *
- * @param {string} isbn ISBN del libro seleccionado.
- * @returns {Promise<void>}
- */
+// Carga comentarios y los pinta en la tabla
 async function cargarComentarios(isbn) {
     try {
         const data = await apiFetch(`../../api/GetComments.php?isbn=${encodeURIComponent(isbn)}`);
@@ -67,13 +62,7 @@ async function cargarComentarios(isbn) {
     }
 }
 
-/**
- * Borra un comentario despues de pedir confirmacion.
- *
- * @param {string} isbn ISBN comentado.
- * @param {number|string} profileCode Perfil propietario del comentario.
- * @returns {Promise<void>}
- */
+// Borra un comentario despues de pedir confirmacion
 async function eliminarComentario(isbn, profileCode) {
     if (confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
         try {

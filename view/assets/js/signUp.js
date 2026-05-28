@@ -4,11 +4,7 @@ import { apiFetch } from './apiClient.js';
 
 init();
 
-/**
- * Carga registro y evita que un usuario logueado vuelva a registrarse.
- *
- * @returns {Promise<void>}
- */
+// Prepara el formulario de registro y redirige si ya esta logueado
 async function init() {
   const isLogged = await checkSession();
 

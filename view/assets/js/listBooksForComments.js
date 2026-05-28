@@ -22,11 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchBooks();
 });
 
-/**
- * Lista libros para elegir cuales comentarios revisar.
- *
- * @returns {Promise<void>}
- */
+// Lista libros para elegir cuales comentarios revisar
 async function fetchBooks() {
     try {
         const data = await apiFetch('../../api/GetAllBooks.php');
@@ -58,12 +54,7 @@ async function fetchBooks() {
     }
 }
 
-/**
- * Abre la vista de comentarios del libro elegido.
- *
- * @param {string} isbn ISBN seleccionado.
- * @returns {void}
- */
+// Abre la vista de comentarios del libro elegido
 function verComentarios(isbn) {
     window.location.href = `viewComments.html?isbn=${isbn}`;
 }

@@ -1,11 +1,6 @@
 import { currentUser, logout } from './session.js';
 
-/**
- * Ajusta la cabecera segun quien haya iniciado sesion y la pagina actual.
- *
- * @param {'main'|'configProfile'|'opcAdmin'|'deleteComment'|'logInSignUp'} filter Modo visual de la cabecera.
- * @returns {Promise<void>}
- */
+// Ajusta la cabecera segun el usuario y la pagina donde esta
 export async function loadHeader(filter) {
     if (currentUser) {
         const opcionesLink = document.getElementById('opcionesLink');
@@ -57,12 +52,7 @@ export async function loadHeader(filter) {
     }
 }
 
-/**
- * Muestra solo algunos enlaces del menu.
- *
- * @param {number[]} [indices=[]] Indices visibles dentro de .nav-menu li.
- * @returns {void}
- */
+// Muestra solo algunos enlaces del menu de navegacion
 function showOnly(indices = []) {
     const navItems = document.querySelectorAll('.nav-menu li');
     navItems.forEach((item, index) => {
@@ -70,11 +60,7 @@ function showOnly(indices = []) {
     });
 }
 
-/**
- * Enlaza las opciones clicables del footer.
- *
- * @returns {Promise<void>}
- */
+// Enlaza las opciones del footer para que hagan cosas al hacer click
 export async function loadFooter(){
     const footerLinks = document.querySelectorAll("#footerLink li")
     footerLinks[1].addEventListener("click",()=>{

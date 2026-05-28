@@ -4,14 +4,10 @@ import { apiFetch } from './apiClient.js';
 
 init();
 
-/** @type {Array<object>} Cache de libros usada por busqueda, sugerencias y renderizado. */
+// Guarda los libros que se cargan desde la base de datos
 let globalBooks = [];
 
-/**
- * Carga sesion, cabecera, footer, catalogo y buscador de la portada.
- *
- * @returns {Promise<void>}
- */
+// Inicia la pagina cargando sesion, cabecera, footer y libros
 async function init() {
     await checkSession();
 
@@ -22,11 +18,7 @@ async function init() {
     initSearchLogic();
 }
 
-/**
- * Deja preparado el buscador con sugerencias y resultados.
- *
- * @returns {void}
- */
+// Prepara el buscador con sugerencias y resultados
 function initSearchLogic() {
     const searchInput = document.getElementById('search-input');
     const clearBtn = document.getElementById('clearBtn');
@@ -89,12 +81,7 @@ function initSearchLogic() {
     });
 }
 
-/**
- * Saca sugerencias de titulo buscando tambien por ISBN y autor.
- *
- * @param {string} term Texto introducido por el usuario.
- * @returns {void}
- */
+// Busca sugerencias por titulo, ISBN o autor
 function updateSuggestions(term) {
     const suggestionsList = document.getElementById('suggestionsList');
     term = term.toLowerCase();
@@ -126,24 +113,13 @@ function updateSuggestions(term) {
     }
 }
 
-/**
- * Resalta la parte coincidente dentro de una sugerencia.
- *
- * @param {string} text Texto original.
- * @param {string} term Termino buscado.
- * @returns {string} HTML con la coincidencia marcada.
- */
+// Resalta el texto que coincide con lo que busca el usuario
 function highlightMatch(text, term) {
     const regex = new RegExp(`(${term})`, 'gi');
     return text.replace(regex, '<b>$1</b>');
 }
 
-/**
- * Pinta los resultados sin tocar las secciones de portada.
- *
- * @param {string} term Termino buscado.
- * @returns {void}
- */
+// Muestra los resultados de la busqueda en la pantalla
 function performSearch(term) {
     if (!term) return;
     term = term.toLowerCase();
@@ -177,12 +153,7 @@ function performSearch(term) {
     toggleSearchView(true);
 }
 
-/**
- * Alterna entre portada normal y resultados de busqueda.
- *
- * @param {boolean} isSearching Indica si debe mostrarse la vista de busqueda.
- * @returns {void}
- */
+// Cambia entre la vista normal y los resultados de buscar
 function toggleSearchView(isSearching) {
     const searchSection = document.getElementById('searchSection');
     const defaultSections = document.getElementById('defaultContent');
@@ -196,12 +167,7 @@ function toggleSearchView(isSearching) {
     }
 }
 
-/**
- * Genera el HTML de estrellas para valoraciones medias.
- *
- * @param {number} rating Valoracion de 0 a 5.
- * @returns {string} Marcado HTML de estrellas.
- */
+// Crea las estrellitas de la valoracion con HTML
 function getEstrellasHTML(rating) {
     let html = '';
     for (let i = 1; i <= 5; i++) {
@@ -216,11 +182,7 @@ function getEstrellasHTML(rating) {
     return html;
 }
 
-/**
- * Carga el catalogo desde la API y actualiza la cache global.
- *
- * @returns {Promise<void>}
- */
+// Trae todos los libros de la API y los guarda en la variable global
 async function cargarLibrosDesdeBD() {
 
     try {
@@ -234,23 +196,13 @@ async function cargarLibrosDesdeBD() {
         console.error("Error:", error);
     }
 }
-/**
- * Renderiza las secciones principales de la portada.
- *
- * @param {Array<object>} listaLibros Libros recibidos desde API.
- * @returns {void}
- */
+// Pinta los libros en las secciones de la portada
 function renderBooks(listaLibros) {
     rngBooksRender(listaLibros);
     ratingBooksRender(listaLibros);
 }
 
-/**
- * Pinta libros mezclados en la seccion de descubrimiento.
- *
- * @param {Array<object>} listaLibros Libros disponibles.
- * @returns {void}
- */
+// Muestra libros al azar en la seccion de descubrimiento
 function rngBooksRender(listaLibros) {
     const contenedor = document.getElementById('rngBooksContainer');
     const template = document.getElementById('book-card-template');
@@ -265,12 +217,7 @@ function rngBooksRender(listaLibros) {
     });
 }
 
-/**
- * Pinta los cuatro libros mejor valorados.
- *
- * @param {Array<object>} listaLibros Libros disponibles.
- * @returns {void}
- */
+// Muestra los cuatro libros con mejor puntuacion
 function ratingBooksRender(listaLibros) {
     const contenedor = document.getElementById('ratingBooksContainer');
     const template = document.getElementById('book-card-template');
@@ -282,14 +229,7 @@ function ratingBooksRender(listaLibros) {
     });
 }
 
-/**
- * Clona la tarjeta del template y la lleva al detalle del libro.
- *
- * @param {object} libro Libro serializado por la API.
- * @param {HTMLElement} contenedor Contenedor destino.
- * @param {HTMLTemplateElement} template Template de tarjeta.
- * @returns {void}
- */
+// Clona la plantilla de tarjeta y la rellena con los datos del libro
 function renderCard(libro, contenedor, template) {
     const clone = template.content.cloneNode(true);
 

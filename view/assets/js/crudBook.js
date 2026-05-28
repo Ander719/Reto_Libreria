@@ -29,11 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/**
- * Prepara el formulario segun mode=create o mode=edit.
- *
- * @returns {void}
- */
+// Prepara el formulario segun mode=create o mode=edit
 function initPageLogic() {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
@@ -62,11 +58,7 @@ function initPageLogic() {
         closeDialogBtn.addEventListener('click', () => reqDialog.close());
     }
 
-    /**
-     * Cambia textos y campos segun si se crea o se edita.
-     *
-     * @returns {void}
-     */
+    // Cambia textos y campos segun si se crea o se edita
     function initInterface() {
         if (mode === 'create') {
             if (pageTitle) pageTitle.innerText = "Añadir Nuevo Libro";
@@ -83,11 +75,7 @@ function initPageLogic() {
         }
     }
 
-    /**
-     * Llena el selector de libros del modo edicion.
-     *
-     * @returns {Promise<void>}
-     */
+    // Llena el selector de libros del modo edicion
     async function loadBooksToSelect() {
         try {
             const data = await apiFetch('../../api/GetAllBooks.php');
@@ -180,23 +168,13 @@ function initPageLogic() {
         });
     }
 
-    /**
-     * Bloquea el formulario hasta elegir libro en modo edicion.
-     *
-     * @param {boolean} isDisabled Estado de bloqueo.
-     * @returns {void}
-     */
+    // Bloquea el formulario hasta elegir libro en modo edicion
     function toggleForm(isDisabled) {
         formInputs.forEach(input => input.disabled = isDisabled);
         if (actionBtn) actionBtn.disabled = isDisabled;
     }
 
-    /**
-     * Copia los datos del libro recibido al formulario.
-     *
-     * @param {object} data Libro recibido desde GetBook.php.
-     * @returns {void}
-     */
+    // Copia los datos del libro recibido al formulario
     function fillForm(data) {
         const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ""; };
 
@@ -220,11 +198,7 @@ function initPageLogic() {
         }
     }
 
-    /**
-     * Quita la miniatura de portada.
-     *
-     * @returns {void}
-     */
+    // Quita la miniatura de portada
     function resetDropZone() {
         const prompt = dropZone.querySelector(".drop-zone__prompt");
         const thumb = dropZone.querySelector(".drop-zone__thumb");
@@ -251,13 +225,7 @@ function initPageLogic() {
         });
     }
 
-    /**
-     * Lee una imagen local para mostrar miniatura.
-     *
-     * @param {HTMLElement} dropZoneElement Zona visual de subida.
-     * @param {File} file Archivo seleccionado.
-     * @returns {void}
-     */
+    // Lee una imagen local para mostrar miniatura
     function updateThumbnailFile(dropZoneElement, file) {
         if (file.type.startsWith("image/")) {
             const reader = new FileReader();
@@ -266,14 +234,7 @@ function initPageLogic() {
         }
     }
 
-    /**
-     * Pinta la miniatura desde una URL o desde un archivo local.
-     *
-     * @param {HTMLElement} dropZoneElement Zona visual de subida.
-     * @param {string} url URL o data URL de la imagen.
-     * @param {string} label Nombre mostrado en la miniatura.
-     * @returns {void}
-     */
+    // Pinta la miniatura desde una URL o desde un archivo local
     function updateThumbnailVisual(dropZoneElement, url, label) {
         let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
         const prompt = dropZoneElement.querySelector(".drop-zone__prompt");

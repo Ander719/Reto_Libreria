@@ -17,11 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadOrders();
 });
 
-/**
- * Carga y pinta los pedidos del usuario actual.
- *
- * @returns {Promise<void>}
- */
+// Carga y pinta los pedidos del usuario actual
 async function loadOrders() {
     const container = document.getElementById('ordersContainer');
     container.innerHTML = '<p class="loading-msg">Cargando tu historial...</p>';

@@ -4,11 +4,7 @@ import { apiFetch } from "./apiClient.js";
 
 init();
 
-/**
- * Carga la pagina de login y redirige si ya hay sesion.
- *
- * @returns {Promise<void>}
- */
+// Prepara la pagina de login y redirige si ya esta logueado
 async function init() {
     const isLogged = await checkSession();
 
@@ -49,13 +45,7 @@ if (loginForm) {
     });
 }
 
-/**
- * Envia usuario y contrasena al login manteniendo cookies de sesion.
- *
- * @param {string} username Nombre de usuario.
- * @param {string} password Contrasena en claro enviada por HTTPS/local al servidor.
- * @returns {Promise<{status: string, message?: string, data?: any}>} Resultado del login.
- */
+// Envia el usuario y la contrasena al servidor para iniciar sesion
 async function login(username, password) {
     try {
         const data = await apiFetch(`../../api/Login.php`, {

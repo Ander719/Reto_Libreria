@@ -2,11 +2,7 @@ import { checkSession } from './session.js';
 import { loadHeader, loadFooter } from './header.js';
 import { apiFetch } from './apiClient.js';
 
-/**
- * Estado de esta pantalla: usuarios cargados y perfil propio.
- *
- * @type {{allUsers: Array<object>, myProfileCode: number|null}}
- */
+// Estado de esta pantalla: usuarios cargados y perfil propio
 const appState = {
     allUsers: [],
     myProfileCode: null
@@ -31,11 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initAdminPanel();
 });
 
-/**
- * Conecta botones de editar, borrar y cambiar contrasena.
- *
- * @returns {void}
- */
+// Conecta botones de editar, borrar y cambiar contrasena
 function setupEventListeners() {
     const adjustBtn = getEl('adjustData');
     if (adjustBtn) adjustBtn.onclick = (e) => {
@@ -98,22 +90,13 @@ function setupEventListeners() {
     setupPasswordLogic();
 }
 
-/**
- * Cierra un modal y vuelve a apuntar al perfil propio.
- *
- * @param {string} modalId ID del modal.
- * @returns {void}
- */
+// Cierra un modal y vuelve a apuntar al perfil propio
 function closeModalAndReset(modalId) {
     toggleModal(modalId, false);
     resetTargetIds();
 }
 
-/**
- * Evita que quede seleccionado otro usuario despues de cerrar un modal.
- *
- * @returns {void}
- */
+// Evita que quede seleccionado otro usuario despues de cerrar un modal
 function resetTargetIds() {
     const saveU = getEl('saveBtnUser');
     const saveA = getEl('saveBtnAdmin');
@@ -121,25 +104,14 @@ function resetTargetIds() {
     if (saveA) saveA.setAttribute('data-target-id', appState.myProfileCode);
 }
 
-/**
- * Muestra u oculta los modales hechos con div.
- *
- * @param {string} id ID del elemento modal.
- * @param {boolean} show Indica si debe mostrarse.
- * @returns {void}
- */
+// Muestra u oculta los modales hechos con div
 function toggleModal(id, show) {
     const el = getEl(id);
     if (!el) return;
     el.style.display = show ? 'flex' : 'none';
 }
 
-/**
- * Carga el perfil actual y rellena el formulario de user o admin.
- *
- * @param {boolean} [isInit=false] Si es true, solo inicializa estado sin abrir modal.
- * @returns {Promise<void>}
- */
+// Carga el perfil actual y rellena el formulario de user o admin
 async function loadMyProfile(isInit = false) {
     try {
         const data = await apiFetch('../../api/GetProfile.php', { credentials: 'include' });
@@ -164,13 +136,7 @@ async function loadMyProfile(isInit = false) {
     } catch (err) { console.error(err); }
 }
 
-/**
- * Rellena campos que comparten nombre y cambian por sufijo User/Admin.
- *
- * @param {object} u Perfil recibido desde API.
- * @param {'User'|'Admin'} prefix Sufijo de los campos del formulario.
- * @returns {void}
- */
+// Rellena campos que comparten nombre y cambian por sufijo User/Admin
 function fillProfileForm(u, prefix) {
     fill(`firstName${prefix}`, u.name_);
     fill(`lastName${prefix}`, u.surname);
@@ -187,12 +153,7 @@ function fillProfileForm(u, prefix) {
     }
 }
 
-/**
- * Valida el formulario y envia cambios segun el rol editado.
- *
- * @param {'user'|'admin'} role Tipo de perfil editado.
- * @returns {Promise<void>}
- */
+// Valida el formulario y envia cambios segun el rol editado
 async function saveUserData(role) {
     const suffix = role === 'admin' ? 'Admin' : 'User';
     const saveBtn = getEl(role === 'admin' ? 'saveBtnAdmin' : 'saveBtnUser');
@@ -295,11 +256,7 @@ async function saveUserData(role) {
     }
 }
 
-/**
- * Muestra la tabla de usuarios solo si la sesion es admin.
- *
- * @returns {Promise<void>}
- */
+// Muestra la tabla de usuarios solo si la sesion es admin
 async function initAdminPanel() {
     try {
         const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
@@ -312,11 +269,7 @@ async function initAdminPanel() {
     } catch (err) { console.error(err); }
 }
 
-/**
- * Carga usuarios en la tabla y conecta editar/borrar por fila.
- *
- * @returns {Promise<void>}
- */
+// Carga usuarios en la tabla y conecta editar/borrar por fila
 async function loadUsersTable() {
     const tbody = getEl('adminTableBody');
     const template = getEl('userRowTemplate');
@@ -357,12 +310,7 @@ async function loadUsersTable() {
     }
 }
 
-/**
- * Abre el modal con el usuario guardado en appState.allUsers.
- *
- * @param {number} index Indice de usuario en cache.
- * @returns {void}
- */
+// Abre el modal con el usuario guardado en appState.allUsers
 function prepareEditUser(index) {
     const u = appState.allUsers[index];
     if (!u) return;
@@ -372,12 +320,7 @@ function prepareEditUser(index) {
     toggleModal('modifyUserPopupAdmin', true);
 }
 
-/**
- * Pide borrar un perfil; la API decide si el usuario tiene permiso.
- *
- * @param {number|string} id Codigo de perfil objetivo.
- * @returns {Promise<void>}
- */
+// Pide borrar un perfil; la API decide si el usuario tiene permiso
 async function deleteUser(id) {
     if (!confirm("¿Eliminar usuario?")) return;
     try {
@@ -397,11 +340,7 @@ async function deleteUser(id) {
     }
 }
 
-/**
- * Cambio de contrasena en dos pasos: comprobar actual y guardar nueva.
- *
- * @returns {void}
- */
+// Cambio de contrasena en dos pasos: comprobar actual y guardar nueva
 function setupPasswordLogic() {
     const verifyForm = getEl('verifyPasswordForm');
     const changeForm = getEl('changePasswordForm');
