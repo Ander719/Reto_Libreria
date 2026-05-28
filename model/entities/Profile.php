@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Datos comunes que comparten usuarios y administradores.
- */
+// Datos que comparten usuarios y administradores
  abstract class Profile {
     private $profile_code;
     private $email;
@@ -12,17 +10,7 @@
     private $name_;
     private $surname;
 
-    /**
-     * Crea la parte comun del perfil.
-     *
-     * @param int $profile_code Codigo interno del perfil.
-     * @param string $email Correo electronico.
-     * @param string $user_name Nombre de usuario unico.
-     * @param string $pswd Hash de contrasena.
-     * @param string $telephone Telefono de contacto.
-     * @param string $name_ Nombre propio.
-     * @param string $surname Apellidos.
-     */
+    // Guarda los datos del perfil cuando se crea un usuario o admin
     public function __construct($profile_code, $email, $user_name, $pswd, $telephone, $name_, $surname) 
     {
         $this->profile_code = $profile_code;
@@ -34,35 +22,27 @@
         $this->surname = $surname;
     }
 
-    /** @return int Codigo interno del perfil. */
+    // Devuelve el codigo del perfil
     public function getProfile_code() { return $this->profile_code; }
-    /** @return string Correo electronico. */
+    // Devuelve el correo electronico
     public function getEmail() { return $this->email; }
-    /** @return string Nombre de usuario. */
+    // Devuelve el nombre de usuario
     public function getUser_name() { return $this->user_name; }
-    /** @return string Hash usado solo para password_verify(), nunca para respuestas API. */
+    // Devuelve el hash de la contrasena (solo para verificacion, no para mostrar)
     public function getPswd() { return $this->pswd; }
-    /** @return string Telefono de contacto. */
+    // Devuelve el telefono de contacto
     public function getTelephone() { return $this->telephone; }
-    /** @return string Nombre propio. */
+    // Devuelve el nombre propio
     public function getName_() { return $this->name_; }
-    /** @return string Apellidos. */
+    // Devuelve los apellidos
     public function getSurname() { return $this->surname; }
 
-    /**
-     * Devuelve una representacion de depuracion del perfil.
-     *
-     * @return string Cadena con campos internos; no debe usarse como salida publica.
-     */
+    // Muestra los datos del perfil para depuracion (no mandar al frontend)
     public function mostrar() 
     {
         return "[$this->profile_code] $this->email - $this->user_name - $this->pswd - $this->telephone - $this->name_ - $this->surname";
     }
-    /**
-     * Pasa el perfil a array sin incluir la contrasena.
-     *
-     * @return array<string, mixed> Datos publicos del perfil sin la contrasena.
-     */
+    // Pasa el perfil a array sin incluir la contrasena para mandarlo como JSON
     public function toArray() {
         return [
             'profile_code' => $this->profile_code,
@@ -74,11 +54,7 @@
         ];
     }
     
-    /**
-     * Representacion textual de la entidad concreta.
-     *
-     * @return string Texto descriptivo para depuracion.
-     */
+    // Devuelve un texto con los datos del perfil para depuracion
     public abstract function __toString();   
 }
 ?>

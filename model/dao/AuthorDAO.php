@@ -3,17 +3,11 @@
 require_once dirname(__DIR__, 2) . '/Config/Database.php'; 
 require_once dirname(__DIR__) . '/entities/Author.php';
 
-/**
- * DAO responsable de reutilizar o crear autores del catalogo.
- */
+// DAO para buscar o crear autores.
 class AuthorDAO {
     private $conn;
 
-    /**
-     * Permite usar una conexion inyectada o crear una propia si se invoca de forma aislada.
-     *
-     * @param PDO|null $db Conexion PDO opcional.
-     */
+    // Guarda la conexion o crea una nueva si no le pasan ninguna.
     public function __construct($db = null) {
         if ($db !== null) {
             $this->conn = $db;
@@ -24,13 +18,7 @@ class AuthorDAO {
         $this->conn = $database->getConnection();
     }
 
-    /**
-     * Busca un autor por nombre y apellido; si no existe, lo inserta y devuelve su ID.
-     *
-     * @param string $name Nombre del autor.
-     * @param string $surname Apellido del autor.
-     * @return int|false ID del autor o false si falla la insercion.
-     */
+    // Busca autor por nombre y apellido, si no existe lo crea.
     public function getOrCreateAuthorId($name, $surname) {
         $query = "SELECT ID_AUTHOR FROM author_ WHERE name_author = :name AND last_name = :surname LIMIT 1";
         $stmt = $this->conn->prepare($query);

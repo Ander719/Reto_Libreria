@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Linea de un pedido.
- */
+// Linea de un pedido
 class Content
 {
     public $id_pedido;
@@ -13,12 +11,7 @@ class Content
     private $bookTitle;
     private $bookCover;
 
-    /**
-     * @param int $id_pedido Identificador del pedido.
-     * @param string $isbn ISBN comprado.
-     * @param int $quantity Cantidad comprada.
-     * @param float $price_moment Precio unitario en el momento de la compra.
-     */
+    // Guarda los datos de la linea del pedido cuando se crea
     public function __construct($id_pedido, $isbn, $quantity, $price_moment)
     {
         $this->id_pedido = $id_pedido;
@@ -27,44 +20,34 @@ class Content
         $this->price_moment = $price_moment;
     }
 
-    /** @return int Identificador del pedido. */
+    // Devuelve el id del pedido
     public function getIdPedido()
     {
         return $this->id_pedido;
     }
 
-    /** @return string ISBN comprado. */
+    // Devuelve el ISBN comprado
     public function getIsbn()
     {
         return $this->isbn;
     }
 
-    /** @return int Cantidad comprada. */
+    // Devuelve la cantidad comprada
     public function getQuantity()
     {
         return $this->quantity;
     }
-    /** @return float Precio unitario historico. */
+    // Devuelve el precio que tenia en el momento de la compra
     public function getPriceMoment()
     {
         return $this->price_moment;
     }
-    /**
-     * Anade titulo y portada obtenidos por JOIN.
-     *
-     * @param string $title Titulo del libro.
-     * @param string $cover Portada del libro.
-     * @return void
-     */
+    // Guarda el titulo y la portada del libro (vienen de un JOIN)
     public function setBookDetails($title, $cover) {
         $this->bookTitle = $title;
         $this->bookCover = $cover;
     }
-    /**
-     * Devuelve la linea con el precio que tenia el libro al comprarlo.
-     *
-     * @return array<string, mixed> Linea lista para JSON.
-     */
+    // Prepara la linea del pedido para mandarla como JSON con el precio historico
     public function toArray() {
         return [
             'isbn'        => $this->isbn,

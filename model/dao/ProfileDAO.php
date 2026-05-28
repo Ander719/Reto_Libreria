@@ -2,27 +2,17 @@
 require_once dirname(__DIR__) . '/entities/Admin.php';     // Sube 1 nivel hasta model y entra en entities
 require_once dirname(__DIR__) . '/entities/User.php';      // Aseguramos que User también esté disponible
 
-/**
- * Consultas y escrituras sobre perfiles, usuarios y administradores.
- */
+// Consultas y escrituras sobre perfiles, usuarios y administradores.
 class ProfileDAO
 {
     private $conn;
 
-    /**
-     * @param PDO $db Conexion PDO reutilizada por el DAO.
-     */
+    // Guarda la conexion PDO.
     public function __construct($db)
     {
         $this->conn = $db;
     }
-    /**
-     * Registra un usuario con el procedimiento de la base de datos.
-     *
-     * @param string $username Nombre de usuario.
-     * @param string $password Hash de contrasena.
-     * @return User|'ERROR_DUPLICADO'|'ERROR_BBDD'|'ERROR_SILENCIOSO' Resultado del alta.
-     */
+    // Registra un usuario usando un procedimiento de la BD.
     public function register($username, $password)
     {
         try {
@@ -61,12 +51,7 @@ class ProfileDAO
         }
     }
 
-    /**
-     * Busca un usuario normal por username.
-     *
-     * @param string $username Nombre de usuario.
-     * @return User|null Usuario encontrado o null.
-     */
+    // Busca un usuario normal por su nombre de usuario.
     public function findUserByUsername($username)
     {
         // JOIN entre profile_ y user_ para hidratar la entidad concreta.
@@ -95,12 +80,7 @@ class ProfileDAO
         return null;
     }
 
-    /**
-     * Busca un administrador por username.
-     *
-     * @param string $username Nombre de usuario.
-     * @return Admin|null Administrador encontrado o null.
-     */
+    // Busca un administrador por su nombre de usuario.
     public function findAdminByUsername($username)
     {
         // JOIN entre profile_ y admin_ para distinguir la identidad de administracion.
@@ -128,12 +108,7 @@ class ProfileDAO
         return null;
     }
 
-    /**
-     * Devuelve la identidad de login con su rol.
-     *
-     * @param string $username Nombre de usuario.
-     * @return array{role:string,profile:User|Admin}|null Identidad autenticable o null.
-     */
+    // Busca el perfil y devuelve el rol que le toca.
     public function findLoginIdentityByUsername($username)
     {
         $admin = $this->findAdminByUsername($username);
@@ -149,12 +124,7 @@ class ProfileDAO
         return null;
     }
 
-    /**
-     * Busca un usuario normal por codigo de perfil.
-     *
-     * @param int $id Codigo de perfil.
-     * @return User|null Usuario encontrado o null.
-     */
+    // Busca un usuario normal por su codigo de perfil.
     public function getUserById($id)
     {
         // profile_ aporta los datos comunes; user_ aporta los datos de compra.
@@ -181,12 +151,7 @@ class ProfileDAO
         }
         return null;
     }
-    /**
-     * Busca un administrador por codigo de perfil.
-     *
-     * @param int $id Codigo de perfil.
-     * @return Admin|null Administrador encontrado o null.
-     */
+    // Busca un administrador por su codigo de perfil.
     public function getAdminById($id)
     {
         // admin_ solo guarda el dato extra de cuenta corriente.
@@ -213,11 +178,7 @@ class ProfileDAO
         return null;
     }
 
-    /**
-     * Devuelve los usuarios normales que aparecen en el panel admin.
-     *
-     * @return User[] Usuarios encontrados.
-     */
+    // Devuelve todos los usuarios normales para el panel admin.
     public function get_all_users()
     {
         $query = "SELECT * FROM profile_ P 
@@ -246,20 +207,7 @@ class ProfileDAO
     }
 
 
-    /**
-     * Guarda cambios de usuario en profile_ y user_.
-     *
-     * @param string|null $email Email actualizado.
-     * @param string $username Nombre de usuario actualizado.
-     * @param string|null $telephone Telefono actualizado.
-     * @param string|null $name Nombre propio.
-     * @param string|null $surname Apellidos.
-     * @param string|null $gender Genero.
-     * @param string|null $card_no Numero de tarjeta; si viene vacio se conserva el anterior.
-     * @param int $profile_code Perfil afectado.
-     * @param string|null $direction Direccion postal.
-     * @return bool True si ambas actualizaciones se confirman.
-     */
+    // Actualiza los datos de un usuario en profile_ y user_.
     public function modifyUser($email, $username, $telephone, $name, $surname, $gender, $card_no, $profile_code, $direction)
     {
         try {
@@ -322,18 +270,7 @@ class ProfileDAO
         }
     }
 
-    /**
-     * Guarda cambios de administrador en profile_ y admin_.
-     *
-     * @param string|null $email Email actualizado.
-     * @param string $username Nombre de usuario actualizado.
-     * @param string|null $telephone Telefono actualizado.
-     * @param string|null $name Nombre propio.
-     * @param string|null $surname Apellidos.
-     * @param string|null $current_account Cuenta corriente.
-     * @param int $profile_code Perfil afectado.
-     * @return bool True si ambas actualizaciones se confirman.
-     */
+    // Actualiza los datos de un admin en profile_ y admin_.
     public function modifyAdmin($email, $username, $telephone, $name, $surname, $current_account, $profile_code)
     {
 
@@ -383,12 +320,7 @@ class ProfileDAO
         }
     }
 
-    /**
-     * Borra el perfil. La base de datos limpia las tablas dependientes.
-     *
-     * @param int $id Codigo de perfil.
-     * @return bool True si la sentencia se ejecuta.
-     */
+    // Borra un perfil de la base de datos.
     public function delete_user($id)
     {
         $query = "DELETE FROM profile_ WHERE profile_code = :id";
@@ -397,13 +329,7 @@ class ProfileDAO
         return $stmt->execute();
     }
 
-    /**
-     * Cambia el hash de contrasena de un perfil.
-     *
-     * @param int $profile_code Codigo de perfil.
-     * @param string $password Hash generado previamente.
-     * @return bool True si se ejecuta la actualizacion.
-     */
+    // Cambia la contrasena de un perfil.
     public function modifyPassword($profile_code, $password)
     {
         $query = "UPDATE profile_ SET pswd = :password WHERE profile_code = :code";
@@ -413,12 +339,7 @@ class ProfileDAO
         return $stmt->execute();
     }
 
-    /**
-     * Comprueba si un perfil pertenece a la tabla admin_.
-     *
-     * @param int $profileCode Codigo de perfil.
-     * @return bool True si es administrador.
-     */
+    // Verifica si un perfil es administrador.
     public function isAdminByProfileCode($profileCode)
     {
         $query = "SELECT profile_code FROM admin_ WHERE profile_code = :id LIMIT 1";
@@ -428,13 +349,7 @@ class ProfileDAO
         return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
     }
 
-    /**
-     * Devuelve la entidad adecuada segun el rol de sesion.
-     *
-     * @param int $id Codigo de perfil.
-     * @param string $role Rol (`admin` o `user`).
-     * @return User|Admin|null Perfil encontrado.
-     */
+    // Devuelve el perfil segun el rol que le pasan.
     public function getProfileByRole($id, $role)
     {
         return $role === 'admin' ? $this->getAdminById($id) : $this->getUserById($id);

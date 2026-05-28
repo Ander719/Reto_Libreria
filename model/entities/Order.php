@@ -1,9 +1,7 @@
 <?php
 require_once 'Content.php';
 
-/**
- * Pedido con sus libros comprados.
- */
+// Pedido con sus libros comprados
 class Order {
     private $id_order;
     private $userId;
@@ -12,59 +10,40 @@ class Order {
     
     private $contents = [];
 
-    /**
-     * @param int $id_order Identificador del pedido.
-     * @param int $userId Perfil comprador.
-     * @param string $dateBuy Fecha de compra.
-     * @param bool|int $bought Estado interno de compra.
-     */
+    // Guarda los datos del pedido cuando se crea
     public function __construct($id_order, $userId, $dateBuy, $bought) {
         $this->id_order = $id_order;
         $this->userId = $userId;
         $this->dateBuy = $dateBuy;
         $this->bought = $bought;
     }
-    /**
-     * Alias de addContent(), se mantiene porque ya aparece en codigo anterior.
-     *
-     * @param Content $content Linea del pedido.
-     * @return void
-     */
+    // Anade un item al pedido (es lo mismo que addContent)
     public function addItem( Content $content) {
         $this->contents[] = $content;
     }
 
-    /** @return int Identificador del pedido. */
+    // Devuelve el id del pedido
     public function getIdOrder() {
         return $this->id_order;
     }
-    /** @return int Perfil comprador. */
+    // Devuelve el id del usuario que compro
     public function getUserId() {
         return $this->userId;
     }
-    /** @return string Fecha de compra. */
+    // Devuelve la fecha de compra
     public function getDateBuy() {
         return $this->dateBuy;
     }
-    /** @return bool|int Estado interno de compra. */
+    // Devuelve si esta comprado o no
     public function getBought() {
         return $this->bought;
     }
-    /**
-     * Anade una linea de contenido al pedido.
-     *
-     * @param Content $content Linea del pedido.
-     * @return void
-     */
+    // Anade una linea de contenido al pedido
     public function addContent(Content $content) {
         $this->contents[] = $content;
     }
 
-    /**
-     * Devuelve el pedido con items y total.
-     *
-     * @return array<string, mixed> Pedido listo para JSON.
-     */
+    // Prepara el pedido con items y total para mandarlo como JSON
     public function toArray() {
     
         $itemsArray = [];
@@ -80,11 +59,7 @@ class Order {
             'items'    => $itemsArray
         ];
     }
-    /**
-     * Calcula el total sumando subtotales serializados de cada linea.
-     *
-     * @return float Total redondeado a dos decimales.
-     */
+    // Calcula el total sumando los subtotales de cada linea
     private function calcularTotal() {
         $total = 0;
         foreach ($this->contents as $c) {

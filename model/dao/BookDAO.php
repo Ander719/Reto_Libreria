@@ -3,27 +3,18 @@
 require_once dirname(__DIR__) . '/entities/Book.php';
 require_once __DIR__ . '/AuthorDAO.php';
 
-/**
- * Consultas de libros. Tambien se apoya en AuthorDAO cuando cambia el autor.
- */
+// Consultas de libros, usa AuthorDAO para el autor.
 class BookDAO {
     private $conn;
     private $authorDAO;
 
-    /**
-     * @param PDO $db Conexion PDO reutilizada por el DAO.
-     */
+    // Guarda la conexion PDO y crea el AuthorDAO.
     public function __construct($db) {
         $this->conn = $db;
         $this->authorDAO = new AuthorDAO($this->conn);
     }
 
-    /**
-     * Busca un libro y trae su autor en la misma consulta.
-     *
-     * @param string $isbn ISBN buscado.
-     * @return Book|false Entidad encontrada o false.
-     */
+    // Busca un libro por ISBN y devuelve el objeto Book.
     public function getBookByIsbn($isbn) {
         // El JOIN evita otra consulta solo para completar el Author.
         $sql = "SELECT b.*, a.name_author, a.last_name 
@@ -52,21 +43,7 @@ class BookDAO {
         );
     }
 
-    /**
-     * Inserta un libro nuevo. Si el autor no existe, se crea antes.
-     *
-     * @param string $isbn ISBN unico.
-     * @param string $title Titulo.
-     * @param string $authorName Nombre del autor.
-     * @param string $authorSurname Apellido del autor.
-     * @param int $pages Paginas.
-     * @param int $stock Stock inicial.
-     * @param string $synopsis Sinopsis.
-     * @param float $price Precio.
-     * @param string $editorial Editorial.
-     * @param string $coverName Portada asociada.
-     * @return bool True si se inserta correctamente.
-     */
+    // Inserta un libro nuevo, creando el autor si hace falta.
     public function createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName) {
         $authorId = $this->authorDAO->getOrCreateAuthorId($authorName, $authorSurname);
         if (!$authorId) {
@@ -83,11 +60,7 @@ class BookDAO {
         ]);
     }
 
-    /**
-     * Lista el catalogo con la valoracion media calculada en SQL.
-     *
-     * @return array<int, array<string, mixed>> Libros serializados con campo rating.
-     */
+    // Obtiene todos los libros con su valoracion media.
     public function getAllBooks() {
         // GetAllBooks() deja la media de valoraciones en la base de datos.
         $sql = "CALL GetAllBooks()";
@@ -115,21 +88,7 @@ class BookDAO {
         return $list;
     }
 
-    /**
-     * Actualiza el libro y cambia la referencia de autor si hace falta.
-     *
-     * @param string $isbn ISBN del libro existente.
-     * @param string $title Titulo actualizado.
-     * @param string $authorName Nombre del autor.
-     * @param string $authorSurname Apellido del autor.
-     * @param int $pages Paginas.
-     * @param int $stock Stock actual.
-     * @param string $synopsis Sinopsis.
-     * @param float $price Precio.
-     * @param string $editorial Editorial.
-     * @param string $cover Portada a mantener o reemplazar.
-     * @return bool True si la actualizacion se ejecuta.
-     */
+    // Actualiza un libro y cambia el autor si es necesario.
     public function modifyBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $cover) {
         $authorId = $this->authorDAO->getOrCreateAuthorId($authorName, $authorSurname);
         if (!$authorId) {

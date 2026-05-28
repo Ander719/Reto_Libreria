@@ -2,29 +2,18 @@
 require_once '../model/entities/Order.php';
 //require_once '../model/entities/Content.php';
 
-/**
- * Consultas y escrituras de pedidos.
- */
+// Consultas y escrituras de pedidos.
 class OrderDao
 {
     private $conn;
 
-    /**
-     * @param PDO $db Conexion PDO reutilizada por el DAO.
-     */
+    // Guarda la conexion PDO.
     public function __construct($db)
     {
         $this->conn = $db;
     }
 
-    /**
-     * Compra directa: crea pedido, linea y descuenta stock.
-     *
-     * @param int $profileCode Perfil comprador.
-     * @param string $isbn ISBN comprado.
-     * @param int $quantity Cantidad solicitada.
-     * @return true|'NO_STOCK'|false Resultado de la operacion.
-     */
+    // Crea un pedido, descuenta stock y lo marca como comprado.
     public function createDirectOrder($profileCode, $isbn, $quantity)
     {
         try {
@@ -77,12 +66,7 @@ class OrderDao
         }
     }
 
-    /**
-     * Monta el historial agrupando las filas del JOIN por pedido.
-     *
-     * @param int $profileCode Perfil comprador.
-     * @return array<int, array<string, mixed>> Pedidos serializados con items.
-     */
+    // Obtiene el historial de pedidos de un perfil.
     public function getOrdersByProfile($profileCode)
     {
         // La consulta ya trae portada y titulo para no hacer otro fetch por cada item.
