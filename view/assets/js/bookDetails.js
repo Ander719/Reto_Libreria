@@ -230,7 +230,7 @@ async function submitComment(e) {
         isbn: isbn,
         text: text,
         rating: parseFloat(ratingInput),
-        date: new Date().toISOString().slice(0, 10)
+        date: new Date().toISOString().slice(0, 19)
     };
 
     try {
