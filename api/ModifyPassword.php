@@ -39,6 +39,7 @@ if (!is_array($input)) {
 }
 
 $password = $input['password'] ?? '';
+$targetProfileCode = $input['profile_code'] ?? null;
 
 if (empty($password)) {
     http_response_code(400);
@@ -51,7 +52,17 @@ if (empty($password)) {
     exit;
 }
 
-$profile_code = (string) $_SESSION['user']['profile_code'];
+// Si es admin y envia un profile_code distinto, cambia la pass del target.
+// Si no, solo permite cambiar la propia.
+$sessionCode = (string) $_SESSION['user']['profile_code'];
+$isAdmin = ($_SESSION['user']['role'] ?? '') === 'admin';
+
+if ($isAdmin && $targetProfileCode !== null) {
+    $profile_code = (string) $targetProfileCode;
+} else {
+    $profile_code = $sessionCode;
+}
+
 $password = trim($password);
 
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
