@@ -98,15 +98,9 @@ La idea es que la API no tenga SQL, que el DAO no sepa nada de HTTP y que las en
 - Los logs muestran la respuesta completa, no fragmentos sueltos.
 - Las redirecciones por bloqueo usan `window.location.replace()`.
 
-### Comentarios y documentacion del codigo
+### Comentarios
 
-Se añadio documentacion dentro del codigo, pero sin comentar cada linea.
-
-- PHPDoc en clases, metodos y funciones importantes.
-- Comentarios en SQL cuando hay `JOIN`, procedimientos almacenados o transacciones.
-- JSDoc en funciones JavaScript que hacen llamadas API, manipulan DOM o registran eventos importantes.
-- Comentarios cortos en HTML para marcar bloques grandes: cabecera, formularios, tablas, modales y footer.
-- Titulos de bloque en CSS para encontrar antes cada zona del diseño.
+Se comentaron las partes principales del codigo.
 
 ---
 
@@ -114,15 +108,15 @@ Se añadio documentacion dentro del codigo, pero sin comentar cada linea.
 
 | Ruta | Que se cambio |
 |------|---------------|
-| `api/*.php` | Contrato JSON comun, validacion de metodos, control de sesion/rol, saneamiento de entrada y comentarios de contexto. |
-| `controller/*.php` | Documentacion de parametros y retornos. Se mantiene como capa intermedia, sin SQL ni acceso directo a `$_GET` o `$_POST`. |
-| `model/dao/*.php` | Consultas SQL, prepared statements, transacciones y retornos especiales documentados. |
-| `model/entities/*.php` | `toArray()` seguro y documentado para exponer solo datos necesarios. |
+| `api/*.php` | Contrato JSON comun, validacion de metodos, control de sesion/rol y saneamiento de entrada. |
+| `controller/*.php` | Se mantiene como capa intermedia, sin SQL ni acceso directo a `$_GET` o `$_POST`. |
+| `model/dao/*.php` | Consultas SQL, prepared statements y transacciones. |
+| `model/entities/*.php` | `toArray()` para exponer solo datos necesarios. |
 | `Config/Database.php` | Conexion PDO centralizada y errores de conexion sin detalles tecnicos para el cliente. |
 | `Config/Session.php` | Arranque de sesion unificado y parametros de cookie compartidos. |
 | `view/assets/js/apiClient.js` | Helper comun para `fetch`, validacion JSON y errores HTTP. |
 | `view/assets/js/session.js` y `view/assets/js/header.js` | Estado de sesion, logout, cabecera y footer compartidos. |
-| `view/assets/js/*.js` | Llamadas API mas homogeneas, `async/await`, manejo de errores y JSDoc en funciones clave. |
+| `view/assets/js/*.js` | Llamadas API mas homogeneas, `async/await` y manejo de errores. |
 | `view/html/*.html` | Comentarios de secciones grandes y contenedores usados por JavaScript. |
 | `view/assets/css/*.css` | Bloques de estilos mejor marcados para mantenimiento. |
 | `SQL/CRUD_ADT.sql` | Comentarios en procedimientos con agregaciones y `JOIN`. |
@@ -144,7 +138,7 @@ Se añadio documentacion dentro del codigo, pero sin comentar cada linea.
 | Password | Podia filtrarse el hash | `toArray()` no expone `pswd` |
 | Portadas | Solo extension | Extension, tamaño y MIME real |
 | Fetch | Logica repetida por archivo | `apiFetch()` comun |
-| Comentarios | Pocos o informales | PHPDoc/JSDoc y comentarios selectivos |
+| Comentarios | Pocos o informales | Comentarios en el codigo |
 
 ---
 
