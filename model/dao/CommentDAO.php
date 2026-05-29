@@ -74,7 +74,8 @@ class CommentDAO {
     public function updateComment(Comment $comment) {
         $query = "UPDATE comment_ 
                   SET comment_text = :text, 
-                      valoration = :rating 
+                      valoration = :rating,
+                      date_comment = NOW()
                   WHERE Isbn = :isbn AND profile_code = :profileCode";
                    
         $stmt = $this->conn->prepare($query);
