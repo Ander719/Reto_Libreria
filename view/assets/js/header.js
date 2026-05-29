@@ -15,10 +15,6 @@ export async function loadHeader(filter) {
             event.preventDefault();
             logout();
         }
-        if (event.target && event.target.textContent === 'volver') {
-            event.preventDefault();
-            window.location.href = document.referrer;
-        }
     });
 
     const welcomeText = document.querySelector('.welcome-text');
