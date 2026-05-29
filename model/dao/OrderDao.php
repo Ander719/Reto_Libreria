@@ -20,8 +20,7 @@ class OrderDao
             // Pedido, linea y stock van juntos o no se guarda nada.
             $this->conn->beginTransaction();
 
-            // FOR UPDATE bloquea el libro mientras se revisa el stock.
-            $stmtCheck = $this->conn->prepare("SELECT stock, price FROM book_ WHERE isbn = :isbn FOR UPDATE");
+            $stmtCheck = $this->conn->prepare("SELECT stock, price FROM book_ WHERE isbn = :isbn");
             $stmtCheck->bindParam(':isbn', $isbn);
             $stmtCheck->execute();
             $book = $stmtCheck->fetch(PDO::FETCH_ASSOC);
