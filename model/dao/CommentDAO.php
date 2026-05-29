@@ -19,12 +19,20 @@ class CommentDAO {
 
         $cleanText = htmlspecialchars(strip_tags($comment->getCommentText()));
 
-        $stmt->bindValue(':profile', $comment->getProfileCode());
-        $stmt->bindValue(':isbn',    $comment->getIsbn());
-        $stmt->bindValue(':text',    $cleanText);
-        $stmt->bindValue(':rating',  $comment->getRating());
+        $profile = $comment->getProfileCode();
+        $isbn    = $comment->getIsbn();
+        $rating  = $comment->getRating();
+        $stmt->bindParam(':profile', $profile);
+        $stmt->bindParam(':isbn',    $isbn);
+        $stmt->bindParam(':text',    $cleanText);
+        $stmt->bindParam(':rating',  $rating);
 
-        return $stmt->execute();
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en CommentDAO::createComment: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Trae todas las resenas de un libro con el nombre del usuario.
@@ -68,18 +76,26 @@ class CommentDAO {
                   SET comment_text = :text, 
                       valoration = :rating 
                   WHERE Isbn = :isbn AND profile_code = :profileCode";
-                  
+                   
         $stmt = $this->conn->prepare($query);
         
         // El texto se sanea tambien en actualizacion para evitar HTML persistente.
         $cleanText = htmlspecialchars(strip_tags($comment->getCommentText()));
 
-        $stmt->bindValue(':text',        $cleanText);
-        $stmt->bindValue(':rating',      $comment->getRating());
-        $stmt->bindValue(':isbn',        $comment->getIsbn());
-        $stmt->bindValue(':profileCode', $comment->getProfileCode());
+        $isbn        = $comment->getIsbn();
+        $profileCode = $comment->getProfileCode();
+        $rating      = $comment->getRating();
+        $stmt->bindParam(':text',        $cleanText);
+        $stmt->bindParam(':rating',      $rating);
+        $stmt->bindParam(':isbn',        $isbn);
+        $stmt->bindParam(':profileCode', $profileCode);
         
-        return $stmt->execute();
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en CommentDAO::updateComment: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Borra una resena de la base de datos.
@@ -89,10 +105,12 @@ class CommentDAO {
         $stmt->bindParam(':isbn', $isbn);
         $stmt->bindParam(':profileCode', $profileCode);
         
-        if($stmt->execute()) {
-            return $stmt->rowCount() > 0;
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en CommentDAO::deleteComment: " . $e->getMessage());
+            return false;
         }
-        return false;
     }
 }
 ?>

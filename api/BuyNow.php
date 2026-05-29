@@ -79,24 +79,32 @@ if ($profileCode === false || $quantity === false || empty($isbn) || $profileCod
     exit;
 }
 
+require_once '../controller/BookController.php';
+
 $controller = new OrderController();
+
+// Pre-check de stock antes de la transaccion.
+$bookCtrl = new BookController();
+$book = $bookCtrl->getBook($isbn);
+if (!$book || $book->getStock() < $quantity) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'No hay suficiente stock.',
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 $result = $controller->createDirectOrder($profileCode, $isbn, $quantity);
 
-// El DAO distingue falta de stock de errores tecnicos para devolver el HTTP adecuado.
 if ($result === true) {
     http_response_code(200);
     echo json_encode([
         'status' => 'success',
         'code' => 200,
         'message' => 'Compra realizada con éxito.',
-        'data' => null
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-} elseif ($result === 'NO_STOCK') {
-    http_response_code(400);
-    echo json_encode([
-        'status' => 'error',
-        'code' => 400,
-        'message' => 'No hay suficiente stock.',
         'data' => null
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {

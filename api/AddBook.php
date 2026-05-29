@@ -133,9 +133,22 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_
 }
 
 $controller = new BookController();
+
+// Pre-check para evitar duplicados antes de llamar al DAO.
+if ($controller->getBook($isbn)) {
+    http_response_code(409);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 409,
+        'message' => 'El ISBN ya existe en el sistema.',
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 $response = $controller->createBook($isbn, $title, $authorName, $authorSurname, $pages, $stock, $synopsis, $price, $editorial, $coverName);
 
-if ($response) {
+if ($response === true) {
     http_response_code(200);
     echo json_encode([
         'status' => 'success',

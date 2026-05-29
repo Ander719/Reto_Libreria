@@ -44,10 +44,13 @@ class AuthorDAO {
         $stmtInsert->bindParam(":name", $name);
         $stmtInsert->bindParam(":surname", $surname);
 
-        if ($stmtInsert->execute()) {
+        try {
+            $stmtInsert->execute();
             return $newId;
+        } catch (PDOException $e) {
+            error_log("Error en AuthorDAO::getOrCreateAuthorId: " . $e->getMessage());
+            return false;
         }
-        return false;
     }
 }
 ?>

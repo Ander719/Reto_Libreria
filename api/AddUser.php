@@ -59,8 +59,20 @@ if (strlen($pswd) < 8) {
 // 4. Hash de contraseña en API
 $passwordHash = password_hash($pswd, PASSWORD_DEFAULT);
 
-// 5. Delegamos al Controlador
+// 5. Pre-check para detectar duplicados antes de registrar.
 $authController = new ProfileController();
+
+if ($authController->loginUser($username)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'code' => 400,
+        'message' => 'Ese nombre de usuario ya está cogido.',
+        'data' => null
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 $result = $authController->register($username, $passwordHash);
 
 if ($result instanceof User) {
@@ -79,17 +91,6 @@ if ($result instanceof User) {
         'data' => [
             'user' => $userData
         ]
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
-}
-
-if ($result === 'ERROR_DUPLICADO') {
-    http_response_code(400);
-    echo json_encode([
-        'status' => 'error',
-        'code' => 400,
-        'message' => 'Ese nombre de usuario ya está cogido.',
-        'data' => null
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }

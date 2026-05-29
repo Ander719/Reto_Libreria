@@ -42,12 +42,8 @@ class ProfileDAO
 
             return "ERROR_SILENCIOSO";
         } catch (PDOException $e) {
-            // 23000 identifica violaciones de integridad, como username duplicado.
-            if ($e->getCode() == '23000') {
-                return "ERROR_DUPLICADO";
-            }
             error_log("Error en ProfileDAO::register: " . $e->getMessage());
-            return "ERROR_BBDD";
+            return false;
         }
     }
 
@@ -326,7 +322,12 @@ class ProfileDAO
         $query = "DELETE FROM profile_ WHERE profile_code = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
-        return $stmt->execute();
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::delete_user: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Cambia la contrasena de un perfil.
@@ -336,7 +337,12 @@ class ProfileDAO
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":password", $password);
         $stmt->bindParam(":code", $profile_code);
-        return $stmt->execute();
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en ProfileDAO::modifyPassword: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Verifica si un perfil es administrador.

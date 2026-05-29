@@ -53,11 +53,21 @@ class BookDAO {
         $query = "INSERT INTO book_ (isbn, title, id_author, pages, stock, synopsis, price, editorial, cover) 
                   VALUES (:isbn, :title, :author, :pages, :stock, :synopsis, :price, :editorial, :cover)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([
-            ":isbn" => $isbn, ":title" => $title, ":author" => $authorId,
-            ":pages" => $pages, ":stock" => $stock, ":synopsis" => $synopsis,
-            ":price" => $price, ":editorial" => $editorial, ":cover" => $coverName
-        ]);
+        $stmt->bindParam(':isbn', $isbn);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':author', $authorId);
+        $stmt->bindParam(':pages', $pages);
+        $stmt->bindParam(':stock', $stock);
+        $stmt->bindParam(':synopsis', $synopsis);
+        $stmt->bindParam(':price', $price);
+        $stmt->bindParam(':editorial', $editorial);
+        $stmt->bindParam(':cover', $coverName);
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en BookDAO::createBook: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Obtiene todos los libros con su valoracion media.
@@ -107,17 +117,21 @@ class BookDAO {
                 WHERE isbn = :isbn";
 
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([
-            ":title" => $title,
-            ":author" => $authorId,
-            ":pages" => $pages,
-            ":stock" => $stock,
-            ":synopsis" => $synopsis,
-            ":price" => $price,
-            ":editorial" => $editorial,
-            ":cover" => $cover,
-            ":isbn" => $isbn
-        ]);
+        $stmt->bindParam(':isbn', $isbn);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':author', $authorId);
+        $stmt->bindParam(':pages', $pages);
+        $stmt->bindParam(':stock', $stock);
+        $stmt->bindParam(':synopsis', $synopsis);
+        $stmt->bindParam(':price', $price);
+        $stmt->bindParam(':editorial', $editorial);
+        $stmt->bindParam(':cover', $cover);
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en BookDAO::modifyBook: " . $e->getMessage());
+            return false;
+        }
     }
 }
 ?>

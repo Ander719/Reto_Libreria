@@ -29,7 +29,7 @@ class OrderDao
 
             if (!$book || $book['stock'] < $quantity) {
                 $this->conn->rollBack();
-                return "NO_STOCK";
+                return false;
             }
 
             $currentPrice = $book['price'];
