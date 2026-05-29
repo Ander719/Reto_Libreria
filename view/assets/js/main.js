@@ -240,7 +240,7 @@ function renderCard(libro, contenedor, template) {
     clone.querySelector('.book-stock').textContent = `Stock: ${libro.stock}`;
 
     const imgElement = clone.querySelector('.book-image-card');
-    imgElement.src = "../assets/img/covers/" + (libro.cover || "mood-heart.png");
+    imgElement.src = "../assets/img/covers/" + (libro.cover || "Book&Bugs_Logo.png");
     imgElement.alt = `Portada de ${libro.title}`;
 
     const ratingContainer = clone.querySelector('.book-rating');

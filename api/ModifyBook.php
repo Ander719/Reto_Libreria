@@ -129,7 +129,7 @@ if (isset($_FILES['coverFile']) && $_FILES['coverFile']['error'] === UPLOAD_ERR_
 
     if (move_uploaded_file($tmpPath, $uploadDir . $newFileName)) {
         $finalCoverName = $newFileName;
-        if ($oldCover && $oldCover !== 'default.jpg' && file_exists($uploadDir . $oldCover)) {
+        if ($oldCover && file_exists($uploadDir . $oldCover)) {
             @unlink($uploadDir . $oldCover);
         }
     }

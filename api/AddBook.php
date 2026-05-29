@@ -48,7 +48,7 @@ $stock = $_POST['stock'] ?? 0;
 $synopsis = $_POST['synopsis'] ?? '';
 $price = $_POST['price'] ?? 0;
 $editorial = $_POST['editorial'] ?? '';
-$coverName = "default.jpg";
+$coverName = null;
 
 $isbn = trim(htmlspecialchars($isbn));
 $title = trim(htmlspecialchars($title));

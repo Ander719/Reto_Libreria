@@ -95,7 +95,7 @@ function rellenarVista(libro) {
     document.getElementById('bookEditorial').textContent = libro.editorial;
 
     const img = document.getElementById('bookCover');
-    img.src = libro.cover ? `../assets/img/covers/${libro.cover}` : "../assets/img/mood-heart.png";
+    img.src = libro.cover ? `../assets/img/covers/${libro.cover}` : "../assets/img/Book&Bugs_Logo.png";
 
     const badge = document.getElementById('stockBadge');
     const btnCart = document.getElementById('addToCartBtn');
