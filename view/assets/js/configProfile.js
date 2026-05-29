@@ -332,8 +332,11 @@ async function deleteUser(id) {
         });
         console.log("Respuesta DeleteUser:", data);
 
-        alert("Usuario eliminado.");
-        loadUsersTable();
+        if (id == appState.myProfileCode) {
+            window.location.replace("login.html");
+        } else {
+            loadUsersTable();
+        }
     } catch (err) {
         console.error(err);
         alert(err.message || "No se pudo eliminar.");

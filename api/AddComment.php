@@ -57,7 +57,6 @@ $profileCode = (string) $_SESSION['user']['profile_code'];
 $isbn = trim(htmlspecialchars((string)$data->isbn));
 $text = trim(htmlspecialchars((string)$data->text));
 $rating = filter_var($data->rating, FILTER_VALIDATE_FLOAT);
-$date = !empty($data->date) ? trim(htmlspecialchars((string)$data->date)) : date('Y-m-d H:i:s');
 
 if ($profileCode === '' || $isbn === '' || $text === '' || $rating === false || $rating < 0 || $rating > 5) {
     http_response_code(400);
@@ -75,7 +74,6 @@ $comment->setProfileCode($profileCode);
 $comment->setIsbn($isbn);
 $comment->setCommentText($text);
 $comment->setRating($rating);
-$comment->setDateComment($date);
 
 $created = $controller->addComment($comment);
 

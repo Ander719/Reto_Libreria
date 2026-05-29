@@ -12,8 +12,8 @@ class CommentDAO {
 
     // Inserta una resena nueva en la base de datos.
     public function createComment(Comment $comment) {
-        $query = "INSERT INTO comment_ (profile_code, Isbn, comment_text, valoration, date_comment) 
-                  VALUES (:profile, :isbn, :text, :rating, :date)";
+        $query = "INSERT INTO comment_ (profile_code, Isbn, comment_text, valoration) 
+                  VALUES (:profile, :isbn, :text, :rating)";
         
         $stmt = $this->conn->prepare($query);
 
@@ -23,7 +23,6 @@ class CommentDAO {
         $stmt->bindValue(':isbn',    $comment->getIsbn());
         $stmt->bindValue(':text',    $cleanText);
         $stmt->bindValue(':rating',  $comment->getRating());
-        $stmt->bindValue(':date',    $comment->getDateComment());
 
         return $stmt->execute();
     }

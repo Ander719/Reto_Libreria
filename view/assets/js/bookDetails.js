@@ -229,8 +229,7 @@ async function submitComment(e) {
         profileCode: getUserId(currentUser),
         isbn: isbn,
         text: text,
-        rating: parseFloat(ratingInput),
-        date: new Date().toISOString().slice(0, 19)
+        rating: parseFloat(ratingInput)
     };
 
     try {
