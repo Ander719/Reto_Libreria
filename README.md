@@ -94,7 +94,6 @@ La idea es que la API no tenga SQL, que el DAO no sepa nada de HTTP y que las en
 - Se creo `view/assets/js/apiClient.js` con `apiFetch()`.
 - Las llamadas API usan `async/await` y `try/catch`.
 - `apiFetch()` revisa que el JSON tenga el contrato esperado.
-- `allowedStatuses` permite tratar casos como `401` sin romper el flujo.
 - Los logs muestran la respuesta completa, no fragmentos sueltos.
 - Las redirecciones por bloqueo usan `window.location.replace()`.
 

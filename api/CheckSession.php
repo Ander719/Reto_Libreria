@@ -26,11 +26,13 @@ if (isset($_SESSION['user'])) {
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 } else {
-    http_response_code(401);
+    http_response_code(200);
     echo json_encode([
-        'status' => 'error',
-        'code' => 401,
-        'message' => 'No hay sesión activa',
-        'data' => null
+        'status' => 'success',
+        'code' => 200,
+        'message' => 'Visitante sin sesión',
+        'data' => [
+            'user' => null
+        ]
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }

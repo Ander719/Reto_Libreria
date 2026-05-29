@@ -6,12 +6,9 @@ export let currentUser = null;
 // Comprueba si el usuario tiene sesion activa
 export async function checkSession() {
     try {
-        const data = await apiFetch('../../api/CheckSession.php', {
-            credentials: 'include',
-            allowedStatuses: [401]
-        });
+        const data = await apiFetch('../../api/CheckSession.php', { credentials: 'include' });
 
-        if (data.status.toLowerCase() === "success" && data.data && data.data.user) {
+        if (data.status === "success" && data.data && data.data.user) {
             console.log("Respuesta CheckSession:", data);
             currentUser = data.data.user;
             return true;
@@ -21,7 +18,7 @@ export async function checkSession() {
         return false;
 
     } catch (error) {
-        console.error("Fallo crítico real comprobando sesión:", error);
+        console.warn("Visitante sin login");
         currentUser = null;
         return false;
     }

@@ -1,8 +1,6 @@
 // Llama a la API con fetch y valida que la respuesta sea JSON
-export async function apiFetch(url, options = {}) {
-    const { allowedStatuses = [], ...fetchOptions } = options;
-
-    const response = await fetch(url, fetchOptions);
+export async function apiFetch(url, opciones = {}) {
+    const response = await fetch(url, opciones);
     const text = await response.text();
 
     let payload;
@@ -21,13 +19,7 @@ export async function apiFetch(url, options = {}) {
         throw new Error(payload.message || 'El código HTTP no coincide con la respuesta del servidor.');
     }
 
-    if (allowedStatuses.includes(response.status)) {
-        return payload;
-    }
-
-    const isServerSuccess = payload.status && payload.status.toLowerCase() === 'success';
-
-    if (!response.ok || !isServerSuccess) {
+    if (!response.ok || payload.status !== 'success') {
         throw new Error(payload.message || `Error HTTP ${response.status}`);
     }
 
