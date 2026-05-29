@@ -4,8 +4,8 @@
 class Database {
     private $host = 'localhost';
     private $db_name = 'crud_adt';
-    private $username = 'libreria_user';
-    private $password = 'TuPass123!';
+    private $username = 'root';
+    private $password = 'abcd*1234';
     private $conn;
 
     // Abre la conexion con MySQL y la devuelve.
