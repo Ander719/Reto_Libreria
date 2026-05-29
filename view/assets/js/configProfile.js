@@ -147,7 +147,25 @@ function fillProfileForm(u, prefix) {
     if (prefix === 'Admin') {
         fill('currentAccountAdmin', u.current_account);
     } else {
-        fill('cardNumberUser', '');
+        const isOwn = (u.profile_code == appState.myProfileCode);
+        const cardContainer = getEl('cardFieldContainer');
+        const cardHelp = getEl('cardHelpUser');
+        const cardInput = getEl('cardNumberUser');
+
+        if (isOwn) {
+            if (cardContainer) cardContainer.style.display = '';
+            if (cardInput) cardInput.value = '';
+            if (cardHelp) {
+                if (u.has_card && u.card_last_four) {
+                    cardHelp.textContent = 'Tarjeta actual: xxxxx' + u.card_last_four + '. Deja vacío para mantenerla.';
+                } else {
+                    cardHelp.textContent = 'No tienes tarjeta registrada.';
+                }
+            }
+        } else {
+            if (cardContainer) cardContainer.style.display = 'none';
+        }
+
         if (u.gender && getEl('genderUser')) getEl('genderUser').value = u.gender;
         fill('directionUser', u.direction);
     }

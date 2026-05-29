@@ -352,6 +352,14 @@ dialog::backdrop {
   width: 100%;
 }
 
+.card-help {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 2px;
+  padding-left: 2px;
+}
+
 .status-msg {
   display: block;
   text-align: center;

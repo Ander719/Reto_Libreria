@@ -33,11 +33,12 @@ class User extends Profile {
         return "User: " . parent::mostrar() . " - Gender: " . $this->gender . " - Card Number: " . $this->cardNumber . " - Direction: " . $this->direction;
     }
 
-    // Prepara los datos del usuario para JSON, la tarjeta solo dice si tiene o no
+    // Prepara los datos del usuario para JSON, la tarjeta solo muestra ultimos 4 digitos
     public function toArray() {
         $data = parent::toArray(); 
         $data['gender'] = $this->gender;
         $data['has_card'] = !empty($this->cardNumber);
+        $data['card_last_four'] = !empty($this->cardNumber) ? substr($this->cardNumber, -4) : null;
         $data['direction'] = $this->direction;
         return $data;
     }
